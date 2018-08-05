@@ -1,13 +1,14 @@
-package uk.co.magictractor.flickr.api;
+package uk.co.magictractor.oauth.api;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class FlickrAuthResponse implements FlickrResponse {
+//TODO! bin this?
+public class OAuthAuthResponse implements OAuthResponse {
 
 	private final Map<String, String> values = new HashMap<>();
 
-	public FlickrAuthResponse(String response) {
+	public OAuthAuthResponse(String response) {
 		for (String entry : response.split("&")) {
 			String[] keyAndValue = entry.split("=");
 			values.put(keyAndValue[0], keyAndValue[1]);

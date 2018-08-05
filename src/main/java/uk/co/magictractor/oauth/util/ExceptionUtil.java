@@ -1,4 +1,4 @@
-package uk.co.magictractor.flickr.util;
+package uk.co.magictractor.oauth.util;
 
 import java.util.concurrent.Callable;
 

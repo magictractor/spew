@@ -1,6 +1,6 @@
-package uk.co.magictractor.flickr.api;
+package uk.co.magictractor.oauth.api;
 
-public interface FlickrResponse {
+public interface OAuthResponse {
 
 	<T> T getObject(String key, Class<T> type);
 

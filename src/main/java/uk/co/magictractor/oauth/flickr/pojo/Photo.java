@@ -1,4 +1,4 @@
-package uk.co.magictractor.flickr.pojo;
+package uk.co.magictractor.oauth.flickr.pojo;
 
 public class Photo {
 

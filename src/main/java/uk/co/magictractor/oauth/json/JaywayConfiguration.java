@@ -1,4 +1,4 @@
-package uk.co.magictractor.flickr.json;
+package uk.co.magictractor.oauth.json;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
