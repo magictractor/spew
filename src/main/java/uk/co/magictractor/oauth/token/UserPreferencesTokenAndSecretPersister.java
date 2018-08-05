@@ -15,13 +15,13 @@ public class UserPreferencesTokenAndSecretPersister implements TokenAndSecretPer
 	}
 
 	@Override
-	public String getTokenAndSecretString() {
-		return preferences.get(KEY, null);
+	public TokenAndSecret getTokenAndSecret() {
+		return TokenAndSecret.forPersistedString(preferences.get(KEY, null));
 	}
 
 	@Override
-	public void setTokenAndSecretString(String tokenAndSecretString) {
-		preferences.put(KEY, tokenAndSecretString);
+	public void setTokenAndSecret(TokenAndSecret tokenAndSecret) {
+		preferences.put(KEY, tokenAndSecret.getPersistedString());
 	}
 
 }

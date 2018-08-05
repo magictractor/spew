@@ -2,20 +2,10 @@ package uk.co.magictractor.oauth.token;
 
 public interface TokenAndSecretPersister {
 
-	default TokenAndSecret getTokenAndSecret() {
-		String tokenAndSecretString = getTokenAndSecretString();
-		if (tokenAndSecretString == null) {
-			return TokenAndSecret.BLANK;
-		}
-		return new TokenAndSecret(getTokenAndSecretString());
-	}
-
-	String getTokenAndSecretString();
+	TokenAndSecret getTokenAndSecret();
 
 	default void setTokenAndSecret(TokenAndSecret tokenAndSecret) {
-		setTokenAndSecretString(tokenAndSecret.getPersistedString());
+		throw new UnsupportedOperationException();
 	}
-
-	void setTokenAndSecretString(String tokenAndSecretString);
 
 }

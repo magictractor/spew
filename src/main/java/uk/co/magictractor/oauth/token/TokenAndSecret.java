@@ -14,10 +14,13 @@ public class TokenAndSecret {
 		this.secret = secret;
 	}
 
-	public TokenAndSecret(String persistedString) {
+	public static TokenAndSecret forPersistedString(String persistedString) {
+		if (persistedString == null) {
+			return BLANK;
+		}
+		
 		String[] parts = persistedString.split(PERSISTED_VALUE_SEPARATOR);
-		this.token = parts[0];
-		this.secret = parts[1];
+		return new TokenAndSecret( parts[0], parts[1]);
 	}
 
 	public String getToken() {
@@ -31,7 +34,7 @@ public class TokenAndSecret {
 	public String getPersistedString() {
 		return token + PERSISTED_VALUE_SEPARATOR + secret;
 	}
-	
+
 	public boolean isBlank() {
 		return secret.length() == 0;
 	}

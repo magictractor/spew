@@ -32,14 +32,4 @@ public class PropertyFileTokenAndSecretPersister implements TokenAndSecretPersis
 		return tokenAndSecret;
 	}
 
-	@Override
-	public String getTokenAndSecretString() {
-		throw new UnsupportedOperationException();
-	}
-	
-	@Override
-	public void setTokenAndSecretString(String tokenAndSecretString) {
-		throw new UnsupportedOperationException();
-	}
-
 }
