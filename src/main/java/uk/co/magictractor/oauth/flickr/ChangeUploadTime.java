@@ -7,9 +7,9 @@ import uk.co.magictractor.oauth.flickr.pojo.Photo;
 import uk.co.magictractor.oauth.servers.Flickr;
 
 public class ChangeUploadTime {
-	private static final String ALL_EXTRAS = "description,license,date_upload,date_taken,"
-			+ "owner_name,icon_server,original_format,last_update,geo,tags,machine_tags,"
-			+ "o_dims,views,media,path_alias," + "url_sq,url_t,url_s,url_q,url_m,url_n,url_z,url_c,url_l,url_o";
+//	private static final String ALL_EXTRAS = "description,license,date_upload,date_taken,"
+//			+ "owner_name,icon_server,original_format,last_update,geo,tags,machine_tags,"
+//			+ "o_dims,views,media,path_alias," + "url_sq,url_t,url_s,url_q,url_m,url_n,url_z,url_c,url_l,url_o";
 
 	// https://api.flickr.com/services/rest/?method=flickr.people.getPhotos
 	// &api_key=1da91a5cdef62942f510c37e84ba5f70

@@ -12,7 +12,6 @@ public final class ExceptionUtil {
 			runnable.run();
 			return null;
 		});
-		// call(runnable);
 	}
 
 	public static <T> T call(Callable<T> callable) {
