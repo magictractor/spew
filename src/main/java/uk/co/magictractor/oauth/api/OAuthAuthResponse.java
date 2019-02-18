@@ -3,6 +3,8 @@ package uk.co.magictractor.oauth.api;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.jayway.jsonpath.TypeRef;
+
 //TODO! bin this?
 public class OAuthAuthResponse implements OAuthResponse {
 
@@ -19,6 +21,11 @@ public class OAuthAuthResponse implements OAuthResponse {
 	public <T> T getObject(String key, Class<T> type) {
 		// TODO! perhaps handle int/date conversions etc
 		return (T) values.get(key);
+	}
+
+	@Override
+	public <T> T getObject(String key, TypeRef<T> type) {
+		throw new UnsupportedOperationException("Not a Json response");
 	}
 
 }

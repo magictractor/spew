@@ -5,9 +5,9 @@ import java.util.Map;
 
 public class OAuthRequest {
 
-	private final String httpMethod = "GET";
 	private final String url;
 	private final Map<String, String> params = new LinkedHashMap<>();
+	private String httpMethod = "GET";
 
 	public OAuthRequest(String url) {
 		this.url = url;
@@ -21,12 +21,23 @@ public class OAuthRequest {
 		return httpMethod;
 	}
 
-	public void addParam(String key, Number number) {
+	// TODO! enum? infer from method (e.g. begins with "set")?
+	public void setHttpMethod(String httpMethod) {
+		this.httpMethod = httpMethod;
+	}
+
+	public void setParam(String key, Number number) {
 		params.put(key, number.toString());
 	}
 
 	public void setParam(String key, String value) {
-		params.put(key, value);
+		// Escape value to handle spaces in titles etc. - nope gubs oauth
+		// params.put(key, UrlEncoderUtil.urlEncode(value));
+		if (value != null) {
+			params.put(key, value);
+		} else {
+			params.remove(key);
+		}
 	}
 
 	public void removeParam(String key) {

@@ -4,6 +4,7 @@ import java.util.prefs.Preferences;
 
 import uk.co.magictractor.oauth.api.OAuthServer;
 
+// TODO! generalise a multi value persister?
 public class UserPreferencesTokenAndSecretPersister implements TokenAndSecretPersister {
 
 	private static final String KEY = "tokenAndSecret";

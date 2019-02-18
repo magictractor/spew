@@ -1,22 +1,13 @@
 package uk.co.magictractor.oauth.api;
 
-import static java.net.HttpURLConnection.HTTP_OK;
-
 import java.awt.Desktop;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
 import java.net.URI;
-import java.net.URL;
 import java.net.URLEncoder;
 import java.util.Base64;
 import java.util.Map;
 import java.util.Random;
 import java.util.Scanner;
 import java.util.TreeMap;
-import java.util.Map.Entry;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
@@ -26,8 +17,10 @@ import uk.co.magictractor.oauth.token.TokenAndSecret;
 import uk.co.magictractor.oauth.token.TokenAndSecretPersister;
 import uk.co.magictractor.oauth.token.UserPreferencesTokenAndSecretPersister;
 import uk.co.magictractor.oauth.util.ExceptionUtil;
+import uk.co.magictractor.oauth.util.UrlEncoderUtil;
 
-public final class OAuthConnection {
+// TODO! common interface for OAuth1 and OAuth2 connections (and no auth? / other auth?)
+public final class OAuth1Connection extends AbstractConnection {
 
 	// TODO! the this the java name, want to derive it from
 	// OAuthServer.getSignature()
@@ -43,7 +36,7 @@ public final class OAuthConnection {
 	private TokenAndSecret userTokenAndSecret;
 
 	// TODO! could derive the authServer from the service URL?
-	public OAuthConnection(OAuth1Server authServer) {
+	public OAuth1Connection(OAuth1Server authServer) {
 		this.authServer = authServer;
 		this.appTokenAndSecret = new PropertyFileTokenAndSecretPersister(authServer).getTokenAndSecret();
 		this.userTokenAndSecretPersister = new UserPreferencesTokenAndSecretPersister(authServer);
@@ -58,12 +51,12 @@ public final class OAuthConnection {
 
 		forAll(apiRequest);
 		forApi(apiRequest);
-		return ExceptionUtil.call(() -> request0(apiRequest));
+		return ExceptionUtil.call(() -> request0(apiRequest, authServer.getJsonConfiguration()));
 	}
-	
-	public OAuthResponse authRequest(OAuthRequest apiRequest) {
+
+	private OAuthResponse authRequest(OAuthRequest apiRequest) {
 		forAll(apiRequest);
-		return ExceptionUtil.call(() -> request0(apiRequest));
+		return ExceptionUtil.call(() -> request0(apiRequest, authServer.getJsonConfiguration()));
 	}
 
 	private void authenticateUser() {
@@ -87,15 +80,17 @@ public final class OAuthConnection {
 		// oauth_callback_confirmed=true&oauth_token=72157697914997341-aa5c16e42e726714&oauth_token_secret=b9f69c0cb17972f6
 		String authToken = response.getString("oauth_token");
 		String authSecret = response.getString("oauth_token_secret");
-		//FlickrConfig.setUserRequestToken(authToken, authSecret);
+		// FlickrConfig.setUserRequestToken(authToken, authSecret);
 		userTokenAndSecret = new TokenAndSecret(authToken, authSecret);
 
 		// https://www.flickr.com/services/oauth/authorize?oauth_token=72157697915783691-9402de420a27bdea&perms=write
-		//String authUrl = "https://www.flickr.com/services/oauth/authorize?oauth_token=" + authToken + "&perms=write";
-		
+		// String authUrl =
+		// "https://www.flickr.com/services/oauth/authorize?oauth_token=" + authToken +
+		// "&perms=write";
+
 		// TODO! check whether this already contains question mark
-		String authUrl = authServer.getResourceOwnerAuthorizationUri() + "&" + "oauth_token=" + authToken; 
-		
+		String authUrl = authServer.getResourceOwnerAuthorizationUri() + "&" + "oauth_token=" + authToken;
+
 		// https://stackoverflow.com/questions/5226212/how-to-open-the-default-webbrowser-using-java
 		if (Desktop.isDesktopSupported()) {
 			// uri = new
@@ -106,7 +101,7 @@ public final class OAuthConnection {
 	}
 
 	private void verify(String verification) {
-		//FlickrRequest request = FlickrRequest.forAuth("access_token");
+		// FlickrRequest request = FlickrRequest.forAuth("access_token");
 		OAuthRequest request = new OAuthRequest(authServer.getTokenRequestUri());
 		request.setParam("oauth_token", userTokenAndSecret.getToken());
 		request.setParam("oauth_verifier", verification);
@@ -118,91 +113,16 @@ public final class OAuthConnection {
 		userTokenAndSecretPersister.setTokenAndSecret(userTokenAndSecret);
 	}
 
-	// http://www.baeldung.com/java-http-request
-	private OAuthResponse request0(OAuthRequest request) throws IOException {
-		// To look at URLStreamHandler
-		URL url = new URL(getUrl(request));
-		// TODO! add query string...
-		HttpURLConnection con = (HttpURLConnection) url.openConnection();
-		con.setRequestMethod(request.getHttpMethod());
-
-		boolean isOK;
-		StringBuilder bodyBuilder = new StringBuilder();
-		BufferedReader in = null;
-		try {
-			isOK = con.getResponseCode() == HTTP_OK;
-			InputStream responseStream = isOK ? con.getInputStream() : con.getErrorStream();
-
-			// TODO! encoding
-			in = new BufferedReader(new InputStreamReader(responseStream));
-			char[] buffer = new char[1024];
-			int len;
-			while ((len = in.read(buffer)) != -1) {
-				bodyBuilder.append(buffer, 0, len);
-			}
-
-//			String line;
-//			while ((line = in.readLine()) != null) {
-//				System.err.println(line);
-//			}
-		} finally {
-			if (in != null) {
-				in.close();
-			}
-			con.disconnect();
-		}
-
-		// TODO! what to do when !isOK
-		if (!isOK) {
-			// TODO! logger?
-			throw new IllegalStateException(
-					con.getResponseCode() + " " + con.getResponseMessage() + " " + bodyBuilder.toString());
-		}
-
-		// TODO! Very long Json does not get displayed in the console
-		System.err.println(bodyBuilder.toString());
-
-		// TODO! wrap/convert response json
-		if ("json".equals(request.getParam("format"))) {
-			OAuthJsonResponse response = new OAuthJsonResponse(bodyBuilder.toString());
-			// TODO! change to !"pass"
-			if ("fail".equals(response.getString("stat"))) {
-				throw new IllegalStateException(bodyBuilder.toString());
-			}
-			return response;
-		} else {
-			return new OAuthAuthResponse(bodyBuilder.toString());
-		}
-	}
-
-	private String getUrl(OAuthRequest request) {
-		//String unsignedUrl = request.getUrl() + "?" + getQueryString(request.getParams());
+	// hmms - push some of this up? - encode could be different per connection?
+	protected String getUrl(OAuthRequest request) {
+		// String unsignedUrl = request.getUrl() + "?" +
+		// getQueryString(request.getParams());
 
 		// urlBuilder.append("oauth_signature=");
 		// urlBuilder.append(getSignature());
 
-		return request.getUrl() + "?" + getQueryString(request.getParams()) + "&oauth_signature="
-				+ getSignature(request);
-	}
-
-	private String getQueryString(Map<String, String> params) {
-		StringBuilder queryStringBuilder = new StringBuilder();
-		// urlBuilder.append("?");
-
-		boolean isFirstParam = true;
-		for (Entry<String, String> paramEntry : params.entrySet()) {
-			if (isFirstParam) {
-				isFirstParam = false;
-			} else {
-				queryStringBuilder.append("&");
-			}
-			queryStringBuilder.append(paramEntry.getKey());
-			queryStringBuilder.append("=");
-			queryStringBuilder.append(paramEntry.getValue());
-			// urlBuilder.append("&");
-		}
-
-		return queryStringBuilder.toString();
+		return request.getUrl() + "?" + getQueryString(request.getParams(), UrlEncoderUtil::paramEncode)
+				+ "&oauth_signature=" + getSignature(request);
 	}
 
 	// See https://www.flickr.com/services/api/auth.oauth.html
@@ -238,20 +158,22 @@ public final class OAuthConnection {
 		StringBuilder signatureBaseStringBuilder = new StringBuilder();
 		signatureBaseStringBuilder.append(request.getHttpMethod());
 		signatureBaseStringBuilder.append('&');
-		signatureBaseStringBuilder.append(urlEncode(request.getUrl()));
+		signatureBaseStringBuilder.append(UrlEncoderUtil.oauthEncode(request.getUrl()));
 		signatureBaseStringBuilder.append('&');
-		signatureBaseStringBuilder.append(urlEncode(getQueryString(getBaseStringParams(request))));
+		signatureBaseStringBuilder.append(
+				UrlEncoderUtil.oauthEncode(getQueryString(getBaseStringParams(request), UrlEncoderUtil::oauthEncode)));
 
 		return signatureBaseStringBuilder.toString();
 	}
 
-	private String urlEncode(String string) {
-		return ExceptionUtil.call(() -> URLEncoder.encode(string, "UTF-8"));
-	}
+//	private String urlEncode(String string) {
+//		return ExceptionUtil.call(() -> URLEncoder.encode(string, "UTF-8"));
+//	}
 
 	/** @return ordered params for building signature key */
 	private Map<String, String> getBaseStringParams(OAuthRequest request) {
 		// TODO! some params should be ignored
+		// TODO! where should params be escaped??
 		return new TreeMap<>(request.getParams());
 	}
 
@@ -278,8 +200,8 @@ public final class OAuthConnection {
 		// TODO! how to make this testable (should be non-random during testing, but
 		// Spring too heavyweight)
 		// https://oauth.net/core/1.0a/#nonce
-		request.addParam("oauth_nonce", new Random().nextInt());
-		request.addParam("oauth_timestamp", System.currentTimeMillis());
+		request.setParam("oauth_nonce", new Random().nextInt());
+		request.setParam("oauth_timestamp", System.currentTimeMillis());
 		// setParam("oauth_callback", "www.google.com");
 		// "oob" so that web shows the verifier which can then be copied
 		request.setParam("oauth_callback", "oob");
@@ -290,3 +212,5 @@ public final class OAuthConnection {
 	}
 
 }
+
+//  https://api.flickr.com/services/rest/?method=flickr.photos.setMeta&api_key=5939e168bc6ea2e41e83b74f6f0b3e2d&photo_id=45249983521&title=Small+white&format=json&nojsoncallback=1&auth_token=72157672277056577-9fa9087d61430e0a&api_sig=2e45756e2c8c451dc08468ab15b7c9ac

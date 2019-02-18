@@ -1,11 +1,11 @@
 package uk.co.magictractor.oauth.flickr;
 
-import uk.co.magictractor.oauth.api.OAuthConnection;
+import uk.co.magictractor.oauth.api.OAuth1Connection;
 import uk.co.magictractor.oauth.api.OAuthRequest;
 import uk.co.magictractor.oauth.api.OAuthResponse;
 import uk.co.magictractor.oauth.flickr.pojo.Photo;
-import uk.co.magictractor.oauth.servers.Flickr;
 
+// bin this
 public class ChangeUploadTime {
 //	private static final String ALL_EXTRAS = "description,license,date_upload,date_taken,"
 //			+ "owner_name,icon_server,original_format,last_update,geo,tags,machine_tags,"
@@ -29,7 +29,7 @@ public class ChangeUploadTime {
 		// https://www.flickr.com/groups/51035612836@N01/discuss/72157594497877875/
 		request.setParam("extras", "date_upload,date_taken,description,tags,machine_tags");
 		// request.setParam("extras", ALL_EXTRAS);
-		OAuthResponse response = new OAuthConnection(new Flickr()).request(request);
+		OAuthResponse response = new OAuth1Connection(new Flickr()).request(request);
 
 		// getClass() -> LinkedHashMap in both cases
 		System.err.println(response);
