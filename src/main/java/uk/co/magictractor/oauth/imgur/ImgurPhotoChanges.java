@@ -2,15 +2,10 @@ package uk.co.magictractor.oauth.imgur;
 
 import java.time.Instant;
 
-import uk.co.magictractor.oauth.api.OAuth1Connection;
-import uk.co.magictractor.oauth.api.OAuthRequest;
-import uk.co.magictractor.oauth.api.OAuthResponse;
-import uk.co.magictractor.oauth.flickr.Flickr;
-import uk.co.magictractor.oauth.flickr.pojo.Photo;
-import uk.co.magictractor.oauth.flickr.pojo.TagSet;
-import uk.co.magictractor.oauth.processor.Changes;
+import uk.co.magictractor.oauth.common.TagSet;
+import uk.co.magictractor.oauth.flickr.pojo.FlickrPhoto;
 
-public class ImgurPhotoChanges implements Changes<Photo> {
+public class ImgurPhotoChanges {
 
 	// private final Photo photo;
 	private final String photoId;
@@ -22,7 +17,7 @@ public class ImgurPhotoChanges implements Changes<Photo> {
 	private Instant dateUpload;
 	private TagSet tagSet;
 
-	public ImgurPhotoChanges(Photo photo) {
+	public ImgurPhotoChanges(FlickrPhoto photo) {
 		photoId = photo.id;
 		originalTitle = photo.title;
 		originalDateUpload = photo.dateUpload;
@@ -49,10 +44,7 @@ public class ImgurPhotoChanges implements Changes<Photo> {
 	// title and description changed using flickr.photos.setMeta
 	// tags using flickr.photos.setTags (also addTags and removeTag)
 	// date posted using flickr.photos.setDates
-	@Override
 	public void persist() {
-		System.err.println("persist: " + photoId);
-
 //		if (!originalTitle.equals(title)) {
 //			setMeta();
 //		}

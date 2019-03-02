@@ -3,7 +3,7 @@ package uk.co.magictractor.oauth.token;
 import java.io.InputStream;
 import java.util.Properties;
 
-import uk.co.magictractor.oauth.api.OAuthServer;
+import uk.co.magictractor.oauth.api.OAuthServiceProvider;
 import uk.co.magictractor.oauth.util.ExceptionUtil;
 
 public class PropertyFileTokenAndSecretPersister implements TokenAndSecretPersister {
@@ -13,7 +13,7 @@ public class PropertyFileTokenAndSecretPersister implements TokenAndSecretPersis
 	
 	private final TokenAndSecret tokenAndSecret;
 
-	public PropertyFileTokenAndSecretPersister(OAuthServer authServer) {
+	public PropertyFileTokenAndSecretPersister(OAuthServiceProvider authServer) {
 		String fileName = authServer.getClass().getSimpleName().toLowerCase() + ".properties";
 		Properties properties = new Properties();
 		InputStream stream = getClass().getResourceAsStream(fileName);

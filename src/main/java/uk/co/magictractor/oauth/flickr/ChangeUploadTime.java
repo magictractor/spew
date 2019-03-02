@@ -3,7 +3,7 @@ package uk.co.magictractor.oauth.flickr;
 import uk.co.magictractor.oauth.api.OAuth1Connection;
 import uk.co.magictractor.oauth.api.OAuthRequest;
 import uk.co.magictractor.oauth.api.OAuthResponse;
-import uk.co.magictractor.oauth.flickr.pojo.Photo;
+import uk.co.magictractor.oauth.flickr.pojo.FlickrPhoto;
 
 // bin this
 public class ChangeUploadTime {
@@ -38,7 +38,7 @@ public class ChangeUploadTime {
 		System.err.println(response.getObject("photos").getClass());
 		System.err.println(response.getObject("photos.photo[3]"));
 		System.err.println(response.getObject("photos.photo[3]").getClass());
-		Photo photo = response.getObject("photos.photo[3]", Photo.class);
+		FlickrPhoto photo = response.getObject("photos.photo[3]", FlickrPhoto.class);
 		System.err.println(">" + photo);
 	}
 

@@ -2,7 +2,7 @@ package uk.co.magictractor.oauth.token;
 
 import java.util.prefs.Preferences;
 
-import uk.co.magictractor.oauth.api.OAuthServer;
+import uk.co.magictractor.oauth.api.OAuthServiceProvider;
 
 // TODO! generalise a multi value persister?
 public class UserPreferencesTokenAndSecretPersister implements TokenAndSecretPersister {
@@ -11,7 +11,7 @@ public class UserPreferencesTokenAndSecretPersister implements TokenAndSecretPer
 
 	private final Preferences preferences;
 
-	public UserPreferencesTokenAndSecretPersister(OAuthServer authServer) {
+	public UserPreferencesTokenAndSecretPersister(OAuthServiceProvider authServer) {
 		preferences = Preferences.userNodeForPackage(authServer.getClass());
 	}
 

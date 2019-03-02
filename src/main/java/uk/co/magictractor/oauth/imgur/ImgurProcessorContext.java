@@ -4,23 +4,35 @@ import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
-import uk.co.magictractor.oauth.flickr.pojo.Photo;
-import uk.co.magictractor.oauth.flickr.pojo.Tag;
+import uk.co.magictractor.oauth.common.Tag;
+import uk.co.magictractor.oauth.flickr.pojo.FlickrPhoto;
 import uk.co.magictractor.oauth.processor.DateAwareProcessorContext;
 
-public class ImgurProcessorContext implements DateAwareProcessorContext<Photo, ImgurPhotoChanges> {
+// TODO! use MutablePhoto rather than ImgurPhotoChanges
+public class ImgurProcessorContext implements DateAwareProcessorContext<FlickrPhoto, ImgurPhotoChanges> {
 
 	private Set<Tag> unknownTags = new HashSet<>();
 
 	// TODO! this is the only change from the Flickr impl
 	@Override
-	public ImgurPhotoChanges beforeElement(Photo photo) {
+	public ImgurPhotoChanges beforeElement(FlickrPhoto photo) {
 		return new ImgurPhotoChanges(photo);
+	}
+	
+
+	@Override
+	public void afterElement(ImgurPhotoChanges photo) {
+		// TODO! move persist code
+		// probably have a processor at the end of the chain which deals with it,
+		// keeping MutablePhoto common, tag/title tidying common, and just one different
+		// processor at the end of the chain for updating Flickr/Imgur/Google Photos.
+		photo.persist();
 	}
 
 	@Override
-	public LocalDate getDate(Photo photo) {
-		return LocalDate.from(photo.dateTaken);
+	public LocalDate getDate(ImgurPhotoChanges photo) {
+		// return LocalDate.from(photo.dateTaken);
+		throw new UnsupportedOperationException("use MutablePhoto rather than ImgurPhotoChanges");
 	}
 
 	public void addUnknownTag(Tag tag) {
@@ -39,4 +51,5 @@ public class ImgurProcessorContext implements DateAwareProcessorContext<Photo, I
 			unknownTags.stream().sorted(Tag.TAG_NAME_COMPARATOR).map(Tag::getTagName).forEach(System.err::println);
 		}
 	}
+
 }

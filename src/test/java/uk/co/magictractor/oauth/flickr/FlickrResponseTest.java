@@ -10,8 +10,8 @@ import org.junit.jupiter.api.Test;
 
 import uk.co.magictractor.oauth.api.OAuthJsonResponse;
 import uk.co.magictractor.oauth.api.OAuthResponse;
-import uk.co.magictractor.oauth.flickr.pojo.Photo;
-import uk.co.magictractor.oauth.flickr.pojo.TagSet;
+import uk.co.magictractor.oauth.common.TagSet;
+import uk.co.magictractor.oauth.flickr.pojo.FlickrPhoto;
 import uk.co.magictractor.oauth.util.IOUtil;
 
 public class FlickrResponseTest {
@@ -26,7 +26,7 @@ public class FlickrResponseTest {
 		System.err.println(response.getObject("photos").getClass());
 		System.err.println(response.getObject("photos.photo[0]"));
 		System.err.println(response.getObject("photos.photo[0]").getClass());
-		Photo photo = response.getObject("photos.photo[0]", Photo.class);
+		FlickrPhoto photo = response.getObject("photos.photo[0]", FlickrPhoto.class);
 		System.err.println(">" + photo);
 
 //		assertThat(photo.id, equalTo("29043424057"));

@@ -1,15 +1,13 @@
 package uk.co.magictractor.oauth.google;
 
-import java.lang.reflect.Field;
 import java.time.Instant;
 import java.time.LocalDateTime;
 
-import com.google.gson.FieldNamingStrategy;
 import com.google.gson.GsonBuilder;
 
-import uk.co.magictractor.oauth.api.OAuth2Server;
+import uk.co.magictractor.oauth.api.OAuth2ServiceProvider;
+import uk.co.magictractor.oauth.common.TagSet;
 import uk.co.magictractor.oauth.flickr.json.TagSetTypeAdapter;
-import uk.co.magictractor.oauth.flickr.pojo.TagSet;
 import uk.co.magictractor.oauth.json.BooleanTypeAdapter;
 import uk.co.magictractor.oauth.json.InstantTypeAdapter;
 import uk.co.magictractor.oauth.json.LocalDateTimeTypeAdapter;
@@ -24,7 +22,7 @@ import uk.co.magictractor.oauth.json.LocalDateTimeTypeAdapter;
 //346766315499-60ikghor22r0lkbdtqp6jpgvtpff8vg3.apps.googleusercontent.com
 //Client Secret
 //-JW9p0euMrM-ymQgeqEJ1MvZ
-public class Google implements OAuth2Server {
+public class Google implements OAuth2ServiceProvider {
 
 	@Override
 	public String getAuthorizationUri() {
@@ -60,15 +58,9 @@ public class Google implements OAuth2Server {
 		// TODO! this option and perhaps other settings should be defaults for all service providers
 		//gsonBuilder.set
 
-		gsonBuilder.setFieldNamingStrategy(new FieldNamingStrategy() {
-			@Override
-			public String translateName(Field f) {
-				// underscore seen in machine_tags
-				return f.getName().toLowerCase().replace("_", "");
-			}
-		});
 		gsonBuilder.registerTypeAdapter(boolean.class, new BooleanTypeAdapter());
-		gsonBuilder.registerTypeAdapter(LocalDateTime.class, new LocalDateTimeTypeAdapter());
+		// TODO! Z shouldn't be quoted here?? - handle offset properly
+		gsonBuilder.registerTypeAdapter(LocalDateTime.class, new LocalDateTimeTypeAdapter("yyyy-MM-dd'T'HH:mm:ss'Z'"));
 		gsonBuilder.registerTypeAdapter(Instant.class, new InstantTypeAdapter());
 		gsonBuilder.registerTypeAdapter(TagSet.class, new TagSetTypeAdapter());
 

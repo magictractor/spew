@@ -1,9 +1,9 @@
 package uk.co.magictractor.oauth.imgur;
 
-import uk.co.magictractor.oauth.flickr.pojo.Photo;
+import uk.co.magictractor.oauth.flickr.pojo.FlickrPhoto;
 import uk.co.magictractor.oauth.processor.ProcessorChain;
 
-public class ImgurProcessorChain extends ProcessorChain<Photo, ImgurProcessorContext, ImgurPhotoChanges> {
+public class ImgurProcessorChain extends ProcessorChain<FlickrPhoto, ImgurPhotoChanges, ImgurProcessorContext> {
 
 	public ImgurProcessorChain() {
 		// TODO! some of these processors could be used for multiple services

@@ -6,6 +6,8 @@ import java.net.URI;
 import java.util.Date;
 import java.util.Scanner;
 
+import com.jayway.jsonpath.Configuration;
+
 import uk.co.magictractor.oauth.token.UserPreferencesPersister;
 import uk.co.magictractor.oauth.util.ExceptionUtil;
 import uk.co.magictractor.oauth.util.UrlEncoderUtil;
@@ -19,20 +21,20 @@ public class OAuth2Connection extends AbstractConnection {
 	 */
 	private static final int EXPIRY_BUFFER = 60;
 
-	private final OAuth2Server authServer;
+	private final OAuth2Application application;
 
 	private final UserPreferencesPersister accessToken;
 	// milliseconds since start of epoch
 	private final UserPreferencesPersister accessTokenExpiry;
 	private final UserPreferencesPersister refreshToken;
-	// TODO! and expiry info
 
-	public OAuth2Connection(OAuth2Server authServer) {
-		this.authServer = authServer;
+	public OAuth2Connection(OAuth2Application application) {
+		this.application = application;
 
-		this.accessToken = new UserPreferencesPersister(authServer, "access_token");
-		this.accessTokenExpiry = new UserPreferencesPersister(authServer, "access_token_expiry");
-		this.refreshToken = new UserPreferencesPersister(authServer, "refresh_token");
+		// TODO! persisters should be based on application, not service provider
+		this.accessToken = new UserPreferencesPersister(application.getServiceProvider(), "access_token");
+		this.accessTokenExpiry = new UserPreferencesPersister(application.getServiceProvider(), "access_token_expiry");
+		this.refreshToken = new UserPreferencesPersister(application.getServiceProvider(), "refresh_token");
 	}
 
 	public OAuthResponse request(OAuthRequest apiRequest) {
@@ -53,7 +55,11 @@ public class OAuth2Connection extends AbstractConnection {
 //		forApi(apiRequest);
 
 		// apiRequest.s
-		return ExceptionUtil.call(() -> request0(apiRequest, authServer.getJsonConfiguration(), this::setAuthHeader));
+		return ExceptionUtil.call(() -> request0(apiRequest, getJsonConfiguration(), this::setAuthHeader));
+	}
+
+	private Configuration getJsonConfiguration() {
+		return application.getServiceProvider().getJsonConfiguration();
 	}
 
 	private void setAuthHeader(HttpURLConnection con) {
@@ -86,25 +92,22 @@ public class OAuth2Connection extends AbstractConnection {
 		fetchAccessAndRefreshToken(verification);
 	}
 
+	// https://developers.google.com/photos/library/guides/authentication-authorization
 	private void authorize() {
-		OAuthRequest request = new OAuthRequest(authServer.getAuthorizationUri());
+		OAuthRequest request = new OAuthRequest(application.getServiceProvider().getAuthorizationUri());
 
 		// TODO! props file
 		// Client ID
 		// 346766315499-60ikghor22r0lkbdtqp6jpgvtpff8vg3.apps.googleusercontent.com
 		// Client Secret
 		// -JW9p0euMrM-ymQgeqEJ1MvZ
-		request.setParam("client_id", "346766315499-60ikghor22r0lkbdtqp6jpgvtpff8vg3.apps.googleusercontent.com");
+		request.setParam("client_id", application.getClientId());
 		// TODO! change to urn:ietf:wg:oauth:2.0:oob:auto? - but how does code get
 		// passed from browser
 		request.setParam("redirect_uri", "urn:ietf:wg:oauth:2.0:oob");
 		// request.setParam("redirect_uri", "urn:ietf:wg:oauth:2.0:oob:auto");
 		request.setParam("response_type", "code");
-		// TODO! and sharing??
-		// https://developers.google.com/photos/library/guides/authentication-authorization
-		// TODO! move scope to auth server - or request??
-		request.setParam("scope",
-				"https://www.googleapis.com/auth/photoslibrary https://www.googleapis.com/auth/photoslibrary.sharing");
+		request.setParam("scope", application.getScope());
 
 //		OAuthResponse response = authRequest(request);
 //
@@ -134,7 +137,7 @@ public class OAuth2Connection extends AbstractConnection {
 	}
 
 	private void fetchAccessAndRefreshToken(String code) {
-		OAuthRequest request = new OAuthRequest(authServer.getTokenUri());
+		OAuthRequest request = new OAuthRequest(application.getServiceProvider().getTokenUri());
 
 		// ah! needed to be POST else 404
 		request.setHttpMethod("POST");
@@ -164,7 +167,7 @@ public class OAuth2Connection extends AbstractConnection {
 	// TODO! handle invalid/expired refresh tokens
 	// https://developers.google.com/identity/protocols/OAuth2InstalledApp#offline
 	private void fetchRefreshedAccessToken() {
-		OAuthRequest request = new OAuthRequest(authServer.getTokenUri());
+		OAuthRequest request = new OAuthRequest(application.getServiceProvider().getTokenUri());
 
 		// ah! needed to be POST else 404
 		request.setHttpMethod("POST");
@@ -220,7 +223,7 @@ public class OAuth2Connection extends AbstractConnection {
 
 	private OAuthResponse authRequest(OAuthRequest apiRequest) {
 		// forAll(apiRequest);
-		return ExceptionUtil.call(() -> request0(apiRequest, authServer.getJsonConfiguration()));
+		return ExceptionUtil.call(() -> request0(apiRequest, getJsonConfiguration()));
 	}
 
 }

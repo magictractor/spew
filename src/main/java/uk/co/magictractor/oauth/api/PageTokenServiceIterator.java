@@ -18,7 +18,7 @@ public abstract class PageTokenServiceIterator<E> implements Iterator<E> {
 
 	private static final int UNKNOWN = -1;
 
-	private List<E> currentPage = null;
+	private List<? extends E> currentPage = null;
 	private String nextPageToken = null;
 	private int nextPageItemIndex;
 	private boolean hasNext;
@@ -58,7 +58,7 @@ public abstract class PageTokenServiceIterator<E> implements Iterator<E> {
 
 	// BEWARE! this must (for now) set nextPageToken as a side effect - change
 	// return type to include the nextPageToken
-	protected abstract List<E> fetchPage(String pageToken);
+	protected abstract List<? extends E> fetchPage(String pageToken);
 
 	protected void setNextPageToken(String nextPageToken) {
 		this.nextPageToken = nextPageToken;

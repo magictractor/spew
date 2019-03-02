@@ -6,11 +6,11 @@ import uk.co.magictractor.oauth.api.OAuth1Connection;
 import uk.co.magictractor.oauth.api.OAuthRequest;
 import uk.co.magictractor.oauth.api.OAuthResponse;
 import uk.co.magictractor.oauth.api.PageCountServiceIterator;
-import uk.co.magictractor.oauth.flickr.pojo.Photo;
-import uk.co.magictractor.oauth.flickr.pojo.Photos;
+import uk.co.magictractor.oauth.flickr.pojo.FlickrPhoto;
+import uk.co.magictractor.oauth.flickr.pojo.FlickrPhotos;
 
 // Use flickr.photos.search rather than flickr.people.getPhotos because it allows sort order to be specified
-public class ImgurPhotoIterator extends PageCountServiceIterator<Photo> {
+public class ImgurPhotoIterator extends PageCountServiceIterator<FlickrPhoto> {
 
 	// min_taken_date (Optional)
 	// Minimum taken date. Photos with an taken date greater than or equal to this
@@ -19,7 +19,7 @@ public class ImgurPhotoIterator extends PageCountServiceIterator<Photo> {
 
 	// Get images https://apidocs.imgur.com/#2e45daca-bd44-47f8-84b0-b3f2aa861735
 	@Override
-	protected List<Photo> fetchPage(int pageNumber) {
+	protected List<FlickrPhoto> fetchPage(int pageNumber) {
 		OAuthRequest request = new OAuthRequest(Imgur.REST_ENDPOINT);
 
 		request.setParam("method", "flickr.photos.search");
@@ -50,7 +50,7 @@ public class ImgurPhotoIterator extends PageCountServiceIterator<Photo> {
 		// photo -> ArrayList
 		// return new ArrayList<Photo>(photos.values());
 
-		Photos photos = response.getObject("photos", Photos.class);
+		FlickrPhotos photos = response.getObject("photos", FlickrPhotos.class);
 		setTotalItemCount(photos.total);
 		setTotalPageCount(photos.pages);
 

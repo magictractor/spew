@@ -8,8 +8,8 @@ import com.google.gson.FieldNamingStrategy;
 import com.google.gson.GsonBuilder;
 
 import uk.co.magictractor.oauth.api.OAuth1Server;
+import uk.co.magictractor.oauth.common.TagSet;
 import uk.co.magictractor.oauth.flickr.json.TagSetTypeAdapter;
-import uk.co.magictractor.oauth.flickr.pojo.TagSet;
 import uk.co.magictractor.oauth.json.BooleanTypeAdapter;
 import uk.co.magictractor.oauth.json.InstantTypeAdapter;
 import uk.co.magictractor.oauth.json.LocalDateTimeTypeAdapter;
@@ -47,7 +47,7 @@ public class Imgur implements OAuth1Server {
 			}
 		});
 		gsonBuilder.registerTypeAdapter(boolean.class, new BooleanTypeAdapter());
-		gsonBuilder.registerTypeAdapter(LocalDateTime.class, new LocalDateTimeTypeAdapter());
+		gsonBuilder.registerTypeAdapter(LocalDateTime.class, new LocalDateTimeTypeAdapter("TODO!"));
 		gsonBuilder.registerTypeAdapter(Instant.class, new InstantTypeAdapter());
 		gsonBuilder.registerTypeAdapter(TagSet.class, new TagSetTypeAdapter());
 		

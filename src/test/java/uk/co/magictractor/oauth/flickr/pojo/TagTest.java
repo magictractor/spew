@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
 
+import uk.co.magictractor.oauth.common.Tag;
+
 public class TagTest {
 
 	@Test

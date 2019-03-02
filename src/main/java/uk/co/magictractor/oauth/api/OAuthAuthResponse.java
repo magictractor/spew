@@ -24,7 +24,7 @@ public class OAuthAuthResponse implements OAuthResponse {
 	}
 
 	@Override
-	public <T> T getObject(String key, TypeRef<T> type) {
+	public <T> T getObject(String key, TypeRef<? extends T> type) {
 		throw new UnsupportedOperationException("Not a Json response");
 	}
 

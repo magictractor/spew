@@ -21,7 +21,7 @@ public class OAuthJsonResponse implements OAuthResponse {
 	}
 
 	@Override
-	public <T> T getObject(String key, TypeRef<T> type) {
+	public <T> T getObject(String key, TypeRef<? extends T> type) {
 		return ctx.read(key, type);
 	}
 

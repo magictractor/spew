@@ -12,19 +12,19 @@ import com.google.gson.JsonParseException;
 
 public class LocalDateTimeTypeAdapter implements JsonDeserializer<LocalDateTime> {
 
+	private final DateTimeFormatter formatter;
+
+	public LocalDateTimeTypeAdapter(String format) {
+		// TODO! Locale
+		// Google has time zone "2018-11-20T15:09:42Z"
+		// Flickr: "yyyy-MM-dd HH:mm:ss"
+		formatter = new DateTimeFormatterBuilder().appendPattern(format).toFormatter();
+	}
+
 	public LocalDateTime deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
 			throws JsonParseException {
 
 		String value = json.getAsString();
-
-		// datetaken=2018-06-23 13:52:33
-		// "datetaken": "2018-08-09 16:08:38"
-
-		// TODO! Locale
-		DateTimeFormatter formatter = new DateTimeFormatterBuilder().appendPattern("yyyy-MM-dd HH:mm:ss").toFormatter();
-
-		// return formatter.parse(value, Instant::from);
 		return formatter.parse(value, LocalDateTime::from);
-
 	}
 }

@@ -7,7 +7,7 @@ public interface OAuthResponse {
 	<T> T getObject(String key, Class<T> type);
 	
 	// hmm, don't want this here - it's Json specific
-	<T> T getObject(String key, TypeRef<T> type);
+	<T> T getObject(String key, TypeRef<? extends T> type);
 
 	default Object getObject(String key) {
 		return getObject(key, Object.class);

@@ -5,27 +5,28 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class ProcessorChain<E, C extends ProcessorContext<E, D>, D extends Changes<E>> {
+public class ProcessorChain<I, E, C extends ProcessorContext<I, E>> {
 
-	private final List<Processor<E, C, D>> processors = new ArrayList<>();
+	private final List<Processor<I, E, C>> processors = new ArrayList<>();
 
-	protected void addProcessor(Processor<E, C, D> processor) {
+	protected void addProcessor(Processor<I, E, C> processor) {
 		processors.add(processor);
 	}
 
-	protected final void execute(Iterator<E> iterator, C context) {
+	protected final void execute(Iterator<? extends I> iterator, C context) {
 		boolean isDateAware = context instanceof DateAwareProcessorContext;
 		LocalDate date = null;
 		LocalDate previousDate = null;
-		DateAwareProcessorContext<E, D> dateAwareContext = isDateAware ? ((DateAwareProcessorContext<E, D>) context)
+		DateAwareProcessorContext<I,E> dateAwareContext = isDateAware ? ((DateAwareProcessorContext<I,E>) context)
 				: null;
 
 		context.beforeProcessing();
 
 		while (iterator.hasNext()) {
-			E element = iterator.next();
-			D changes = context.beforeElement(element);
+			E element = context.beforeElement(iterator.next());
 
+			// TODO! doc what this is used for
+			// TODO! should be able to handle this in beforeElement impl?
 			if (isDateAware) {
 				date = dateAwareContext.getDate(element);
 				if (date == null) {
@@ -39,9 +40,11 @@ public class ProcessorChain<E, C extends ProcessorContext<E, D>, D extends Chang
 				}
 			}
 
-			process(context, changes);
+			for (Processor<I, E, C> processor : processors) {
+				processor.process(element, context);
+			}
 
-			context.afterElement(changes);
+			context.afterElement(element);
 
 			if (isDateAware) {
 				previousDate = date;
@@ -53,14 +56,6 @@ public class ProcessorChain<E, C extends ProcessorContext<E, D>, D extends Chang
 		}
 
 		context.afterProcessing();
-	}
-
-	private void process(C context, D changes) {
-
-		for (Processor<E, C, D> processor : processors) {
-			processor.process(changes, context);
-		}
-
 	}
 
 }

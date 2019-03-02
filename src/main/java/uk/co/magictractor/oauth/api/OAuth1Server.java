@@ -1,6 +1,6 @@
 package uk.co.magictractor.oauth.api;
 
-public interface OAuth1Server extends OAuthServer {
+public interface OAuth1Server extends OAuthServiceProvider {
 
 	// https://tools.ietf.org/html/rfc5849#section-1.1
 
