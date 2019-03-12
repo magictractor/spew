@@ -24,7 +24,8 @@ public class TitleProcessor implements Processor<FlickrPhoto, MutablePhoto, Flic
 	private boolean isDefaultTitle(String title) {
 		// IMG_ for Canon Powershot SX60
 		// _MG_ for Canon EOS 60D
-		return title.startsWith("IMG_") || title.startsWith("_MG_");
+		// PANA for Panasonic Lumix G9
+		return title.startsWith("IMG_") || title.startsWith("_MG_") || title.startsWith("PANA");
 	}
 
 }

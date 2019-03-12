@@ -1,6 +1,8 @@
 package uk.co.magictractor.oauth.google;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 
 import uk.co.magictractor.oauth.common.Photo;
 import uk.co.magictractor.oauth.common.TagSet;
@@ -34,6 +36,11 @@ public class GoogleMediaItem implements Photo {
 	private String filename;
 
 	@Override
+	public String getServiceProviderId() {
+		return id;
+	}
+
+	@Override
 	public String getFileName() {
 		return filename;
 	}
@@ -51,9 +58,15 @@ public class GoogleMediaItem implements Photo {
 	}
 
 	@Override
-	public LocalDateTime getDateTimeTaken() {
+	public Instant getDateTimeTaken() {
 		// return mediaMetadata.creationTime.toLocalDateTime();
-		return mediaMetadata.creationTime;
+		return mediaMetadata.creationTime.toInstant(ZoneOffset.UTC);
+	}
+
+	@Override
+	public Instant getDateTimeUpload() {
+		// upload time is not returned by the Google API
+		return null;
 	}
 
 	@Override
@@ -81,7 +94,6 @@ public class GoogleMediaItem implements Photo {
 	}
 
 	// TODO! change name of this or Photo - looks like this should implement Photo??
-	// Photo -> MediaItem??
 	public class GooglePhoto {
 		// Google does have zone information "2018-11-20T15:09:42Z"
 		private String cameraMake;
@@ -94,7 +106,8 @@ public class GoogleMediaItem implements Photo {
 	@Override
 	public TagSet getTagSet() {
 		// TODO Google does not support tags
-		// probably mimic by adding tags in description "Kingfisher [kingfisher bird rbge
+		// probably mimic by adding tags in description "Kingfisher [kingfisher bird
+		// rbge
 		// edinburgh]"
 		return null;
 	}

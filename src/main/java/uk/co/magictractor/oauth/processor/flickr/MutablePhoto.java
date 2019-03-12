@@ -1,40 +1,41 @@
 package uk.co.magictractor.oauth.processor.flickr;
 
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import uk.co.magictractor.oauth.api.OAuth1Connection;
 import uk.co.magictractor.oauth.api.OAuthRequest;
 import uk.co.magictractor.oauth.api.OAuthResponse;
+import uk.co.magictractor.oauth.common.Photo;
 import uk.co.magictractor.oauth.common.TagSet;
 import uk.co.magictractor.oauth.flickr.Flickr;
 import uk.co.magictractor.oauth.flickr.MyFlickrApp;
-import uk.co.magictractor.oauth.flickr.pojo.FlickrPhoto;
 
-// TODO! this could implement Photo?
+// TODO! this could/should implement Photo?
 public class MutablePhoto {
 
 	// private final Photo photo;
 	private final String photoId;
 	private final String originalTitle;
-	// TODO! private
-	public final LocalDateTime originalDateTaken;
-	private final Instant originalDateUpload;
+	// TODO! private or bin
+	public final LocalDate originalDateTaken;
+	private final Instant originalDateTimeUpload;
 	private final TagSet originalTagSet;
 
 	private String title;
-	private Instant dateUpload;
+	private Instant dateTimeUpload;
 	private TagSet tagSet;
 
-	public MutablePhoto(FlickrPhoto photo) {
-		photoId = photo.id;
-		originalTitle = photo.title;
-		originalDateTaken = photo.dateTaken;
-		originalDateUpload = photo.dateUpload;
-		originalTagSet = photo.tags;
+	public MutablePhoto(Photo photo) {
+		photoId = photo.getServiceProviderId();
+		originalTitle = photo.getTitle();
+		originalDateTaken = photo.getDateTaken();
+		originalDateTimeUpload = photo.getDateTimeUpload();
+		originalTagSet = photo.getTagSet();
 
 		title = originalTitle;
-		dateUpload = originalDateUpload;
+		dateTimeUpload = originalDateTimeUpload;
 		tagSet = new TagSet(originalTagSet);
 	}
 

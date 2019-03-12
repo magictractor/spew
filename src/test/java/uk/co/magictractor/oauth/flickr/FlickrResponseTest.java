@@ -36,20 +36,20 @@ public class FlickrResponseTest {
 //		assertThat(photo.isFamily, equalTo(false));
 //		assertThat(photo.dateUpload, equalTo(Instant.ofEpochMilli(1534007093L)));
 
-		assertThat(photo.id).isEqualTo("29043424057");
+		assertThat(photo.getServiceProviderId()).isEqualTo("29043424057");
 		// assertThat(photo.tags).isNotNull();
-		assertThat(photo.tags).isEqualTo(new TagSet("kingfisher rbge"));
-		assertThat(photo.isPublic).isTrue();
-		assertThat(photo.isFriend).isFalse();
-		assertThat(photo.isFamily).isFalse();
+		assertThat(photo.getTagSet()).isEqualTo(new TagSet("kingfisher rbge"));
+		assertThat(photo.isPublic()).isTrue();
+		assertThat(photo.isFriend()).isFalse();
+		assertThat(photo.isFamily()).isFalse();
 		// assertThat(photo.dateTaken).isEqualTo(Instant.ofEpochMilli(1534007093L));
 		// assertThat(photo.dateTaken).isNotNull();
 		// "datetaken": "2018-06-23 13:52:33",
 		// "datetaken": "2018-08-09 16:08:38",
 		// assertThat(photo.dateTaken).isEqualTo(LocalDateTime.of(2018, 8, 9, 16, 8,
 		// 38));
-		assertThat(photo.dateTaken).isEqualTo(LocalDateTime.of(2018, 6, 23, 13, 52, 33));
-		assertThat(photo.dateUpload).isEqualTo(Instant.ofEpochMilli(1534007093L));
+		assertThat(photo.getDateTaken()).isEqualTo(LocalDateTime.of(2018, 6, 23, 13, 52, 33));
+		assertThat(photo.getDateUpload()).isEqualTo(Instant.ofEpochMilli(1534007093L));
 	}
 
 	private OAuthResponse buildResponse(String fileName) {

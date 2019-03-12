@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -37,11 +37,11 @@ public class LocalPhoto implements Photo {
 
 	private final Path photoPath;
 	private boolean hasReadExif;
-	
+
 	// These values read from exif/sidecar on demand
 	private String title;
 	private String description;
-	private LocalDateTime dateTimeTaken;
+	private Instant dateTimeTaken;
 	private String shutterSpeed;
 	private String aperture;
 	private Integer iso;
@@ -68,6 +68,12 @@ public class LocalPhoto implements Photo {
 	}
 
 	@Override
+	public String getServiceProviderId() {
+		// TODO! perhaps absolute path here?
+		return null;
+	}
+
+	@Override
 	public String getFileName() {
 		return photoPath.getFileName().toString();
 	}
@@ -77,17 +83,26 @@ public class LocalPhoto implements Photo {
 		ensureFileRead();
 		return title;
 	}
-	
+
 	@Override
 	public String getDescription() {
 		ensureFileRead();
 		return description;
 	}
-	
+
 	@Override
-	public LocalDateTime getDateTimeTaken() {
+	public Instant getDateTimeTaken() {
 		ensureFileRead();
 		return dateTimeTaken;
+	}
+
+	@Override
+	public Instant getDateTimeUpload() {
+		/*
+		 * Does not apply to local files, which might not have been uploaded, or could
+		 * have been uploaded multiple times to different service providers.
+		 */
+		return null;
 	}
 
 	@Override
@@ -234,16 +249,15 @@ public class LocalPhoto implements Photo {
 		Iterator<XMPPropertyInfo> fnumberIter = xmpMeta.iterator("http://purl.org/dc/elements/1.1/", "FNumber",
 				new IteratorOptions().setJustChildren(true));
 		fnumberIter.forEachRemaining((v) -> System.err.println("fnumber[]: " + v.getValue()));
-		
-		
+
 		// PixelXDimension
 		// PixelYDimension
 		// exif:FocalLength="4000/10"
 
-		//xmpMeta.iterator().forEachRemaining(System.err::println);
-		
+		// xmpMeta.iterator().forEachRemaining(System.err::println);
+
 		System.err.println();
 	}
 
-	//private 
+	// private
 }

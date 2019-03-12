@@ -1,10 +1,19 @@
 package uk.co.magictractor.oauth.common;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.ZoneId;
 
 public interface Photo {
+
+	/**
+	 * The id used by the service provider (Flickr etc) to identify the photograph.
+	 * 
+	 * This is used when making API calls which modify the image properties.
+	 */
+	String getServiceProviderId();
 
 	// file name
 	String getFileName();
@@ -15,15 +24,29 @@ public interface Photo {
 
 	TagSet getTagSet();
 
-	// we (generally?) don't know the time zone
-	LocalDateTime getDateTimeTaken();
+	Instant getDateTimeTaken();
 
 	default LocalDate getDateTaken() {
-		return getDateTimeTaken().toLocalDate();
+		// return getDateTimeTaken().toLocalDate();
+		return getDateTimeTaken() == null ? null : LocalDateTime.ofInstant(getDateTimeTaken(), ZoneId.systemDefault()).toLocalDate();
 	}
 
 	default LocalTime getTimeTaken() {
-		return getDateTimeTaken().toLocalTime();
+		// return getDateTimeTaken().toLocalTime();
+		// return getDateTimeTaken() == null ? null : LocalTime.from(getDateTimeTaken());
+		return getDateTimeTaken() == null ? null : LocalDateTime.ofInstant(getDateTimeTaken(), ZoneId.systemDefault()).toLocalTime();
+	}
+
+	Instant getDateTimeUpload();
+
+	default LocalDate getDateUpload() {
+		//return getDateTimeUpload().toLocalDate();
+		return getDateTimeUpload() == null ? null : LocalDate.from(getDateTimeUpload());
+	}
+
+	default LocalTime getTimeUpload() {
+		//return getDateTimeUpload().toLocalTime();
+		return getDateTimeUpload() == null ? null : LocalTime.from(getDateTimeUpload());
 	}
 
 	default String getShutterSpeed() {
