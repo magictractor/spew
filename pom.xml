@@ -65,6 +65,13 @@
 			<version>2.11.0</version>
 		</dependency>
 
+		<!-- For callback server -->
+		<dependency>
+			<groupId>io.netty</groupId>
+			<artifactId>netty-all</artifactId>
+			<version>4.1.33.Final</version>
+		</dependency>
+
 		<!-- test dependencies -->
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>

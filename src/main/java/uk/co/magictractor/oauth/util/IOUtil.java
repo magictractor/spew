@@ -11,13 +11,21 @@ public final class IOUtil {
 	private IOUtil() {
 	}
 
-	public static String readAndClose(InputStream in) {
-		return ExceptionUtil.call(() -> readAndClose0(in));
+	// TODO! replace with Guava Closeables
+	public static void closeQuietly(InputStream in) {
+		ExceptionUtil.call(() -> in.close());
 	}
 
-	private static String readAndClose0(InputStream in) throws IOException {
+	public static String readStringAndClose(InputStream in) {
+		return ExceptionUtil.call(() -> readStringAndClose0(in));
+	}
+
+	// TODO! now using Guava, which probably provides something very similar
+	// https://stackoverflow.com/questions/4185665/guava-equivalent-for-ioutils-tostringinputstream
+	// see CharStreams and StaticPage
+	private static String readStringAndClose0(InputStream in) throws IOException {
 		Objects.requireNonNull(in, "InputStream must not be null");
-		
+
 		StringBuilder bodyBuilder = new StringBuilder();
 		Reader reader = null;
 

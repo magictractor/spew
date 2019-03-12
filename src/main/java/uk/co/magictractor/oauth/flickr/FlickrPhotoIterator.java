@@ -2,7 +2,7 @@ package uk.co.magictractor.oauth.flickr;
 
 import java.util.List;
 
-import uk.co.magictractor.oauth.api.OAuth1Connection;
+import uk.co.magictractor.oauth.api.OAuthApplication;
 import uk.co.magictractor.oauth.api.OAuthRequest;
 import uk.co.magictractor.oauth.api.OAuthResponse;
 import uk.co.magictractor.oauth.api.PageCountServiceIterator;
@@ -17,6 +17,10 @@ public class FlickrPhotoIterator extends PageCountServiceIterator<FlickrPhoto> {
 	// value will be returned. The date can be in the form of a mysql datetime or
 	// unix timestamp.
 
+	public FlickrPhotoIterator(OAuthApplication application) {
+		super(application);
+	}
+	
 	@Override
 	protected List<FlickrPhoto> fetchPage(int pageNumber) {
 		OAuthRequest request = new OAuthRequest(Flickr.REST_ENDPOINT);
@@ -36,8 +40,7 @@ public class FlickrPhotoIterator extends PageCountServiceIterator<FlickrPhoto> {
 		// https://www.flickr.com/groups/51035612836@N01/discuss/72157594497877875/
 		request.setParam("extras", "date_upload,date_taken,description,tags,machine_tags");
 		// request.setParam("extras", ALL_EXTRAS);
-		// TODO! change this to Flickr.connection()?
-		OAuthResponse response = new OAuth1Connection(new Flickr()).request(request);
+		OAuthResponse response = getConnection().request(request);
 
 		// https://stackoverflow.com/questions/13686284/parsing-jsonobject-to-listmapstring-object-using-gson
 
@@ -58,7 +61,7 @@ public class FlickrPhotoIterator extends PageCountServiceIterator<FlickrPhoto> {
 	}
 
 	public static void main(String[] args) {
-		FlickrPhotoIterator iter = new FlickrPhotoIterator();
+		FlickrPhotoIterator iter = new FlickrPhotoIterator(MyFlickrApp.getInstance());
 		while (iter.hasNext()) {
 			System.err.println(iter.next().title);
 		}

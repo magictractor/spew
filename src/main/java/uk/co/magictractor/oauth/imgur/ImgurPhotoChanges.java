@@ -5,6 +5,7 @@ import java.time.Instant;
 import uk.co.magictractor.oauth.common.TagSet;
 import uk.co.magictractor.oauth.flickr.pojo.FlickrPhoto;
 
+// TODO! bin this (use mutable photo)
 public class ImgurPhotoChanges {
 
 	// private final Photo photo;

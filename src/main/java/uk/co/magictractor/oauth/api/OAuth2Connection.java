@@ -4,16 +4,30 @@ import java.awt.Desktop;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
+import com.google.common.base.Charsets;
+import com.google.common.collect.Iterables;
 import com.jayway.jsonpath.Configuration;
 
+import io.netty.buffer.ByteBuf;
+import io.netty.handler.codec.http.FullHttpRequest;
+import io.netty.handler.codec.http.FullHttpResponse;
+import io.netty.handler.codec.http.QueryStringDecoder;
+import uk.co.magictractor.oauth.server.CallbackServer;
 import uk.co.magictractor.oauth.token.UserPreferencesPersister;
 import uk.co.magictractor.oauth.util.ExceptionUtil;
 import uk.co.magictractor.oauth.util.UrlEncoderUtil;
 
 // https://developers.google.com/identity/protocols/OAuth2
-public class OAuth2Connection extends AbstractConnection {
+public class OAuth2Connection extends AbstractOAuthConnection {
+
+	private static final String OOB = "urn:ietf:wg:oauth:2.0:oob";
+	private static final String CALLBACK_SERVER = "http://127.0.0.1:8080";
 
 	/*
 	 * milliseconds to remove from expiry to ensure that we refresh if getting close
@@ -28,20 +42,23 @@ public class OAuth2Connection extends AbstractConnection {
 	private final UserPreferencesPersister accessTokenExpiry;
 	private final UserPreferencesPersister refreshToken;
 
+	/// ** Default visibility, applications should obtain instances via
+	/// OAuth2Application.getConnection(). */
+	// TODO! change to default?
 	public OAuth2Connection(OAuth2Application application) {
 		this.application = application;
 
-		// TODO! persisters should be based on application, not service provider
-		this.accessToken = new UserPreferencesPersister(application.getServiceProvider(), "access_token");
-		this.accessTokenExpiry = new UserPreferencesPersister(application.getServiceProvider(), "access_token_expiry");
-		this.refreshToken = new UserPreferencesPersister(application.getServiceProvider(), "refresh_token");
+		this.accessToken = new UserPreferencesPersister(application, "access_token");
+		this.accessTokenExpiry = new UserPreferencesPersister(application, "access_token_expiry");
+		this.refreshToken = new UserPreferencesPersister(application, "refresh_token");
 	}
 
 	public OAuthResponse request(OAuthRequest apiRequest) {
 		// authenticate();
 
 		if (accessToken.getValue() == null) {
-			authenticateUser();
+			// authenticateUser();
+			authorize();
 		} else if (isAccessTokenExpired()) {
 			fetchRefreshedAccessToken();
 		}
@@ -55,6 +72,9 @@ public class OAuth2Connection extends AbstractConnection {
 //		forApi(apiRequest);
 
 		// apiRequest.s
+
+		// TODO! need to block while waiting for auth
+		//return null;
 		return ExceptionUtil.call(() -> request0(apiRequest, getJsonConfiguration(), this::setAuthHeader));
 	}
 
@@ -74,40 +94,55 @@ public class OAuth2Connection extends AbstractConnection {
 		// urlBuilder.append(getSignature());
 
 		return request.getUrl() + "?" + getQueryString(request.getParams(), UrlEncoderUtil::paramEncode);
+		// return request.getUrl() + "?" + getQueryString(request.getParams(), (s) ->
+		// s);
 	}
 
-	private void authenticateUser() {
-		authorize();
-
-		Scanner scanner = new Scanner(System.in);
-		// System.err.println("Enter verification code for oauth_token=" + requestToken
-		// + ": ");
-		System.err.println("Enter verification code: ");
-		String verification = scanner.nextLine().trim();
-		// FlickrConfig.setUserAuthVerifier(verification);
-		scanner.close();
-
-		// verify(verification);
-
-		fetchAccessAndRefreshToken(verification);
-	}
+//	private void authenticateUser() {
+//		authorize();
+//
+//		Scanner scanner = new Scanner(System.in);
+//		// System.err.println("Enter verification code for oauth_token=" + requestToken
+//		// + ": ");
+//		System.err.println("Enter verification code: ");
+//		String verification = scanner.nextLine().trim();
+//		// FlickrConfig.setUserAuthVerifier(verification);
+//		scanner.close();
+//
+//		// verify(verification);
+//
+//		fetchAccessAndRefreshToken(verification);
+//	}
 
 	// https://developers.google.com/photos/library/guides/authentication-authorization
 	private void authorize() {
 		OAuthRequest request = new OAuthRequest(application.getServiceProvider().getAuthorizationUri());
 
-		// TODO! props file
-		// Client ID
-		// 346766315499-60ikghor22r0lkbdtqp6jpgvtpff8vg3.apps.googleusercontent.com
-		// Client Secret
-		// -JW9p0euMrM-ymQgeqEJ1MvZ
+		request.setHttpMethod("POST");
+
 		request.setParam("client_id", application.getClientId());
-		// TODO! change to urn:ietf:wg:oauth:2.0:oob:auto? - but how does code get
-		// passed from browser
-		request.setParam("redirect_uri", "urn:ietf:wg:oauth:2.0:oob");
-		// request.setParam("redirect_uri", "urn:ietf:wg:oauth:2.0:oob:auto");
-		request.setParam("response_type", "code");
+		String redirectUri = getAuthorizeRedirectUrl();
+		request.setParam("redirect_uri", redirectUri);
+
+		// Ah! was using code, but should be token? see
+		// https://apidocs.imgur.com/#authorization-and-oauth
+		// ah! despite being deprecated, pin works for Imgur - first step only - cannot
+		// convert pin to access token
+		// Google does not like "pin": Invalid response_type: pin
+		// request.setParam("response_type", "pin");
+		request.setParam("response_type", getAuthorizeResponseType());
+		// BUT! Google bombs with token plus redirect_uri
+		// redirect_uri not supported for response_type=token: urn:ietf:wg:oauth:2.0:oob
+
 		request.setParam("scope", application.getScope());
+
+		// Igmur:
+		// http://127.0.0.1:8080/#access_token=76fc8472073f9ae9da616bae08fc686a6395a41d
+		// &expires_in=315360000
+		// &token_type=bearer
+		// &refresh_token=70975f674b1218fa535167bdc01ba943123ec935
+		// &account_username=GazingAtTrees
+		// &account_id=96937645
 
 //		OAuthResponse response = authRequest(request);
 //
@@ -127,33 +162,84 @@ public class OAuth2Connection extends AbstractConnection {
 		// "oauth_token=" + authToken;
 
 		// https://stackoverflow.com/questions/5226212/how-to-open-the-default-webbrowser-using-java
-		if (Desktop.isDesktopSupported()) {
-			// uri = new
-			String authUrl = getUrl(request);
-			ExceptionUtil.call(() -> Desktop.getDesktop().browse(new URI(authUrl)));
-		} else {
+		if (!Desktop.isDesktopSupported()) {
 			throw new UnsupportedOperationException("TODO");
+		}
+
+		// Launch local server to receive callback containing authentication
+		// information.
+		CallbackServer callbackServer = null;
+		if (CALLBACK_SERVER.equals(redirectUri)) {
+			callbackServer = new CallbackServer(this::setAccessToken, 8080);
+			callbackServer.run();
+		}
+//		else if (OOB.equals(redirectUri)) {
+//			captureManuallyPastedGrant();
+//		}
+
+		String authUrl = getUrl(request);
+		ExceptionUtil.call(() -> Desktop.getDesktop().browse(new URI(authUrl)));
+
+		if (callbackServer != null) {
+			callbackServer.join();
+		} else if (OOB.equals(redirectUri)) {
+			captureManuallyPastedGrant();
+		} // else boom
+	}
+
+	// TODO! some of this is common with OAuth1
+	private void captureManuallyPastedGrant() {
+		Scanner scanner = new Scanner(System.in);
+		// System.err.println("Enter verification code for oauth_token=" + requestToken
+		// + ": ");
+		System.err.println("Enter verification code: ");
+		String verification = scanner.nextLine().trim();
+		// FlickrConfig.setUserAuthVerifier(verification);
+		scanner.close();
+
+		// verify(verification);
+
+		fetchAccessAndRefreshToken(verification);
+	}
+
+	// future - perhaps allow connection to use value other than the default
+	private String getAuthorizeResponseType() {
+		return application.defaultAuthorizeResponseType().name().toLowerCase();
+	}
+
+	// future - perhaps allow connection to use value other than the default
+	private String getAuthorizeRedirectUrl() {
+		switch (application.defaultAuthorizeResponseType()) {
+		case TOKEN:
+			return CALLBACK_SERVER;
+		default:
+			return OOB;
 		}
 	}
 
+	// TODO! needs a tweak to handle pin
 	private void fetchAccessAndRefreshToken(String code) {
 		OAuthRequest request = new OAuthRequest(application.getServiceProvider().getTokenUri());
 
-		// ah! needed to be POST else 404
+		// ah! needed to be POST else 404 (Google)
 		request.setHttpMethod("POST");
 
 		request.setParam("code", code);
-		// TODO! move these to props...
-		request.setParam("client_id", "346766315499-60ikghor22r0lkbdtqp6jpgvtpff8vg3.apps.googleusercontent.com");
-		request.setParam("client_secret", "-JW9p0euMrM-ymQgeqEJ1MvZ");
+		// request.setParam("pin", code);
+		request.setParam("client_id", application.getClientId());
+		request.setParam("client_secret", application.getClientSecret());
 
 		request.setParam("grant_type", "authorization_code");
+		// request.setParam("grant_type", "pin");
+
 		// request.setParam("redirect_uri",
 		// "https://www.googleapis.com/auth/photoslibrary");
 		// request.setParam("redirect_uri", "https://magictractor.co.uk");
 
 		// request.setParam("redirect_uri", "urn:ietf:wg:oauth:2.0:oob:auto");
-		request.setParam("redirect_uri", "urn:ietf:wg:oauth:2.0:oob");
+		// Hmm. This looks unnecessary... but Google needs it
+		// request.setParam("redirect_uri", "urn:ietf:wg:oauth:2.0:oob");
+		request.setParam("redirect_uri", OOB);
 		// request.setParam("scope", "");
 
 		OAuthResponse response = authRequest(request);
@@ -161,7 +247,7 @@ public class OAuth2Connection extends AbstractConnection {
 		refreshToken.setValue(response.getString("refresh_token"));
 		// accessToken.setValue(response.getString("access_token"));
 		// System.err.println("access_token set to " + accessToken.getValue());
-		setAccessToken(response);
+		setAccessToken((key) -> response.getString(key));
 	}
 
 	// TODO! handle invalid/expired refresh tokens
@@ -173,9 +259,8 @@ public class OAuth2Connection extends AbstractConnection {
 		request.setHttpMethod("POST");
 
 		request.setParam("refresh_token", refreshToken.getValue());
-		// TODO! move these to props...
-		request.setParam("client_id", "346766315499-60ikghor22r0lkbdtqp6jpgvtpff8vg3.apps.googleusercontent.com");
-		request.setParam("client_secret", "-JW9p0euMrM-ymQgeqEJ1MvZ");
+		request.setParam("client_id", application.getClientId());
+		request.setParam("client_secret", application.getClientSecret());
 
 		request.setParam("grant_type", "refresh_token");
 		OAuthResponse response = authRequest(request);
@@ -183,14 +268,32 @@ public class OAuth2Connection extends AbstractConnection {
 		// accessToken.setValue(response.getString("access_token"));
 		// System.err.println("accessToken refreshed to " + accessToken.getValue());
 
-		setAccessToken(response);
+		setAccessToken((key) -> response.getString(key));
 	}
 
-	private void setAccessToken(OAuthResponse response) {
-		accessToken.setValue(response.getString("access_token"));
+//	private void setAccessToken(OAuthResponse response) {
+//		setAccessToken(response.getString("access_token"), response.getString("expires_in"));
+//	}
+	
+	private void setAccessToken(FullHttpRequest httpRequest) {
+		ByteBuf content = httpRequest.content();
+		// new QueryStringDecoder()
+
+		String s = content.toString(Charsets.UTF_8);
+		System.err.println("content: " + s);
+
+		QueryStringDecoder d = new QueryStringDecoder(s, Charsets.UTF_8, false);
+		Map<String, List<String>> parameters = d.parameters();
+		System.err.println(parameters);
+		
+		setAccessToken((key) -> Iterables.getOnlyElement(parameters.get(key)));
+	}
+	
+	private void setAccessToken(Function<String, String> valueMap) {
+		accessToken.setValue(valueMap.apply("access_token"));
 
 		// typically 3600 for one hour
-		int expiresInSeconds = Integer.parseInt(response.getString("expires_in"));
+		int expiresInSeconds = Integer.parseInt(valueMap.apply("expires_in"));
 		long expiresInMilliseconds = expiresInSeconds * 1000;
 		long expiry = System.currentTimeMillis() + expiresInMilliseconds - EXPIRY_BUFFER;
 		accessTokenExpiry.setValue(Long.toString(expiry));

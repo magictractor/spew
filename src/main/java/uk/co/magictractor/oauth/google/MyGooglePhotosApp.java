@@ -1,20 +1,29 @@
 package uk.co.magictractor.oauth.google;
 
 import uk.co.magictractor.oauth.api.OAuth2Application;
+import uk.co.magictractor.oauth.api.OAuth2AuthorizeResponseType;
+import uk.co.magictractor.oauth.api.OAuth2Connection;
 import uk.co.magictractor.oauth.api.OAuth2ServiceProvider;
+import uk.co.magictractor.oauth.api.OAuthConnection;
+import uk.co.magictractor.oauth.processor.properties.OAuth2CachedResourceFileProperties;
 
-public class MyGooglePhotosApp implements OAuth2Application {
+public class MyGooglePhotosApp extends OAuth2CachedResourceFileProperties implements OAuth2Application {
 
-	private final OAuth2ServiceProvider serviceProvider = new Google();
+	private static final MyGooglePhotosApp INSTANCE = new MyGooglePhotosApp();
 
-	@Override
-	public OAuth2ServiceProvider getServiceProvider() {
-		return serviceProvider;
+// TODO! want connection cache in a superclass, not the file props
+	private OAuth2Connection connection;
+
+	private MyGooglePhotosApp() {
+	}
+
+	public static MyGooglePhotosApp getInstance() {
+		return INSTANCE;
 	}
 
 	@Override
-	public String getClientId() {
-		return "346766315499-60ikghor22r0lkbdtqp6jpgvtpff8vg3.apps.googleusercontent.com";
+	public OAuth2ServiceProvider getServiceProvider() {
+		return Google.getInstance();
 	}
 
 	@Override
@@ -30,4 +39,16 @@ public class MyGooglePhotosApp implements OAuth2Application {
 		// return "https://www.googleapis.com/auth/photoslibrary.sharing";
 	}
 
+	@Override
+	public OAuthConnection getConnection() {
+		if (connection == null) {
+			connection = new OAuth2Connection(this);
+		}
+		return connection;
+	}
+
+	@Override
+	public OAuth2AuthorizeResponseType defaultAuthorizeResponseType() {
+		return OAuth2AuthorizeResponseType.CODE;
+	}
 }

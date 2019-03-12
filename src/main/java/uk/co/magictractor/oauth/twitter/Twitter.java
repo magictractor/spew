@@ -1,9 +1,9 @@
 package uk.co.magictractor.oauth.twitter;
 
-import uk.co.magictractor.oauth.api.OAuth1Server;
+import uk.co.magictractor.oauth.api.OAuth1ServiceProvider;
 
 // manage apps at apps.twitter.com
-public class Twitter implements OAuth1Server {
+public class Twitter implements OAuth1ServiceProvider {
 
 	// https://developer.twitter.com/en/docs/basics/authentication/api-reference/request_token
 	@Override

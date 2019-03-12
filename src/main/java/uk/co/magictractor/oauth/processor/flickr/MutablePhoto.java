@@ -8,6 +8,7 @@ import uk.co.magictractor.oauth.api.OAuthRequest;
 import uk.co.magictractor.oauth.api.OAuthResponse;
 import uk.co.magictractor.oauth.common.TagSet;
 import uk.co.magictractor.oauth.flickr.Flickr;
+import uk.co.magictractor.oauth.flickr.MyFlickrApp;
 import uk.co.magictractor.oauth.flickr.pojo.FlickrPhoto;
 
 // TODO! this could implement Photo?
@@ -84,8 +85,7 @@ public class MutablePhoto {
 		request.setParam("photo_id", photoId);
 		request.setParam("title", title);
 
-		//
-		OAuthResponse response = new OAuth1Connection(new Flickr()).request(request);
+		OAuthResponse response = new OAuth1Connection(MyFlickrApp.getInstance()).request(request);
 	}
 
 	// TODO! move this - it's Flickr specific, perhaps impl for Google Photos too
@@ -102,7 +102,7 @@ public class MutablePhoto {
 		// TODO! refactor this method - a processor has added the parents already
 		request.setParam("tags", tagSet.getCompactTagNamesWithParents());
 
-		OAuthResponse response = new OAuth1Connection(new Flickr()).request(request);
+		OAuthResponse response = new OAuth1Connection(MyFlickrApp.getInstance()).request(request);
 	}
 
 	// App Garden

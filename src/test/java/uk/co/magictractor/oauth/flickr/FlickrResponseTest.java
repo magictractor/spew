@@ -54,7 +54,7 @@ public class FlickrResponseTest {
 
 	private OAuthResponse buildResponse(String fileName) {
 		InputStream in = getClass().getResourceAsStream(fileName);
-		String json = IOUtil.readAndClose(in);
-		return new OAuthJsonResponse(json, new Flickr().getJsonConfiguration());
+		String json = IOUtil.readStringAndClose(in);
+		return new OAuthJsonResponse(json, Flickr.getInstance().getJsonConfiguration());
 	}
 }

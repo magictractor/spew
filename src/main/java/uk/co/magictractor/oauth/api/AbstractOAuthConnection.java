@@ -15,8 +15,10 @@ import com.jayway.jsonpath.Configuration;
 
 import uk.co.magictractor.oauth.util.IOUtil;
 
-public abstract class AbstractConnection {
+// Common code for OAuth1 and OAuth2 implementations.
+public abstract class AbstractOAuthConnection implements OAuthConnection {
 
+	// TODO! return Netty HttpResponse instead - Configuration shouldn't embedded here?
 	protected OAuthResponse request0(OAuthRequest request, Configuration jsonConfiguration) throws IOException {
 		return request0(request, jsonConfiguration, null);
 	}
@@ -47,8 +49,9 @@ public abstract class AbstractConnection {
 		try {
 			isOK = con.getResponseCode() == HTTP_OK;
 			InputStream responseStream = isOK ? con.getInputStream() : con.getErrorStream();
+			//con.getHeaderField(n);
 			// 401 con.getInputStream() throws error; con.getErrorStream() returns null
-			body = responseStream == null ? "" : IOUtil.readAndClose(responseStream);
+			body = responseStream == null ? "" : IOUtil.readStringAndClose(responseStream);
 		} finally {
 			con.disconnect();
 		}

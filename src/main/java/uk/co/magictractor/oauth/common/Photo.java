@@ -13,6 +13,8 @@ public interface Photo {
 
 	String getDescription();
 
+	TagSet getTagSet();
+
 	// we (generally?) don't know the time zone
 	LocalDateTime getDateTimeTaken();
 
@@ -24,13 +26,17 @@ public interface Photo {
 		return getDateTimeTaken().toLocalTime();
 	}
 
-	String getShutterSpeed();
+	default String getShutterSpeed() {
+		return null;
+	}
 
-	String getAperture();
+	default String getAperture() {
+		return null;
+	}
 
-	int getIso();
-
-	TagSet getTagSet();
+	default Integer getIso() {
+		return null;
+	}
 
 	// rating
 

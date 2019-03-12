@@ -1,6 +1,7 @@
 package uk.co.magictractor.oauth.processor.flickr;
 
 import uk.co.magictractor.oauth.flickr.FlickrPhotoIterator;
+import uk.co.magictractor.oauth.flickr.MyFlickrApp;
 import uk.co.magictractor.oauth.flickr.pojo.FlickrPhoto;
 import uk.co.magictractor.oauth.processor.ProcessorChain;
 
@@ -24,7 +25,7 @@ public class FlickrProcessorChain extends ProcessorChain<FlickrPhoto, MutablePho
 
 	public static void main(String[] args) {
 		FlickrProcessorChain processorChain = new FlickrProcessorChain();
-		processorChain.execute(new FlickrPhotoIterator(), new FlickrProcessorContext());
+		processorChain.execute(new FlickrPhotoIterator(MyFlickrApp.getInstance()), new FlickrProcessorContext());
 	}
 
 }

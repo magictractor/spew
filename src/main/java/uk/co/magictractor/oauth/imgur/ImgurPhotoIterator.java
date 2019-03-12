@@ -2,65 +2,152 @@ package uk.co.magictractor.oauth.imgur;
 
 import java.util.List;
 
-import uk.co.magictractor.oauth.api.OAuth1Connection;
+import uk.co.magictractor.oauth.api.OAuthApplication;
 import uk.co.magictractor.oauth.api.OAuthRequest;
 import uk.co.magictractor.oauth.api.OAuthResponse;
 import uk.co.magictractor.oauth.api.PageCountServiceIterator;
 import uk.co.magictractor.oauth.flickr.pojo.FlickrPhoto;
 import uk.co.magictractor.oauth.flickr.pojo.FlickrPhotos;
+import uk.co.magictractor.oauth.imgur.pojo.ImgurImage;
+import uk.co.magictractor.oauth.imgur.pojo.ImgurImages;
 
-// Use flickr.photos.search rather than flickr.people.getPhotos because it allows sort order to be specified
-public class ImgurPhotoIterator extends PageCountServiceIterator<FlickrPhoto> {
+/*
+ * <pre>
+ * {
+	"data": [{
+		"id": "nFp4FhQ",
+		"title": null,
+		"description": null,
+		"datetime": 1551631461,
+		"type": "image\/jpeg",
+		"animated": false,
+		"width": 4522,
+		"height": 2543,
+		"size": 5021953,
+		"views": 0,
+		"bandwidth": 0,
+		"vote": null,
+		"favorite": false,
+		"nsfw": null,
+		"section": null,
+		"account_url": "GazingAtTrees",
+		"account_id": 96937645,
+		"is_ad": false,
+		"in_most_viral": false,
+		"has_sound": false,
+		"tags": [],
+		"ad_type": 0,
+		"ad_url": "",
+		"edited": "0",
+		"in_gallery": false,
+		"deletehash": "PtMp42LRT2ruMwR",
+		"name": null,
+		"link": "https:\/\/i.imgur.com\/nFp4FhQ.jpg"
+	}, {
+		"id": "tKppqPo",
+		"title": null,
+		"description": null,
+		"datetime": 1548526186,
+		"type": "image\/jpeg",
+		"animated": false,
+		"width": 4046,
+		"height": 3037,
+		"size": 4814472,
+		"views": 9,
+		"bandwidth": 43330248,
+		"vote": null,
+		"favorite": false,
+		"nsfw": null,
+		"section": null,
+		"account_url": "GazingAtTrees",
+		"account_id": 96937645,
+		"is_ad": false,
+		"in_most_viral": false,
+		"has_sound": false,
+		"tags": [],
+		"ad_type": 0,
+		"ad_url": "",
+		"edited": "0",
+		"in_gallery": false,
+		"deletehash": "b5YAoRBExapHy3c",
+		"name": "PANA2005",
+		"link": "https:\/\/i.imgur.com\/tKppqPo.jpg"
+	}, {
+		"id": "WtFB7Is",
+		"title": "Kingfisher",
+		"description": null,
+		"datetime": 1541407541,
+		"type": "image\/jpeg",
+		"animated": false,
+		"width": 1702,
+		"height": 1702,
+		"size": 613582,
+		"views": 335,
+		"bandwidth": 205549970,
+		"vote": null,
+		"favorite": false,
+		"nsfw": null,
+		"section": null,
+		"account_url": "GazingAtTrees",
+		"account_id": 96937645,
+		"is_ad": false,
+		"in_most_viral": false,
+		"has_sound": false,
+		"tags": [],
+		"ad_type": 0,
+		"ad_url": "",
+		"edited": "0",
+		"in_gallery": false,
+		"deletehash": "4wG6JZriZ4gYlzK",
+		"name": "IMG_0405",
+		"link": "https:\/\/i.imgur.com\/WtFB7Is.jpg"
+	}],
+	"success": true,
+	"status": 200
+}
+</pre>
+ */
+public class ImgurPhotoIterator extends PageCountServiceIterator<ImgurImage> {
 
 	// min_taken_date (Optional)
 	// Minimum taken date. Photos with an taken date greater than or equal to this
 	// value will be returned. The date can be in the form of a mysql datetime or
 	// unix timestamp.
 
+	public ImgurPhotoIterator(OAuthApplication application) {
+		super(application);
+	}
+
 	// Get images https://apidocs.imgur.com/#2e45daca-bd44-47f8-84b0-b3f2aa861735
 	@Override
-	protected List<FlickrPhoto> fetchPage(int pageNumber) {
-		OAuthRequest request = new OAuthRequest(Imgur.REST_ENDPOINT);
+	protected List<ImgurImage> fetchPage(int pageNumber) {
+		OAuthRequest request = new OAuthRequest(Imgur.REST_ENDPOINT + "/account/me/images/" + (pageNumber - 1));
 
-		request.setParam("method", "flickr.photos.search");
+		// request.setParam("method", "account/me/images/page/" + (pageNumber - 1));
 
-		request.setParam("user_id", "me");
-		request.setParam("sort", "date-taken-desc");
-		request.setParam("page", pageNumber);
-		// default is 100, max is 500
-		request.setParam("per_page", 500);
+//		request.setParam("user_id", "me");
+//		request.setParam("sort", "date-taken-desc");
+//		request.setParam("page", pageNumber);
+//		// default is 100, max is 500
+//		request.setParam("per_page", 500);
 
-		//request.setParam("min_taken_date", "2018-10-10");
-		// request.setParam("min_taken_date", "2018-10-06");
-
-		// machine_tags are no auto tags
-		// https://www.flickr.com/groups/51035612836@N01/discuss/72157594497877875/
-		request.setParam("extras", "date_upload,date_taken,description,tags,machine_tags");
-		// request.setParam("extras", ALL_EXTRAS);
-		OAuthResponse response = new OAuth1Connection(new Imgur()).request(request);
-
-		// https://stackoverflow.com/questions/13686284/parsing-jsonobject-to-listmapstring-object-using-gson
+		// TODO! must not have hard coded app in the middle of the iterator! app now in
+		// super class...
+		OAuthResponse response = MyImgurApp.getInstance().getConnection().request(request);
 
 		System.err.println(response);
 
-		// works, but want counts too
-//		TypeRef<List<Photo>> type = new TypeRef<List<Photo>>() {
-//		};
-//		List<Photo> photos = response.getObject("photos.photo", type);
-		// photo -> ArrayList
-		// return new ArrayList<Photo>(photos.values());
+		ImgurImages images = response.getObject("$", ImgurImages.class);
+//		setTotalItemCount(photos.total);
+//		setTotalPageCount(photos.pages);
 
-		FlickrPhotos photos = response.getObject("photos", FlickrPhotos.class);
-		setTotalItemCount(photos.total);
-		setTotalPageCount(photos.pages);
-
-		return photos.photo;
+		return images.getImages();
 	}
 
 	public static void main(String[] args) {
-		ImgurPhotoIterator iter = new ImgurPhotoIterator();
+		ImgurPhotoIterator iter = new ImgurPhotoIterator(MyImgurApp.getInstance());
 		while (iter.hasNext()) {
-			System.err.println(iter.next().title);
+			System.err.println(iter.next().getTitle());
 		}
 	}
 }

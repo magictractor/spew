@@ -10,7 +10,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.adobe.xmp.XMPException;
-import com.adobe.xmp.XMPIterator;
 import com.adobe.xmp.XMPMeta;
 import com.adobe.xmp.XMPMetaFactory;
 import com.adobe.xmp.options.IteratorOptions;
@@ -45,7 +44,7 @@ public class LocalPhoto implements Photo {
 	private LocalDateTime dateTimeTaken;
 	private String shutterSpeed;
 	private String aperture;
-	private int iso;
+	private Integer iso;
 	private TagSet tagSet;
 
 	// TODO! could have two methods - one just using file name, another using magic
@@ -104,7 +103,7 @@ public class LocalPhoto implements Photo {
 	}
 
 	@Override
-	public int getIso() {
+	public Integer getIso() {
 		ensureFileRead();
 		return iso;
 	}

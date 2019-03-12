@@ -20,13 +20,13 @@ import uk.co.magictractor.oauth.util.ExceptionUtil;
 import uk.co.magictractor.oauth.util.UrlEncoderUtil;
 
 // TODO! common interface for OAuth1 and OAuth2 connections (and no auth? / other auth?)
-public final class OAuth1Connection extends AbstractConnection {
+public final class OAuth1Connection extends AbstractOAuthConnection {
 
 	// TODO! the this the java name, want to derive it from
 	// OAuthServer.getSignature()
 	private static final String SIGNATURE_METHOD = "HmacSHA1";
 
-	private final OAuth1Server authServer;
+	private final OAuth1ServiceProvider authServer;
 	private final TokenAndSecret appTokenAndSecret;
 	/**
 	 * This is only used for the access token. Temporary tokens are held in memory
@@ -36,8 +36,11 @@ public final class OAuth1Connection extends AbstractConnection {
 	private TokenAndSecret userTokenAndSecret;
 
 	// TODO! could derive the authServer from the service URL?
-	public OAuth1Connection(OAuth1Server authServer) {
-		this.authServer = authServer;
+	// TODO! change this to default then use MyApp.getInstance().getConnection()
+	/** Default visibility, applications should obtain instances via OAuth1Application.getConnection(). */
+	public OAuth1Connection(OAuth1Application application) {
+		this.authServer = application.getServiceProvider();
+		// TODO! split app from service provider, as done for Google Photos (OAuth2)
 		this.appTokenAndSecret = new PropertyFileTokenAndSecretPersister(authServer).getTokenAndSecret();
 		this.userTokenAndSecretPersister = new UserPreferencesTokenAndSecretPersister(authServer);
 		this.userTokenAndSecret = new UserPreferencesTokenAndSecretPersister(authServer).getTokenAndSecret();

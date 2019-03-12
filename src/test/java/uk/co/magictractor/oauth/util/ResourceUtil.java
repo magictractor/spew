@@ -17,7 +17,7 @@ public final class ResourceUtil {
 			throw new IllegalStateException("resource not found: " + testClass.getResource(fileName));
 		}
 
-		return IOUtil.readAndClose(in);
+		return IOUtil.readStringAndClose(in);
 	}
 
 	// TODO! bin or pass in Json Config or extract config from class?
@@ -27,8 +27,8 @@ public final class ResourceUtil {
 			throw new IllegalStateException("resource not found: " + testClass.getResource(fileName));
 		}
 
-		String json = IOUtil.readAndClose(in);
-		return new OAuthJsonResponse(json, new Google().getJsonConfiguration());
+		String json = IOUtil.readStringAndClose(in);
+		return new OAuthJsonResponse(json, Google.getInstance().getJsonConfiguration());
 	}
 
 }

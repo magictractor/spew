@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 import com.google.gson.FieldNamingStrategy;
 import com.google.gson.GsonBuilder;
 
-import uk.co.magictractor.oauth.api.OAuth1Server;
+import uk.co.magictractor.oauth.api.OAuth1ServiceProvider;
 import uk.co.magictractor.oauth.common.TagSet;
 import uk.co.magictractor.oauth.flickr.json.TagSetTypeAdapter;
 import uk.co.magictractor.oauth.json.BooleanTypeAdapter;
@@ -15,14 +15,24 @@ import uk.co.magictractor.oauth.json.InstantTypeAdapter;
 import uk.co.magictractor.oauth.json.LocalDateTimeTypeAdapter;
 
 // https://www.flickr.com/services/apps/create/
-public class Flickr implements OAuth1Server {
+public class Flickr implements OAuth1ServiceProvider {
+
 
 	public static final String REST_ENDPOINT = "https://api.flickr.com/services/rest/";
 
 //	https://api.imgur.com/oauth2/addclient
 //		https://api.imgur.com/oauth2/authorize
 //		https://api.imgur.com/oauth2/token
-			
+
+	private static final Flickr INSTANCE = new Flickr();
+
+	private Flickr() {
+	}
+
+	public static Flickr getInstance() {
+		return INSTANCE;
+	}
+
 	@Override
 	public String getTemporaryCredentialRequestUri() {
 		return "https://www.flickr.com/services/oauth/request_token";
@@ -53,10 +63,10 @@ public class Flickr implements OAuth1Server {
 		gsonBuilder.registerTypeAdapter(LocalDateTime.class, new LocalDateTimeTypeAdapter("yyyy-MM-dd HH:mm:ss"));
 		gsonBuilder.registerTypeAdapter(Instant.class, new InstantTypeAdapter());
 		gsonBuilder.registerTypeAdapter(TagSet.class, new TagSetTypeAdapter());
-		
-		//gsonBuilder.registerTypeAdapter(List.class, new ListTypeAdapter());
 
-		//gsonBuilder.registerTypeAdapterFactory(new FlickrTagsTypeAdapterFactory());
+		// gsonBuilder.registerTypeAdapter(List.class, new ListTypeAdapter());
+
+		// gsonBuilder.registerTypeAdapterFactory(new FlickrTagsTypeAdapterFactory());
 
 		return gsonBuilder;
 	}

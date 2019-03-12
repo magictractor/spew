@@ -29,7 +29,7 @@ public class ChangeUploadTime {
 		// https://www.flickr.com/groups/51035612836@N01/discuss/72157594497877875/
 		request.setParam("extras", "date_upload,date_taken,description,tags,machine_tags");
 		// request.setParam("extras", ALL_EXTRAS);
-		OAuthResponse response = new OAuth1Connection(new Flickr()).request(request);
+		OAuthResponse response = new OAuth1Connection(MyFlickrApp.getInstance()).request(request);
 
 		// getClass() -> LinkedHashMap in both cases
 		System.err.println(response);

@@ -15,7 +15,10 @@ public abstract class GoogleServiceIterator<E> extends PageTokenServiceIterator<
 
 		request.setParam("pageToken", pageToken);
 
-		OAuthResponse response = new OAuth2Connection(new MyGooglePhotosApp()).request(request);
+		// OAuthResponse response = new OAuth2Connection(MyGooglePhotosApp.getInstance()).request(request);
+		
+		// TODO! must not have hard coded app in the middle of the iterator!
+		OAuthResponse response = MyGooglePhotosApp.getInstance().getConnection().request(request);
 
 		System.err.println(response);
 

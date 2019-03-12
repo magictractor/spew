@@ -14,7 +14,7 @@ public class GoogleMediaItemsResponseTest {
 	@Test
 	void t() {
 		String json = ResourceUtil.readResource(this.getClass(), "mediaItems.json");
-		OAuthJsonResponse response = new OAuthJsonResponse(json, new Google().getJsonConfiguration());
+		OAuthJsonResponse response = new OAuthJsonResponse(json, Google.getInstance().getJsonConfiguration());
 
 		System.err.println(response);
 		Object photos = response.getObject("mediaItems");

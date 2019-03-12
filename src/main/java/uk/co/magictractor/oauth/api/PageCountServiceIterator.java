@@ -17,6 +17,8 @@ public abstract class PageCountServiceIterator<E> implements Iterator<E> {
 
 	private static final int UNKNOWN = -1;
 
+	private final OAuthApplication application;
+
 	private List<E> currentPage = Collections.emptyList();
 	// TODO! some services might use zero based page numbering
 	private int nextPageNumber = 1;
@@ -25,6 +27,15 @@ public abstract class PageCountServiceIterator<E> implements Iterator<E> {
 
 	private int totalPageCount = UNKNOWN;
 	private int totalItemCount = UNKNOWN;
+
+	// TODO! also pass in expected service provider and add assertion??
+	public PageCountServiceIterator(OAuthApplication application) {
+		this.application = application;
+	}
+
+	protected OAuthConnection getConnection() {
+		return application.getConnection();
+	}
 
 	@Override
 	public boolean hasNext() {
@@ -51,7 +62,7 @@ public abstract class PageCountServiceIterator<E> implements Iterator<E> {
 			// TODO! could check total item count too
 			if (totalPageCount != UNKNOWN && nextPageNumber > totalPageCount) {
 				// TODO! logging
-				currentPage  = Collections.emptyList();
+				currentPage = Collections.emptyList();
 			} else {
 				// TODO! hmm, next page can be token based (e.g. Google) "nextPageToken"
 				currentPage = fetchPage(nextPageNumber++);
@@ -59,7 +70,7 @@ public abstract class PageCountServiceIterator<E> implements Iterator<E> {
 					throw new IllegalStateException("fetchPage() returned null");
 				}
 			}
-			
+
 			hasNext = !currentPage.isEmpty();
 			nextPageItemIndex = 0;
 		}

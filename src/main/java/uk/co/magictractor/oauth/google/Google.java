@@ -24,6 +24,15 @@ import uk.co.magictractor.oauth.json.LocalDateTimeTypeAdapter;
 //-JW9p0euMrM-ymQgeqEJ1MvZ
 public class Google implements OAuth2ServiceProvider {
 
+	private static final Google INSTANCE = new Google();
+
+	private Google() {
+	}
+
+	public static Google getInstance() {
+		return INSTANCE;
+	}
+
 	@Override
 	public String getAuthorizationUri() {
 		return "https://accounts.google.com/o/oauth2/v2/auth";
@@ -54,9 +63,10 @@ public class Google implements OAuth2ServiceProvider {
 
 	public GsonBuilder getGsonBuilder() {
 		GsonBuilder gsonBuilder = new GsonBuilder();
-		
-		// TODO! this option and perhaps other settings should be defaults for all service providers
-		//gsonBuilder.set
+
+		// TODO! this option and perhaps other settings should be defaults for all
+		// service providers
+		// gsonBuilder.set
 
 		gsonBuilder.registerTypeAdapter(boolean.class, new BooleanTypeAdapter());
 		// TODO! Z shouldn't be quoted here?? - handle offset properly

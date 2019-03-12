@@ -68,7 +68,7 @@ public class GoogleMediaItem implements Photo {
 	}
 
 	@Override
-	public int getIso() {
+	public Integer getIso() {
 		return mediaMetadata.photo.isoEquivalent;
 	}
 
@@ -88,7 +88,7 @@ public class GoogleMediaItem implements Photo {
 		private String cameraModel;
 		private String focalLength;
 		private String apertureFNumber;
-		private int isoEquivalent;
+		private Integer isoEquivalent;
 	}
 
 	@Override

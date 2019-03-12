@@ -1,5 +1,7 @@
 package uk.co.magictractor.oauth.util;
 
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.concurrent.Callable;
 
 public final class ExceptionUtil {
@@ -19,6 +21,8 @@ public final class ExceptionUtil {
 			return (T) callable.call();
 		} catch (RuntimeException e) {
 			throw e;
+		} catch (IOException e) {
+			throw new UncheckedIOException((IOException) e);
 		} catch (Exception e) {
 			throw new IllegalStateException(e);
 		}
