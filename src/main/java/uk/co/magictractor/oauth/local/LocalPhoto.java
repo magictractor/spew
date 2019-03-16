@@ -1,31 +1,24 @@
 package uk.co.magictractor.oauth.local;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Instant;
 import java.util.Arrays;
-import java.util.Iterator;
+import java.util.Collections;
 import java.util.List;
+import java.util.function.Function;
 
-import com.adobe.xmp.XMPException;
-import com.adobe.xmp.XMPMeta;
-import com.adobe.xmp.XMPMetaFactory;
-import com.adobe.xmp.options.IteratorOptions;
-import com.adobe.xmp.properties.XMPProperty;
-import com.adobe.xmp.properties.XMPPropertyInfo;
 import com.drew.imaging.ImageMetadataReader;
 import com.drew.imaging.ImageProcessingException;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.exif.ExifSubIFDDirectory;
+import com.drew.metadata.xmp.XmpDirectory;
+import com.google.common.collect.Iterables;
 
-import uk.co.magictractor.oauth.common.Photo;
 import uk.co.magictractor.oauth.common.TagSet;
-import uk.co.magictractor.oauth.util.ExceptionUtil;
 
-public class LocalPhoto implements Photo {
+public class LocalPhoto extends BaseLocalPhoto {
 
 	/*
 	 * Files encountered which have a suffix in neither of these lists results in a
@@ -35,17 +28,8 @@ public class LocalPhoto implements Photo {
 	private static final List<String> PHOTO_SUFFIXES = Arrays.asList("jpg", "rw2", "cr2");
 	private static final List<String> NON_PHOTO_SUFFIXES = Arrays.asList("xmp", "mp4");
 
-	private final Path photoPath;
-	private boolean hasReadExif;
-
-	// These values read from exif/sidecar on demand
-	private String title;
-	private String description;
-	private Instant dateTimeTaken;
-	private String shutterSpeed;
-	private String aperture;
-	private Integer iso;
-	private TagSet tagSet;
+	private ExifSubIFDDirectory exif;
+	private XmpDirectory xmp;
 
 	// TODO! could have two methods - one just using file name, another using magic
 	// to get file type?
@@ -64,93 +48,15 @@ public class LocalPhoto implements Photo {
 	}
 
 	public LocalPhoto(Path path) {
-		this.photoPath = path;
-	}
-
-	@Override
-	public String getServiceProviderId() {
-		// TODO! perhaps absolute path here?
-		return null;
-	}
-
-	@Override
-	public String getFileName() {
-		return photoPath.getFileName().toString();
-	}
-
-	@Override
-	public String getTitle() {
-		ensureFileRead();
-		return title;
-	}
-
-	@Override
-	public String getDescription() {
-		ensureFileRead();
-		return description;
-	}
-
-	@Override
-	public Instant getDateTimeTaken() {
-		ensureFileRead();
-		return dateTimeTaken;
-	}
-
-	@Override
-	public Instant getDateTimeUpload() {
-		/*
-		 * Does not apply to local files, which might not have been uploaded, or could
-		 * have been uploaded multiple times to different service providers.
-		 */
-		return null;
-	}
-
-	@Override
-	public String getShutterSpeed() {
-		ensureFileRead();
-		return shutterSpeed;
-	}
-
-	@Override
-	public String getAperture() {
-		ensureFileRead();
-		return aperture;
-	}
-
-	@Override
-	public Integer getIso() {
-		ensureFileRead();
-		return iso;
-	}
-
-	@Override
-	public TagSet getTagSet() {
-		ensureFileRead();
-		return tagSet;
-	}
-
-	private void ensureFileRead() {
-		if (hasReadExif) {
-			return;
-		}
-
-		readPhotoExif();
-
-		Path sidecarPath = findSidecar();
-		if (sidecarPath != null) {
-			// TODO! remove throws
-			ExceptionUtil.call(() -> readSidecarExif(sidecarPath));
-		}
-
-		hasReadExif = true;
+		super(path);
 	}
 
 	private Path findSidecar() {
-		String sidecarName = photoPath.getFileName().toString() + ".xmp";
+		String sidecarName = getPath().getFileName().toString() + ".xmp";
 
 		// TODO! could also handle replacing extension with ".xmp" as well as appending
 		// ".xmp"
-		Path sidecarPath = photoPath.resolveSibling(sidecarName);
+		Path sidecarPath = getPath().resolveSibling(sidecarName);
 
 		return java.nio.file.Files.exists(sidecarPath) ? sidecarPath : null;
 	}
@@ -158,16 +64,23 @@ public class LocalPhoto implements Photo {
 	// Photos are read on demand to avoid a performance hit when loading the local
 	// library.
 	// For performance files are read once and results cached.
-	private void readPhotoExif() {
+	@Override
+	public void preInit() {
 		Metadata metadata;
-
 		try {
-			metadata = ImageMetadataReader.readMetadata(photoPath.toFile());
+			metadata = ImageMetadataReader.readMetadata(getPath().toFile());
 		} catch (ImageProcessingException | IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return;
 		}
+
+		// exif = metadata.getFirstDirectoryOfType(ExifSubIFDDirectory.class)
+		exif = Iterables.getOnlyElement(metadata.getDirectoriesOfType(ExifSubIFDDirectory.class));
+		// xmp often not present
+		// xmp =
+		// Iterables.getOnlyElement(metadata.getDirectoriesOfType(XmpDirectory.class));
+		xmp = metadata.getFirstDirectoryOfType(XmpDirectory.class);
 
 //		for (Directory directory : metadata.getDirectories()) {
 //			String directoryName = directory.getName();
@@ -198,66 +111,140 @@ public class LocalPhoto implements Photo {
 		// what's the difference between original and digitized?
 		System.err.println("datetime:  " + subIFD.getString(ExifSubIFDDirectory.TAG_DATETIME_ORIGINAL));
 
+//		for (Directory dir : metadata.getDirectories()) {
+//			// dir.
+//			for (Tag tag : dir.getTags()) {
+//				System.err.println("tag: " + tag);
+//			}
+//		}
+//
+//		if (xmp != null) {
+//			System.err.println("xmp props: " + xmp.getXmpProperties());
+//			System.err.println("xmp rating: " + xmp.getXmpProperties().get("xmp:Rating"));
+//		}
+
 		// System.err.println("datetime: " +
 		// subIFD.getString(ExifSubIFDDirectory.TAG_DATETIME_ORIGINAL));
 
 		// and file name from file (or File directory in metadata)
 	}
 
-	/**
-	 * MetadataExtractor does not currently support reading values.
-	 * 
-	 * This ticket includes the workaround used here.
-	 * https://github.com/drewnoakes/metadata-extractor/issues/118
-	 * 
-	 * @throws XMPException
-	 * @throws IOException
-	 */
-	private void readSidecarExif(Path sidecarPath) throws XMPException, IOException {
-		XMPMeta xmpMeta;
-
-		try (InputStream sidecarStream = Files.newInputStream(sidecarPath)) {
-			xmpMeta = XMPMetaFactory.parse(sidecarStream);
-		}
-
-		// Unregistered schema namespace URI
-		// XMPProperty subject = xmpMeta.getProperty("dc", "subject");
-
-		// Empty schema namespace URI
-		// XMPProperty subject = xmpMeta.getProperty(null, "dc:subject");
-
-		// works!
-		XMPProperty subject = xmpMeta.getProperty("http://purl.org/dc/elements/1.1/", "subject");
-		// null
-		XMPProperty desc = xmpMeta.getProperty("http://www.w3.org/1999/02/22-rdf-syntax-ns#", "Description");
-
-		// Yes! 63/10
-		XMPProperty fnumber = xmpMeta.getProperty("http://ns.adobe.com/exif/1.0/", "FNumber");
-		// speed ratings are a list?
-		XMPProperty iso = xmpMeta.getProperty("http://ns.adobe.com/exif/1.0/", "ISOSpeedRatings");
-
-		Iterator<XMPPropertyInfo> isoIter = xmpMeta.iterator("http://ns.adobe.com/exif/1.0/", "ISOSpeedRatings",
-				new IteratorOptions().setJustChildren(true));
-		isoIter.forEachRemaining((v) -> System.err.println("iso[]: " + v.getValue()));
-
-		Iterator<XMPPropertyInfo> subjectIter = xmpMeta.iterator("http://purl.org/dc/elements/1.1/", "subject",
-				new IteratorOptions().setJustChildren(true));
-		subjectIter.forEachRemaining((v) -> System.err.println("subject[]: " + v.getValue()));
-
-		// Can just use getProperty for this, but perhaps this is more flexible??
-		// nope...
-		Iterator<XMPPropertyInfo> fnumberIter = xmpMeta.iterator("http://purl.org/dc/elements/1.1/", "FNumber",
-				new IteratorOptions().setJustChildren(true));
-		fnumberIter.forEachRemaining((v) -> System.err.println("fnumber[]: " + v.getValue()));
-
-		// PixelXDimension
-		// PixelYDimension
-		// exif:FocalLength="4000/10"
-
-		// xmpMeta.iterator().forEachRemaining(System.err::println);
-
-		System.err.println();
+	@Override
+	public void postInit() {
+		exif = null;
+		xmp = null;
 	}
 
-	// private
+	@Override
+	protected List<SupplierWithDescription<String>> getTitlePropertyValueSuppliers() {
+		// return Arrays.asList(new ExifValueSupplier(ExifSubIFDDirectory.tit));
+		return Collections.emptyList();
+	}
+
+	@Override
+	protected List<SupplierWithDescription<String>> getDescriptionPropertyValueSuppliers() {
+		return Collections.emptyList();
+	}
+
+	@Override
+	protected List<SupplierWithDescription<TagSet>> getTagSetPropertyValueSuppliers() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	protected List<SupplierWithDescription<Instant>> getDateTimeTakenPropertyValueSuppliers() {
+		// TODO! what's the difference between original and digitized?
+		// return Arrays.asList(new
+		// ExifValueStringSupplier(ExifSubIFDDirectory.TAG_DATETIME_ORIGINAL));
+
+		return null;
+	}
+
+	@Override
+	protected List<SupplierWithDescription<Integer>> getRatingPropertyValueSuppliers() {
+		return Arrays.asList(asInteger(new XmpValueSupplier("xmp:Rating")));
+	}
+
+	private SupplierWithDescription<Integer> asInteger(SupplierWithDescription<String> stringSupplier) {
+		return new ConvertedSupplierWithDescription<Integer>(stringSupplier, (s) -> Integer.valueOf(s));
+	}
+
+	public class ConvertedSupplierWithDescription<T> implements SupplierWithDescription<T> {
+		private SupplierWithDescription<String> wrapped;
+		private Function<String, T> converter;
+
+		public ConvertedSupplierWithDescription(SupplierWithDescription<String> wrapped,
+				Function<String, T> converter) {
+			this.wrapped = wrapped;
+			this.converter = converter;
+		}
+
+		@Override
+		public T get() {
+			String string = wrapped.get();
+			return string == null ? null : converter.apply(string);
+		}
+
+		@Override
+		public String getDescription() {
+			return wrapped.getDescription();
+		}
+	}
+
+	public abstract class ExifValueSupplier<T> implements SupplierWithDescription<T> {
+		protected final int tagType;
+
+		ExifValueSupplier(int tagType) {
+			this.tagType = tagType;
+		}
+
+		@Override
+		public final String getDescription() {
+			return exif.getDescription(tagType);
+		}
+	}
+
+	public class ExifStringValueSupplier extends ExifValueSupplier<String> {
+		ExifStringValueSupplier(int tagType) {
+			super(tagType);
+		}
+
+		@Override
+		public String get() {
+			return exif.getString(tagType);
+		}
+	}
+
+//	public class ExifIntegerValueSupplier extends ExifValueSupplier<Integer> {
+//		ExifIntegerValueSupplier(int tagType) {
+//			super(tagType);
+//		}
+//
+//		@Override
+//		public Integer get() {
+//			// TODO! exif/xmp
+//			return xmp.getInteger(tagType);
+//		}
+//	}
+
+	public class XmpValueSupplier implements SupplierWithDescription<String> {
+
+		private String key;
+
+		XmpValueSupplier(String key) {
+			this.key = key;
+		}
+
+		@Override
+		public String get() {
+			return xmp == null ? null : xmp.getXmpProperties().get(key);
+		}
+
+		@Override
+		public String getDescription() {
+			return "[XMP] " + key;
+		}
+	}
+
 }

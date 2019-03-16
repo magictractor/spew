@@ -20,6 +20,12 @@ public abstract class BaseLocalPhoto implements Photo {
 	private Instant dateTimeTaken;
 	private Integer rating;
 
+	private String shutterSpeed;
+
+	private String aperture;
+
+	private Integer iso;
+
 	protected BaseLocalPhoto(Path path) {
 		this.path = path;
 	}
@@ -75,6 +81,24 @@ public abstract class BaseLocalPhoto implements Photo {
 		ensurePropertyValuesRead();
 		return rating;
 	}
+	
+	@Override
+	public String getShutterSpeed() {
+		ensurePropertyValuesRead();
+		return shutterSpeed;
+	}
+
+	@Override
+	public String getAperture() {
+		ensurePropertyValuesRead();
+		return aperture;
+	}
+
+	@Override
+	public Integer getIso() {
+		ensurePropertyValuesRead();
+		return iso;
+	}
 
 	private void ensurePropertyValuesRead() {
 		if (!propertyValuesRead) {
@@ -100,7 +124,7 @@ public abstract class BaseLocalPhoto implements Photo {
 	}
 
 	// First non-null value is best.
-	private <T> T getBestPropertyValue(List<SuppierWithDescription<T>> propertyValueSuppliers, String description) {
+	private <T> T getBestPropertyValue(List<SupplierWithDescription<T>> propertyValueSuppliers, String description) {
 		// List<SuppierWithDescription<T>> propertyValueSuppliers =
 		// getPropertyValueSuppliers(photoPropertyType);
 
@@ -110,7 +134,7 @@ public abstract class BaseLocalPhoto implements Photo {
 		}
 
 		T bestPropertyValue = null;
-		for (SuppierWithDescription<T> propertyValueSupplier : propertyValueSuppliers) {
+		for (SupplierWithDescription<T> propertyValueSupplier : propertyValueSuppliers) {
 			T value = propertyValueSupplier.get();
 
 			System.err.println(propertyValueSupplier.getDescription() + " -> " + value);
@@ -141,18 +165,18 @@ public abstract class BaseLocalPhoto implements Photo {
 //		}
 //	}
 
-	protected abstract List<SuppierWithDescription<String>> getTitlePropertyValueSuppliers();
+	protected abstract List<SupplierWithDescription<String>> getTitlePropertyValueSuppliers();
 
-	protected abstract List<SuppierWithDescription<String>> getDescriptionPropertyValueSuppliers();
+	protected abstract List<SupplierWithDescription<String>> getDescriptionPropertyValueSuppliers();
 
-	protected abstract List<SuppierWithDescription<TagSet>> getTagSetPropertyValueSuppliers();
+	protected abstract List<SupplierWithDescription<TagSet>> getTagSetPropertyValueSuppliers();
 
-	protected abstract List<SuppierWithDescription<Instant>> getDateTimeTakenPropertyValueSuppliers();
+	protected abstract List<SupplierWithDescription<Instant>> getDateTimeTakenPropertyValueSuppliers();
 
-	protected abstract List<SuppierWithDescription<Integer>> getRatingPropertyValueSuppliers();
+	protected abstract List<SupplierWithDescription<Integer>> getRatingPropertyValueSuppliers();
 
 	// Supplier with a description for logging
-	public static interface SuppierWithDescription<T> extends Supplier<T> {
+	public static interface SupplierWithDescription<T> extends Supplier<T> {
 		String getDescription();
 	}
 }

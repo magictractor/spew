@@ -56,33 +56,33 @@ public class LocalSidecar extends BaseLocalPhoto {
 	}
 
 	@Override
-	protected List<SuppierWithDescription<String>> getTitlePropertyValueSuppliers() {
+	protected List<SupplierWithDescription<String>> getTitlePropertyValueSuppliers() {
 		return Arrays.asList(new XmpMetaLocalizedTextPropertyValueSupplier(DC, "title"));
 	}
 
 	@Override
-	protected List<SuppierWithDescription<String>> getDescriptionPropertyValueSuppliers() {
+	protected List<SupplierWithDescription<String>> getDescriptionPropertyValueSuppliers() {
 		return Arrays.asList(new XmpMetaLocalizedTextPropertyValueSupplier(DC, "description"),
 				new XmpMetaLocalizedTextPropertyValueSupplier(EXIF, "UserComment"));
 	}
 
 	@Override
-	protected List<SuppierWithDescription<TagSet>> getTagSetPropertyValueSuppliers() {
+	protected List<SupplierWithDescription<TagSet>> getTagSetPropertyValueSuppliers() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	protected List<SuppierWithDescription<Instant>> getDateTimeTakenPropertyValueSuppliers() {
+	protected List<SupplierWithDescription<Instant>> getDateTimeTakenPropertyValueSuppliers() {
 		return Collections.emptyList();
 	}
 
 	@Override
-	protected List<SuppierWithDescription<Integer>> getRatingPropertyValueSuppliers() {
+	protected List<SupplierWithDescription<Integer>> getRatingPropertyValueSuppliers() {
 		return Arrays.asList(new XmpMetaIntegerPropertyValueSupplier(XMP, "Rating"));
 	}
 
-	private abstract class XmpMetaPropertyValueSupplier<T> implements SuppierWithDescription<T> {
+	private abstract class XmpMetaPropertyValueSupplier<T> implements SupplierWithDescription<T> {
 
 		protected final String nameSpace;
 		protected final String propertyName;
