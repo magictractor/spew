@@ -1,25 +1,24 @@
-package uk.co.magictractor.oauth.processor.flickr;
+package uk.co.magictractor.oauth.processor.common;
 
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
+import uk.co.magictractor.oauth.common.Photo;
 import uk.co.magictractor.oauth.common.Tag;
-import uk.co.magictractor.oauth.flickr.pojo.FlickrPhoto;
 import uk.co.magictractor.oauth.processor.DateAwareProcessorContext;
 
-public class FlickrProcessorContext implements DateAwareProcessorContext<FlickrPhoto, MutablePhoto> {
+public class PhotoProcessorContext implements DateAwareProcessorContext<Photo, MutablePhoto> {
 
 	private Set<Tag> unknownTags = new HashSet<>();
 
 	@Override
-	public MutablePhoto beforeElement(FlickrPhoto photo) {
+	public MutablePhoto beforeElement(Photo photo) {
 		return new MutablePhoto(photo);
 	}
 
 	@Override
 	public void afterElement(MutablePhoto photo) {
-		photo.persist();
 	}
 
 	@Override

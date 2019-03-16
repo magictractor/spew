@@ -12,6 +12,12 @@ import uk.co.magictractor.oauth.json.BooleanTypeAdapter;
 import uk.co.magictractor.oauth.json.InstantTypeAdapter;
 import uk.co.magictractor.oauth.json.LocalDateTimeTypeAdapter;
 
+/**
+ * From https://imgur.com/tos:
+ * "don't use Imgur to host image libraries you link to from elsewhere, content
+ * for your website, advertising, avatars, or anything else that turns us into
+ * your content delivery network"
+ */
 public class Imgur implements OAuth2ServiceProvider {
 
 	public static final String REST_ENDPOINT = "https://api.imgur.com/3/";

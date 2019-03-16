@@ -107,6 +107,12 @@ public class Tag {
 		initRodents();
 		initInsects();
 
+		Tag frog = init(TagType.SUBJECT, "Frog");
+		init(frog, "Common frog");
+
+		Tag newt = init(TagType.SUBJECT, "Newt");
+		init(newt, "Smooth newt", "Palmate newt");
+
 		// TODO! fungus?
 		init(TagType.SUBJECT, "Fungi");
 	}
@@ -124,6 +130,9 @@ public class Tag {
 
 		Tag grebe = init(bird, "Grebe");
 		init(grebe, "Little grebe", "Great crested grebe");
+		
+		Tag gull = init(bird, "Gull");
+		init(gull, "Black-headed gull", "Lesser black-backed gull");
 
 		Tag heron = init(bird, "Heron");
 		init(heron, "Grey heron");
@@ -172,7 +181,17 @@ public class Tag {
 		Tag bee = init(insect, "Bee");
 		init(bee, "Honey bee");
 		Tag bumblebee = init(bee, "Bumblebee");
-		init(bumblebee, "Common carder bee", "Tree bumblebee");
+		init(bumblebee, "Common carder bee", "Tree bumblebee", "Red-tailed bumblebee", "Buff-tailed bumbleebee");
+
+		Tag wasp = init(insect, "Wasp");
+		init(wasp, "Common wasp");
+
+		Tag hoverfly = init(insect, "Hoverfly");
+		Tag dronefly = init(hoverfly, "Drone fly");
+		init(dronefly, "Common drone fly", "Tapered drone fly");
+
+		Tag fly = init(insect, "Fly");
+// more
 
 		Tag lepidoptera = init(insect, "Lepidoptera");
 

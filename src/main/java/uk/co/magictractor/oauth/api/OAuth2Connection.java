@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 import com.google.common.base.Charsets;
 import com.google.common.collect.Iterables;
@@ -16,7 +15,6 @@ import com.jayway.jsonpath.Configuration;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.handler.codec.http.FullHttpRequest;
-import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.QueryStringDecoder;
 import uk.co.magictractor.oauth.server.CallbackServer;
 import uk.co.magictractor.oauth.token.UserPreferencesPersister;

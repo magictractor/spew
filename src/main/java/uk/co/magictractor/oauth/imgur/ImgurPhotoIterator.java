@@ -6,8 +6,6 @@ import uk.co.magictractor.oauth.api.OAuthApplication;
 import uk.co.magictractor.oauth.api.OAuthRequest;
 import uk.co.magictractor.oauth.api.OAuthResponse;
 import uk.co.magictractor.oauth.api.PageCountServiceIterator;
-import uk.co.magictractor.oauth.flickr.pojo.FlickrPhoto;
-import uk.co.magictractor.oauth.flickr.pojo.FlickrPhotos;
 import uk.co.magictractor.oauth.imgur.pojo.ImgurImage;
 import uk.co.magictractor.oauth.imgur.pojo.ImgurImages;
 

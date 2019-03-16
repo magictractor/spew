@@ -5,18 +5,19 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class ProcessorChain<I, E, C extends ProcessorContext<I, E>> {
+public class ProcessorChain<I, E, C extends ProcessorContext<? super I, E>> {
 
-	private final List<Processor<I, E, C>> processors = new ArrayList<>();
+	private final List<Processor<? super I, E, C>> processors = new ArrayList<>();
 
-	protected void addProcessor(Processor<I, E, C> processor) {
+	protected void addProcessor(Processor<? super I, E, C> processor) {
 		processors.add(processor);
 	}
 
-	protected final void execute(Iterator<? extends I> iterator, C context) {
+	public final void execute(Iterator<? extends I> iterator, C context) {
 		boolean isDateAware = context instanceof DateAwareProcessorContext;
 		LocalDate date = null;
 		LocalDate previousDate = null;
+		// TODO! don't like DateAwareProcessorContext
 		DateAwareProcessorContext<I,E> dateAwareContext = isDateAware ? ((DateAwareProcessorContext<I,E>) context)
 				: null;
 
@@ -40,7 +41,7 @@ public class ProcessorChain<I, E, C extends ProcessorContext<I, E>> {
 				}
 			}
 
-			for (Processor<I, E, C> processor : processors) {
+			for (Processor<? super I, E, C> processor : processors) {
 				processor.process(element, context);
 			}
 

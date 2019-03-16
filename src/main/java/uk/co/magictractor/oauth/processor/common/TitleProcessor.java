@@ -1,18 +1,18 @@
-package uk.co.magictractor.oauth.processor.flickr;
+package uk.co.magictractor.oauth.processor.common;
 
+import uk.co.magictractor.oauth.common.Photo;
 import uk.co.magictractor.oauth.common.Tag;
 import uk.co.magictractor.oauth.common.TagType;
-import uk.co.magictractor.oauth.flickr.pojo.FlickrPhoto;
 import uk.co.magictractor.oauth.processor.Processor;
 
 /**
  * Replace default titles based on the file name, "IMG_1234" etc, with the name
  * from the subject tag.
  */
-public class TitleProcessor implements Processor<FlickrPhoto, MutablePhoto, FlickrProcessorContext> {
+public class TitleProcessor implements Processor<Photo, MutablePhoto, PhotoProcessorContext> {
 
 	@Override
-	public void process(MutablePhoto photoChanges, FlickrProcessorContext context) {
+	public void process(MutablePhoto photoChanges, PhotoProcessorContext context) {
 		if (isDefaultTitle(photoChanges.getTitle())) {
 			Tag subject = photoChanges.getTagSet().getDeepestTag(TagType.SUBJECT);
 			if (subject != null && !subject.hasChildren()) {

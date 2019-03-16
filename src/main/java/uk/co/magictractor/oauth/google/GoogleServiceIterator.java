@@ -2,7 +2,6 @@ package uk.co.magictractor.oauth.google;
 
 import java.util.List;
 
-import uk.co.magictractor.oauth.api.OAuth2Connection;
 import uk.co.magictractor.oauth.api.OAuthRequest;
 import uk.co.magictractor.oauth.api.OAuthResponse;
 import uk.co.magictractor.oauth.api.PageTokenServiceIterator;

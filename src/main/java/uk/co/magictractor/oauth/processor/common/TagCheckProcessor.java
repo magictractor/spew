@@ -1,18 +1,18 @@
-package uk.co.magictractor.oauth.processor.flickr;
+package uk.co.magictractor.oauth.processor.common;
 
+import uk.co.magictractor.oauth.common.Photo;
 import uk.co.magictractor.oauth.common.Tag;
 import uk.co.magictractor.oauth.common.TagSet;
 import uk.co.magictractor.oauth.common.TagType;
-import uk.co.magictractor.oauth.flickr.pojo.FlickrPhoto;
 import uk.co.magictractor.oauth.processor.Processor;
 
 /**
  * Check that tags are known, and that there is a terminal tag (such as "red admiral" rather than just "butterfly").
  */
-public class TagCheckProcessor implements Processor<FlickrPhoto, MutablePhoto, FlickrProcessorContext> {
+public class TagCheckProcessor implements Processor<Photo, MutablePhoto, PhotoProcessorContext> {
 
 	@Override
-	public void process(MutablePhoto photo, FlickrProcessorContext context) {
+	public void process(MutablePhoto photo, PhotoProcessorContext context) {
 		TagSet tags = photo.getTagSet();
 
 		checkTagType(TagType.SUBJECT, tags, context);
@@ -20,7 +20,7 @@ public class TagCheckProcessor implements Processor<FlickrPhoto, MutablePhoto, F
 		checkNoUnknownTags(tags, context);
 	}
 
-	private void checkTagType(TagType tagType, TagSet tags, FlickrProcessorContext context) {
+	private void checkTagType(TagType tagType, TagSet tags, PhotoProcessorContext context) {
 		Tag deepestTag = tags.getDeepestTag(tagType);
 		if (deepestTag == null) {
 			System.err.println("No tag of type " + tagType);
@@ -29,7 +29,7 @@ public class TagCheckProcessor implements Processor<FlickrPhoto, MutablePhoto, F
 		}
 	}
 
-	private void checkNoUnknownTags(TagSet tags, FlickrProcessorContext context) {
+	private void checkNoUnknownTags(TagSet tags, PhotoProcessorContext context) {
 		for (Tag tag : tags.getTags()) {
 			if (tag.isUnknown()) {
 				context.addUnknownTag(tag);

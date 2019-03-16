@@ -1,7 +1,6 @@
 package uk.co.magictractor.oauth.imgur.pojo;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
 
 import uk.co.magictractor.oauth.common.Photo;
 import uk.co.magictractor.oauth.common.TagSet;
