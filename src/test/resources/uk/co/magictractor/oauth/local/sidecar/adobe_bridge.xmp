@@ -1,0 +1,125 @@
+<x:xmpmeta xmlns:x="adobe:ns:meta/" x:xmptk="Adobe XMP Core 5.6-c140 79.160451, 2017/05/06-01:08:21        ">
+ <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+  <rdf:Description rdf:about=""
+    xmlns:xmp="http://ns.adobe.com/xap/1.0/"
+    xmlns:xmpMM="http://ns.adobe.com/xap/1.0/mm/"
+    xmlns:stEvt="http://ns.adobe.com/xap/1.0/sType/ResourceEvent#"
+    xmlns:tiff="http://ns.adobe.com/tiff/1.0/"
+    xmlns:exif="http://ns.adobe.com/exif/1.0/"
+    xmlns:aux="http://ns.adobe.com/exif/1.0/aux/"
+    xmlns:exifEX="http://cipa.jp/exif/1.0/"
+    xmlns:photoshop="http://ns.adobe.com/photoshop/1.0/"
+    xmlns:dc="http://purl.org/dc/elements/1.1/"
+    xmlns:crs="http://ns.adobe.com/camera-raw-settings/1.0/"
+   xmp:Rating="3"
+   xmp:ModifyDate="2019-03-15T14:07:10.037"
+   xmp:CreateDate="2019-03-15T14:07:10.037"
+   xmp:MetadataDate="2019-03-16T15:11:42Z"
+   xmpMM:InstanceID="xmp.iid:64375fde-b97b-554b-af1d-fb7970ea638e"
+   xmpMM:DocumentID="86B577A14880698E9B784334F47EBA87"
+   xmpMM:OriginalDocumentID="86B577A14880698E9B784334F47EBA87"
+   tiff:Make="Panasonic"
+   tiff:Model="DC-G9"
+   tiff:Orientation="1"
+   tiff:ImageWidth="5184"
+   tiff:ImageLength="3888"
+   tiff:PhotometricInterpretation="2"
+   tiff:SamplesPerPixel="3"
+   exif:ExifVersion="0231"
+   exif:ExposureTime="1/250"
+   exif:ShutterSpeedValue="7965784/1000000"
+   exif:FNumber="63/10"
+   exif:ApertureValue="5310704/1000000"
+   exif:ExposureProgram="3"
+   exif:ExposureBiasValue="0/100"
+   exif:MaxApertureValue="1360/256"
+   exif:MeteringMode="3"
+   exif:LightSource="0"
+   exif:FocalLength="4000/10"
+   exif:SensingMethod="2"
+   exif:FileSource="3"
+   exif:SceneType="1"
+   exif:FocalLengthIn35mmFilm="800"
+   exif:CustomRendered="0"
+   exif:ExposureMode="0"
+   exif:WhiteBalance="0"
+   exif:SceneCaptureType="0"
+   exif:GainControl="1"
+   exif:Contrast="0"
+   exif:Saturation="0"
+   exif:Sharpness="0"
+   exif:DigitalZoomRatio="0/10"
+   exif:FocalPlaneXResolution="276975862/32768"
+   exif:FocalPlaneYResolution="276975862/32768"
+   exif:FocalPlaneResolutionUnit="3"
+   exif:DateTimeOriginal="2019-03-15T14:07:10.037"
+   exif:PixelXDimension="5184"
+   exif:PixelYDimension="3888"
+   aux:SerialNumber="XER1805070002"
+   aux:Lens="LEICA DG 100-400/F4.0-6.3"
+   aux:LensSerialNumber="28DIF11G083P"
+   exifEX:LensModel="LEICA DG 100-400/F4.0-6.3"
+   photoshop:DateCreated="2019-03-15T14:07:10.037"
+   photoshop:ColorMode="3"
+   photoshop:ICCProfile=""
+   photoshop:Headline="headline"
+   photoshop:SidecarForExtension="RW2"
+   photoshop:EmbeddedXMPDigest="3D51DF3333E577CFE937A1F886D0BD2D"
+   dc:format="image/x-panasonic-raw"
+   crs:HasSettings="False"
+   crs:HasCrop="False"
+   crs:AlreadyApplied="False"
+   crs:RawFileName="adobe_bridge.RW2">
+   <xmpMM:History>
+    <rdf:Seq>
+     <rdf:li
+      stEvt:action="saved"
+      stEvt:instanceID="xmp.iid:4f30d923-3199-7840-bf7f-ce9f36566593"
+      stEvt:when="2019-03-16T15:03:53Z"
+      stEvt:softwareAgent="Adobe Photoshop Camera Raw 11.1"
+      stEvt:changed="/metadata"/>
+     <rdf:li
+      stEvt:action="saved"
+      stEvt:instanceID="xmp.iid:64375fde-b97b-554b-af1d-fb7970ea638e"
+      stEvt:when="2019-03-16T15:11:42Z"
+      stEvt:softwareAgent="Adobe Photoshop Camera Raw 11.1 (Windows)"
+      stEvt:changed="/metadata"/>
+    </rdf:Seq>
+   </xmpMM:History>
+   <tiff:BitsPerSample>
+    <rdf:Seq>
+     <rdf:li>16</rdf:li>
+     <rdf:li>16</rdf:li>
+     <rdf:li>16</rdf:li>
+    </rdf:Seq>
+   </tiff:BitsPerSample>
+   <exif:ISOSpeedRatings>
+    <rdf:Seq>
+     <rdf:li>200</rdf:li>
+    </rdf:Seq>
+   </exif:ISOSpeedRatings>
+   <exif:Flash
+    exif:Fired="False"
+    exif:Return="0"
+    exif:Mode="2"
+    exif:Function="False"
+    exif:RedEyeMode="False"/>
+   <dc:description>
+    <rdf:Alt>
+     <rdf:li xml:lang="x-default">description</rdf:li>
+    </rdf:Alt>
+   </dc:description>
+   <dc:subject>
+    <rdf:Bag>
+     <rdf:li>keyword1 keyword2</rdf:li>
+     <rdf:li>keyword 3</rdf:li>
+    </rdf:Bag>
+   </dc:subject>
+   <dc:title>
+    <rdf:Alt>
+     <rdf:li xml:lang="x-default">title</rdf:li>
+    </rdf:Alt>
+   </dc:title>
+  </rdf:Description>
+ </rdf:RDF>
+</x:xmpmeta>

@@ -25,6 +25,10 @@ public interface Photo {
 	TagSet getTagSet();
 
 	Instant getDateTimeTaken();
+	
+	default Integer getRating() {
+		return null;
+	}
 
 	default LocalDate getDateTaken() {
 		// return getDateTimeTaken().toLocalDate();
