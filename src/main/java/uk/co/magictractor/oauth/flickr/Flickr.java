@@ -1,10 +1,8 @@
 package uk.co.magictractor.oauth.flickr;
 
-import java.lang.reflect.Field;
 import java.time.Instant;
 import java.time.LocalDateTime;
 
-import com.google.gson.FieldNamingStrategy;
 import com.google.gson.GsonBuilder;
 
 import uk.co.magictractor.oauth.api.OAuth1ServiceProvider;

@@ -7,9 +7,7 @@ import java.net.URL;
 import java.nio.file.Paths;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
-import java.util.concurrent.TimeUnit;
 
-import org.assertj.core.api.ZonedDateTimeAssert;
 import org.junit.jupiter.api.Test;
 
 import uk.co.magictractor.oauth.common.Photo;

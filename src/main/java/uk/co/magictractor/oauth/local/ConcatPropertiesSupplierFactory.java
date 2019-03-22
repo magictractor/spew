@@ -8,7 +8,6 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 
 import uk.co.magictractor.oauth.common.TagSet;
-import uk.co.magictractor.oauth.local.PropertySuppliedPhoto.PhotoPropertiesSupplier;
 
 public class ConcatPropertiesSupplierFactory implements PhotoPropertiesSupplierFactory {
 

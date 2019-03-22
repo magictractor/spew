@@ -2,7 +2,6 @@ package uk.co.magictractor.oauth.local;
 
 import java.time.Instant;
 import java.util.Iterator;
-import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import uk.co.magictractor.oauth.common.Photo;
@@ -167,11 +166,6 @@ public abstract class PropertySuppliedPhoto implements Photo {
 		}
 
 		return bestPropertyValue;
-	}
-
-	// Supplier with a description for logging
-	public static interface PhotoPropertiesSupplier<T> extends Supplier<T> {
-		String getDescription();
 	}
 
 	// For simple implementations - just unit tests - move to a test util?

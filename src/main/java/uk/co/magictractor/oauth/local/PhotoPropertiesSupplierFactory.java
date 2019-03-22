@@ -4,7 +4,6 @@ import java.time.Instant;
 import java.util.stream.Stream;
 
 import uk.co.magictractor.oauth.common.TagSet;
-import uk.co.magictractor.oauth.local.PropertySuppliedPhoto.PhotoPropertiesSupplier;
 
 /**
  * Implementations may return null, which will result in warnings. Use this for

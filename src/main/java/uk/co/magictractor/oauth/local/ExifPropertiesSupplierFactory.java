@@ -1,5 +1,6 @@
 package uk.co.magictractor.oauth.local;
 
+import static uk.co.magictractor.oauth.local.ConvertedPhotoPropertiesSupplier.asInstant;
 import static uk.co.magictractor.oauth.local.ConvertedPhotoPropertiesSupplier.asInteger;
 
 import java.io.IOException;
@@ -16,7 +17,6 @@ import com.drew.metadata.xmp.XmpDirectory;
 import com.google.common.collect.Iterables;
 
 import uk.co.magictractor.oauth.common.TagSet;
-import uk.co.magictractor.oauth.local.PropertySuppliedPhoto.PhotoPropertiesSupplier;
 
 public class ExifPropertiesSupplierFactory implements PhotoPropertiesSupplierFactory {
 
@@ -26,7 +26,6 @@ public class ExifPropertiesSupplierFactory implements PhotoPropertiesSupplierFac
 
 	public ExifPropertiesSupplierFactory(Path path) {
 		this.path = path;
-		// TODO! init on demand
 		init();
 	}
 
@@ -119,11 +118,9 @@ public class ExifPropertiesSupplierFactory implements PhotoPropertiesSupplierFac
 
 	@Override
 	public Stream<PhotoPropertiesSupplier<Instant>> getDateTimeTakenPropertyValueSuppliers() {
-		// TODO! what's the difference between original and digitized?
-		// return Arrays.asList(new
-		// ExifValueStringSupplier(ExifSubIFDDirectory.TAG_DATETIME_ORIGINAL));
-// TODO! null so that a warning is logged until impl is added
-		return null;
+		// TODO! time zone? param of getDateOriginal
+		return Stream.of(asInstant(PhotoPropertiesSupplier.of(() -> exif.getDateOriginal(),
+				exif.getTagName(ExifSubIFDDirectory.TAG_DATETIME_ORIGINAL))));
 	}
 
 	@Override
@@ -133,8 +130,7 @@ public class ExifPropertiesSupplierFactory implements PhotoPropertiesSupplierFac
 
 	@Override
 	public Stream<PhotoPropertiesSupplier<String>> getShutterSpeedPropertyValueSuppliers() {
-		// return Stream.of(new ExifStringValueSupplier(ExifSubIFDDirectory.TAG_SHUTTER_SPEED)); // needs conversion
-		return Stream.of(new ExifStringValueSupplier(ExifSubIFDDirectory.TAG_EXPOSURE_TIME)); 
+		return Stream.of(new ExifStringValueSupplier(ExifSubIFDDirectory.TAG_EXPOSURE_TIME));
 	}
 
 	@Override
@@ -157,6 +153,8 @@ public class ExifPropertiesSupplierFactory implements PhotoPropertiesSupplierFac
 		return Stream.of(new ExifIntegerValueSupplier(ExifSubIFDDirectory.TAG_EXIF_IMAGE_HEIGHT));
 	}
 
+	// TODO! tidy these suppliers, as done for sidecar
+
 	public abstract class ExifValueSupplier<T> implements PhotoPropertiesSupplier<T> {
 		protected final int tagType;
 
@@ -166,7 +164,7 @@ public class ExifPropertiesSupplierFactory implements PhotoPropertiesSupplierFac
 
 		@Override
 		public final String getDescription() {
-			return exif.getDescription(tagType);
+			return exif.getTagName(tagType);
 		}
 	}
 

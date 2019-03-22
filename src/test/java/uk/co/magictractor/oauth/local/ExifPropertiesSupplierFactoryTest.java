@@ -5,6 +5,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.net.URI;
 import java.net.URL;
 import java.nio.file.Paths;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 
 import org.junit.jupiter.api.Test;
 
@@ -22,6 +24,8 @@ public class ExifPropertiesSupplierFactoryTest {
 		// DPP allows ratings to be modified, but not title and description.
 		assertThat(photo.getTitle()).isNull();
 		assertThat(photo.getDescription()).isNull();
+		// TODO! better assert method??
+		assertThat(photo.getDateTimeTaken()).isEqualTo(ZonedDateTime.of(2018, 7, 26, 14, 42, 25, 0 , ZoneOffset.UTC).toInstant());
 		assertThat(photo.getShutterSpeed()).isEqualTo("1/200");
 		assertThat(photo.getAperture()).isEqualTo("5.6");
 		assertThat(photo.getIso()).isEqualTo(125);

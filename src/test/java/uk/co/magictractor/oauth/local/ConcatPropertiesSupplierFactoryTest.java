@@ -7,7 +7,6 @@ import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
 
 import uk.co.magictractor.oauth.common.Photo;
-import uk.co.magictractor.oauth.local.PropertySuppliedPhoto.PhotoPropertiesSupplier;
 
 public class ConcatPropertiesSupplierFactoryTest {
 

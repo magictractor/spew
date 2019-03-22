@@ -1,13 +1,11 @@
 package uk.co.magictractor.oauth.local;
 
+import java.time.Instant;
+import java.util.Date;
 import java.util.List;
 import java.util.function.Function;
-import java.util.stream.Stream;
 
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Iterators;
-
-import uk.co.magictractor.oauth.local.PropertySuppliedPhoto.PhotoPropertiesSupplier;
 
 public class ConvertedPhotoPropertiesSupplier<FROM, TO> implements PhotoPropertiesSupplier<TO> {
 
@@ -33,6 +31,10 @@ public class ConvertedPhotoPropertiesSupplier<FROM, TO> implements PhotoProperti
 	public static PhotoPropertiesSupplier<Integer> asInteger(PhotoPropertiesSupplier<String> stringSupplier) {
 		return new ConvertedPhotoPropertiesSupplier<String, Integer>(stringSupplier,
 				(string) -> Integer.valueOf(string));
+	}
+
+	public static PhotoPropertiesSupplier<Instant> asInstant(PhotoPropertiesSupplier<Date> dateSupplier) {
+		return new ConvertedPhotoPropertiesSupplier<Date, Instant>(dateSupplier, (date) -> date.toInstant());
 	}
 
 	public static <T> PhotoPropertiesSupplier<T> onlyElement(PhotoPropertiesSupplier<List<T>> listSupplier) {

@@ -25,7 +25,6 @@ import com.adobe.xmp.properties.XMPPropertyInfo;
 import com.google.common.collect.Streams;
 
 import uk.co.magictractor.oauth.common.TagSet;
-import uk.co.magictractor.oauth.local.PropertySuppliedPhoto.PhotoPropertiesSupplier;
 import uk.co.magictractor.oauth.util.ExceptionUtil;
 
 /**
