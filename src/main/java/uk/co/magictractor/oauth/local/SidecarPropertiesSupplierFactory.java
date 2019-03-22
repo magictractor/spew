@@ -8,11 +8,14 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Instant;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.adobe.xmp.XMPDateTime;
 import com.adobe.xmp.XMPException;
 import com.adobe.xmp.XMPMeta;
 import com.adobe.xmp.XMPMetaFactory;
@@ -67,7 +70,8 @@ public class SidecarPropertiesSupplierFactory implements PhotoPropertiesSupplier
 
 	@Override
 	public Stream<PhotoPropertiesSupplier<String>> getDescriptionPropertyValueSuppliers() {
-		return Stream.of(createLocalizedTextSupplier(DC, "description"), createLocalizedTextSupplier(EXIF, "UserComment"));
+		return Stream.of(createLocalizedTextSupplier(DC, "description"),
+				createLocalizedTextSupplier(EXIF, "UserComment"));
 	}
 
 	@Override
@@ -78,8 +82,9 @@ public class SidecarPropertiesSupplierFactory implements PhotoPropertiesSupplier
 
 	@Override
 	public Stream<PhotoPropertiesSupplier<Instant>> getDateTimeTakenPropertyValueSuppliers() {
-		// TODO implement this?
-		return null;
+		return Stream.of(
+				// createInstantSupplier(EXIF, "DateTimeOriginal"),
+				createInstantSupplier(XMP, "CreateDate"));
 	}
 
 	@Override
@@ -122,21 +127,40 @@ public class SidecarPropertiesSupplierFactory implements PhotoPropertiesSupplier
 		return new XmpMetaPropertyValueSupplier<>(namespace, propertyName, (n, p) -> xmpMeta.getPropertyInteger(n, p));
 	}
 
+	private XmpMetaPropertyValueSupplier<Instant> createInstantSupplier(Namespace namespace, String propertyName) {
+		return new XmpMetaPropertyValueSupplier<>(namespace, propertyName, this::getInstant);
+	}
+
+	private Instant getInstant(String namespaceUri, String propertyName) throws XMPException {
+		XMPDateTime dt = xmpMeta.getPropertyDate(namespaceUri, propertyName);
+		if (dt == null) {
+			return null;
+		}
+
+		// TODO! find and cite source which verifies this is always UTC
+		return ZonedDateTime.of(dt.getYear(), dt.getMonth(), dt.getDay(), dt.getHour(), dt.getMinute(), dt.getSecond(),
+				dt.getNanoSecond(), ZoneOffset.UTC).toInstant();
+	}
+
 	private XmpMetaPropertyValueSupplier<List<String>> createListSupplier(Namespace namespace, String propertyName) {
-		return new XmpMetaPropertyValueSupplier<>(namespace, propertyName, (n, p) -> {
-			@SuppressWarnings("unchecked")
-			Iterator<XMPPropertyInfo> iter = xmpMeta.iterator(namespace.uri, propertyName,
-					new IteratorOptions().setJustChildren(true));
-			return Streams.stream(iter).map(XMPPropertyInfo::getValue).collect(Collectors.toList());
-		});
+		return new XmpMetaPropertyValueSupplier<>(namespace, propertyName, this::getList);
+	}
+
+	private List<String> getList(String namespaceUri, String propertyName) throws XMPException {
+		@SuppressWarnings("unchecked")
+		Iterator<XMPPropertyInfo> iter = xmpMeta.iterator(namespaceUri, propertyName,
+				new IteratorOptions().setJustChildren(true));
+		return Streams.stream(iter).map(XMPPropertyInfo::getValue).collect(Collectors.toList());
 	}
 
 	// Title, description etc may have multiple values for different locales.
 	private XmpMetaPropertyValueSupplier<String> createLocalizedTextSupplier(Namespace namespace, String propertyName) {
-		return new XmpMetaPropertyValueSupplier<>(namespace, propertyName, (n, p) -> {
-			XMPProperty localizedText = xmpMeta.getLocalizedText(namespace.uri, propertyName, null, "x-default");
-			return localizedText == null ? null : localizedText.getValue();
-		});
+		return new XmpMetaPropertyValueSupplier<>(namespace, propertyName, this::getLocalizedText);
+	}
+
+	private String getLocalizedText(String namespaceUri, String propertyName) throws XMPException {
+		XMPProperty localizedText = xmpMeta.getLocalizedText(namespaceUri, propertyName, null, "x-default");
+		return localizedText == null ? null : localizedText.getValue();
 	}
 
 	private class XmpMetaPropertyValueSupplier<T> implements PhotoPropertiesSupplier<T> {
