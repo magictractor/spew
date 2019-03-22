@@ -67,7 +67,7 @@ public class FlickrPhotoIterator extends PageCountServiceIterator<FlickrPhoto> {
 		FlickrPhotoIterator iter = new FlickrPhotoIterator(MyFlickrApp.getInstance());
 		while (iter.hasNext()) {
 			FlickrPhoto photo = iter.next();
-			System.err.println(photo.getTitle() + "  " + photo.getWidth() + "x" + photo.getHeight());
+			System.err.println(photo.getTitle() + "  " + photo.getDateTimeTaken());
 		}
 	}
 }

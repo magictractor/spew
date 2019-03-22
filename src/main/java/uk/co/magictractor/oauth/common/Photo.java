@@ -48,12 +48,16 @@ public interface Photo {
 
 	default LocalDate getDateUpload() {
 		// return getDateTimeUpload().toLocalDate();
-		return getDateTimeUpload() == null ? null : LocalDate.from(getDateTimeUpload());
+		// return getDateTimeUpload() == null ? null : LocalDate.from(getDateTimeUpload());
+		return getDateTimeUpload() == null ? null
+				: LocalDateTime.ofInstant(getDateTimeUpload(), ZoneId.systemDefault()).toLocalDate();
 	}
 
 	default LocalTime getTimeUpload() {
 		// return getDateTimeUpload().toLocalTime();
-		return getDateTimeUpload() == null ? null : LocalTime.from(getDateTimeUpload());
+		// return getDateTimeUpload() == null ? null : LocalTime.from(getDateTimeUpload());
+		return getDateTimeUpload() == null ? null
+				: LocalDateTime.ofInstant(getDateTimeUpload(), ZoneId.systemDefault()).toLocalTime();
 	}
 
 	default String getShutterSpeed() {

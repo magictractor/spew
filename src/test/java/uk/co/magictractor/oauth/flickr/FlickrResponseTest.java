@@ -5,6 +5,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.io.InputStream;
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 
 import org.junit.jupiter.api.Test;
 
@@ -48,8 +50,8 @@ public class FlickrResponseTest {
 		// "datetaken": "2018-08-09 16:08:38",
 		// assertThat(photo.dateTaken).isEqualTo(LocalDateTime.of(2018, 8, 9, 16, 8,
 		// 38));
-		assertThat(photo.getDateTaken()).isEqualTo(LocalDateTime.of(2018, 6, 23, 13, 52, 33));
-		assertThat(photo.getDateUpload()).isEqualTo(Instant.ofEpochMilli(1534007093L));
+		assertThat(photo.getDateTimeTaken()).isEqualTo(ZonedDateTime.of(2018, 6, 23, 13, 52, 33, 0, ZoneOffset.UTC).toInstant());
+		assertThat(photo.getDateTimeUpload()).isEqualTo(Instant.ofEpochMilli(1534007093L));
 	}
 
 	private OAuthResponse buildResponse(String fileName) {

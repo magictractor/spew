@@ -25,21 +25,23 @@ public class FlickrPhoto implements Photo {
 	private TagSet tags;
 	// these are not Flickr's auto tags, they are tags using "x:y=z" syntax
 	private TagSet machineTagSet;
-	private boolean isPublic;
-	private boolean isFriend;
-	private boolean isFamily;
+	private boolean ispublic;
+	private boolean isfriend;
+	private boolean isfamily;
 //	public Boolean ispublic;
 //	public boolean isfriend;
 //	public boolean isfamily;
 	// ...
 
 	// Flickr does not record the time zone for dateTaken
-	private LocalDateTime dateTaken;
+	// Changing the user's timezone does not change this value
+	// TODO! test values in exif and uploaded to Flickr when changing time zones in camera settings
+	private LocalDateTime datetaken;
 	// private Instant dateTaken;
 	// public Instant dateTaken;
 	// dateupload=1534007093, datetaken=2018-06-23 13:52:33,
 	// datetakengranularity=0.0, datetakenunknown=0.0
-	private Instant dateUpload;
+	private Instant dateupload;
 	// original names a
 	private Integer width_o;
 	private Integer height_o;
@@ -71,27 +73,30 @@ public class FlickrPhoto implements Photo {
 		return tags;
 	}
 
+	// https://www.flickr.com/profile_edit.gne?from=personal to change user's
+	// timezone
 	@Override
 	public Instant getDateTimeTaken() {
 		// return dateTaken;
 		// TODO! can we get the user's Flcikr timezone rather than hardcoding UTC
-		return dateTaken.toInstant(ZoneOffset.UTC);
+		// what comes back from Flickr?
+		return datetaken == null ? null : datetaken.toInstant(ZoneOffset.UTC);
 	}
 
 	public Instant getDateTimeUpload() {
-		return dateUpload;
+		return dateupload;
 	}
 
 	public boolean isPublic() {
-		return isPublic;
+		return ispublic;
 	}
 
 	public boolean isFamily() {
-		return isFamily;
+		return isfamily;
 	}
 
 	public boolean isFriend() {
-		return isFriend;
+		return isfriend;
 	}
 
 	@Override
