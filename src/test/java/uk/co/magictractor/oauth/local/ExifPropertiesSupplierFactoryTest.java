@@ -26,12 +26,6 @@ public class ExifPropertiesSupplierFactoryTest {
 	private Photo readPhoto(String resourceName) {
 		URL resourceUrl = getClass().getResource(resourceName);
 		URI resourceUri = ExceptionUtil.call(() -> resourceUrl.toURI());
-		return new PropertySuppliedPhoto(Paths.get(resourceUri)) {
-
-			@Override
-			protected PhotoPropertiesSupplierFactory getPhotoPropertiesSupplierFactory() {
-				return new ExifPropertiesSupplierFactory(getPath());
-			}
-		};
+		return PropertySuppliedPhoto.forFactory(new ExifPropertiesSupplierFactory(Paths.get(resourceUri)));
 	}
 }

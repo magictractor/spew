@@ -14,6 +14,8 @@ public class LocalPhoto extends PropertySuppliedPhoto {
 	private static final List<String> PHOTO_SUFFIXES = Arrays.asList("jpg", "rw2", "cr2");
 	private static final List<String> NON_PHOTO_SUFFIXES = Arrays.asList("xmp", "mp4");
 
+	private final Path path;
+
 	// TODO! could have two methods - one just using file name, another using magic
 	// to get file type?
 	// see FileTypeDetector
@@ -31,23 +33,31 @@ public class LocalPhoto extends PropertySuppliedPhoto {
 	}
 
 	public LocalPhoto(Path path) {
-		super(path);
+		this.path = path;
 	}
 
 	private Path findSidecar() {
-		String sidecarName = getPath().getFileName().toString() + ".xmp";
+		String sidecarName = path.getFileName().toString() + ".xmp";
 
 		// TODO! could also handle replacing extension with ".xmp" as well as appending
 		// ".xmp"
-		Path sidecarPath = getPath().resolveSibling(sidecarName);
+		Path sidecarPath = path.resolveSibling(sidecarName);
 
 		return java.nio.file.Files.exists(sidecarPath) ? sidecarPath : null;
 	}
 
 	@Override
 	protected PhotoPropertiesSupplierFactory getPhotoPropertiesSupplierFactory() {
-		// TODO! sidecar props first
-		return new ExifPropertiesSupplierFactory(getPath());
+		ExifPropertiesSupplierFactory exifProperties = new ExifPropertiesSupplierFactory(path);
+		Path sidecar = findSidecar();
+		if (sidecar == null) {
+			// No sidecar, just get properties from the image file.
+			return exifProperties;
+		}
+
+		SidecarPropertiesSupplierFactory sidecarProperties = new SidecarPropertiesSupplierFactory(sidecar);
+		// Properties in the sidecar are read before properties in the image file.
+		return new ConcatPropertiesSupplierFactory(sidecarProperties, exifProperties);
 	}
 
 }

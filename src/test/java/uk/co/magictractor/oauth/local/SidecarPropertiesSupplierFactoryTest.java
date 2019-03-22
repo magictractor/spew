@@ -9,9 +9,6 @@ import java.nio.file.Paths;
 import org.junit.jupiter.api.Test;
 
 import uk.co.magictractor.oauth.common.Photo;
-import uk.co.magictractor.oauth.local.PhotoPropertiesSupplierFactory;
-import uk.co.magictractor.oauth.local.PropertySuppliedPhoto;
-import uk.co.magictractor.oauth.local.SidecarPropertiesSupplierFactory;
 import uk.co.magictractor.oauth.util.ExceptionUtil;
 
 public class SidecarPropertiesSupplierFactoryTest {
@@ -46,12 +43,6 @@ public class SidecarPropertiesSupplierFactoryTest {
 	private Photo readSidecar(String resourceName) {
 		URL resourceUrl = getClass().getResource(resourceName);
 		URI resourceUri = ExceptionUtil.call(() -> resourceUrl.toURI());
-		return new PropertySuppliedPhoto(Paths.get(resourceUri)) {
-
-			@Override
-			protected PhotoPropertiesSupplierFactory getPhotoPropertiesSupplierFactory() {
-				return new SidecarPropertiesSupplierFactory(getPath());
-			}
-		};
+		return PropertySuppliedPhoto.forFactory(new SidecarPropertiesSupplierFactory(Paths.get(resourceUri)));
 	}
 }

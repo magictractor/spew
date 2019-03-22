@@ -1,6 +1,5 @@
 package uk.co.magictractor.oauth.local;
 
-import java.nio.file.Path;
 import java.time.Instant;
 import java.util.Iterator;
 import java.util.function.Supplier;
@@ -9,10 +8,11 @@ import java.util.stream.Stream;
 import uk.co.magictractor.oauth.common.Photo;
 import uk.co.magictractor.oauth.common.TagSet;
 
-// Common code for images and sidecars
+/**
+ * For photographs where title, description, rating etc can be derived from
+ * multiple sources such as exif data in images and sidecar data.
+ */
 public abstract class PropertySuppliedPhoto implements Photo {
-
-	private final Path path;
 
 	private boolean propertyValuesRead;
 	private String title;
@@ -27,23 +27,25 @@ public abstract class PropertySuppliedPhoto implements Photo {
 
 	private Integer iso;
 
-	protected PropertySuppliedPhoto(Path path) {
-		this.path = path;
-	}
-
-	protected Path getPath() {
-		return path;
-	}
+//	protected PropertySuppliedPhoto(Path path) {
+//		this.path = path;
+//	}
+//
+//	protected Path getPath() {
+//		return path;
+//	}
 
 	@Override
 	public String getServiceProviderId() {
-		// Could use absolute path here
+		// Could use absolute path here - or property providers
 		return null;
 	}
 
 	@Override
 	public String getFileName() {
-		return path.getFileName().toString();
+		// TODO! use property providers
+		// return path.getFileName().toString();
+		return null;
 	}
 
 	@Override
@@ -164,18 +166,19 @@ public abstract class PropertySuppliedPhoto implements Photo {
 		return bestPropertyValue;
 	}
 
-//	protected abstract List<PhotoPropertiesSupplier<String>> getTitlePropertyValueSuppliers();
-//
-//	protected abstract List<PhotoPropertiesSupplier<String>> getDescriptionPropertyValueSuppliers();
-//
-//	protected abstract List<PhotoPropertiesSupplier<TagSet>> getTagSetPropertyValueSuppliers();
-//
-//	protected abstract List<PhotoPropertiesSupplier<Instant>> getDateTimeTakenPropertyValueSuppliers();
-//
-//	protected abstract List<PhotoPropertiesSupplier<Integer>> getRatingPropertyValueSuppliers();
-
 	// Supplier with a description for logging
 	public static interface PhotoPropertiesSupplier<T> extends Supplier<T> {
 		String getDescription();
+	}
+
+	// For simple implementations - just unit tests??
+	public static PropertySuppliedPhoto forFactory(PhotoPropertiesSupplierFactory factory) {
+		return new PropertySuppliedPhoto() {
+
+			@Override
+			protected PhotoPropertiesSupplierFactory getPhotoPropertiesSupplierFactory() {
+				return factory;
+			}
+		};
 	}
 }

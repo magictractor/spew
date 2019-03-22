@@ -2,6 +2,7 @@ package uk.co.magictractor.oauth.local;
 
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Stream;
@@ -11,8 +12,15 @@ import uk.co.magictractor.oauth.local.PropertySuppliedPhoto.PhotoPropertiesSuppl
 
 public class ConcatPropertiesSupplierFactory implements PhotoPropertiesSupplierFactory {
 
-	// TODO! streams rather than lists??
 	private final List<PhotoPropertiesSupplierFactory> wrapped = new ArrayList<>();
+
+	public ConcatPropertiesSupplierFactory(PhotoPropertiesSupplierFactory... factories) {
+		wrapped.addAll(Arrays.asList(factories));
+	}
+
+	public void add(PhotoPropertiesSupplierFactory factory) {
+		wrapped.add(factory);
+	}
 
 	@Override
 	public Stream<PhotoPropertiesSupplier<String>> getTitlePropertyValueSuppliers() {
@@ -41,9 +49,6 @@ public class ConcatPropertiesSupplierFactory implements PhotoPropertiesSupplierF
 
 	private <T> Stream<PhotoPropertiesSupplier<T>> concat(
 			Function<PhotoPropertiesSupplierFactory, Stream<PhotoPropertiesSupplier<T>>> method) {
-		// return
-		// wrapped.stream().map(method).flatMap(Collection::stream).collect(Collectors.toList());
 		return wrapped.stream().map(method).flatMap(i -> i);
-		// throw new UnsupportedOperationException();
 	}
 }
