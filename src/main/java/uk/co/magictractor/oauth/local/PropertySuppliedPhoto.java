@@ -2,8 +2,9 @@ package uk.co.magictractor.oauth.local;
 
 import java.nio.file.Path;
 import java.time.Instant;
-import java.util.List;
+import java.util.Iterator;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 import uk.co.magictractor.oauth.common.Photo;
 import uk.co.magictractor.oauth.common.TagSet;
@@ -120,7 +121,7 @@ public abstract class PropertySuppliedPhoto implements Photo {
 	protected abstract PhotoPropertiesSupplierFactory getPhotoPropertiesSupplierFactory();
 
 	// First non-null value is best.
-	private <T> T getBestPropertyValue(List<PhotoPropertiesSupplier<T>> propertyValueSuppliers, String description) {
+	private <T> T getBestPropertyValue(Stream<PhotoPropertiesSupplier<T>> propertyValueSuppliers, String description) {
 		// List<SuppierWithDescription<T>> propertyValueSuppliers =
 		// getPropertyValueSuppliers(photoPropertyType);
 
@@ -134,7 +135,14 @@ public abstract class PropertySuppliedPhoto implements Photo {
 		}
 
 		T bestPropertyValue = null;
-		for (PhotoPropertiesSupplier<T> propertyValueSupplier : propertyValueSuppliers) {
+		// propertyValueSuppliers.iterator()
+		// for (PhotoPropertiesSupplier<T> propertyValueSupplier :
+		// propertyValueSuppliers) {
+		// propertyValueSuppliers.forEach((propertyValueSupplier) -> {
+
+		Iterator<PhotoPropertiesSupplier<T>> iter = propertyValueSuppliers.iterator();
+		while (iter.hasNext()) {
+			PhotoPropertiesSupplier<T> propertyValueSupplier = iter.next();
 			T value = propertyValueSupplier.get();
 
 			System.err.println(propertyValueSupplier.getDescription() + " -> " + value);
@@ -150,6 +158,7 @@ public abstract class PropertySuppliedPhoto implements Photo {
 					System.err.println("Different value from " + propertyValueSupplier.getDescription());
 				}
 			}
+			// });
 		}
 
 		return bestPropertyValue;

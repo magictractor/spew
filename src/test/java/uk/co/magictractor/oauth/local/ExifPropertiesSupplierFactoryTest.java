@@ -9,9 +9,6 @@ import java.nio.file.Paths;
 import org.junit.jupiter.api.Test;
 
 import uk.co.magictractor.oauth.common.Photo;
-import uk.co.magictractor.oauth.local.PhotoPropertiesSupplierFactory;
-import uk.co.magictractor.oauth.local.PropertySuppliedPhoto;
-import uk.co.magictractor.oauth.local.SidecarPropertiesSupplierFactory;
 import uk.co.magictractor.oauth.util.ExceptionUtil;
 
 public class ExifPropertiesSupplierFactoryTest {

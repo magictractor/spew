@@ -5,10 +5,8 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Instant;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Iterator;
-import java.util.List;
+import java.util.stream.Stream;
 
 import com.adobe.xmp.XMPException;
 import com.adobe.xmp.XMPMeta;
@@ -56,30 +54,31 @@ public class SidecarPropertiesSupplierFactory implements PhotoPropertiesSupplier
 	}
 
 	@Override
-	public List<PhotoPropertiesSupplier<String>> getTitlePropertyValueSuppliers() {
-		return Arrays.asList(new XmpMetaLocalizedTextPropertyValueSupplier(DC, "title"));
+	public Stream<PhotoPropertiesSupplier<String>> getTitlePropertyValueSuppliers() {
+		return Stream.of(new XmpMetaLocalizedTextPropertyValueSupplier(DC, "title"));
 	}
 
 	@Override
-	public List<PhotoPropertiesSupplier<String>> getDescriptionPropertyValueSuppliers() {
-		return Arrays.asList(new XmpMetaLocalizedTextPropertyValueSupplier(DC, "description"),
+	public Stream<PhotoPropertiesSupplier<String>> getDescriptionPropertyValueSuppliers() {
+		return Stream.of(new XmpMetaLocalizedTextPropertyValueSupplier(DC, "description"),
 				new XmpMetaLocalizedTextPropertyValueSupplier(EXIF, "UserComment"));
 	}
 
 	@Override
-	public List<PhotoPropertiesSupplier<TagSet>> getTagSetPropertyValueSuppliers() {
-		// TODO Auto-generated method stub
+	public Stream<PhotoPropertiesSupplier<TagSet>> getTagSetPropertyValueSuppliers() {
+		// TODO implement this
 		return null;
 	}
 
 	@Override
-	public List<PhotoPropertiesSupplier<Instant>> getDateTimeTakenPropertyValueSuppliers() {
-		return Collections.emptyList();
+	public Stream<PhotoPropertiesSupplier<Instant>> getDateTimeTakenPropertyValueSuppliers() {
+		// TODO implement this?
+		return null;
 	}
 
 	@Override
-	public List<PhotoPropertiesSupplier<Integer>> getRatingPropertyValueSuppliers() {
-		return Arrays.asList(new XmpMetaIntegerPropertyValueSupplier(XMP, "Rating"));
+	public Stream<PhotoPropertiesSupplier<Integer>> getRatingPropertyValueSuppliers() {
+		return Stream.of(new XmpMetaIntegerPropertyValueSupplier(XMP, "Rating"));
 	}
 
 	private abstract class XmpMetaPropertyValueSupplier<T> implements PhotoPropertiesSupplier<T> {

@@ -5,9 +5,7 @@ import static uk.co.magictractor.oauth.local.ConvertedPhotoPropertiesSupplier.as
 import java.io.IOException;
 import java.nio.file.Path;
 import java.time.Instant;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.stream.Stream;
 
 import com.drew.imaging.ImageMetadataReader;
 import com.drew.imaging.ImageProcessingException;
@@ -100,34 +98,32 @@ public class ExifPropertiesSupplierFactory implements PhotoPropertiesSupplierFac
 	}
 
 	@Override
-	public List<PhotoPropertiesSupplier<String>> getTitlePropertyValueSuppliers() {
-		// return Arrays.asList(new ExifValueSupplier(ExifSubIFDDirectory.tit));
-		return Collections.emptyList();
+	public Stream<PhotoPropertiesSupplier<String>> getTitlePropertyValueSuppliers() {
+		return Stream.empty();
 	}
 
 	@Override
-	public List<PhotoPropertiesSupplier<String>> getDescriptionPropertyValueSuppliers() {
-		return Collections.emptyList();
+	public Stream<PhotoPropertiesSupplier<String>> getDescriptionPropertyValueSuppliers() {
+		return Stream.empty();
 	}
 
 	@Override
-	public List<PhotoPropertiesSupplier<TagSet>> getTagSetPropertyValueSuppliers() {
-		// TODO Auto-generated method stub
-		return null;
+	public Stream<PhotoPropertiesSupplier<TagSet>> getTagSetPropertyValueSuppliers() {
+		return Stream.empty();
 	}
 
 	@Override
-	public List<PhotoPropertiesSupplier<Instant>> getDateTimeTakenPropertyValueSuppliers() {
+	public Stream<PhotoPropertiesSupplier<Instant>> getDateTimeTakenPropertyValueSuppliers() {
 		// TODO! what's the difference between original and digitized?
 		// return Arrays.asList(new
 		// ExifValueStringSupplier(ExifSubIFDDirectory.TAG_DATETIME_ORIGINAL));
-
+// TODO! null so that a warning is logged until impl is added
 		return null;
 	}
 
 	@Override
-	public List<PhotoPropertiesSupplier<Integer>> getRatingPropertyValueSuppliers() {
-		return Arrays.asList(asInteger(new XmpValueSupplier("xmp:Rating")));
+	public Stream<PhotoPropertiesSupplier<Integer>> getRatingPropertyValueSuppliers() {
+		return Stream.of(asInteger(new XmpValueSupplier("xmp:Rating")));
 	}
 
 	public abstract class ExifValueSupplier<T> implements PhotoPropertiesSupplier<T> {
