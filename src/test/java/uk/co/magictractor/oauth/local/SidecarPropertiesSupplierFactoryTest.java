@@ -1,4 +1,4 @@
-package uk.co.magictractor.oauth.local.sidecar;
+package uk.co.magictractor.oauth.local;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -9,9 +9,12 @@ import java.nio.file.Paths;
 import org.junit.jupiter.api.Test;
 
 import uk.co.magictractor.oauth.common.Photo;
+import uk.co.magictractor.oauth.local.PhotoPropertiesSupplierFactory;
+import uk.co.magictractor.oauth.local.PropertySuppliedPhoto;
+import uk.co.magictractor.oauth.local.SidecarPropertiesSupplierFactory;
 import uk.co.magictractor.oauth.util.ExceptionUtil;
 
-public class LocalSidecarTest {
+public class SidecarPropertiesSupplierFactoryTest {
 
 	@Test
 	public void testDigikamSidecar() {
@@ -43,6 +46,12 @@ public class LocalSidecarTest {
 	private Photo readSidecar(String resourceName) {
 		URL resourceUrl = getClass().getResource(resourceName);
 		URI resourceUri = ExceptionUtil.call(() -> resourceUrl.toURI());
-		return new LocalSidecar(Paths.get(resourceUri));
+		return new PropertySuppliedPhoto(Paths.get(resourceUri)) {
+
+			@Override
+			protected PhotoPropertiesSupplierFactory getPhotoPropertiesSupplierFactory() {
+				return new SidecarPropertiesSupplierFactory(getPath());
+			}
+		};
 	}
 }

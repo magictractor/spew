@@ -9,7 +9,7 @@ import uk.co.magictractor.oauth.common.Photo;
 import uk.co.magictractor.oauth.common.TagSet;
 
 // Common code for images and sidecars
-public abstract class BaseLocalPhoto implements Photo {
+public abstract class PropertySuppliedPhoto implements Photo {
 
 	private final Path path;
 
@@ -26,7 +26,7 @@ public abstract class BaseLocalPhoto implements Photo {
 
 	private Integer iso;
 
-	protected BaseLocalPhoto(Path path) {
+	protected PropertySuppliedPhoto(Path path) {
 		this.path = path;
 	}
 
@@ -81,7 +81,7 @@ public abstract class BaseLocalPhoto implements Photo {
 		ensurePropertyValuesRead();
 		return rating;
 	}
-	
+
 	@Override
 	public String getShutterSpeed() {
 		ensurePropertyValuesRead();
@@ -107,24 +107,20 @@ public abstract class BaseLocalPhoto implements Photo {
 	}
 
 	private void initPropertyValues() {
-		preInit();
-		title = getBestPropertyValue(getTitlePropertyValueSuppliers(), "title");
-		description = getBestPropertyValue(getDescriptionPropertyValueSuppliers(), "description");
-		// TODO! could merge tags rather than getting best
-		tagSet = getBestPropertyValue(getTagSetPropertyValueSuppliers(), "tags");
-		dateTimeTaken = getBestPropertyValue(getDateTimeTakenPropertyValueSuppliers(), "date time taken");
-		rating = getBestPropertyValue(getRatingPropertyValueSuppliers(), "rating");
-		postInit();
+		PhotoPropertiesSupplierFactory supplierFactory = getPhotoPropertiesSupplierFactory();
+
+		title = getBestPropertyValue(supplierFactory.getTitlePropertyValueSuppliers(), "title");
+		description = getBestPropertyValue(supplierFactory.getDescriptionPropertyValueSuppliers(), "description");
+		tagSet = getBestPropertyValue(supplierFactory.getTagSetPropertyValueSuppliers(), "tags");
+		dateTimeTaken = getBestPropertyValue(supplierFactory.getDateTimeTakenPropertyValueSuppliers(),
+				"date time taken");
+		rating = getBestPropertyValue(supplierFactory.getRatingPropertyValueSuppliers(), "rating");
 	}
 
-	public void preInit() {
-	}
-
-	public void postInit() {
-	}
+	protected abstract PhotoPropertiesSupplierFactory getPhotoPropertiesSupplierFactory();
 
 	// First non-null value is best.
-	private <T> T getBestPropertyValue(List<SupplierWithDescription<T>> propertyValueSuppliers, String description) {
+	private <T> T getBestPropertyValue(List<PhotoPropertiesSupplier<T>> propertyValueSuppliers, String description) {
 		// List<SuppierWithDescription<T>> propertyValueSuppliers =
 		// getPropertyValueSuppliers(photoPropertyType);
 
@@ -134,7 +130,7 @@ public abstract class BaseLocalPhoto implements Photo {
 		}
 
 		T bestPropertyValue = null;
-		for (SupplierWithDescription<T> propertyValueSupplier : propertyValueSuppliers) {
+		for (PhotoPropertiesSupplier<T> propertyValueSupplier : propertyValueSuppliers) {
 			T value = propertyValueSupplier.get();
 
 			System.err.println(propertyValueSupplier.getDescription() + " -> " + value);
@@ -155,28 +151,18 @@ public abstract class BaseLocalPhoto implements Photo {
 		return bestPropertyValue;
 	}
 
-//	protected  <T> List<SuppierWithDescription<T>> getPropertyValueSuppliers(PhotoPropertyType photoPropertyType) {
-//		List<SuppierWithDescription<T>> suppliers;
-//		switch (photoPropertyType) {
-//		case Title:
-//			suppliers = getTitlePropertyValueSuppliers();
-//			default: 
-//				throw new IllegalStateException("Code needs to be modified to handle photo proprty type " + photoPropertyType);
-//		}
-//	}
-
-	protected abstract List<SupplierWithDescription<String>> getTitlePropertyValueSuppliers();
-
-	protected abstract List<SupplierWithDescription<String>> getDescriptionPropertyValueSuppliers();
-
-	protected abstract List<SupplierWithDescription<TagSet>> getTagSetPropertyValueSuppliers();
-
-	protected abstract List<SupplierWithDescription<Instant>> getDateTimeTakenPropertyValueSuppliers();
-
-	protected abstract List<SupplierWithDescription<Integer>> getRatingPropertyValueSuppliers();
+//	protected abstract List<PhotoPropertiesSupplier<String>> getTitlePropertyValueSuppliers();
+//
+//	protected abstract List<PhotoPropertiesSupplier<String>> getDescriptionPropertyValueSuppliers();
+//
+//	protected abstract List<PhotoPropertiesSupplier<TagSet>> getTagSetPropertyValueSuppliers();
+//
+//	protected abstract List<PhotoPropertiesSupplier<Instant>> getDateTimeTakenPropertyValueSuppliers();
+//
+//	protected abstract List<PhotoPropertiesSupplier<Integer>> getRatingPropertyValueSuppliers();
 
 	// Supplier with a description for logging
-	public static interface SupplierWithDescription<T> extends Supplier<T> {
+	public static interface PhotoPropertiesSupplier<T> extends Supplier<T> {
 		String getDescription();
 	}
 }

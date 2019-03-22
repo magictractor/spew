@@ -1,4 +1,4 @@
-package uk.co.magictractor.oauth.local.sidecar;
+package uk.co.magictractor.oauth.local;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -18,71 +18,71 @@ import com.adobe.xmp.properties.XMPProperty;
 import com.adobe.xmp.properties.XMPPropertyInfo;
 
 import uk.co.magictractor.oauth.common.TagSet;
-import uk.co.magictractor.oauth.local.BaseLocalPhoto;
+import uk.co.magictractor.oauth.local.PropertySuppliedPhoto.PhotoPropertiesSupplier;
 import uk.co.magictractor.oauth.util.ExceptionUtil;
 
 /**
+ * Photo properties read from a sidecar (.xmp) file.
+ * 
  * MetadataExtractor does not currently support reading values from sidecar
  * files.
  * 
  * Use Adobe's XMPMeta to read sidecar data, as suggested in
  * https://github.com/drewnoakes/metadata-extractor/issues/118.
  */
-public class LocalSidecar extends BaseLocalPhoto {
+public class SidecarPropertiesSupplierFactory implements PhotoPropertiesSupplierFactory {
 
 	private static final String XMP = "http://ns.adobe.com/xap/1.0/";
 	private static final String DC = "http://purl.org/dc/elements/1.1/";
 	private static final String EXIF = "http://ns.adobe.com/exif/1.0/";
 
-	// Only non-null while properties are initialised, to reduce memory footprint.
+	private final Path path;
 	private XMPMeta xmpMeta;
 
-	public LocalSidecar(Path path) {
-		super(path);
+	public SidecarPropertiesSupplierFactory(Path path) {
+		this.path = path;
+		// TODO! init on demand
+		init();
 	}
 
-	public void preInit() {
-		ExceptionUtil.call(this::preInit0);
+	public void init() {
+		ExceptionUtil.call(this::init0);
 	}
 
-	private void preInit0() throws IOException, XMPException {
-		try (InputStream sidecarStream = Files.newInputStream(getPath())) {
+	private void init0() throws IOException, XMPException {
+		try (InputStream sidecarStream = Files.newInputStream(path)) {
 			xmpMeta = XMPMetaFactory.parse(sidecarStream);
 		}
 	}
 
-	public void postInit() {
-		xmpMeta = null;
-	}
-
 	@Override
-	protected List<SupplierWithDescription<String>> getTitlePropertyValueSuppliers() {
+	public List<PhotoPropertiesSupplier<String>> getTitlePropertyValueSuppliers() {
 		return Arrays.asList(new XmpMetaLocalizedTextPropertyValueSupplier(DC, "title"));
 	}
 
 	@Override
-	protected List<SupplierWithDescription<String>> getDescriptionPropertyValueSuppliers() {
+	public List<PhotoPropertiesSupplier<String>> getDescriptionPropertyValueSuppliers() {
 		return Arrays.asList(new XmpMetaLocalizedTextPropertyValueSupplier(DC, "description"),
 				new XmpMetaLocalizedTextPropertyValueSupplier(EXIF, "UserComment"));
 	}
 
 	@Override
-	protected List<SupplierWithDescription<TagSet>> getTagSetPropertyValueSuppliers() {
+	public List<PhotoPropertiesSupplier<TagSet>> getTagSetPropertyValueSuppliers() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	protected List<SupplierWithDescription<Instant>> getDateTimeTakenPropertyValueSuppliers() {
+	public List<PhotoPropertiesSupplier<Instant>> getDateTimeTakenPropertyValueSuppliers() {
 		return Collections.emptyList();
 	}
 
 	@Override
-	protected List<SupplierWithDescription<Integer>> getRatingPropertyValueSuppliers() {
+	public List<PhotoPropertiesSupplier<Integer>> getRatingPropertyValueSuppliers() {
 		return Arrays.asList(new XmpMetaIntegerPropertyValueSupplier(XMP, "Rating"));
 	}
 
-	private abstract class XmpMetaPropertyValueSupplier<T> implements SupplierWithDescription<T> {
+	private abstract class XmpMetaPropertyValueSupplier<T> implements PhotoPropertiesSupplier<T> {
 
 		protected final String nameSpace;
 		protected final String propertyName;
@@ -195,5 +195,4 @@ public class LocalSidecar extends BaseLocalPhoto {
 
 		System.err.println();
 	}
-
 }
