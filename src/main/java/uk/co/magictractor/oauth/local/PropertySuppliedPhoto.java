@@ -124,8 +124,12 @@ public abstract class PropertySuppliedPhoto implements Photo {
 		// List<SuppierWithDescription<T>> propertyValueSuppliers =
 		// getPropertyValueSuppliers(photoPropertyType);
 
-		if (propertyValueSuppliers == null || propertyValueSuppliers.isEmpty()) {
-			System.err.println("getPropertyValueSuppliers() returned no Suppliers for property type " + description);
+		/**
+		 * Null means not implemented and causes a warning. When there is no
+		 * corresponding property, implementations should return an empty list.
+		 */
+		if (propertyValueSuppliers == null) {
+			System.err.println("missing property suppliers for " + description);
 			return null;
 		}
 

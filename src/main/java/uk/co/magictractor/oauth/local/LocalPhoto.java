@@ -1,21 +1,8 @@
 package uk.co.magictractor.oauth.local;
 
-import java.io.IOException;
 import java.nio.file.Path;
-import java.time.Instant;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-
-import com.drew.imaging.ImageMetadataReader;
-import com.drew.imaging.ImageProcessingException;
-import com.drew.metadata.Directory;
-import com.drew.metadata.Metadata;
-import com.drew.metadata.exif.ExifSubIFDDirectory;
-import com.drew.metadata.xmp.XmpDirectory;
-import com.google.common.collect.Iterables;
-
-import uk.co.magictractor.oauth.common.TagSet;
 
 public class LocalPhoto extends PropertySuppliedPhoto {
 

@@ -11,6 +11,7 @@ public final class ResourceUtil {
 	private ResourceUtil() {
 	}
 
+	// TODO! replace with code from Guava?
 	public static String readResource(Class<?> testClass, String fileName) {
 		InputStream in = testClass.getResourceAsStream(fileName);
 		if (in == null) {
