@@ -20,6 +20,11 @@ public class SidecarPropertiesSupplierFactoryTest {
 		assertThat(sidecar.getRating()).isEqualTo(4);
 		assertThat(sidecar.getTitle()).isEqualTo("Heron eating frog");
 		assertThat(sidecar.getDescription()).isEqualTo("The herons have been catching lots of frogs this week.");
+		assertThat(sidecar.getShutterSpeed()).isEqualTo("10/2500"); // TODO! convert to 1/250
+		assertThat(sidecar.getAperture()).isEqualTo("63/10"); // // TODO! convert/standardise
+		// Digikam does not copy width and height to the sidecar
+		assertThat(sidecar.getWidth()).isNull();
+		assertThat(sidecar.getHeight()).isNull();
 	}
 
 	@Test
@@ -29,6 +34,12 @@ public class SidecarPropertiesSupplierFactoryTest {
 		assertThat(sidecar.getRating()).isEqualTo(2);
 		assertThat(sidecar.getTitle()).isEqualTo("title");
 		assertThat(sidecar.getDescription()).isEqualTo("description");
+		// darktable copies none of these values into the sidecar
+		assertThat(sidecar.getShutterSpeed()).isNull();
+		assertThat(sidecar.getAperture()).isNull();
+		assertThat(sidecar.getIso()).isNull();
+		assertThat(sidecar.getWidth()).isNull();
+		assertThat(sidecar.getHeight()).isNull();
 	}
 
 	@Test
@@ -38,6 +49,11 @@ public class SidecarPropertiesSupplierFactoryTest {
 		assertThat(sidecar.getRating()).isEqualTo(3);
 		assertThat(sidecar.getTitle()).isEqualTo("title");
 		assertThat(sidecar.getDescription()).isEqualTo("description");
+		assertThat(sidecar.getShutterSpeed()).isEqualTo("1/250");
+		assertThat(sidecar.getAperture()).isEqualTo("63/10"); // TODO! convert/standardise
+		assertThat(sidecar.getIso()).isEqualTo(200);
+		assertThat(sidecar.getWidth()).isEqualTo(5184);
+		assertThat(sidecar.getHeight()).isEqualTo(3888);
 	}
 
 	private Photo readSidecar(String resourceName) {

@@ -19,6 +19,8 @@ import uk.co.magictractor.oauth.local.PropertySuppliedPhoto.PhotoPropertiesSuppl
  */
 public interface PhotoPropertiesSupplierFactory {
 
+	Stream<PhotoPropertiesSupplier<String>> getFileNamePropertyValueSuppliers();
+	
 	Stream<PhotoPropertiesSupplier<String>> getTitlePropertyValueSuppliers();
 
 	Stream<PhotoPropertiesSupplier<String>> getDescriptionPropertyValueSuppliers();
@@ -28,5 +30,15 @@ public interface PhotoPropertiesSupplierFactory {
 	Stream<PhotoPropertiesSupplier<Instant>> getDateTimeTakenPropertyValueSuppliers();
 
 	Stream<PhotoPropertiesSupplier<Integer>> getRatingPropertyValueSuppliers();
+
+	Stream<PhotoPropertiesSupplier<String>> getShutterSpeedPropertyValueSuppliers();
+	
+	Stream<PhotoPropertiesSupplier<String>> getAperturePropertyValueSuppliers();
+	
+	Stream<PhotoPropertiesSupplier<Integer>> getIsoPropertyValueSuppliers();
+	
+	Stream<PhotoPropertiesSupplier<Integer>> getWidthValueSuppliers();
+	
+	Stream<PhotoPropertiesSupplier<Integer>> getHeightValueSuppliers();
 
 }

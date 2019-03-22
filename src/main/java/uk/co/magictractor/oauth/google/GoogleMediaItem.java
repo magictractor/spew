@@ -112,4 +112,14 @@ public class GoogleMediaItem implements Photo {
 		return null;
 	}
 
+	@Override
+	public Integer getWidth() {
+		return mediaMetadata.width;
+	}
+
+	@Override
+	public Integer getHeight() {
+		return mediaMetadata.height;
+	}
+
 }

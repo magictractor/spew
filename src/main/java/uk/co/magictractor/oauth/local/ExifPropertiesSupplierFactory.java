@@ -98,6 +98,11 @@ public class ExifPropertiesSupplierFactory implements PhotoPropertiesSupplierFac
 	}
 
 	@Override
+	public Stream<PhotoPropertiesSupplier<String>> getFileNamePropertyValueSuppliers() {
+		return Stream.of(new FileNameSupplier());
+	}
+
+	@Override
 	public Stream<PhotoPropertiesSupplier<String>> getTitlePropertyValueSuppliers() {
 		return Stream.empty();
 	}
@@ -126,6 +131,32 @@ public class ExifPropertiesSupplierFactory implements PhotoPropertiesSupplierFac
 		return Stream.of(asInteger(new XmpValueSupplier("xmp:Rating")));
 	}
 
+	@Override
+	public Stream<PhotoPropertiesSupplier<String>> getShutterSpeedPropertyValueSuppliers() {
+		// return Stream.of(new ExifStringValueSupplier(ExifSubIFDDirectory.TAG_SHUTTER_SPEED)); // needs conversion
+		return Stream.of(new ExifStringValueSupplier(ExifSubIFDDirectory.TAG_EXPOSURE_TIME)); 
+	}
+
+	@Override
+	public Stream<PhotoPropertiesSupplier<String>> getAperturePropertyValueSuppliers() {
+		return Stream.of(new ExifStringValueSupplier(ExifSubIFDDirectory.TAG_FNUMBER));
+	}
+
+	@Override
+	public Stream<PhotoPropertiesSupplier<Integer>> getIsoPropertyValueSuppliers() {
+		return Stream.of(new ExifIntegerValueSupplier(ExifSubIFDDirectory.TAG_ISO_EQUIVALENT));
+	}
+
+	@Override
+	public Stream<PhotoPropertiesSupplier<Integer>> getWidthValueSuppliers() {
+		return Stream.of(new ExifIntegerValueSupplier(ExifSubIFDDirectory.TAG_EXIF_IMAGE_WIDTH));
+	}
+
+	@Override
+	public Stream<PhotoPropertiesSupplier<Integer>> getHeightValueSuppliers() {
+		return Stream.of(new ExifIntegerValueSupplier(ExifSubIFDDirectory.TAG_EXIF_IMAGE_HEIGHT));
+	}
+
 	public abstract class ExifValueSupplier<T> implements PhotoPropertiesSupplier<T> {
 		protected final int tagType;
 
@@ -150,6 +181,17 @@ public class ExifPropertiesSupplierFactory implements PhotoPropertiesSupplierFac
 		}
 	}
 
+	public class ExifIntegerValueSupplier extends ExifValueSupplier<Integer> {
+		ExifIntegerValueSupplier(int tagType) {
+			super(tagType);
+		}
+
+		@Override
+		public Integer get() {
+			return exif.getInteger(tagType);
+		}
+	}
+
 	public class XmpValueSupplier implements PhotoPropertiesSupplier<String> {
 
 		private String key;
@@ -168,4 +210,18 @@ public class ExifPropertiesSupplierFactory implements PhotoPropertiesSupplierFac
 			return "[XMP] " + key;
 		}
 	}
+
+	public class FileNameSupplier implements PhotoPropertiesSupplier<String> {
+
+		@Override
+		public String get() {
+			return path.toFile().getName();
+		}
+
+		@Override
+		public String getDescription() {
+			return "[File name]";
+		}
+	}
+
 }

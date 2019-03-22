@@ -25,31 +25,34 @@ public interface Photo {
 	TagSet getTagSet();
 
 	Instant getDateTimeTaken();
-	
+
 	default Integer getRating() {
 		return null;
 	}
 
 	default LocalDate getDateTaken() {
 		// return getDateTimeTaken().toLocalDate();
-		return getDateTimeTaken() == null ? null : LocalDateTime.ofInstant(getDateTimeTaken(), ZoneId.systemDefault()).toLocalDate();
+		return getDateTimeTaken() == null ? null
+				: LocalDateTime.ofInstant(getDateTimeTaken(), ZoneId.systemDefault()).toLocalDate();
 	}
 
 	default LocalTime getTimeTaken() {
 		// return getDateTimeTaken().toLocalTime();
-		// return getDateTimeTaken() == null ? null : LocalTime.from(getDateTimeTaken());
-		return getDateTimeTaken() == null ? null : LocalDateTime.ofInstant(getDateTimeTaken(), ZoneId.systemDefault()).toLocalTime();
+		// return getDateTimeTaken() == null ? null :
+		// LocalTime.from(getDateTimeTaken());
+		return getDateTimeTaken() == null ? null
+				: LocalDateTime.ofInstant(getDateTimeTaken(), ZoneId.systemDefault()).toLocalTime();
 	}
 
 	Instant getDateTimeUpload();
 
 	default LocalDate getDateUpload() {
-		//return getDateTimeUpload().toLocalDate();
+		// return getDateTimeUpload().toLocalDate();
 		return getDateTimeUpload() == null ? null : LocalDate.from(getDateTimeUpload());
 	}
 
 	default LocalTime getTimeUpload() {
-		//return getDateTimeUpload().toLocalTime();
+		// return getDateTimeUpload().toLocalTime();
 		return getDateTimeUpload() == null ? null : LocalTime.from(getDateTimeUpload());
 	}
 
@@ -65,9 +68,14 @@ public interface Photo {
 		return null;
 	}
 
-	// rating
+	// exposure comp
 
-	// dimensions
+	// focal length (and ff equiv?)
 
-	// one day - on demand get hold of image?
+	Integer getWidth();
+
+	Integer getHeight();
+
+	// one day - on demand get hold of image? - will need for uploading local photo
+	// to service provider
 }

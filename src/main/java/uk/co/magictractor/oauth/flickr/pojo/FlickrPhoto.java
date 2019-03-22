@@ -40,6 +40,9 @@ public class FlickrPhoto implements Photo {
 	// dateupload=1534007093, datetaken=2018-06-23 13:52:33,
 	// datetakengranularity=0.0, datetakenunknown=0.0
 	private Instant dateUpload;
+	// original names a
+	private Integer width_o;
+	private Integer height_o;
 
 	@Override
 	public String getServiceProviderId() {
@@ -89,6 +92,16 @@ public class FlickrPhoto implements Photo {
 
 	public boolean isFriend() {
 		return isFriend;
+	}
+
+	@Override
+	public Integer getWidth() {
+		return width_o;
+	}
+
+	@Override
+	public Integer getHeight() {
+		return height_o;
 	}
 
 }

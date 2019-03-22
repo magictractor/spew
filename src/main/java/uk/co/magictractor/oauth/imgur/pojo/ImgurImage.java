@@ -58,4 +58,14 @@ public class ImgurImage implements Photo {
 		return null;
 	}
 
+	@Override
+	public Integer getWidth() {
+		return width;
+	}
+
+	@Override
+	public Integer getHeight() {
+		return height;
+	}
+
 }

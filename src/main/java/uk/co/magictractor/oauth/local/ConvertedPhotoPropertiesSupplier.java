@@ -1,23 +1,28 @@
 package uk.co.magictractor.oauth.local;
 
+import java.util.List;
 import java.util.function.Function;
+import java.util.stream.Stream;
+
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Iterators;
 
 import uk.co.magictractor.oauth.local.PropertySuppliedPhoto.PhotoPropertiesSupplier;
 
-public class ConvertedPhotoPropertiesSupplier<T> implements PhotoPropertiesSupplier<T> {
+public class ConvertedPhotoPropertiesSupplier<FROM, TO> implements PhotoPropertiesSupplier<TO> {
 
-	private PhotoPropertiesSupplier<String> wrapped;
-	private Function<String, T> converter;
+	private PhotoPropertiesSupplier<FROM> wrapped;
+	private Function<FROM, TO> converter;
 
-	public ConvertedPhotoPropertiesSupplier(PhotoPropertiesSupplier<String> wrapped, Function<String, T> converter) {
+	public ConvertedPhotoPropertiesSupplier(PhotoPropertiesSupplier<FROM> wrapped, Function<FROM, TO> converter) {
 		this.wrapped = wrapped;
 		this.converter = converter;
 	}
 
 	@Override
-	public T get() {
-		String string = wrapped.get();
-		return string == null ? null : converter.apply(string);
+	public TO get() {
+		FROM from = wrapped.get();
+		return from == null ? null : converter.apply(from);
 	}
 
 	@Override
@@ -26,6 +31,17 @@ public class ConvertedPhotoPropertiesSupplier<T> implements PhotoPropertiesSuppl
 	}
 
 	public static PhotoPropertiesSupplier<Integer> asInteger(PhotoPropertiesSupplier<String> stringSupplier) {
-		return new ConvertedPhotoPropertiesSupplier<Integer>(stringSupplier, (s) -> Integer.valueOf(s));
+		return new ConvertedPhotoPropertiesSupplier<String, Integer>(stringSupplier,
+				(string) -> Integer.valueOf(string));
 	}
+
+	public static <T> PhotoPropertiesSupplier<T> onlyElement(PhotoPropertiesSupplier<List<T>> listSupplier) {
+		return new ConvertedPhotoPropertiesSupplier<List<T>, T>(listSupplier,
+				(list) -> Iterables.getOnlyElement(list, null));
+	}
+
+//	public static <T> PhotoPropertiesSupplier<T> onlyElement(PhotoPropertiesSupplier<Stream<T>> streamSupplier) {
+//		return new ConvertedPhotoPropertiesSupplier<Stream<T>, T>(streamSupplier,
+//				(stream) -> Iterators.getOnlyElement(stream.iterator(), null));
+//	}
 }

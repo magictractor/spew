@@ -38,7 +38,10 @@ public class FlickrPhotoIterator extends PageCountServiceIterator<FlickrPhoto> {
 
 		// machine_tags are no auto tags
 		// https://www.flickr.com/groups/51035612836@N01/discuss/72157594497877875/
-		request.setParam("extras", "date_upload,date_taken,description,tags,machine_tags");
+		//
+		// url_o is a workaround for o_dims not working
+		// https://www.flickr.com/groups/51035612836@N01/discuss/72157649995435595/
+		request.setParam("extras", "date_upload,date_taken,description,tags,machine_tags,url_o");
 		// request.setParam("extras", ALL_EXTRAS);
 		OAuthResponse response = getConnection().request(request);
 
@@ -63,7 +66,8 @@ public class FlickrPhotoIterator extends PageCountServiceIterator<FlickrPhoto> {
 	public static void main(String[] args) {
 		FlickrPhotoIterator iter = new FlickrPhotoIterator(MyFlickrApp.getInstance());
 		while (iter.hasNext()) {
-			System.err.println(iter.next().getTitle());
+			FlickrPhoto photo = iter.next();
+			System.err.println(photo.getTitle() + "  " + photo.getWidth() + "x" + photo.getHeight());
 		}
 	}
 }

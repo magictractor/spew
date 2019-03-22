@@ -52,13 +52,13 @@ public class Flickr implements OAuth1ServiceProvider {
 	public GsonBuilder getGsonBuilder() {
 		GsonBuilder gsonBuilder = new GsonBuilder();
 
-		gsonBuilder.setFieldNamingStrategy(new FieldNamingStrategy() {
-			@Override
-			public String translateName(Field f) {
-				// underscore seen in machine_tags
-				return f.getName().toLowerCase().replace("_", "");
-			}
-		});
+//		gsonBuilder.setFieldNamingStrategy(new FieldNamingStrategy() {
+//			@Override
+//			public String translateName(Field f) {
+//				// underscore seen in machine_tags
+//				return f.getName().toLowerCase().replace("_", "");
+//			}
+//		});
 		gsonBuilder.registerTypeAdapter(boolean.class, new BooleanTypeAdapter());
 		gsonBuilder.registerTypeAdapter(LocalDateTime.class, new LocalDateTimeTypeAdapter("yyyy-MM-dd HH:mm:ss"));
 		gsonBuilder.registerTypeAdapter(Instant.class, new InstantTypeAdapter());

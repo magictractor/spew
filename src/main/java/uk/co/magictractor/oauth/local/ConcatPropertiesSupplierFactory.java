@@ -23,6 +23,11 @@ public class ConcatPropertiesSupplierFactory implements PhotoPropertiesSupplierF
 	}
 
 	@Override
+	public Stream<PhotoPropertiesSupplier<String>> getFileNamePropertyValueSuppliers() {
+		return concat(PhotoPropertiesSupplierFactory::getFileNamePropertyValueSuppliers);
+	}
+
+	@Override
 	public Stream<PhotoPropertiesSupplier<String>> getTitlePropertyValueSuppliers() {
 		return concat(PhotoPropertiesSupplierFactory::getTitlePropertyValueSuppliers);
 	}
@@ -45,6 +50,31 @@ public class ConcatPropertiesSupplierFactory implements PhotoPropertiesSupplierF
 	@Override
 	public Stream<PhotoPropertiesSupplier<Integer>> getRatingPropertyValueSuppliers() {
 		return concat(PhotoPropertiesSupplierFactory::getRatingPropertyValueSuppliers);
+	}
+
+	@Override
+	public Stream<PhotoPropertiesSupplier<String>> getShutterSpeedPropertyValueSuppliers() {
+		return concat(PhotoPropertiesSupplierFactory::getShutterSpeedPropertyValueSuppliers);
+	}
+
+	@Override
+	public Stream<PhotoPropertiesSupplier<String>> getAperturePropertyValueSuppliers() {
+		return concat(PhotoPropertiesSupplierFactory::getAperturePropertyValueSuppliers);
+	}
+
+	@Override
+	public Stream<PhotoPropertiesSupplier<Integer>> getIsoPropertyValueSuppliers() {
+		return concat(PhotoPropertiesSupplierFactory::getIsoPropertyValueSuppliers);
+	}
+
+	@Override
+	public Stream<PhotoPropertiesSupplier<Integer>> getWidthValueSuppliers() {
+		return concat(PhotoPropertiesSupplierFactory::getWidthValueSuppliers);
+	}
+
+	@Override
+	public Stream<PhotoPropertiesSupplier<Integer>> getHeightValueSuppliers() {
+		return concat(PhotoPropertiesSupplierFactory::getHeightValueSuppliers);
 	}
 
 	private <T> Stream<PhotoPropertiesSupplier<T>> concat(

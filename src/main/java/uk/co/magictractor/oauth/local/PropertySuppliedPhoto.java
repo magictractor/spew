@@ -15,37 +15,30 @@ import uk.co.magictractor.oauth.common.TagSet;
 public abstract class PropertySuppliedPhoto implements Photo {
 
 	private boolean propertyValuesRead;
+
+	private String serviceProviderId;
+	private String fileName;
 	private String title;
 	private String description;
 	private TagSet tagSet;
 	private Instant dateTimeTaken;
 	private Integer rating;
-
 	private String shutterSpeed;
-
 	private String aperture;
-
 	private Integer iso;
-
-//	protected PropertySuppliedPhoto(Path path) {
-//		this.path = path;
-//	}
-//
-//	protected Path getPath() {
-//		return path;
-//	}
+	private Integer width;
+	private Integer height;
 
 	@Override
 	public String getServiceProviderId() {
-		// Could use absolute path here - or property providers
-		return null;
+		ensurePropertyValuesRead();
+		return serviceProviderId;
 	}
 
 	@Override
 	public String getFileName() {
-		// TODO! use property providers
-		// return path.getFileName().toString();
-		return null;
+		ensurePropertyValuesRead();
+		return fileName;
 	}
 
 	@Override
@@ -103,6 +96,18 @@ public abstract class PropertySuppliedPhoto implements Photo {
 		return iso;
 	}
 
+	@Override
+	public Integer getWidth() {
+		ensurePropertyValuesRead();
+		return width;
+	}
+
+	@Override
+	public Integer getHeight() {
+		ensurePropertyValuesRead();
+		return height;
+	}
+
 	private void ensurePropertyValuesRead() {
 		if (!propertyValuesRead) {
 			initPropertyValues();
@@ -112,20 +117,24 @@ public abstract class PropertySuppliedPhoto implements Photo {
 	private void initPropertyValues() {
 		PhotoPropertiesSupplierFactory supplierFactory = getPhotoPropertiesSupplierFactory();
 
+		fileName = getBestPropertyValue(supplierFactory.getFileNamePropertyValueSuppliers(), "file name");
 		title = getBestPropertyValue(supplierFactory.getTitlePropertyValueSuppliers(), "title");
 		description = getBestPropertyValue(supplierFactory.getDescriptionPropertyValueSuppliers(), "description");
 		tagSet = getBestPropertyValue(supplierFactory.getTagSetPropertyValueSuppliers(), "tags");
 		dateTimeTaken = getBestPropertyValue(supplierFactory.getDateTimeTakenPropertyValueSuppliers(),
 				"date time taken");
 		rating = getBestPropertyValue(supplierFactory.getRatingPropertyValueSuppliers(), "rating");
+		shutterSpeed = getBestPropertyValue(supplierFactory.getShutterSpeedPropertyValueSuppliers(), "shutter speed");
+		aperture = getBestPropertyValue(supplierFactory.getAperturePropertyValueSuppliers(), "aperture");
+		iso = getBestPropertyValue(supplierFactory.getIsoPropertyValueSuppliers(), "iso");
+		width = getBestPropertyValue(supplierFactory.getWidthValueSuppliers(), "width");
+		height = getBestPropertyValue(supplierFactory.getHeightValueSuppliers(), "height");
 	}
 
 	protected abstract PhotoPropertiesSupplierFactory getPhotoPropertiesSupplierFactory();
 
 	// First non-null value is best.
 	private <T> T getBestPropertyValue(Stream<PhotoPropertiesSupplier<T>> propertyValueSuppliers, String description) {
-		// List<SuppierWithDescription<T>> propertyValueSuppliers =
-		// getPropertyValueSuppliers(photoPropertyType);
 
 		/**
 		 * Null means not implemented and causes a warning. When there is no
@@ -137,11 +146,6 @@ public abstract class PropertySuppliedPhoto implements Photo {
 		}
 
 		T bestPropertyValue = null;
-		// propertyValueSuppliers.iterator()
-		// for (PhotoPropertiesSupplier<T> propertyValueSupplier :
-		// propertyValueSuppliers) {
-		// propertyValueSuppliers.forEach((propertyValueSupplier) -> {
-
 		Iterator<PhotoPropertiesSupplier<T>> iter = propertyValueSuppliers.iterator();
 		while (iter.hasNext()) {
 			PhotoPropertiesSupplier<T> propertyValueSupplier = iter.next();
@@ -160,7 +164,6 @@ public abstract class PropertySuppliedPhoto implements Photo {
 					System.err.println("Different value from " + propertyValueSupplier.getDescription());
 				}
 			}
-			// });
 		}
 
 		return bestPropertyValue;
@@ -171,7 +174,7 @@ public abstract class PropertySuppliedPhoto implements Photo {
 		String getDescription();
 	}
 
-	// For simple implementations - just unit tests??
+	// For simple implementations - just unit tests - move to a test util?
 	public static PropertySuppliedPhoto forFactory(PhotoPropertiesSupplierFactory factory) {
 		return new PropertySuppliedPhoto() {
 
