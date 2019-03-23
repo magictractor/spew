@@ -59,7 +59,7 @@ public class Flickr implements OAuth1ServiceProvider {
 //		});
 		gsonBuilder.registerTypeAdapter(boolean.class, new BooleanTypeAdapter());
 		gsonBuilder.registerTypeAdapter(LocalDateTime.class, new LocalDateTimeTypeAdapter("yyyy-MM-dd HH:mm:ss"));
-		gsonBuilder.registerTypeAdapter(Instant.class, new InstantTypeAdapter());
+		gsonBuilder.registerTypeAdapter(Instant.class, InstantTypeAdapter.EPOCH_SECONDS);
 		gsonBuilder.registerTypeAdapter(TagSet.class, new TagSetTypeAdapter());
 
 		// gsonBuilder.registerTypeAdapter(List.class, new ListTypeAdapter());

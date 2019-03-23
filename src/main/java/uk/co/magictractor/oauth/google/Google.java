@@ -71,7 +71,7 @@ public class Google implements OAuth2ServiceProvider {
 		gsonBuilder.registerTypeAdapter(boolean.class, new BooleanTypeAdapter());
 		// TODO! Z shouldn't be quoted here?? - handle offset properly
 		gsonBuilder.registerTypeAdapter(LocalDateTime.class, new LocalDateTimeTypeAdapter("yyyy-MM-dd'T'HH:mm:ss'Z'"));
-		gsonBuilder.registerTypeAdapter(Instant.class, new InstantTypeAdapter());
+		gsonBuilder.registerTypeAdapter(Instant.class, InstantTypeAdapter.EPOCH_MILLIS);
 		gsonBuilder.registerTypeAdapter(TagSet.class, new TagSetTypeAdapter());
 
 		// gsonBuilder.registerTypeAdapter(List.class, new ListTypeAdapter());

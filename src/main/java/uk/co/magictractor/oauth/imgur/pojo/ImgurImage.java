@@ -16,6 +16,7 @@ public class ImgurImage implements Photo {
 	// private String tags;
 	private int width;
 	private int height;
+	private Instant datetime;
 
 	@Override
 	public String getServiceProviderId() {
@@ -48,13 +49,12 @@ public class ImgurImage implements Photo {
 
 	@Override
 	public Instant getDateTimeTaken() {
-		// TODO Auto-generated method stub
-		return null;
+		return datetime;
 	}
 
 	@Override
 	public Instant getDateTimeUpload() {
-		// TODO Auto-generated method stub
+		// Imgur does not report the upload time.
 		return null;
 	}
 

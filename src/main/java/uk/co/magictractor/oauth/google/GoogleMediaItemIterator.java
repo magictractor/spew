@@ -26,7 +26,8 @@ public class GoogleMediaItemIterator extends GoogleServiceIterator<GoogleMediaIt
 	public static void main(String[] args) {
 		GoogleMediaItemIterator iter = new GoogleMediaItemIterator();
 		while (iter.hasNext()) {
-			System.err.println(iter.next().getFileName());
+			GoogleMediaItem photo = iter.next();
+			System.err.println(photo.getFileName() + "  " + photo.getDateTimeTaken());
 		}
 	}
 

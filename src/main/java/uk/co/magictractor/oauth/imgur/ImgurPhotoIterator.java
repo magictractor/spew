@@ -145,7 +145,8 @@ public class ImgurPhotoIterator extends PageCountServiceIterator<ImgurImage> {
 	public static void main(String[] args) {
 		ImgurPhotoIterator iter = new ImgurPhotoIterator(MyImgurApp.getInstance());
 		while (iter.hasNext()) {
-			System.err.println(iter.next().getTitle());
+			ImgurImage photo = iter.next();
+			System.err.println(photo.getTitle() + " " + photo.getDateTimeTaken());
 		}
 	}
 }
