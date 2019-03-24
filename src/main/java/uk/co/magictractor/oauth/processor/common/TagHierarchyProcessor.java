@@ -15,6 +15,9 @@ public class TagHierarchyProcessor implements Processor<Photo, MutablePhoto, Pho
 	@Override
 	public void process(MutablePhoto photoChanges, PhotoProcessorContext context) {
 		TagSet tagSet = photoChanges.getTagSet();
+		if (tagSet == null) {
+			return;
+		}
 
 		for (TagType tagType : TagType.values()) {
 			addTagHierarchy(tagType, tagSet);

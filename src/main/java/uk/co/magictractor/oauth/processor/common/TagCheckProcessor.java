@@ -13,15 +13,18 @@ public class TagCheckProcessor implements Processor<Photo, MutablePhoto, PhotoPr
 
 	@Override
 	public void process(MutablePhoto photo, PhotoProcessorContext context) {
-		TagSet tags = photo.getTagSet();
+		TagSet tagSet = photo.getTagSet();
+		if (tagSet == null) {
+			return;
+		}
 
-		checkTagType(TagType.SUBJECT, tags, context);
-		checkTagType(TagType.LOCATION, tags, context);
-		checkNoUnknownTags(tags, context);
+		checkTagType(TagType.SUBJECT, tagSet, context);
+		checkTagType(TagType.LOCATION, tagSet, context);
+		checkNoUnknownTags(tagSet, context);
 	}
 
-	private void checkTagType(TagType tagType, TagSet tags, PhotoProcessorContext context) {
-		Tag deepestTag = tags.getDeepestTag(tagType);
+	private void checkTagType(TagType tagType, TagSet tagSet, PhotoProcessorContext context) {
+		Tag deepestTag = tagSet.getDeepestTag(tagType);
 		if (deepestTag == null) {
 			System.err.println("No tag of type " + tagType);
 		} else if (deepestTag.hasChildren()) {
@@ -29,8 +32,8 @@ public class TagCheckProcessor implements Processor<Photo, MutablePhoto, PhotoPr
 		}
 	}
 
-	private void checkNoUnknownTags(TagSet tags, PhotoProcessorContext context) {
-		for (Tag tag : tags.getTags()) {
+	private void checkNoUnknownTags(TagSet tagSet, PhotoProcessorContext context) {
+		for (Tag tag : tagSet.getTags()) {
 			if (tag.isUnknown()) {
 				context.addUnknownTag(tag);
 			}

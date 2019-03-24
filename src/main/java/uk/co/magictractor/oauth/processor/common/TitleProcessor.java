@@ -1,7 +1,10 @@
 package uk.co.magictractor.oauth.processor.common;
 
+import com.google.common.base.Strings;
+
 import uk.co.magictractor.oauth.common.Photo;
 import uk.co.magictractor.oauth.common.Tag;
+import uk.co.magictractor.oauth.common.TagSet;
 import uk.co.magictractor.oauth.common.TagType;
 import uk.co.magictractor.oauth.processor.Processor;
 
@@ -12,11 +15,18 @@ import uk.co.magictractor.oauth.processor.Processor;
 public class TitleProcessor implements Processor<Photo, MutablePhoto, PhotoProcessorContext> {
 
 	@Override
-	public void process(MutablePhoto photoChanges, PhotoProcessorContext context) {
-		if (isDefaultTitle(photoChanges.getTitle())) {
-			Tag subject = photoChanges.getTagSet().getDeepestTag(TagType.SUBJECT);
+	public void process(MutablePhoto photo, PhotoProcessorContext context) {
+		if (isDefaultTitle(photo.getTitle())) {
+			TagSet tagSet = photo.getTagSet();
+			if (tagSet == null) {
+				// TODO! log a warning (via context)
+				System.err.println("No tags, so cannot create title");
+				return;
+			}
+
+			Tag subject = photo.getTagSet().getDeepestTag(TagType.SUBJECT);
 			if (subject != null && !subject.hasChildren()) {
-				photoChanges.setTitle(subject.getTagName());
+				photo.setTitle(subject.getTagName());
 			}
 		}
 	}
@@ -25,7 +35,8 @@ public class TitleProcessor implements Processor<Photo, MutablePhoto, PhotoProce
 		// IMG_ for Canon Powershot SX60
 		// _MG_ for Canon EOS 60D
 		// PANA for Panasonic Lumix G9
-		return title.startsWith("IMG_") || title.startsWith("_MG_") || title.startsWith("PANA");
+		return Strings.isNullOrEmpty(title) || title.startsWith("IMG_") || title.startsWith("_MG_")
+				|| title.startsWith("PANA");
 	}
 
 }

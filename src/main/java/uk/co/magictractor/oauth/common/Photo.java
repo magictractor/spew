@@ -6,6 +6,9 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
 
+import com.google.common.base.MoreObjects;
+import com.google.common.base.MoreObjects.ToStringHelper;
+
 public interface Photo {
 
 	/**
@@ -48,14 +51,16 @@ public interface Photo {
 
 	default LocalDate getDateUpload() {
 		// return getDateTimeUpload().toLocalDate();
-		// return getDateTimeUpload() == null ? null : LocalDate.from(getDateTimeUpload());
+		// return getDateTimeUpload() == null ? null :
+		// LocalDate.from(getDateTimeUpload());
 		return getDateTimeUpload() == null ? null
 				: LocalDateTime.ofInstant(getDateTimeUpload(), ZoneId.systemDefault()).toLocalDate();
 	}
 
 	default LocalTime getTimeUpload() {
 		// return getDateTimeUpload().toLocalTime();
-		// return getDateTimeUpload() == null ? null : LocalTime.from(getDateTimeUpload());
+		// return getDateTimeUpload() == null ? null :
+		// LocalTime.from(getDateTimeUpload());
 		return getDateTimeUpload() == null ? null
 				: LocalDateTime.ofInstant(getDateTimeUpload(), ZoneId.systemDefault()).toLocalTime();
 	}
@@ -80,6 +85,18 @@ public interface Photo {
 
 	Integer getHeight();
 
+	public static ToStringHelper toStringHelper(Photo photo) {
+		ToStringHelper toStringHelper = MoreObjects.toStringHelper(photo);
+		if (photo.getServiceProviderId() != null) {
+			toStringHelper.add("serviceProviderId", photo.getServiceProviderId());
+		}
+		if (photo.getFileName() != null) {
+			toStringHelper.add("fileName", photo.getFileName());
+		}
+		return toStringHelper;
+	}
+
 	// one day - on demand get hold of image? - will need for uploading local photo
 	// to service provider
+
 }

@@ -23,7 +23,7 @@ public class PhotoProcessorContext implements DateAwareProcessorContext<Photo, M
 
 	@Override
 	public LocalDate getDate(MutablePhoto photo) {
-		return LocalDate.from(photo.originalDateTaken);
+		return LocalDate.from(photo.getDateTaken());
 	}
 
 	public void addUnknownTag(Tag tag) {
