@@ -9,7 +9,7 @@ import uk.co.magictractor.oauth.api.PageTokenServiceIterator;
 public abstract class GoogleServiceIterator<E> extends PageTokenServiceIterator<E> {
 
 	@Override
-	protected final List<? extends E> fetchPage(String pageToken) {
+	protected final PageAndNextToken<E> fetchPage(String pageToken) {
 		OAuthRequest request = createPageRequest();
 
 		request.setParam("pageToken", pageToken);
@@ -19,9 +19,10 @@ public abstract class GoogleServiceIterator<E> extends PageTokenServiceIterator<
 		// TODO! must not have hard coded app in the middle of the iterator!
 		OAuthResponse response = MyGooglePhotosApp.getInstance().getConnection().request(request);
 
-		setNextPageToken(response.getString("nextPageToken"));
+		List<? extends E> page = parsePageResponse(response);
+		String nextToken = response.getString("nextPageToken");
 
-		return parsePageResponse(response);
+		return new PageAndNextToken(page, nextToken);
 	}
 	
 	protected abstract OAuthRequest createPageRequest();

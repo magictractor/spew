@@ -45,10 +45,9 @@ public abstract class PageTokenServiceIterator<E> implements Iterator<E> {
 				// At least one page has been fetched, and there is no token for another page.
 				currentPage = Collections.emptyList();
 			} else {
-				currentPage = fetchPage(nextPageToken);
-				if (currentPage == null) {
-					throw new IllegalStateException("fetchPage() returned null");
-				}
+				PageAndNextToken<E> pageAndNextToken = fetchPage(nextPageToken);
+				currentPage = pageAndNextToken.page;
+				nextPageToken = pageAndNextToken.nextToken;
 			}
 
 			hasNext = !currentPage.isEmpty();
@@ -58,10 +57,28 @@ public abstract class PageTokenServiceIterator<E> implements Iterator<E> {
 
 	// BEWARE! this must (for now) set nextPageToken as a side effect - change
 	// return type to include the nextPageToken
-	protected abstract List<? extends E> fetchPage(String pageToken);
+	protected abstract PageAndNextToken<E> fetchPage(String pageToken);
 
-	protected void setNextPageToken(String nextPageToken) {
-		this.nextPageToken = nextPageToken;
+//	protected void setNextPageToken(String nextPageToken) {
+//		this.nextPageToken = nextPageToken;
+//	}
+
+	public static class PageAndNextToken<E> {
+		final List<? extends E> page;
+		final String nextToken;
+
+		/**
+		 * @param page
+		 * @param nextToken may be null to indicate that this is the last page
+		 */
+		public PageAndNextToken(List<? extends E> page, String nextToken) {
+			if (page == null) {
+				throw new IllegalArgumentException("page must not be null");
+			}
+
+			this.page = page;
+			this.nextToken = nextToken;
+		}
 	}
 
 }
