@@ -22,7 +22,7 @@ public abstract class GoogleServiceIterator<E> extends PageTokenServiceIterator<
 		List<? extends E> page = parsePageResponse(response);
 		String nextToken = response.getString("nextPageToken");
 
-		return new PageAndNextToken(page, nextToken);
+		return new PageAndNextToken<>(page, nextToken);
 	}
 	
 	protected abstract OAuthRequest createPageRequest();

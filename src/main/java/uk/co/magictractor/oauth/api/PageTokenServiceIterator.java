@@ -1,9 +1,7 @@
 package uk.co.magictractor.oauth.api;
 
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 /**
  * Base class for iterators which fetch items using third party service methods
@@ -14,54 +12,26 @@ import java.util.NoSuchElementException;
  * {@link #next()}, and the next page is fetched only after iterating over all
  * items in the first page.
  */
-public abstract class PageTokenServiceIterator<E> implements Iterator<E> {
+public abstract class PageTokenServiceIterator<E> extends PageServiceIterator<E> {
 
-	private static final int UNKNOWN = -1;
-
-	private List<? extends E> currentPage = null;
+	// The first page should be fetched without a nextPageToken.
+	private boolean first = true;
 	private String nextPageToken = null;
-	private int nextPageItemIndex;
-	private boolean hasNext;
 
-	// TODO! some of this code is common with the page count iterator
-	@Override
-	public boolean hasNext() {
-		ensurePage();
-		return hasNext;
-	}
-
-	@Override
-	public E next() {
-		ensurePage();
-		if (!hasNext) {
-			throw new NoSuchElementException();
-		}
-		return currentPage.get(nextPageItemIndex++);
-	}
-
-	private void ensurePage() {
-		if (currentPage == null || (nextPageItemIndex >= currentPage.size())) {
-			if (currentPage != null && nextPageToken == null) {
-				// At least one page has been fetched, and there is no token for another page.
-				currentPage = Collections.emptyList();
-			} else {
-				PageAndNextToken<E> pageAndNextToken = fetchPage(nextPageToken);
-				currentPage = pageAndNextToken.page;
-				nextPageToken = pageAndNextToken.nextToken;
-			}
-
-			hasNext = !currentPage.isEmpty();
-			nextPageItemIndex = 0;
+	protected List<? extends E> nextPage() {
+		if (first || nextPageToken != null) {
+			// Get first page, or next page.
+			PageAndNextToken<E> pageAndNextToken = fetchPage(nextPageToken);
+			first = false;
+			nextPageToken = pageAndNextToken.nextToken;
+			return pageAndNextToken.page;
+		} else {
+			// Previously fetched page had no nextPageToken, so we're done.
+			return Collections.emptyList();
 		}
 	}
 
-	// BEWARE! this must (for now) set nextPageToken as a side effect - change
-	// return type to include the nextPageToken
 	protected abstract PageAndNextToken<E> fetchPage(String pageToken);
-
-//	protected void setNextPageToken(String nextPageToken) {
-//		this.nextPageToken = nextPageToken;
-//	}
 
 	public static class PageAndNextToken<E> {
 		final List<? extends E> page;
