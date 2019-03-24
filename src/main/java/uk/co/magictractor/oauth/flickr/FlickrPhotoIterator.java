@@ -1,22 +1,38 @@
 package uk.co.magictractor.oauth.flickr;
 
+import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 import uk.co.magictractor.oauth.api.OAuthApplication;
 import uk.co.magictractor.oauth.api.OAuthRequest;
 import uk.co.magictractor.oauth.api.OAuthResponse;
 import uk.co.magictractor.oauth.api.PageCountServiceIterator;
+import uk.co.magictractor.oauth.common.filter.DateTakenPhotoFilter;
+import uk.co.magictractor.oauth.common.filter.DateUploadedPhotoFilter;
 import uk.co.magictractor.oauth.common.filter.PhotoFilter;
 import uk.co.magictractor.oauth.flickr.pojo.FlickrPhoto;
 import uk.co.magictractor.oauth.flickr.pojo.FlickrPhotos;
+import uk.co.magictractor.oauth.local.dates.DateRange;
 
-/** Uses flickr.photos.search rather than flickr.people.getPhotos because it allows sort order to be specified.
+/**
+ * Uses flickr.photos.search rather than flickr.people.getPhotos because it
+ * allows sort order to be specified.
  * 
  * See https://www.flickr.com/services/api/flickr.photos.search.html.
  */
 public class FlickrPhotoIterator extends PageCountServiceIterator<FlickrPhoto> {
+
+	private static final List<Class<? extends PhotoFilter>> SUPPORTED_FILTERS = Arrays
+			.asList(DateTakenPhotoFilter.class, DateUploadedPhotoFilter.class);
+
+	// From API doc: "The date can be in the form of a unix timestamp or mysql
+	// datetime."
+	private String minTakenDate;
+	private String maxTakenDate;
+	private String minUploadedDate;
+	private String maxUploadedDate;
 
 	// min_taken_date (Optional)
 	// Minimum taken date. Photos with an taken date greater than or equal to this
@@ -29,7 +45,7 @@ public class FlickrPhotoIterator extends PageCountServiceIterator<FlickrPhoto> {
 
 	@Override
 	public Collection<Class<? extends PhotoFilter>> supportedPhotoFilters() {
-		return Collections.emptySet();
+		return SUPPORTED_FILTERS;
 	}
 
 	@Override
@@ -42,10 +58,13 @@ public class FlickrPhotoIterator extends PageCountServiceIterator<FlickrPhoto> {
 		request.setParam("sort", "date-taken-desc");
 		request.setParam("page", pageNumber);
 		// default is 100, max is 500
-		request.setParam("per_page", 500);
+		// request.setParam("per_page", 500);
 
-		// request.setParam("min_taken_date", "2018-10-10");
-		// request.setParam("min_taken_date", "2018-10-06");
+		// Filters
+		request.setParam("min_taken_date", minTakenDate);
+		request.setParam("max_taken_date", maxTakenDate);
+		request.setParam("min_upload_date", minUploadedDate);
+		request.setParam("max_upload_date", maxUploadedDate);
 
 		// machine_tags are no auto tags
 		// https://www.flickr.com/groups/51035612836@N01/discuss/72157594497877875/
@@ -74,8 +93,26 @@ public class FlickrPhotoIterator extends PageCountServiceIterator<FlickrPhoto> {
 		return photos.photo;
 	}
 
+	@Override
+	protected void setDateTakenPhotoFilter(DateTakenPhotoFilter filter) {
+		minTakenDate = convert(filter.getFrom());
+		maxTakenDate = convert(filter.getTo());
+	}
+
+	@Override
+	protected void setDateUploadedPhotoFilter(DateUploadedPhotoFilter filter) {
+		minUploadedDate = convert(filter.getFrom());
+		maxUploadedDate = convert(filter.getTo());
+	}
+
+	private String convert(LocalDate localDate) {
+		return localDate.getYear() + "-" + localDate.getMonthValue() + "-" + localDate.getDayOfMonth();
+	}
+
 	public static void main(String[] args) {
 		FlickrPhotoIterator iter = new FlickrPhotoIterator(MyFlickrApp.getInstance());
+		iter.addFilter(new DateTakenPhotoFilter(DateRange.forMonth(2019, 2)));
+		// iter.addFilter(new DateUploadedPhotoFilter(DateRange.forMonth(2019, 3)));
 		while (iter.hasNext()) {
 			FlickrPhoto photo = iter.next();
 			System.err.println(photo.getTitle() + "  " + photo.getDateTimeTaken());

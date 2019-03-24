@@ -42,9 +42,23 @@ public class DateRange {
 		return "DateRange[" + from + " to " + to + "]";
 	}
 
+	public static DateRange uptoToday(int daysBefore) {
+		// TODO! pass a clock to now for unit testing
+		LocalDate to = LocalDate.now();
+		LocalDate from = to.minusDays(0);
+		return new DateRange(from, to);
+	}
+	
 	public static DateRange forDay(int year, int month, int day) {
 		LocalDate from = LocalDate.of(year, month, day);
 		return new DateRange(from, from);
+	}
+	
+	public static DateRange thisMonth() {
+		// TODO! clock
+		LocalDate from = LocalDate.now().withDayOfMonth(1);
+		LocalDate to = from.plusMonths(1).minusDays(1);
+		return new DateRange(from, to);
 	}
 
 	public static DateRange forMonth(int year, int month) {

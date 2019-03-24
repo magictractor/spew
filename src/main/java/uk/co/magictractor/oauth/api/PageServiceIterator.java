@@ -41,16 +41,17 @@ public abstract class PageServiceIterator<E> extends AbstractIterator<E> {
 			setDateTakenPhotoFilter((DateTakenPhotoFilter) filter);
 		} else if (filter instanceof DateUploadedPhotoFilter) {
 			setDateUploadedPhotoFilter((DateUploadedPhotoFilter) filter);
-		} 
-		throw new UnsupportedOperationException(
-				"Code must be modified to handle filter type " + filter.getClass().getSimpleName());
+		} else {
+			throw new UnsupportedOperationException(
+					"Code must be modified to handle filter type " + filter.getClass().getSimpleName());
+		}
 	}
 
 	protected void setDateTakenPhotoFilter(DateTakenPhotoFilter filter) {
 		throw new UnsupportedOperationException(
 				"setDateTakenPhotoFilter() must be overridden when DateTakenPhotoFilter is supported");
 	}
-	
+
 	protected void setDateUploadedPhotoFilter(DateUploadedPhotoFilter filter) {
 		throw new UnsupportedOperationException(
 				"setDateUploadedPhotoFilter() must be overridden when DateUploadedPhotoFilter is supported");
