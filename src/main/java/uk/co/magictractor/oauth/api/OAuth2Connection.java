@@ -91,6 +91,7 @@ public class OAuth2Connection extends AbstractOAuthConnection {
 		// urlBuilder.append("oauth_signature=");
 		// urlBuilder.append(getSignature());
 
+		// TODO! some params should be in request body
 		return request.getUrl() + "?" + getQueryString(request.getParams(), UrlEncoderUtil::paramEncode);
 		// return request.getUrl() + "?" + getQueryString(request.getParams(), (s) ->
 		// s);

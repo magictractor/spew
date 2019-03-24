@@ -26,6 +26,9 @@ public abstract class AbstractOAuthConnection implements OAuthConnection {
 	// http://www.baeldung.com/java-http-request
 	protected OAuthResponse request0(OAuthRequest request, Configuration jsonConfiguration,
 			Consumer<HttpURLConnection> initConnection) throws IOException {
+		// TODO! Yuck! some requests should have params in the body, such as for Google Photos
+		// good time to switch to Netty??
+		
 		// To look at URLStreamHandler
 		URL url = new URL(getUrl(request));
 		// TODO! add query string...
@@ -45,13 +48,13 @@ public abstract class AbstractOAuthConnection implements OAuthConnection {
 		}
 
 		boolean isOK;
-		String body;
+		String responseBody;
 		try {
 			isOK = con.getResponseCode() == HTTP_OK;
 			InputStream responseStream = isOK ? con.getInputStream() : con.getErrorStream();
 			//con.getHeaderField(n);
 			// 401 con.getInputStream() throws error; con.getErrorStream() returns null
-			body = responseStream == null ? "" : IOUtil.readStringAndClose(responseStream);
+			responseBody = responseStream == null ? "" : IOUtil.readStringAndClose(responseStream);
 		} finally {
 			con.disconnect();
 		}
@@ -60,16 +63,16 @@ public abstract class AbstractOAuthConnection implements OAuthConnection {
 		if (!isOK) {
 			// TODO! logger?
 			throw new IllegalStateException(
-					url + " response was " + con.getResponseCode() + " " + con.getResponseMessage() + " " + body);
+					url + " response was " + con.getResponseCode() + " " + con.getResponseMessage() + " " + responseBody);
 		}
 
 		// TODO! Very long Json does not get displayed in the console
-		System.err.println(body);
+		// System.err.println(responseBody);
 
 		// TODO! wrap/convert response json
 		// if ("json".equals(request.getParam("format"))) {
-		if (body.startsWith("{")) {
-			OAuthJsonResponse response = new OAuthJsonResponse(body, jsonConfiguration);
+		if (responseBody.startsWith("{")) {
+			OAuthJsonResponse response = new OAuthJsonResponse(responseBody, jsonConfiguration);
 			// TODO! change to !"pass"
 			// TODO! pass/fail specific to Flickr?
 //			if ("fail".equals(response.getString("stat"))) {
@@ -78,7 +81,7 @@ public abstract class AbstractOAuthConnection implements OAuthConnection {
 			return response;
 		} else {
 			// TODO! Google request hitting this...
-			return new OAuthAuthResponse(body);
+			return new OAuthAuthResponse(responseBody);
 		}
 	}
 
