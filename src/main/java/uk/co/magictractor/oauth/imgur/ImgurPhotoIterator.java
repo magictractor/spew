@@ -1,11 +1,14 @@
 package uk.co.magictractor.oauth.imgur;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import uk.co.magictractor.oauth.api.OAuthApplication;
 import uk.co.magictractor.oauth.api.OAuthRequest;
 import uk.co.magictractor.oauth.api.OAuthResponse;
 import uk.co.magictractor.oauth.api.PageCountServiceIterator;
+import uk.co.magictractor.oauth.common.filter.PhotoFilter;
 import uk.co.magictractor.oauth.imgur.pojo.ImgurImage;
 import uk.co.magictractor.oauth.imgur.pojo.ImgurImages;
 
@@ -114,6 +117,11 @@ public class ImgurPhotoIterator extends PageCountServiceIterator<ImgurImage> {
 
 	public ImgurPhotoIterator(OAuthApplication application) {
 		super(application);
+	}
+
+	@Override
+	public Collection<Class<? extends PhotoFilter>> supportedPhotoFilters() {
+		return Collections.emptySet();
 	}
 
 	// Get images https://apidocs.imgur.com/#2e45daca-bd44-47f8-84b0-b3f2aa861735

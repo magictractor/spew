@@ -8,6 +8,10 @@ public final class ExceptionUtil {
 
 	private ExceptionUtil() {
 	}
+	
+	public static RuntimeException notYetImplemented() {
+		return new UnsupportedOperationException("Not yet implemented");
+	}
 
 	public static void call(RunnableWithException runnable) {
 		call(() -> {
@@ -32,4 +36,5 @@ public final class ExceptionUtil {
 	public interface RunnableWithException {
 		void run() throws Exception;
 	}
+
 }

@@ -1,16 +1,24 @@
 package uk.co.magictractor.oauth.google;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import com.jayway.jsonpath.TypeRef;
 
 import uk.co.magictractor.oauth.api.OAuthRequest;
 import uk.co.magictractor.oauth.api.OAuthResponse;
+import uk.co.magictractor.oauth.common.filter.PhotoFilter;
 
 // https://developers.google.com/photos/library/guides/list
 //
 // https://developers.google.com/photos/library/reference/rest/v1/mediaItems#MediaItem
 public class GoogleMediaItemIterator extends GoogleServiceIterator<GoogleMediaItem> {
+
+	@Override
+	public Collection<Class<? extends PhotoFilter>> supportedPhotoFilters() {
+		return Collections.emptySet();
+	}
 
 	@Override
 	protected OAuthRequest createPageRequest() {

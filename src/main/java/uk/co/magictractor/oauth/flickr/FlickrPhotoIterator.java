@@ -1,15 +1,21 @@
 package uk.co.magictractor.oauth.flickr;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import uk.co.magictractor.oauth.api.OAuthApplication;
 import uk.co.magictractor.oauth.api.OAuthRequest;
 import uk.co.magictractor.oauth.api.OAuthResponse;
 import uk.co.magictractor.oauth.api.PageCountServiceIterator;
+import uk.co.magictractor.oauth.common.filter.PhotoFilter;
 import uk.co.magictractor.oauth.flickr.pojo.FlickrPhoto;
 import uk.co.magictractor.oauth.flickr.pojo.FlickrPhotos;
 
-// Use flickr.photos.search rather than flickr.people.getPhotos because it allows sort order to be specified
+/** Uses flickr.photos.search rather than flickr.people.getPhotos because it allows sort order to be specified.
+ * 
+ * See https://www.flickr.com/services/api/flickr.photos.search.html.
+ */
 public class FlickrPhotoIterator extends PageCountServiceIterator<FlickrPhoto> {
 
 	// min_taken_date (Optional)
@@ -20,7 +26,12 @@ public class FlickrPhotoIterator extends PageCountServiceIterator<FlickrPhoto> {
 	public FlickrPhotoIterator(OAuthApplication application) {
 		super(application);
 	}
-	
+
+	@Override
+	public Collection<Class<? extends PhotoFilter>> supportedPhotoFilters() {
+		return Collections.emptySet();
+	}
+
 	@Override
 	protected List<FlickrPhoto> fetchPage(int pageNumber) {
 		OAuthRequest request = new OAuthRequest(Flickr.REST_ENDPOINT);
@@ -33,7 +44,7 @@ public class FlickrPhotoIterator extends PageCountServiceIterator<FlickrPhoto> {
 		// default is 100, max is 500
 		request.setParam("per_page", 500);
 
-		//request.setParam("min_taken_date", "2018-10-10");
+		// request.setParam("min_taken_date", "2018-10-10");
 		// request.setParam("min_taken_date", "2018-10-06");
 
 		// machine_tags are no auto tags
@@ -70,4 +81,5 @@ public class FlickrPhotoIterator extends PageCountServiceIterator<FlickrPhoto> {
 			System.err.println(photo.getTitle() + "  " + photo.getDateTimeTaken());
 		}
 	}
+
 }
