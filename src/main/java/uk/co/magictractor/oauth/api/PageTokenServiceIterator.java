@@ -42,11 +42,7 @@ public abstract class PageTokenServiceIterator<E> extends PageServiceIterator<E>
 		 * @param nextToken may be null to indicate that this is the last page
 		 */
 		public PageAndNextToken(List<? extends E> page, String nextToken) {
-			if (page == null) {
-				throw new IllegalArgumentException("page must not be null");
-			}
-
-			this.page = page;
+			this.page = page == null ? Collections.emptyList() : page;
 			this.nextToken = nextToken;
 		}
 	}

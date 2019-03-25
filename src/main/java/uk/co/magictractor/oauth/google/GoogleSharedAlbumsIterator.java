@@ -10,6 +10,7 @@ import uk.co.magictractor.oauth.api.OAuthRequest;
 import uk.co.magictractor.oauth.api.OAuthResponse;
 import uk.co.magictractor.oauth.common.Album;
 import uk.co.magictractor.oauth.common.filter.PhotoFilter;
+import uk.co.magictractor.oauth.google.pojo.GoogleAlbum;
 
 public class GoogleSharedAlbumsIterator extends GoogleServiceIterator<Album> {
 
@@ -25,7 +26,7 @@ public class GoogleSharedAlbumsIterator extends GoogleServiceIterator<Album> {
 		// return new OAuthRequest("https://photoslibrary.googleapis.com/v1/albums");
 
 		// https://developers.google.com/photos/library/reference/rest/v1/sharedAlbums/list
-		return new OAuthRequest("https://photoslibrary.googleapis.com/v1/sharedAlbums");
+		return OAuthRequest.get("https://photoslibrary.googleapis.com/v1/sharedAlbums");
 	}
 
 	@Override

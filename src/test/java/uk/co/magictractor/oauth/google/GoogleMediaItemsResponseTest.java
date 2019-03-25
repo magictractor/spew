@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 import org.junit.jupiter.api.Test;
 
 import uk.co.magictractor.oauth.api.OAuthJsonResponse;
+import uk.co.magictractor.oauth.google.pojo.GoogleMediaItem;
 import uk.co.magictractor.oauth.util.ResourceUtil;
 
 public class GoogleMediaItemsResponseTest {

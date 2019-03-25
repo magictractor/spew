@@ -1,6 +1,5 @@
 package uk.co.magictractor.oauth.google;
 
-import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -11,6 +10,9 @@ import uk.co.magictractor.oauth.api.OAuthRequest;
 import uk.co.magictractor.oauth.api.OAuthResponse;
 import uk.co.magictractor.oauth.common.filter.DateTakenPhotoFilter;
 import uk.co.magictractor.oauth.common.filter.PhotoFilter;
+import uk.co.magictractor.oauth.google.pojo.GoogleFilters;
+import uk.co.magictractor.oauth.google.pojo.GoogleMediaItem;
+import uk.co.magictractor.oauth.local.dates.DateRange;
 
 // https://developers.google.com/photos/library/guides/list
 //
@@ -20,8 +22,7 @@ public class GoogleMediaItemIterator extends GoogleServiceIterator<GoogleMediaIt
 	private static final List<Class<? extends PhotoFilter>> SUPPORTED_FILTERS = Arrays
 			.asList(DateTakenPhotoFilter.class);
 
-	private String minTakenDate;
-	private String maxTakenDate;
+	private DateRange dateTakenRange;
 
 	@Override
 	public Collection<Class<? extends PhotoFilter>> supportedPhotoFilters() {
@@ -30,19 +31,16 @@ public class GoogleMediaItemIterator extends GoogleServiceIterator<GoogleMediaIt
 
 	@Override
 	protected void setDateTakenPhotoFilter(DateTakenPhotoFilter filter) {
-		minTakenDate = convert(filter.getFrom());
-		maxTakenDate = convert(filter.getTo());
-	}
-
-	private String convert(LocalDate localDate) {
-		return localDate.getYear() + "-" + localDate.getMonthValue() + "-" + localDate.getDayOfMonth();
+		dateTakenRange = filter.getDateRange();
 	}
 
 	@Override
 	protected OAuthRequest createPageRequest() {
-//		String endpoint = "https://photoslibrary.googleapis.com/v1/mediaItems:search";
-		String endpoint = "https://photoslibrary.googleapis.com/v1/mediaItems";
-		OAuthRequest request = new OAuthRequest(endpoint);
+		OAuthRequest request = OAuthRequest.post("https://photoslibrary.googleapis.com/v1/mediaItems:search");
+
+		if (dateTakenRange != null) {
+			request.setParam("filters", new GoogleFilters(dateTakenRange));
+		}
 
 		return request;
 	}
@@ -55,7 +53,7 @@ public class GoogleMediaItemIterator extends GoogleServiceIterator<GoogleMediaIt
 
 	public static void main(String[] args) {
 		GoogleMediaItemIterator iter = new GoogleMediaItemIterator();
-		// iter.addFilter(new DateTakenPhotoFilter(DateRange.forYear(2018)));
+		iter.addFilter(new DateTakenPhotoFilter(DateRange.forDay(2018, 11, 21)));
 		while (iter.hasNext()) {
 			GoogleMediaItem photo = iter.next();
 			System.err.println(photo.getFileName() + "  " + photo.getDateTimeTaken());

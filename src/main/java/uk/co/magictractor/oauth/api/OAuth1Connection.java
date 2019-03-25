@@ -77,7 +77,8 @@ public final class OAuth1Connection extends AbstractOAuthConnection {
 	}
 
 	private void authorize() {
-		OAuthRequest request = new OAuthRequest(authServer.getTemporaryCredentialRequestUri());
+		// TODO! POST?
+		OAuthRequest request = OAuthRequest.get(authServer.getTemporaryCredentialRequestUri());
 		OAuthResponse response = authRequest(request);
 
 		// oauth_callback_confirmed=true&oauth_token=72157697914997341-aa5c16e42e726714&oauth_token_secret=b9f69c0cb17972f6
@@ -105,7 +106,8 @@ public final class OAuth1Connection extends AbstractOAuthConnection {
 
 	private void verify(String verification) {
 		// FlickrRequest request = FlickrRequest.forAuth("access_token");
-		OAuthRequest request = new OAuthRequest(authServer.getTokenRequestUri());
+		// TODO! POST?
+		OAuthRequest request = OAuthRequest.get(authServer.getTokenRequestUri());
 		request.setParam("oauth_token", userTokenAndSecret.getToken());
 		request.setParam("oauth_verifier", verification);
 		OAuthResponse response = authRequest(request);
@@ -174,7 +176,7 @@ public final class OAuth1Connection extends AbstractOAuthConnection {
 //	}
 
 	/** @return ordered params for building signature key */
-	private Map<String, String> getBaseStringParams(OAuthRequest request) {
+	private Map<String, Object> getBaseStringParams(OAuthRequest request) {
 		// TODO! some params should be ignored
 		// TODO! where should params be escaped??
 		return new TreeMap<>(request.getParams());

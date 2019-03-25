@@ -40,9 +40,8 @@ public class FlickrPhotoUpdateProcessor extends PhotoUpdateProcessor {
 		// TODO Auto-generated method stub
 		System.err.println("set title: " + photo.getTitle());
 
-		OAuthRequest request = new OAuthRequest(Flickr.REST_ENDPOINT);
+		OAuthRequest request = OAuthRequest.post(Flickr.REST_ENDPOINT);
 
-		request.setHttpMethod("POST");
 		request.setParam("method", "flickr.photos.setMeta");
 
 		request.setParam("photo_id", photo.getServiceProviderId());
@@ -56,9 +55,8 @@ public class FlickrPhotoUpdateProcessor extends PhotoUpdateProcessor {
 		// TODO Auto-generated method stub
 		System.err.println("set tags: " + photo.getTagSet());
 
-		OAuthRequest request = new OAuthRequest(Flickr.REST_ENDPOINT);
+		OAuthRequest request = OAuthRequest.post(Flickr.REST_ENDPOINT);
 
-		request.setHttpMethod("POST");
 		request.setParam("method", "flickr.photos.setTags");
 
 		request.setParam("photo_id", photo.getServiceProviderId());

@@ -12,6 +12,10 @@ public abstract class DateRangePhotoFilter implements PhotoFilter {
 		this.dateRange = dateRange;
 	}
 
+	public DateRange getDateRange() {
+		return dateRange;
+	}
+
 	public LocalDate getFrom() {
 		return dateRange.getFrom();
 	}

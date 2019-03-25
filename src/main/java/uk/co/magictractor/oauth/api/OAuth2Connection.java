@@ -71,8 +71,8 @@ public class OAuth2Connection extends AbstractOAuthConnection {
 
 		// apiRequest.s
 
-		// TODO! need to block while waiting for auth
-		//return null;
+		// TODO! need to block while waiting for auth from Imgur
+		// return null;
 		return ExceptionUtil.call(() -> request0(apiRequest, getJsonConfiguration(), this::setAuthHeader));
 	}
 
@@ -91,8 +91,13 @@ public class OAuth2Connection extends AbstractOAuthConnection {
 		// urlBuilder.append("oauth_signature=");
 		// urlBuilder.append(getSignature());
 
-		// TODO! some params should be in request body
-		return request.getUrl() + "?" + getQueryString(request.getParams(), UrlEncoderUtil::paramEncode);
+		// TODO! may need to have both query params and body params
+		if (!request.hasParamsInBody()) {
+			return request.getUrl() + "?" + getQueryString(request.getParams(), UrlEncoderUtil::paramEncode);
+		} else {
+			// Params will go in the request body.
+			return request.getUrl();
+		}
 		// return request.getUrl() + "?" + getQueryString(request.getParams(), (s) ->
 		// s);
 	}
@@ -115,9 +120,7 @@ public class OAuth2Connection extends AbstractOAuthConnection {
 
 	// https://developers.google.com/photos/library/guides/authentication-authorization
 	private void authorize() {
-		OAuthRequest request = new OAuthRequest(application.getServiceProvider().getAuthorizationUri());
-
-		request.setHttpMethod("POST");
+		OAuthRequest request = OAuthRequest.post(application.getServiceProvider().getAuthorizationUri());
 
 		request.setParam("client_id", application.getClientId());
 		String redirectUri = getAuthorizeRedirectUrl();
@@ -218,10 +221,8 @@ public class OAuth2Connection extends AbstractOAuthConnection {
 
 	// TODO! needs a tweak to handle pin
 	private void fetchAccessAndRefreshToken(String code) {
-		OAuthRequest request = new OAuthRequest(application.getServiceProvider().getTokenUri());
-
 		// ah! needed to be POST else 404 (Google)
-		request.setHttpMethod("POST");
+		OAuthRequest request = OAuthRequest.post(application.getServiceProvider().getTokenUri());
 
 		request.setParam("code", code);
 		// request.setParam("pin", code);
@@ -252,10 +253,7 @@ public class OAuth2Connection extends AbstractOAuthConnection {
 	// TODO! handle invalid/expired refresh tokens
 	// https://developers.google.com/identity/protocols/OAuth2InstalledApp#offline
 	private void fetchRefreshedAccessToken() {
-		OAuthRequest request = new OAuthRequest(application.getServiceProvider().getTokenUri());
-
-		// ah! needed to be POST else 404
-		request.setHttpMethod("POST");
+		OAuthRequest request = OAuthRequest.post(application.getServiceProvider().getTokenUri());
 
 		request.setParam("refresh_token", refreshToken.getValue());
 		request.setParam("client_id", application.getClientId());
@@ -273,7 +271,7 @@ public class OAuth2Connection extends AbstractOAuthConnection {
 //	private void setAccessToken(OAuthResponse response) {
 //		setAccessToken(response.getString("access_token"), response.getString("expires_in"));
 //	}
-	
+
 	private void setAccessToken(FullHttpRequest httpRequest) {
 		ByteBuf content = httpRequest.content();
 		// new QueryStringDecoder()
@@ -284,10 +282,10 @@ public class OAuth2Connection extends AbstractOAuthConnection {
 		QueryStringDecoder d = new QueryStringDecoder(s, Charsets.UTF_8, false);
 		Map<String, List<String>> parameters = d.parameters();
 		System.err.println(parameters);
-		
+
 		setAccessToken((key) -> Iterables.getOnlyElement(parameters.get(key)));
 	}
-	
+
 	private void setAccessToken(Function<String, String> valueMap) {
 		accessToken.setValue(valueMap.apply("access_token"));
 

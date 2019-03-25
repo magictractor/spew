@@ -1,4 +1,4 @@
-package uk.co.magictractor.oauth.google;
+package uk.co.magictractor.oauth.google.pojo;
 
 import uk.co.magictractor.oauth.common.Album;
 

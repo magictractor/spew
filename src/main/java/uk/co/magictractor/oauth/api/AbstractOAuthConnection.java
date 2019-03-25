@@ -18,7 +18,8 @@ import uk.co.magictractor.oauth.util.IOUtil;
 // Common code for OAuth1 and OAuth2 implementations.
 public abstract class AbstractOAuthConnection implements OAuthConnection {
 
-	// TODO! return Netty HttpResponse instead - Configuration shouldn't embedded here?
+	// TODO! return Netty HttpResponse instead - Configuration shouldn't embedded
+	// here?
 	protected OAuthResponse request0(OAuthRequest request, Configuration jsonConfiguration) throws IOException {
 		return request0(request, jsonConfiguration, null);
 	}
@@ -26,14 +27,15 @@ public abstract class AbstractOAuthConnection implements OAuthConnection {
 	// http://www.baeldung.com/java-http-request
 	protected OAuthResponse request0(OAuthRequest request, Configuration jsonConfiguration,
 			Consumer<HttpURLConnection> initConnection) throws IOException {
-		// TODO! Yuck! some requests should have params in the body, such as for Google Photos
-		// good time to switch to Netty??
-		
+
 		// To look at URLStreamHandler
 		URL url = new URL(getUrl(request));
 		// TODO! add query string...
 		HttpURLConnection con = (HttpURLConnection) url.openConnection();
 		con.setRequestMethod(request.getHttpMethod());
+
+		// request.getParams();
+		// con.getOutputStream();
 
 		// Used to set authentication in headers for OAuth2
 		if (initConnection != null) {
@@ -41,8 +43,28 @@ public abstract class AbstractOAuthConnection implements OAuthConnection {
 		}
 
 		// Prevent 411 Content Length Required
-		if ("POST".equals(request.getHttpMethod())) {
-			// con.setRequestProperty("Content-Length", "0");
+//		if ("POST".equals(request.getHttpMethod())) {
+//			// con.setRequestProperty("Content-Length", "0");
+//			con.setDoOutput(true);
+//			con.setFixedLengthStreamingMode(0);
+//		}
+
+		if (request.hasParamsInBody()) {
+			con.setDoOutput(true);
+
+			if (!request.getParams().isEmpty()) {
+				con.setRequestProperty("content-type", "application/json");
+				String requestBody = buildRequestBody(request, jsonConfiguration);
+				System.err.println("request body: " + requestBody);
+				// TODO! encoding
+				byte[] requestBodyBytes = requestBody.getBytes();
+				con.setFixedLengthStreamingMode(requestBodyBytes.length);
+				con.getOutputStream().write(requestBodyBytes);
+			} else {
+				con.setFixedLengthStreamingMode(0);
+			}
+		} else if ("POST".equals(request.getHttpMethod())) {
+			// TODO! tidy up this code
 			con.setDoOutput(true);
 			con.setFixedLengthStreamingMode(0);
 		}
@@ -52,7 +74,7 @@ public abstract class AbstractOAuthConnection implements OAuthConnection {
 		try {
 			isOK = con.getResponseCode() == HTTP_OK;
 			InputStream responseStream = isOK ? con.getInputStream() : con.getErrorStream();
-			//con.getHeaderField(n);
+			// con.getHeaderField(n);
 			// 401 con.getInputStream() throws error; con.getErrorStream() returns null
 			responseBody = responseStream == null ? "" : IOUtil.readStringAndClose(responseStream);
 		} finally {
@@ -62,12 +84,12 @@ public abstract class AbstractOAuthConnection implements OAuthConnection {
 		// TODO! what to do when !isOK
 		if (!isOK) {
 			// TODO! logger?
-			throw new IllegalStateException(
-					url + " response was " + con.getResponseCode() + " " + con.getResponseMessage() + " " + responseBody);
+			throw new IllegalStateException(url + " response was " + con.getResponseCode() + " "
+					+ con.getResponseMessage() + " " + responseBody);
 		}
 
 		// TODO! Very long Json does not get displayed in the console
-		// System.err.println(responseBody);
+		System.err.println(responseBody);
 
 		// TODO! wrap/convert response json
 		// if ("json".equals(request.getParam("format"))) {
@@ -85,15 +107,19 @@ public abstract class AbstractOAuthConnection implements OAuthConnection {
 		}
 	}
 
+	private String buildRequestBody(OAuthRequest request, Configuration jsonConfiguration) {
+		return jsonConfiguration.jsonProvider().toJson(request.getParams());
+	}
+
 	abstract protected String getUrl(OAuthRequest request);
 
 	// make this private?
-	protected final String getQueryString(Map<String, String> params, Function<String, String> valueEncoder) {
+	protected final String getQueryString(Map<String, Object> params, Function<String, String> valueEncoder) {
 		StringBuilder queryStringBuilder = new StringBuilder();
 		// urlBuilder.append("?");
 
 		boolean isFirstParam = true;
-		for (Entry<String, String> paramEntry : params.entrySet()) {
+		for (Entry<String, Object> paramEntry : params.entrySet()) {
 			if (isFirstParam) {
 				isFirstParam = false;
 			} else {
@@ -101,7 +127,7 @@ public abstract class AbstractOAuthConnection implements OAuthConnection {
 			}
 			queryStringBuilder.append(paramEntry.getKey());
 			queryStringBuilder.append("=");
-			queryStringBuilder.append(valueEncoder.apply(paramEntry.getValue()));
+			queryStringBuilder.append(valueEncoder.apply(paramEntry.getValue().toString()));
 			// urlBuilder.append("&");
 		}
 

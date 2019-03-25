@@ -32,7 +32,7 @@ class OAuthRequestTest {
 
 	/** Set up example from https://www.flickr.com/services/api/auth.oauth.html */
 	private OAuthRequest setUpExampleRequest() {
-		OAuthRequest request = new OAuthRequest("https://api.flickr.com/services/rest/request_token");
+		OAuthRequest request = OAuthRequest.post("https://api.flickr.com/services/rest/request_token");
 
 		// request.removeParam("format");
 		// request.removeParam("nojsoncallback");

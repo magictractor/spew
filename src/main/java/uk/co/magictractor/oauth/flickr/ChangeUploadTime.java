@@ -18,7 +18,7 @@ public class ChangeUploadTime {
 	// &api_sig=2f89eec3ea014525e7a4cec5d51cf1ab
 
 	private void exec() {
-		OAuthRequest request = new OAuthRequest(Flickr.REST_ENDPOINT);
+		OAuthRequest request = OAuthRequest.get(Flickr.REST_ENDPOINT);
 
 		// https://secure.flickr.com/services/api/flickr.people.getPhotos.html
 		// FlickrRequest request = FlickrRequest.forApi("flickr.people.getPhotos");

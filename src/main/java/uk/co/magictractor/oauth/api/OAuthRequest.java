@@ -5,11 +5,32 @@ import java.util.Map;
 
 public class OAuthRequest {
 
+	private final String httpMethod;
 	private final String url;
-	private final Map<String, String> params = new LinkedHashMap<>();
-	private String httpMethod = "GET";
+	private final Map<String, Object> params = new LinkedHashMap<>();
 
-	public OAuthRequest(String url) {
+	public static final OAuthRequest get(String url) {
+		return new OAuthRequest("GET", url);
+	}
+
+	public static final OAuthRequest post(String url) {
+		return new OAuthRequest("POST", url);
+	}
+
+	public static final OAuthRequest del(String url) {
+		return new OAuthRequest("DEL", url);
+	}
+
+	public static final OAuthRequest update(String url) {
+		return new OAuthRequest("UPDATE", url);
+	}
+
+	public static final OAuthRequest create(String httpMethod, String url) {
+		return new OAuthRequest(httpMethod, url);
+	}
+
+	private OAuthRequest(String httpMethod, String url) {
+		this.httpMethod = httpMethod;
 		this.url = url;
 	}
 
@@ -21,16 +42,12 @@ public class OAuthRequest {
 		return httpMethod;
 	}
 
-	// TODO! enum? infer from method (e.g. begins with "set")?
-	public void setHttpMethod(String httpMethod) {
-		this.httpMethod = httpMethod;
+	public boolean hasParamsInBody() {
+		// TODO! check whether DEL or other method types support a body
+		return !"GET".equals(httpMethod);
 	}
 
-	public void setParam(String key, Number number) {
-		params.put(key, number.toString());
-	}
-
-	public void setParam(String key, String value) {
+	public void setParam(String key, Object value) {
 		// Escape value to handle spaces in titles etc. - nope gubs oauth
 		// params.put(key, UrlEncoderUtil.urlEncode(value));
 		if (value != null) {
@@ -44,12 +61,11 @@ public class OAuthRequest {
 		params.remove(key);
 	}
 
-	public String getParam(String key) {
+	public Object getParam(String key) {
 		return params.get(key);
 	}
 
-	// TODO! remove this??
-	public Map<String, String> getParams() {
+	public Map<String, Object> getParams() {
 		return params;
 	}
 }

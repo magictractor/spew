@@ -24,7 +24,7 @@ public interface OAuthServiceProvider {
 	}
 
 	default Configuration getJsonConfiguration() {
-		Gson gson = getGsonBuilder().create();
+		Gson gson = getGsonBuilder().setPrettyPrinting().create();
 		JsonProvider jsonProvider = new GsonJsonProvider(gson);
 		MappingProvider mappingProvider = new GsonMappingProvider(gson);
 
