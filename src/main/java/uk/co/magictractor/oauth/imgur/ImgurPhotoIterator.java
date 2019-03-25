@@ -127,7 +127,7 @@ public class ImgurPhotoIterator extends PageCountServiceIterator<ImgurImage> {
 	// Get images https://apidocs.imgur.com/#2e45daca-bd44-47f8-84b0-b3f2aa861735
 	@Override
 	protected List<ImgurImage> fetchPage(int pageNumber) {
-		OAuthRequest request = OAuthRequest.get(Imgur.REST_ENDPOINT + "/account/me/images/" + (pageNumber - 1));
+		OAuthRequest request = OAuthRequest.createGetRequest(Imgur.REST_ENDPOINT + "/account/me/images/" + (pageNumber - 1));
 
 		// request.setParam("method", "account/me/images/page/" + (pageNumber - 1));
 

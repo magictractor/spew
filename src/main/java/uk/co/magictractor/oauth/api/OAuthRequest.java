@@ -9,23 +9,23 @@ public class OAuthRequest {
 	private final String url;
 	private final Map<String, Object> params = new LinkedHashMap<>();
 
-	public static final OAuthRequest get(String url) {
+	public static final OAuthRequest createGetRequest(String url) {
 		return new OAuthRequest("GET", url);
 	}
 
-	public static final OAuthRequest post(String url) {
+	public static final OAuthRequest createPostRequest(String url) {
 		return new OAuthRequest("POST", url);
 	}
 
-	public static final OAuthRequest del(String url) {
+	public static final OAuthRequest createDelRequest(String url) {
 		return new OAuthRequest("DEL", url);
 	}
 
-	public static final OAuthRequest update(String url) {
-		return new OAuthRequest("UPDATE", url);
+	public static final OAuthRequest createPutRequest(String url) {
+		return new OAuthRequest("PUT", url);
 	}
 
-	public static final OAuthRequest create(String httpMethod, String url) {
+	public static final OAuthRequest createRequest(String httpMethod, String url) {
 		return new OAuthRequest(httpMethod, url);
 	}
 

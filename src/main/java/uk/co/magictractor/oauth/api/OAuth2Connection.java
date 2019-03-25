@@ -120,7 +120,7 @@ public class OAuth2Connection extends AbstractOAuthConnection {
 
 	// https://developers.google.com/photos/library/guides/authentication-authorization
 	private void authorize() {
-		OAuthRequest request = OAuthRequest.post(application.getServiceProvider().getAuthorizationUri());
+		OAuthRequest request = OAuthRequest.createPostRequest(application.getServiceProvider().getAuthorizationUri());
 
 		request.setParam("client_id", application.getClientId());
 		String redirectUri = getAuthorizeRedirectUrl();
@@ -222,7 +222,7 @@ public class OAuth2Connection extends AbstractOAuthConnection {
 	// TODO! needs a tweak to handle pin
 	private void fetchAccessAndRefreshToken(String code) {
 		// ah! needed to be POST else 404 (Google)
-		OAuthRequest request = OAuthRequest.post(application.getServiceProvider().getTokenUri());
+		OAuthRequest request = OAuthRequest.createPostRequest(application.getServiceProvider().getTokenUri());
 
 		request.setParam("code", code);
 		// request.setParam("pin", code);
@@ -253,7 +253,7 @@ public class OAuth2Connection extends AbstractOAuthConnection {
 	// TODO! handle invalid/expired refresh tokens
 	// https://developers.google.com/identity/protocols/OAuth2InstalledApp#offline
 	private void fetchRefreshedAccessToken() {
-		OAuthRequest request = OAuthRequest.post(application.getServiceProvider().getTokenUri());
+		OAuthRequest request = OAuthRequest.createPostRequest(application.getServiceProvider().getTokenUri());
 
 		request.setParam("refresh_token", refreshToken.getValue());
 		request.setParam("client_id", application.getClientId());

@@ -78,7 +78,7 @@ public final class OAuth1Connection extends AbstractOAuthConnection {
 
 	private void authorize() {
 		// TODO! POST?
-		OAuthRequest request = OAuthRequest.get(authServer.getTemporaryCredentialRequestUri());
+		OAuthRequest request = OAuthRequest.createGetRequest(authServer.getTemporaryCredentialRequestUri());
 		OAuthResponse response = authRequest(request);
 
 		// oauth_callback_confirmed=true&oauth_token=72157697914997341-aa5c16e42e726714&oauth_token_secret=b9f69c0cb17972f6
@@ -107,7 +107,7 @@ public final class OAuth1Connection extends AbstractOAuthConnection {
 	private void verify(String verification) {
 		// FlickrRequest request = FlickrRequest.forAuth("access_token");
 		// TODO! POST?
-		OAuthRequest request = OAuthRequest.get(authServer.getTokenRequestUri());
+		OAuthRequest request = OAuthRequest.createGetRequest(authServer.getTokenRequestUri());
 		request.setParam("oauth_token", userTokenAndSecret.getToken());
 		request.setParam("oauth_verifier", verification);
 		OAuthResponse response = authRequest(request);

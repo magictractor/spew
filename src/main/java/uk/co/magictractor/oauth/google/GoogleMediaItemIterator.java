@@ -36,7 +36,7 @@ public class GoogleMediaItemIterator extends GoogleServiceIterator<GoogleMediaIt
 
 	@Override
 	protected OAuthRequest createPageRequest() {
-		OAuthRequest request = OAuthRequest.post("https://photoslibrary.googleapis.com/v1/mediaItems:search");
+		OAuthRequest request = OAuthRequest.createPostRequest("https://photoslibrary.googleapis.com/v1/mediaItems:search");
 
 		if (dateTakenRange != null) {
 			request.setParam("filters", new GoogleFilters(dateTakenRange));

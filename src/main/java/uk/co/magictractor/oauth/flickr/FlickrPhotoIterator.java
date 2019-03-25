@@ -50,7 +50,7 @@ public class FlickrPhotoIterator extends PageCountServiceIterator<FlickrPhoto> {
 
 	@Override
 	protected List<FlickrPhoto> fetchPage(int pageNumber) {
-		OAuthRequest request = OAuthRequest.post(Flickr.REST_ENDPOINT);
+		OAuthRequest request = OAuthRequest.createPostRequest(Flickr.REST_ENDPOINT);
 
 		request.setParam("method", "flickr.photos.search");
 
