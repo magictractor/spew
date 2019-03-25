@@ -8,6 +8,7 @@ import com.jayway.jsonpath.TypeRef;
 
 import uk.co.magictractor.oauth.api.OAuthRequest;
 import uk.co.magictractor.oauth.api.OAuthResponse;
+import uk.co.magictractor.oauth.api.PhotoIterator;
 import uk.co.magictractor.oauth.common.filter.DateTakenPhotoFilter;
 import uk.co.magictractor.oauth.common.filter.PhotoFilter;
 import uk.co.magictractor.oauth.google.pojo.GoogleFilters;
@@ -17,7 +18,7 @@ import uk.co.magictractor.oauth.local.dates.DateRange;
 // https://developers.google.com/photos/library/guides/list
 //
 // https://developers.google.com/photos/library/reference/rest/v1/mediaItems#MediaItem
-public class GoogleMediaItemIterator extends GoogleServiceIterator<GoogleMediaItem> {
+public class GoogleMediaItemIterator extends GoogleServiceIterator<GoogleMediaItem> implements PhotoIterator<GoogleMediaItem> {
 
 	private static final List<Class<? extends PhotoFilter>> SUPPORTED_FILTERS = Arrays
 			.asList(DateTakenPhotoFilter.class);
@@ -30,7 +31,7 @@ public class GoogleMediaItemIterator extends GoogleServiceIterator<GoogleMediaIt
 	}
 
 	@Override
-	protected void setDateTakenPhotoFilter(DateTakenPhotoFilter filter) {
+	public void setDateTakenPhotoFilter(DateTakenPhotoFilter filter) {
 		dateTakenRange = filter.getDateRange();
 	}
 

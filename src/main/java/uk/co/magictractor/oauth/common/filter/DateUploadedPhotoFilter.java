@@ -11,8 +11,8 @@ public class DateUploadedPhotoFilter extends DateRangePhotoFilter {
 	}
 
 	@Override
-	public boolean test(Photo t) {
-		throw ExceptionUtil.notYetImplemented();
+	public boolean test(Photo photo) {
+		return getDateRange().contains(photo.getDateUpload());
 	}
 
 }

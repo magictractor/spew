@@ -1,7 +1,5 @@
 package uk.co.magictractor.oauth.google;
 
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 import com.jayway.jsonpath.TypeRef;
@@ -9,15 +7,9 @@ import com.jayway.jsonpath.TypeRef;
 import uk.co.magictractor.oauth.api.OAuthRequest;
 import uk.co.magictractor.oauth.api.OAuthResponse;
 import uk.co.magictractor.oauth.common.Album;
-import uk.co.magictractor.oauth.common.filter.PhotoFilter;
 import uk.co.magictractor.oauth.google.pojo.GoogleAlbum;
 
 public class GoogleSharedAlbumsIterator extends GoogleServiceIterator<Album> {
-
-	@Override
-	public Collection<Class<? extends PhotoFilter>> supportedPhotoFilters() {
-		return Collections.emptySet();
-	}
 
 	@Override
 	protected OAuthRequest createPageRequest() {

@@ -9,6 +9,7 @@ import uk.co.magictractor.oauth.api.OAuthApplication;
 import uk.co.magictractor.oauth.api.OAuthRequest;
 import uk.co.magictractor.oauth.api.OAuthResponse;
 import uk.co.magictractor.oauth.api.PageCountServiceIterator;
+import uk.co.magictractor.oauth.api.PhotoIterator;
 import uk.co.magictractor.oauth.common.filter.DateTakenPhotoFilter;
 import uk.co.magictractor.oauth.common.filter.DateUploadedPhotoFilter;
 import uk.co.magictractor.oauth.common.filter.PhotoFilter;
@@ -22,7 +23,7 @@ import uk.co.magictractor.oauth.local.dates.DateRange;
  * 
  * See https://www.flickr.com/services/api/flickr.photos.search.html.
  */
-public class FlickrPhotoIterator extends PageCountServiceIterator<FlickrPhoto> {
+public class FlickrPhotoIterator extends PageCountServiceIterator<FlickrPhoto> implements PhotoIterator<FlickrPhoto> {
 
 	private static final List<Class<? extends PhotoFilter>> SUPPORTED_FILTERS = Arrays
 			.asList(DateTakenPhotoFilter.class, DateUploadedPhotoFilter.class);
@@ -94,13 +95,13 @@ public class FlickrPhotoIterator extends PageCountServiceIterator<FlickrPhoto> {
 	}
 
 	@Override
-	protected void setDateTakenPhotoFilter(DateTakenPhotoFilter filter) {
+	public void setDateTakenPhotoFilter(DateTakenPhotoFilter filter) {
 		minTakenDate = convert(filter.getFrom());
 		maxTakenDate = convert(filter.getTo());
 	}
 
 	@Override
-	protected void setDateUploadedPhotoFilter(DateUploadedPhotoFilter filter) {
+	public void setDateUploadedPhotoFilter(DateUploadedPhotoFilter filter) {
 		minUploadedDate = convert(filter.getFrom());
 		maxUploadedDate = convert(filter.getTo());
 	}

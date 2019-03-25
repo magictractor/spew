@@ -2,15 +2,19 @@ package uk.co.magictractor.oauth.imgur;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 import uk.co.magictractor.oauth.api.OAuthApplication;
 import uk.co.magictractor.oauth.api.OAuthRequest;
 import uk.co.magictractor.oauth.api.OAuthResponse;
 import uk.co.magictractor.oauth.api.PageCountServiceIterator;
+import uk.co.magictractor.oauth.api.PhotoIterator;
+import uk.co.magictractor.oauth.common.filter.DateTakenPhotoFilter;
 import uk.co.magictractor.oauth.common.filter.PhotoFilter;
 import uk.co.magictractor.oauth.imgur.pojo.ImgurImage;
 import uk.co.magictractor.oauth.imgur.pojo.ImgurImages;
+import uk.co.magictractor.oauth.local.dates.DateRange;
 
 /*
  * <pre>
@@ -108,7 +112,8 @@ import uk.co.magictractor.oauth.imgur.pojo.ImgurImages;
 }
 </pre>
  */
-public class ImgurPhotoIterator extends PageCountServiceIterator<ImgurImage> {
+/** https://apidocs.imgur.com/#2e45daca-bd44-47f8-84b0-b3f2aa861735 */
+public class ImgurPhotoIterator extends PageCountServiceIterator<ImgurImage> implements PhotoIterator<ImgurImage> {
 
 	// min_taken_date (Optional)
 	// Minimum taken date. Photos with an taken date greater than or equal to this
@@ -121,13 +126,15 @@ public class ImgurPhotoIterator extends PageCountServiceIterator<ImgurImage> {
 
 	@Override
 	public Collection<Class<? extends PhotoFilter>> supportedPhotoFilters() {
+		// Imgur /images/ does not support filters.
 		return Collections.emptySet();
 	}
 
 	// Get images https://apidocs.imgur.com/#2e45daca-bd44-47f8-84b0-b3f2aa861735
 	@Override
 	protected List<ImgurImage> fetchPage(int pageNumber) {
-		OAuthRequest request = OAuthRequest.createGetRequest(Imgur.REST_ENDPOINT + "/account/me/images/" + (pageNumber - 1));
+		OAuthRequest request = OAuthRequest
+				.createGetRequest(Imgur.REST_ENDPOINT + "/account/me/images/" + (pageNumber - 1));
 
 		// request.setParam("method", "account/me/images/page/" + (pageNumber - 1));
 
@@ -151,7 +158,7 @@ public class ImgurPhotoIterator extends PageCountServiceIterator<ImgurImage> {
 	}
 
 	public static void main(String[] args) {
-		ImgurPhotoIterator iter = new ImgurPhotoIterator(MyImgurApp.getInstance());
+		Iterator<ImgurImage> iter = new ImgurPhotoIterator(MyImgurApp.getInstance()).builder().withFilter(new DateTakenPhotoFilter(DateRange.forYear(2019))).build();
 		while (iter.hasNext()) {
 			ImgurImage photo = iter.next();
 			System.err.println(photo.getTitle() + " " + photo.getDateTimeTaken());
