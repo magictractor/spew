@@ -5,11 +5,13 @@ import uk.co.magictractor.oauth.api.OAuth2AuthorizeResponseType;
 import uk.co.magictractor.oauth.api.OAuth2Connection;
 import uk.co.magictractor.oauth.api.OAuth2ServiceProvider;
 import uk.co.magictractor.oauth.api.OAuthConnection;
-import uk.co.magictractor.oauth.processor.properties.OAuth2CachedResourceFileProperties;
+import uk.co.magictractor.oauth.processor.properties.ResourceFileProperties;
 
-public class MyImgurApp extends OAuth2CachedResourceFileProperties implements OAuth2Application {
+public class MyImgurApp implements OAuth2Application {
 
 	private static final MyImgurApp INSTANCE = new MyImgurApp();
+
+	private final ResourceFileProperties properties = new ResourceFileProperties(MyImgurApp.class);
 
 	// TODO! common class for connection cache - see MyGooglePhotosApp
 	private OAuth2Connection connection;
@@ -45,5 +47,16 @@ public class MyImgurApp extends OAuth2CachedResourceFileProperties implements OA
 	@Override
 	public OAuth2AuthorizeResponseType defaultAuthorizeResponseType() {
 		return OAuth2AuthorizeResponseType.TOKEN;
+	}
+	
+
+	@Override
+	public String getClientId() {
+		return properties.getProperty("client_id");
+	}
+
+	@Override
+	public String getClientSecret() {
+		return properties.getProperty("client_id");
 	}
 }

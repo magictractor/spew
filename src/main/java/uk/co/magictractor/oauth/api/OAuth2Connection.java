@@ -120,7 +120,7 @@ public class OAuth2Connection extends AbstractOAuthConnection {
 
 	// https://developers.google.com/photos/library/guides/authentication-authorization
 	private void authorize() {
-		OAuthRequest request = OAuthRequest.createPostRequest(application.getServiceProvider().getAuthorizationUri());
+		OAuthRequest request = OAuthRequest.createGetRequest(application.getServiceProvider().getAuthorizationUri());
 
 		request.setParam("client_id", application.getClientId());
 		String redirectUri = getAuthorizeRedirectUrl();

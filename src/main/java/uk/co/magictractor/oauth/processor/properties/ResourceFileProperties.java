@@ -3,17 +3,32 @@ package uk.co.magictractor.oauth.processor.properties;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
+import java.lang.ref.WeakReference;
 import java.util.Properties;
 
 import uk.co.magictractor.oauth.util.IOUtil;
 
-public interface ResourceFileProperties {
+public class ResourceFileProperties {
 
-	default String getResourceName() {
+	private final Class<?> clazz;
+	private WeakReference<Properties> propertiesRef;
+	
+	// TODO! default should be null
+	private String resourceFolder = "oauth";
+
+	// TODO! bin this constructor?
+	public ResourceFileProperties(Class<?> clazz) {
+		this.clazz = clazz;
+	}
+	
+	public ResourceFileProperties(Object obj) {
+		clazz = obj.getClass();
+	}
+
+	protected String getResourceName() {
 		// TODO! and dir
 		StringBuilder resourceNameBuilder = new StringBuilder();
 
-		String resourceFolder = getResourceFolder();
 		if (resourceFolder != null) {
 			// leading slash??
 			resourceNameBuilder.append('/');
@@ -21,33 +36,40 @@ public interface ResourceFileProperties {
 			resourceNameBuilder.append('/');
 		}
 
-		resourceNameBuilder.append(getClass().getSimpleName().toLowerCase());
+		resourceNameBuilder.append(clazz.getSimpleName().toLowerCase());
 		resourceNameBuilder.append(".properties");
 
 		return resourceNameBuilder.toString();
 	}
 
 	// TODO! is "folder" the correct terminology
-	default String getResourceFolder() {
-		return null;
-	}
+//	private String getResourceFolder() {
+//		return null;
+//	}
 
-	default String getProperty(String key) {
+	public String getProperty(String key) {
 		String value = getProperties().getProperty(key);
 		if (value == null) {
 			throw new IllegalStateException("Missing property for key " + key + " in resource " + getResourceName());
 		}
 		return value;
 	}
-	
-	default Properties getProperties() {
-		return readProperties(getResourceName());
+
+	private Properties getProperties() {
+		if (propertiesRef == null) {
+			Properties properties = readProperties();
+			propertiesRef = new WeakReference<Properties>(properties);
+		}
+		// Hmm. Is there a (very small) possibility that Ref could have been reclaimed
+		// between the null check and here?
+		return propertiesRef.get();
 	}
 
-	default Properties readProperties(String resourceName) {
+	private Properties readProperties() {
 		Properties properties = new Properties();
 
-		InputStream resourceStream = getClass().getResourceAsStream(resourceName);
+		String resourceName = getResourceName();
+		InputStream resourceStream = clazz.getResourceAsStream(resourceName);
 		if (resourceStream == null) {
 			throw new IllegalStateException(buildMissingResourceMessage(resourceName));
 		}
@@ -63,7 +85,7 @@ public interface ResourceFileProperties {
 		return properties;
 	}
 
-	default String buildMissingResourceMessage(String resourceName) {
+	protected String buildMissingResourceMessage(String resourceName) {
 		return "Missing resouce file: " + resourceName;
 	}
 

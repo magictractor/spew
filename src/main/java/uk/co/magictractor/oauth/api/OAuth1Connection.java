@@ -12,10 +12,7 @@ import java.util.TreeMap;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
-import uk.co.magictractor.oauth.token.PropertyFileTokenAndSecretPersister;
-import uk.co.magictractor.oauth.token.TokenAndSecret;
-import uk.co.magictractor.oauth.token.TokenAndSecretPersister;
-import uk.co.magictractor.oauth.token.UserPreferencesTokenAndSecretPersister;
+import uk.co.magictractor.oauth.token.UserPreferencesPersister;
 import uk.co.magictractor.oauth.util.ExceptionUtil;
 import uk.co.magictractor.oauth.util.UrlEncoderUtil;
 
@@ -23,43 +20,44 @@ import uk.co.magictractor.oauth.util.UrlEncoderUtil;
 public final class OAuth1Connection extends AbstractOAuthConnection {
 
 	// TODO! the this the java name, want to derive it from
-	// OAuthServer.getSignature()
+	// OAuthServer.getSignature(), such as "HMAC-SHA1"
+	// Imagebam uses a different method.
 	private static final String SIGNATURE_METHOD = "HmacSHA1";
 
-	private final OAuth1ServiceProvider authServer;
-	private final TokenAndSecret appTokenAndSecret;
-	/**
-	 * This is only used for the access token. Temporary tokens are held in memory
-	 * and not persisted.
-	 */
-	private final TokenAndSecretPersister userTokenAndSecretPersister;
-	private TokenAndSecret userTokenAndSecret;
+	private final OAuth1Application application;
 
-	// TODO! could derive the authServer from the service URL?
+	/**
+	 * Temporary tokens and secrets are held in memory and not persisted.
+	 */
+	private final UserPreferencesPersister userToken;
+	private final UserPreferencesPersister userSecret;
+
 	// TODO! change this to default then use MyApp.getInstance().getConnection()
-	/** Default visibility, applications should obtain instances via OAuth1Application.getConnection(). */
+	/**
+	 * Default visibility, applications should obtain instances via
+	 * OAuth1Application.getConnection().
+	 */
 	public OAuth1Connection(OAuth1Application application) {
-		this.authServer = application.getServiceProvider();
-		// TODO! split app from service provider, as done for Google Photos (OAuth2)
-		this.appTokenAndSecret = new PropertyFileTokenAndSecretPersister(authServer).getTokenAndSecret();
-		this.userTokenAndSecretPersister = new UserPreferencesTokenAndSecretPersister(authServer);
-		this.userTokenAndSecret = new UserPreferencesTokenAndSecretPersister(authServer).getTokenAndSecret();
+		this.application = application;
+
+		this.userToken = new UserPreferencesPersister(application, "user_token");
+		this.userSecret = new UserPreferencesPersister(application, "user_secret");
 	}
 
 	public OAuthResponse request(OAuthRequest apiRequest) {
 		// TODO! (optionally?) verify existing tokens?
-		if (userTokenAndSecret.isBlank()) {
+		if (userToken.getValue() == null) {
 			authenticateUser();
 		}
 
 		forAll(apiRequest);
 		forApi(apiRequest);
-		return ExceptionUtil.call(() -> request0(apiRequest, authServer.getJsonConfiguration()));
+		return ExceptionUtil.call(() -> request0(apiRequest, application.getServiceProvider().getJsonConfiguration()));
 	}
 
 	private OAuthResponse authRequest(OAuthRequest apiRequest) {
 		forAll(apiRequest);
-		return ExceptionUtil.call(() -> request0(apiRequest, authServer.getJsonConfiguration()));
+		return ExceptionUtil.call(() -> request0(apiRequest, application.getServiceProvider().getJsonConfiguration()));
 	}
 
 	private void authenticateUser() {
@@ -78,22 +76,21 @@ public final class OAuth1Connection extends AbstractOAuthConnection {
 
 	private void authorize() {
 		// TODO! POST?
-		OAuthRequest request = OAuthRequest.createGetRequest(authServer.getTemporaryCredentialRequestUri());
+		OAuthRequest request = OAuthRequest
+				.createGetRequest(application.getServiceProvider().getTemporaryCredentialRequestUri());
 		OAuthResponse response = authRequest(request);
 
-		// oauth_callback_confirmed=true&oauth_token=72157697914997341-aa5c16e42e726714&oauth_token_secret=b9f69c0cb17972f6
 		String authToken = response.getString("oauth_token");
 		String authSecret = response.getString("oauth_token_secret");
-		// FlickrConfig.setUserRequestToken(authToken, authSecret);
-		userTokenAndSecret = new TokenAndSecret(authToken, authSecret);
 
-		// https://www.flickr.com/services/oauth/authorize?oauth_token=72157697915783691-9402de420a27bdea&perms=write
-		// String authUrl =
-		// "https://www.flickr.com/services/oauth/authorize?oauth_token=" + authToken +
-		// "&perms=write";
+		// These are temporary values, only used to get the user's token and secret, so
+		// don't persist them.
+		userToken.setUnpersistedValue(authToken);
+		userSecret.setUnpersistedValue(authSecret);
 
 		// TODO! check whether this already contains question mark
-		String authUrl = authServer.getResourceOwnerAuthorizationUri() + "&" + "oauth_token=" + authToken;
+		String authUrl = application.getServiceProvider().getResourceOwnerAuthorizationUri() + "&" + "oauth_token="
+				+ authToken;
 
 		// https://stackoverflow.com/questions/5226212/how-to-open-the-default-webbrowser-using-java
 		if (Desktop.isDesktopSupported()) {
@@ -107,15 +104,15 @@ public final class OAuth1Connection extends AbstractOAuthConnection {
 	private void verify(String verification) {
 		// FlickrRequest request = FlickrRequest.forAuth("access_token");
 		// TODO! POST?
-		OAuthRequest request = OAuthRequest.createGetRequest(authServer.getTokenRequestUri());
-		request.setParam("oauth_token", userTokenAndSecret.getToken());
+		OAuthRequest request = OAuthRequest.createGetRequest(application.getServiceProvider().getTokenRequestUri());
+		request.setParam("oauth_token", userToken.getValue());
 		request.setParam("oauth_verifier", verification);
 		OAuthResponse response = authRequest(request);
 
 		String authToken = response.getString("oauth_token");
 		String authSecret = response.getString("oauth_token_secret");
-		userTokenAndSecret = new TokenAndSecret(authToken, authSecret);
-		userTokenAndSecretPersister.setTokenAndSecret(userTokenAndSecret);
+		userToken.setValue(authToken);
+		userSecret.setValue(authSecret);
 	}
 
 	// hmms - push some of this up? - encode could be different per connection?
@@ -139,7 +136,7 @@ public final class OAuth1Connection extends AbstractOAuthConnection {
 
 		// TODO! consumer key only absent for auth
 		// String key = FlickrConfig.API_KEY + "&";
-		String key = appTokenAndSecret.getSecret() + "&" + userTokenAndSecret.getSecret();
+		String key = application.getAppSecret() + "&" + userSecret.getValue("");
 		// TODO! Java signature name and Api not identical
 		SecretKeySpec signingKey = new SecretKeySpec(key.getBytes(), SIGNATURE_METHOD);
 		Mac mac = ExceptionUtil.call(() -> Mac.getInstance(SIGNATURE_METHOD));
@@ -186,8 +183,8 @@ public final class OAuth1Connection extends AbstractOAuthConnection {
 		// OAuthRequest request = new OAuthRequest(FLICKR_REST_ENDPOINT);
 //		setParam("oauth_consumer_key", FlickrConfig.API_KEY);
 
-		request.setParam("api_key", appTokenAndSecret.getToken());
-		request.setParam("oauth_token", userTokenAndSecretPersister.getTokenAndSecret().getToken());
+		request.setParam("api_key", application.getAppToken());
+		request.setParam("oauth_token", userToken.getValue());
 		// request.setParam("method", flickrMethod);
 		request.setParam("format", "json");
 		request.setParam("nojsoncallback", "1");
@@ -197,7 +194,7 @@ public final class OAuth1Connection extends AbstractOAuthConnection {
 
 	private void forAll(OAuthRequest request) {
 		// hmm... same as api_key?
-		request.setParam("oauth_consumer_key", appTokenAndSecret.getToken());
+		request.setParam("oauth_consumer_key", application.getAppToken());
 
 		// TODO! nonce should be random, with guarantee that it is never the same if the
 		// timestamp has not

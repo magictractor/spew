@@ -2,7 +2,6 @@ package uk.co.magictractor.oauth.api;
 
 public interface OAuth2Application extends OAuthApplication {
 
-	// TODO! could just be a Class?
 	OAuth2ServiceProvider getServiceProvider();
 
 	String getClientId();

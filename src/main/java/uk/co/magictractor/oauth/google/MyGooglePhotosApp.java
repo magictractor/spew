@@ -5,11 +5,13 @@ import uk.co.magictractor.oauth.api.OAuth2AuthorizeResponseType;
 import uk.co.magictractor.oauth.api.OAuth2Connection;
 import uk.co.magictractor.oauth.api.OAuth2ServiceProvider;
 import uk.co.magictractor.oauth.api.OAuthConnection;
-import uk.co.magictractor.oauth.processor.properties.OAuth2CachedResourceFileProperties;
+import uk.co.magictractor.oauth.processor.properties.ResourceFileProperties;
 
-public class MyGooglePhotosApp extends OAuth2CachedResourceFileProperties implements OAuth2Application {
+public class MyGooglePhotosApp implements OAuth2Application {
 
 	private static final MyGooglePhotosApp INSTANCE = new MyGooglePhotosApp();
+
+	private final ResourceFileProperties properties = new ResourceFileProperties(MyGooglePhotosApp.class);
 
 // TODO! want connection cache in a superclass, not the file props
 	private OAuth2Connection connection;
@@ -50,5 +52,15 @@ public class MyGooglePhotosApp extends OAuth2CachedResourceFileProperties implem
 	@Override
 	public OAuth2AuthorizeResponseType defaultAuthorizeResponseType() {
 		return OAuth2AuthorizeResponseType.CODE;
+	}
+
+	@Override
+	public String getClientId() {
+		return properties.getProperty("client_id");
+	}
+
+	@Override
+	public String getClientSecret() {
+		return properties.getProperty("client_secret");
 	}
 }
