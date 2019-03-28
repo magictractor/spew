@@ -23,5 +23,11 @@ public class Twitter implements OAuth1ServiceProvider {
 	public String getTokenRequestUri() {
 		return "https://api.twitter.com/oauth/access_token";
 	}
+	
+	@Override
+	public String getRequestSignatureMethod() {
+		// TODO! check this
+		return "HMAC-SHA1";
+	}
 
 }

@@ -15,7 +15,6 @@ import uk.co.magictractor.oauth.json.LocalDateTimeTypeAdapter;
 // https://www.flickr.com/services/apps/create/
 public class Flickr implements OAuth1ServiceProvider {
 
-
 	public static final String REST_ENDPOINT = "https://api.flickr.com/services/rest/";
 
 //	https://api.imgur.com/oauth2/addclient
@@ -45,6 +44,11 @@ public class Flickr implements OAuth1ServiceProvider {
 	@Override
 	public String getTokenRequestUri() {
 		return "https://www.flickr.com/services/oauth/access_token";
+	}
+
+	@Override
+	public String getRequestSignatureMethod() {
+		return "HMAC-SHA1";
 	}
 
 	public GsonBuilder getGsonBuilder() {

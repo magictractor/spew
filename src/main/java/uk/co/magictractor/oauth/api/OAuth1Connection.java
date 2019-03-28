@@ -3,7 +3,7 @@ package uk.co.magictractor.oauth.api;
 import java.awt.Desktop;
 import java.net.URI;
 import java.net.URLEncoder;
-import java.util.Base64;
+import java.security.MessageDigest;
 import java.util.Map;
 import java.util.Random;
 import java.util.Scanner;
@@ -12,6 +12,9 @@ import java.util.TreeMap;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
+import com.google.common.io.BaseEncoding;
+
+import uk.co.magictractor.oauth.imagebam.ImageBam;
 import uk.co.magictractor.oauth.token.UserPreferencesPersister;
 import uk.co.magictractor.oauth.util.ExceptionUtil;
 import uk.co.magictractor.oauth.util.UrlEncoderUtil;
@@ -19,12 +22,10 @@ import uk.co.magictractor.oauth.util.UrlEncoderUtil;
 // TODO! common interface for OAuth1 and OAuth2 connections (and no auth? / other auth?)
 public final class OAuth1Connection extends AbstractOAuthConnection {
 
-	// TODO! the this the java name, want to derive it from
-	// OAuthServer.getSignature(), such as "HMAC-SHA1"
-	// Imagebam uses a different method.
-	private static final String SIGNATURE_METHOD = "HmacSHA1";
-
 	private final OAuth1Application application;
+
+	// unit tests can call setSeed() on this
+	private final Random nonceGenerator = new Random();
 
 	/**
 	 * Temporary tokens and secrets are held in memory and not persisted.
@@ -71,7 +72,7 @@ public final class OAuth1Connection extends AbstractOAuthConnection {
 		// FlickrConfig.setUserAuthVerifier(verification);
 		scanner.close();
 
-		verify(verification);
+		fetchToken(verification);
 	}
 
 	private void authorize() {
@@ -88,22 +89,31 @@ public final class OAuth1Connection extends AbstractOAuthConnection {
 		userToken.setUnpersistedValue(authToken);
 		userSecret.setUnpersistedValue(authSecret);
 
-		// TODO! check whether this already contains question mark
-		String authUrl = application.getServiceProvider().getResourceOwnerAuthorizationUri() + "&" + "oauth_token="
-				+ authToken;
+		String authUriBase = application.getServiceProvider().getResourceOwnerAuthorizationUri();
+		StringBuilder authUriBuilder = new StringBuilder();
+		authUriBuilder.append(authUriBase);
+		if (authUriBase.contains("?")) {
+			// Already has query string, perhaps for permission types, like Flickr
+			authUriBuilder.append('&');
+		} else {
+			authUriBuilder.append('?');
+		}
+		authUriBuilder.append("oauth_token=");
+		authUriBuilder.append(authToken);
+		String authUri = authUriBuilder.toString();
 
 		// https://stackoverflow.com/questions/5226212/how-to-open-the-default-webbrowser-using-java
 		if (Desktop.isDesktopSupported()) {
 			// uri = new
-			ExceptionUtil.call(() -> Desktop.getDesktop().browse(new URI(authUrl)));
+			ExceptionUtil.call(() -> Desktop.getDesktop().browse(new URI(authUri)));
 		} else {
 			throw new UnsupportedOperationException("TODO");
 		}
 	}
 
-	private void verify(String verification) {
+	private void fetchToken(String verification) {
 		// FlickrRequest request = FlickrRequest.forAuth("access_token");
-		// TODO! POST?
+		// TODO! POST? - imagebam allows get or post
 		OAuthRequest request = OAuthRequest.createGetRequest(application.getServiceProvider().getTokenRequestUri());
 		request.setParam("oauth_token", userToken.getValue());
 		request.setParam("oauth_verifier", verification);
@@ -134,29 +144,69 @@ public final class OAuth1Connection extends AbstractOAuthConnection {
 //			throw new IllegalArgumentException("userSecret must not be null (it may be an empty string)");
 //		}
 
+		// AARGH - ImageBam refers to "key" where I have used
+		// getSignatureBaseString(request)
 		// TODO! consumer key only absent for auth
-		// String key = FlickrConfig.API_KEY + "&";
+		// TODO! different service providers have different strategies for the key?!
+		// Flickr:
 		String key = application.getAppSecret() + "&" + userSecret.getValue("");
+		// ImageBam
+		// oauth_signature = MD5(API-key + API-secret + oauth_timestamp + oauth_nonce +
+		// oauth_token + oauth_token_secret)
+//		String key = application.getAppToken() + application.getAppSecret() + request.getParam("oauth_timestamp")
+//				+ request.getParam("oauth_nonce") + request.getParam("oauth_token")
+//				+ request.getParam("oauth_token_secret");
+//		System.err.println("key: " + key);
+
 		// TODO! Java signature name and Api not identical
-		SecretKeySpec signingKey = new SecretKeySpec(key.getBytes(), SIGNATURE_METHOD);
-		Mac mac = ExceptionUtil.call(() -> Mac.getInstance(SIGNATURE_METHOD));
+		String signatureMethod = application.getServiceProvider().getJavaSignatureMethod();
+		SecretKeySpec signingKey = new SecretKeySpec(key.getBytes(), signatureMethod);
+		Mac mac = ExceptionUtil.call(() -> Mac.getInstance(signatureMethod));
 		ExceptionUtil.call(() -> mac.init(signingKey));
 
-		String signature = Base64.getEncoder().encodeToString(mac.doFinal(getSignatureBaseString(request).getBytes()));
+		// String signature =
+		// Base64.getEncoder().encodeToString(mac.doFinal(getSignatureBaseString(request).getBytes()));
+		String signature;
+		if (ImageBam.getInstance().equals(application.getServiceProvider())) {
+			// PHP example on ImageBam wiki uses MD5() function which returns hex
+			// different base string, different hashing, and different encoding
+			// ah! it's md5 - not HMAC-md5?!
+			// https://www.ietf.org/rfc/rfc2104.txt - HMAC
+			// and a different base string!
+			byte[] bytes = ExceptionUtil.call(
+					() -> MessageDigest.getInstance("MD5").digest(getImageBamSignatureBaseString(request).getBytes()));
+			// and a different encoding!
+			signature = BaseEncoding.base16().lowerCase().encode(bytes);
+		} else {
+			// Flickr
+			// TODO! get some more examples of OAuth1 before tidying this mess up??
+			// signature =
+			// Base64.getEncoder().encodeToString(mac.doFinal(getSignatureBaseString(request).getBytes()));
+			signature = BaseEncoding.base64().encode(mac.doFinal(getSignatureBaseString(request).getBytes()));
+		}
+
+		System.err.println("signature: " + signature);
+
 		return ExceptionUtil.call(() -> URLEncoder.encode(signature, "UTF-8"));
 	}
 
+	private String getImageBamSignatureBaseString(OAuthRequest request) {
+		StringBuilder signatureBaseStringBuilder = new StringBuilder();
+
+		signatureBaseStringBuilder.append(application.getAppToken());
+		signatureBaseStringBuilder.append(application.getAppSecret());
+		signatureBaseStringBuilder.append(request.getParam("oauth_timestamp"));
+		signatureBaseStringBuilder.append(request.getParam("oauth_nonce"));
+		if (userToken.getValue() != null) {
+			signatureBaseStringBuilder.append(userToken.getValue());
+			signatureBaseStringBuilder.append(userSecret.getValue());
+		}
+
+		return signatureBaseStringBuilder.toString();
+	}
+
 	// See https://www.flickr.com/services/api/auth.oauth.html
-	public String getSignatureBaseString(OAuthRequest request) {
-//		String baseStringUrl = getQueryString(getBaseStringParams(request));
-//
-//		String encodedUrl = ExceptionUtil.call(() -> URLEncoder.encode(baseStringUrl, "UTF-8"));
-		// TODO! very scruffy
-		// replace the question mark with an ampersand
-		// encodedUrl = encodedUrl.replace("%3F", "&");
-
-		// return request.getHttpMethod() + "&" + encodedUrl + "&" + encodedQueryParams;
-
+	private String getSignatureBaseString(OAuthRequest request) {
 		StringBuilder signatureBaseStringBuilder = new StringBuilder();
 		signatureBaseStringBuilder.append(request.getHttpMethod());
 		signatureBaseStringBuilder.append('&');
@@ -193,24 +243,21 @@ public final class OAuth1Connection extends AbstractOAuthConnection {
 	}
 
 	private void forAll(OAuthRequest request) {
-		// hmm... same as api_key?
+		// hmm... same as api_key? (in forApi())
 		request.setParam("oauth_consumer_key", application.getAppToken());
 
-		// TODO! nonce should be random, with guarantee that it is never the same if the
-		// timestamp has not
-		// move on since the last API call
-		// TODO! how to make this testable (should be non-random during testing, but
-		// Spring too heavyweight)
+		// TODO! nonce should guarantee that it is never the same if the
+		// timestamp has not move on since the last API call. Not quite guaranteed here
+		// - but pretty darned likely.
 		// https://oauth.net/core/1.0a/#nonce
-		request.setParam("oauth_nonce", new Random().nextInt());
-		request.setParam("oauth_timestamp", System.currentTimeMillis());
+		request.setParam("oauth_nonce", nonceGenerator.nextInt());
+		request.setParam("oauth_timestamp", System.currentTimeMillis() / 1000);
 		// setParam("oauth_callback", "www.google.com");
 		// "oob" so that web shows the verifier which can then be copied
+		// eh? should only need "oob" during authorization
 		request.setParam("oauth_callback", "oob");
-		// addParam("oauth_signature_method", SIGNATURE_METHOD);
 		request.setParam("oauth_version", "1.0");
-		// TODO (tbc) method name not same in Java and API
-		request.setParam("oauth_signature_method", "HMAC-SHA1");
+		request.setParam("oauth_signature_method", application.getServiceProvider().getRequestSignatureMethod());
 	}
 
 }

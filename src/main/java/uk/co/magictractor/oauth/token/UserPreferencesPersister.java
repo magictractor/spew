@@ -4,6 +4,7 @@ import java.util.Optional;
 import java.util.prefs.Preferences;
 
 import uk.co.magictractor.oauth.api.OAuthApplication;
+import uk.co.magictractor.oauth.util.ExceptionUtil;
 
 public class UserPreferencesPersister {
 
@@ -33,9 +34,10 @@ public class UserPreferencesPersister {
 
 	public void setValue(String value) {
 		preferences.put(key, value);
+		ExceptionUtil.call(() -> preferences.flush());
 		this.value = Optional.ofNullable(value);
 	}
-	
+
 	/** Used for temporary token and secret with OAuth1. */
 	public void setUnpersistedValue(String value) {
 		this.value = Optional.ofNullable(value);

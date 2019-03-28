@@ -19,7 +19,7 @@ import uk.co.magictractor.oauth.util.IOUtil;
 public abstract class AbstractOAuthConnection implements OAuthConnection {
 
 	// TODO! return Netty HttpResponse instead - Configuration shouldn't embedded
-	// here?
+	// here? - can remove configuration param and get via service provider
 	protected OAuthResponse request0(OAuthRequest request, Configuration jsonConfiguration) throws IOException {
 		return request0(request, jsonConfiguration, null);
 	}
@@ -42,13 +42,6 @@ public abstract class AbstractOAuthConnection implements OAuthConnection {
 			initConnection.accept(con);
 		}
 
-		// Prevent 411 Content Length Required
-//		if ("POST".equals(request.getHttpMethod())) {
-//			// con.setRequestProperty("Content-Length", "0");
-//			con.setDoOutput(true);
-//			con.setFixedLengthStreamingMode(0);
-//		}
-
 		if (request.hasParamsInBody()) {
 			con.setDoOutput(true);
 
@@ -61,12 +54,9 @@ public abstract class AbstractOAuthConnection implements OAuthConnection {
 				con.setFixedLengthStreamingMode(requestBodyBytes.length);
 				con.getOutputStream().write(requestBodyBytes);
 			} else {
+				// Prevent 411 Content Length Required
 				con.setFixedLengthStreamingMode(0);
 			}
-		} else if ("POST".equals(request.getHttpMethod())) {
-			// TODO! tidy up this code
-			con.setDoOutput(true);
-			con.setFixedLengthStreamingMode(0);
 		}
 
 		boolean isOK;
@@ -116,7 +106,6 @@ public abstract class AbstractOAuthConnection implements OAuthConnection {
 	// make this private?
 	protected final String getQueryString(Map<String, Object> params, Function<String, String> valueEncoder) {
 		StringBuilder queryStringBuilder = new StringBuilder();
-		// urlBuilder.append("?");
 
 		boolean isFirstParam = true;
 		for (Entry<String, Object> paramEntry : params.entrySet()) {
@@ -128,7 +117,6 @@ public abstract class AbstractOAuthConnection implements OAuthConnection {
 			queryStringBuilder.append(paramEntry.getKey());
 			queryStringBuilder.append("=");
 			queryStringBuilder.append(valueEncoder.apply(paramEntry.getValue().toString()));
-			// urlBuilder.append("&");
 		}
 
 		return queryStringBuilder.toString();

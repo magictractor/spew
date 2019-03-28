@@ -62,7 +62,8 @@ public class OAuthRequest {
 	}
 
 	public Object getParam(String key) {
-		return params.get(key);
+		// TODO! do not commit - do null handling where it's needed
+		return params.containsKey(key) ? params.get(key) : "";
 	}
 
 	public Map<String, Object> getParams() {
