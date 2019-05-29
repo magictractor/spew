@@ -7,11 +7,11 @@ import com.google.gson.reflect.TypeToken;
 
 public class FlickrTagsTypeAdapterFactory implements TypeAdapterFactory {
 
-	@Override
-	public <T> TypeAdapter<T> create(Gson gson, TypeToken<T> type) {
-		System.err.println("gson: " + gson.toString() + ", type: " + type);
-		
-		return null;
-	}
+    @Override
+    public <T> TypeAdapter<T> create(Gson gson, TypeToken<T> type) {
+        System.err.println("gson: " + gson.toString() + ", type: " + type);
+
+        return null;
+    }
 
 }

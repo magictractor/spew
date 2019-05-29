@@ -2,16 +2,16 @@ package uk.co.magictractor.oauth.api;
 
 public interface OAuth2Application extends OAuthApplication { // <OAuth2ServiceProvider> {
 
-	OAuth2ServiceProvider getServiceProvider();
+    OAuth2ServiceProvider getServiceProvider();
 
-	String getClientId();
+    String getClientId();
 
-	String getClientSecret();
+    String getClientSecret();
 
-	// https://brandur.org/oauth-scope
-	String getScope();
+    // https://brandur.org/oauth-scope
+    String getScope();
 
-	// default?
-	OAuth2AuthorizeResponseType defaultAuthorizeResponseType();
+    // default?
+    OAuth2AuthorizeResponseType defaultAuthorizeResponseType();
 
 }

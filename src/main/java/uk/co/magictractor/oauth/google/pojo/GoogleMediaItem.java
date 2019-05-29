@@ -28,98 +28,98 @@ import uk.co.magictractor.oauth.common.TagSet;
 //  }
 public class GoogleMediaItem implements Photo {
 
-	private String id;
-	private String description;
-	private String productUrl;
-	private String baseUrl;
-	private GoogleMediaMetadata mediaMetadata;
-	private String filename;
+    private String id;
+    private String description;
+    private String productUrl;
+    private String baseUrl;
+    private GoogleMediaMetadata mediaMetadata;
+    private String filename;
 
-	@Override
-	public String getServiceProviderId() {
-		return id;
-	}
+    @Override
+    public String getServiceProviderId() {
+        return id;
+    }
 
-	@Override
-	public String getFileName() {
-		return filename;
-	}
+    @Override
+    public String getFileName() {
+        return filename;
+    }
 
-	@Override
-	public String getTitle() {
-		// Google Photos does not have titles, just a file name and a description.
-		return null;
-	}
+    @Override
+    public String getTitle() {
+        // Google Photos does not have titles, just a file name and a description.
+        return null;
+    }
 
-	@Override
-	public String getDescription() {
-		// TODO! ignore tags if they are hacked into the description
-		return description;
-	}
+    @Override
+    public String getDescription() {
+        // TODO! ignore tags if they are hacked into the description
+        return description;
+    }
 
-	@Override
-	public Instant getDateTimeTaken() {
-		// return mediaMetadata.creationTime.toLocalDateTime();
-		return mediaMetadata.creationTime.toInstant(ZoneOffset.UTC);
-	}
+    @Override
+    public Instant getDateTimeTaken() {
+        // return mediaMetadata.creationTime.toLocalDateTime();
+        return mediaMetadata.creationTime.toInstant(ZoneOffset.UTC);
+    }
 
-	@Override
-	public Instant getDateTimeUpload() {
-		// upload time is not returned by the Google API
-		return null;
-	}
+    @Override
+    public Instant getDateTimeUpload() {
+        // upload time is not returned by the Google API
+        return null;
+    }
 
-	@Override
-	public String getShutterSpeed() {
-		// Curiously, this isn't returned although aperture, focal length etc are
-		return null;
-	}
+    @Override
+    public String getShutterSpeed() {
+        // Curiously, this isn't returned although aperture, focal length etc are
+        return null;
+    }
 
-	@Override
-	public String getAperture() {
-		return mediaMetadata.photo.apertureFNumber;
-	}
+    @Override
+    public String getAperture() {
+        return mediaMetadata.photo.apertureFNumber;
+    }
 
-	@Override
-	public Integer getIso() {
-		return mediaMetadata.photo.isoEquivalent;
-	}
+    @Override
+    public Integer getIso() {
+        return mediaMetadata.photo.isoEquivalent;
+    }
 
-	public class GoogleMediaMetadata {
-		// Google does have zone information "2018-11-20T15:09:42Z"
-		private LocalDateTime creationTime;
-		private int width;
-		private int height;
-		private GooglePhoto photo;
-	}
+    public class GoogleMediaMetadata {
+        // Google does have zone information "2018-11-20T15:09:42Z"
+        private LocalDateTime creationTime;
+        private int width;
+        private int height;
+        private GooglePhoto photo;
+    }
 
-	// TODO! change name of this or Photo - looks like this should implement Photo??
-	public class GooglePhoto {
-		// Google does have zone information "2018-11-20T15:09:42Z"
-		private String cameraMake;
-		private String cameraModel;
-		private String focalLength;
-		private String apertureFNumber;
-		private Integer isoEquivalent;
-	}
+    // TODO! change name of this or Photo - looks like this should implement Photo??
+    public class GooglePhoto {
+        // Google does have zone information "2018-11-20T15:09:42Z"
+        private String cameraMake;
+        private String cameraModel;
+        private String focalLength;
+        private String apertureFNumber;
+        private Integer isoEquivalent;
+    }
 
-	@Override
-	public TagSet getTagSet() {
-		// TODO Google does not support tags
-		// probably mimic by adding tags in description "Kingfisher [kingfisher bird
-		// rbge
-		// edinburgh]"
-		return null;
-	}
+    @Override
+    public TagSet getTagSet() {
+        // TODO Google does not support tags
+        // probably mimic by adding tags in description "Kingfisher [kingfisher bird
+        // rbge
+        // edinburgh]"
+        return null;
+    }
 
-	@Override
-	public Integer getWidth() {
-		return mediaMetadata.width;
-	}
+    @Override
+    public Integer getWidth() {
+        return mediaMetadata.width;
+    }
 
-	@Override
-	public Integer getHeight() {
-		return mediaMetadata.height;
-	}
+    @Override
+    public Integer getHeight() {
+        return mediaMetadata.height;
+    }
 
 }

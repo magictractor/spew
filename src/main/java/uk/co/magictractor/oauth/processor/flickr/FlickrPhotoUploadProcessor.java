@@ -10,16 +10,16 @@ import uk.co.magictractor.oauth.processor.common.PhotoUploadProcessorChain;
 /** Processor for uploading photos to a service provider for the first time. */
 public class FlickrPhotoUploadProcessor extends PhotoUploadProcessor {
 
-	@Override
-	public void process(MutablePhoto photo, PhotoProcessorContext context) {
-		if (photo.getServiceProviderId() != null) {
-			return;
-		}
-	}
+    @Override
+    public void process(MutablePhoto photo, PhotoProcessorContext context) {
+        if (photo.getServiceProviderId() != null) {
+            return;
+        }
+    }
 
-	public static void main(String[] args) {
-		PhotoUploadProcessorChain processorChain = new PhotoUploadProcessorChain(new FlickrPhotoUploadProcessor());
-		processorChain.execute(new FlickrPhotoIterator(MyFlickrApp.getInstance()), new PhotoProcessorContext());
-	}
+    public static void main(String[] args) {
+        PhotoUploadProcessorChain processorChain = new PhotoUploadProcessorChain(new FlickrPhotoUploadProcessor());
+        processorChain.execute(new FlickrPhotoIterator(MyFlickrApp.getInstance()), new PhotoProcessorContext());
+    }
 
 }

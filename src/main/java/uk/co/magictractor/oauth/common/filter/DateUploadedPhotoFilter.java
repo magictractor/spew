@@ -5,13 +5,13 @@ import uk.co.magictractor.oauth.local.dates.DateRange;
 
 public class DateUploadedPhotoFilter extends DateRangePhotoFilter {
 
-	public DateUploadedPhotoFilter(DateRange dateRange) {
-		super(dateRange);
-	}
+    public DateUploadedPhotoFilter(DateRange dateRange) {
+        super(dateRange);
+    }
 
-	@Override
-	public boolean test(Photo photo) {
-		return getDateRange().contains(photo.getDateUpload());
-	}
+    @Override
+    public boolean test(Photo photo) {
+        return getDateRange().contains(photo.getDateUpload());
+    }
 
 }

@@ -6,15 +6,15 @@ import java.util.List;
 import uk.co.magictractor.oauth.local.dates.DateRange;
 
 /**
- * Currently only a single date range is supported, but Google can handle multiple dates and ranges.
- * 
+ * Currently only a single date range is supported, but Google can handle
+ * multiple dates and ranges.
  * https://developers.google.com/photos/library/reference/rest/v1/mediaItems/search#DateFilter
  */
 public class GoogleDateFilter {
 
-	private List<GoogleDateRange> ranges;
-	
-	public GoogleDateFilter(DateRange dateRange) {
-		ranges = Arrays.asList(new GoogleDateRange(dateRange));
-	}
+    private List<GoogleDateRange> ranges;
+
+    public GoogleDateFilter(DateRange dateRange) {
+        ranges = Arrays.asList(new GoogleDateRange(dateRange));
+    }
 }

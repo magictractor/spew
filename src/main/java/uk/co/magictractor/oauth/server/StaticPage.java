@@ -10,31 +10,33 @@ import com.google.common.io.Closeables;
 // A static page displayed by CallbackServer.
 public class StaticPage {
 
-	private byte[] bytes;
+    private byte[] bytes;
 
-	// TODO! cache?
-	
-	public StaticPage(String resourceName) {
-		this(StaticPage.class.getResourceAsStream(resourceName));
-	}
-	
-	// TODO! date in response and if-not-modified-since
-	public StaticPage(InputStream inputStream) {
-		try {
-			bytes = ByteStreams.toByteArray(inputStream);
-		} catch (IOException e) {
-			throw new UncheckedIOException(e);
-		} finally {
-			Closeables.closeQuietly(inputStream);
-		}
-	}
-	
-	public byte[] getBytes() {
-		return bytes;
-	}
-	
-	public int getLength() {
-		return bytes.length;
-	}
-	
+    // TODO! cache?
+
+    public StaticPage(String resourceName) {
+        this(StaticPage.class.getResourceAsStream(resourceName));
+    }
+
+    // TODO! date in response and if-not-modified-since
+    public StaticPage(InputStream inputStream) {
+        try {
+            bytes = ByteStreams.toByteArray(inputStream);
+        }
+        catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+        finally {
+            Closeables.closeQuietly(inputStream);
+        }
+    }
+
+    public byte[] getBytes() {
+        return bytes;
+    }
+
+    public int getLength() {
+        return bytes.length;
+    }
+
 }

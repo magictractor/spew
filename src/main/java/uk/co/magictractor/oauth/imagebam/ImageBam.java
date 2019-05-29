@@ -11,51 +11,51 @@ import uk.co.magictractor.oauth.api.OAuth1ServiceProvider;
  */
 public class ImageBam implements OAuth1ServiceProvider {
 
-	public static final String REST_ENDPOINT = "http://www.imagebam.com/sys/API/resource/";
+    public static final String REST_ENDPOINT = "http://www.imagebam.com/sys/API/resource/";
 
-//	https://api.imgur.com/oauth2/addclient
-//		https://api.imgur.com/oauth2/authorize
-//		https://api.imgur.com/oauth2/token
+    //	https://api.imgur.com/oauth2/addclient
+    //		https://api.imgur.com/oauth2/authorize
+    //		https://api.imgur.com/oauth2/token
 
-	private static final ImageBam INSTANCE = new ImageBam();
+    private static final ImageBam INSTANCE = new ImageBam();
 
-	private ImageBam() {
-	}
+    private ImageBam() {
+    }
 
-	public static ImageBam getInstance() {
-		return INSTANCE;
-	}
+    public static ImageBam getInstance() {
+        return INSTANCE;
+    }
 
-	@Override
-	public String getTemporaryCredentialRequestUri() {
-		return "http://www.imagebam.com/sys/oauth/request_token";
-	}
+    @Override
+    public String getTemporaryCredentialRequestUri() {
+        return "http://www.imagebam.com/sys/oauth/request_token";
+    }
 
-	@Override
-	public String getResourceOwnerAuthorizationUri() {
-		return "http://www.imagebam.com/sys/oauth/authorize_token";
-	}
+    @Override
+    public String getResourceOwnerAuthorizationUri() {
+        return "http://www.imagebam.com/sys/oauth/authorize_token";
+    }
 
-	@Override
-	public String getTokenRequestUri() {
-		return "http://www.imagebam.com/sys/oauth/request_access_token";
-	}
+    @Override
+    public String getTokenRequestUri() {
+        return "http://www.imagebam.com/sys/oauth/request_access_token";
+    }
 
-	@Override
-	public String getRequestSignatureMethod() {
-		return "MD5";
-	}
+    @Override
+    public String getRequestSignatureMethod() {
+        return "MD5";
+    }
 
-	public GsonBuilder getGsonBuilder() {
-		GsonBuilder gsonBuilder = new GsonBuilder();
+    public GsonBuilder getGsonBuilder() {
+        GsonBuilder gsonBuilder = new GsonBuilder();
 
-		// gsonBuilder.registerTypeAdapter(boolean.class, new BooleanTypeAdapter());
-		// gsonBuilder.registerTypeAdapter(LocalDateTime.class, new
-		// LocalDateTimeTypeAdapter("yyyy-MM-dd HH:mm:ss"));
-		// gsonBuilder.registerTypeAdapter(Instant.class,
-		// InstantTypeAdapter.EPOCH_SECONDS);
-		// gsonBuilder.registerTypeAdapter(TagSet.class, new TagSetTypeAdapter());
+        // gsonBuilder.registerTypeAdapter(boolean.class, new BooleanTypeAdapter());
+        // gsonBuilder.registerTypeAdapter(LocalDateTime.class, new
+        // LocalDateTimeTypeAdapter("yyyy-MM-dd HH:mm:ss"));
+        // gsonBuilder.registerTypeAdapter(Instant.class,
+        // InstantTypeAdapter.EPOCH_SECONDS);
+        // gsonBuilder.registerTypeAdapter(TagSet.class, new TagSetTypeAdapter());
 
-		return gsonBuilder;
-	}
+        return gsonBuilder;
+    }
 }

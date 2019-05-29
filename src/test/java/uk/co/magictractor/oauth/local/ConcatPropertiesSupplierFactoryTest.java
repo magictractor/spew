@@ -10,27 +10,27 @@ import uk.co.magictractor.oauth.common.Photo;
 
 public class ConcatPropertiesSupplierFactoryTest {
 
-	private static final PhotoPropertiesSupplierFactory A = new NoopPhotoPropertiesSupplierFactory() {
+    private static final PhotoPropertiesSupplierFactory A = new NoopPhotoPropertiesSupplierFactory() {
 
-		@Override
-		public Stream<PhotoPropertiesSupplier<String>> getTitlePropertyValueSuppliers() {
-			return Stream.of(SimplePhotoPropertiesSupplier.of("Title A"));
-		}
-	};
+        @Override
+        public Stream<PhotoPropertiesSupplier<String>> getTitlePropertyValueSuppliers() {
+            return Stream.of(SimplePhotoPropertiesSupplier.of("Title A"));
+        }
+    };
 
-	private static final PhotoPropertiesSupplierFactory B = new NoopPhotoPropertiesSupplierFactory() {
+    private static final PhotoPropertiesSupplierFactory B = new NoopPhotoPropertiesSupplierFactory() {
 
-		@Override
-		public Stream<PhotoPropertiesSupplier<String>> getTitlePropertyValueSuppliers() {
-			return Stream.of(SimplePhotoPropertiesSupplier.of("Title B"));
-		}
-	};
+        @Override
+        public Stream<PhotoPropertiesSupplier<String>> getTitlePropertyValueSuppliers() {
+            return Stream.of(SimplePhotoPropertiesSupplier.of("Title B"));
+        }
+    };
 
-	@Test
-	public void t() {
-		ConcatPropertiesSupplierFactory ab = new ConcatPropertiesSupplierFactory(A, B);
-		Photo photo = PropertySuppliedPhoto.forFactory(ab);
-		assertThat(photo.getTitle()).isEqualTo("Title A");
-	}
+    @Test
+    public void t() {
+        ConcatPropertiesSupplierFactory ab = new ConcatPropertiesSupplierFactory(A, B);
+        Photo photo = PropertySuppliedPhoto.forFactory(ab);
+        assertThat(photo.getTitle()).isEqualTo("Title A");
+    }
 
 }

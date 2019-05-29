@@ -8,28 +8,28 @@ import uk.co.magictractor.oauth.google.Google;
 
 public final class ResourceUtil {
 
-	private ResourceUtil() {
-	}
+    private ResourceUtil() {
+    }
 
-	// TODO! replace with code from Guava?
-	public static String readResource(Class<?> testClass, String fileName) {
-		InputStream in = testClass.getResourceAsStream(fileName);
-		if (in == null) {
-			throw new IllegalStateException("resource not found: " + testClass.getResource(fileName));
-		}
+    // TODO! replace with code from Guava?
+    public static String readResource(Class<?> testClass, String fileName) {
+        InputStream in = testClass.getResourceAsStream(fileName);
+        if (in == null) {
+            throw new IllegalStateException("resource not found: " + testClass.getResource(fileName));
+        }
 
-		return IOUtil.readStringAndClose(in);
-	}
+        return IOUtil.readStringAndClose(in);
+    }
 
-	// TODO! bin or pass in Json Config or extract config from class?
-	private static OAuthResponse buildResponse(Class<?> testClass, String fileName) {
-		InputStream in = testClass.getResourceAsStream(fileName);
-		if (in == null) {
-			throw new IllegalStateException("resource not found: " + testClass.getResource(fileName));
-		}
+    // TODO! bin or pass in Json Config or extract config from class?
+    private static OAuthResponse buildResponse(Class<?> testClass, String fileName) {
+        InputStream in = testClass.getResourceAsStream(fileName);
+        if (in == null) {
+            throw new IllegalStateException("resource not found: " + testClass.getResource(fileName));
+        }
 
-		String json = IOUtil.readStringAndClose(in);
-		return new OAuthJsonResponse(json, Google.getInstance().getJsonConfiguration());
-	}
+        String json = IOUtil.readStringAndClose(in);
+        return new OAuthJsonResponse(json, Google.getInstance().getJsonConfiguration());
+    }
 
 }

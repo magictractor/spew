@@ -115,53 +115,55 @@ import uk.co.magictractor.oauth.local.dates.DateRange;
 /** https://apidocs.imgur.com/#2e45daca-bd44-47f8-84b0-b3f2aa861735 */
 public class ImgurPhotoIterator extends PageCountServiceIterator<ImgurImage> implements PhotoIterator<ImgurImage> {
 
-	// min_taken_date (Optional)
-	// Minimum taken date. Photos with an taken date greater than or equal to this
-	// value will be returned. The date can be in the form of a mysql datetime or
-	// unix timestamp.
+    // min_taken_date (Optional)
+    // Minimum taken date. Photos with an taken date greater than or equal to this
+    // value will be returned. The date can be in the form of a mysql datetime or
+    // unix timestamp.
 
-	public ImgurPhotoIterator(OAuthApplication application) {
-		super(application);
-	}
+    public ImgurPhotoIterator(OAuthApplication application) {
+        super(application);
+    }
 
-	@Override
-	public Collection<Class<? extends PhotoFilter>> supportedPhotoFilters() {
-		// Imgur /images/ does not support filters.
-		return Collections.emptySet();
-	}
+    @Override
+    public Collection<Class<? extends PhotoFilter>> supportedPhotoFilters() {
+        // Imgur /images/ does not support filters.
+        return Collections.emptySet();
+    }
 
-	// Get images https://apidocs.imgur.com/#2e45daca-bd44-47f8-84b0-b3f2aa861735
-	@Override
-	protected List<ImgurImage> fetchPage(int pageNumber) {
-		OAuthRequest request = OAuthRequest
-				.createGetRequest(Imgur.REST_ENDPOINT + "/account/me/images/" + (pageNumber - 1));
+    // Get images https://apidocs.imgur.com/#2e45daca-bd44-47f8-84b0-b3f2aa861735
+    @Override
+    protected List<ImgurImage> fetchPage(int pageNumber) {
+        OAuthRequest request = OAuthRequest
+                .createGetRequest(Imgur.REST_ENDPOINT + "/account/me/images/" + (pageNumber - 1));
 
-		// request.setParam("method", "account/me/images/page/" + (pageNumber - 1));
+        // request.setParam("method", "account/me/images/page/" + (pageNumber - 1));
 
-//		request.setParam("user_id", "me");
-//		request.setParam("sort", "date-taken-desc");
-//		request.setParam("page", pageNumber);
-//		// default is 100, max is 500
-//		request.setParam("per_page", 500);
+        //		request.setParam("user_id", "me");
+        //		request.setParam("sort", "date-taken-desc");
+        //		request.setParam("page", pageNumber);
+        //		// default is 100, max is 500
+        //		request.setParam("per_page", 500);
 
-		// TODO! must not have hard coded app in the middle of the iterator! app now in
-		// super class...
-		OAuthResponse response = MyImgurApp.getInstance().getConnection().request(request);
+        // TODO! must not have hard coded app in the middle of the iterator! app now in
+        // super class...
+        OAuthResponse response = MyImgurApp.getInstance().getConnection().request(request);
 
-		System.err.println(response);
+        System.err.println(response);
 
-		ImgurImages images = response.getObject("$", ImgurImages.class);
-//		setTotalItemCount(photos.total);
-//		setTotalPageCount(photos.pages);
+        ImgurImages images = response.getObject("$", ImgurImages.class);
+        //		setTotalItemCount(photos.total);
+        //		setTotalPageCount(photos.pages);
 
-		return images.getImages();
-	}
+        return images.getImages();
+    }
 
-	public static void main(String[] args) {
-		Iterator<ImgurImage> iter = new ImgurPhotoIterator(MyImgurApp.getInstance()).builder().withFilter(new DateTakenPhotoFilter(DateRange.forYear(2019))).build();
-		while (iter.hasNext()) {
-			ImgurImage photo = iter.next();
-			System.err.println(photo.getTitle() + " " + photo.getDateTimeTaken());
-		}
-	}
+    public static void main(String[] args) {
+        Iterator<ImgurImage> iter = new ImgurPhotoIterator(MyImgurApp.getInstance()).builder()
+                .withFilter(new DateTakenPhotoFilter(DateRange.forYear(2019)))
+                .build();
+        while (iter.hasNext()) {
+            ImgurImage photo = iter.next();
+            System.err.println(photo.getTitle() + " " + photo.getDateTimeTaken());
+        }
+    }
 }

@@ -7,41 +7,41 @@ import uk.co.magictractor.oauth.api.OAuthConnection;
 import uk.co.magictractor.oauth.processor.properties.ResourceFileProperties;
 
 public class MyImageBamApp implements OAuth1Application {
-	
-	private static final MyImageBamApp INSTANCE = new MyImageBamApp();
 
-	private final ResourceFileProperties properties = new ResourceFileProperties(MyImageBamApp.class);
+    private static final MyImageBamApp INSTANCE = new MyImageBamApp();
 
-	// TODO! want connection cache in a superclass
-	private OAuth1Connection connection;
+    private final ResourceFileProperties properties = new ResourceFileProperties(MyImageBamApp.class);
 
-	private MyImageBamApp() {
-	}
+    // TODO! want connection cache in a superclass
+    private OAuth1Connection connection;
 
-	public static MyImageBamApp getInstance() {
-		return INSTANCE;
-	}
+    private MyImageBamApp() {
+    }
 
-	@Override
-	public OAuth1ServiceProvider getServiceProvider() {
-		return ImageBam.getInstance();
-	}
+    public static MyImageBamApp getInstance() {
+        return INSTANCE;
+    }
 
-	@Override
-	public OAuthConnection getConnection() {
-		if (connection == null) {
-			connection = new OAuth1Connection(this);
-		}
-		return connection;
-	}
+    @Override
+    public OAuth1ServiceProvider getServiceProvider() {
+        return ImageBam.getInstance();
+    }
 
-	@Override
-	public String getAppToken() {
-		return properties.getProperty("app_token");
-	}
+    @Override
+    public OAuthConnection getConnection() {
+        if (connection == null) {
+            connection = new OAuth1Connection(this);
+        }
+        return connection;
+    }
 
-	@Override
-	public String getAppSecret() {
-		return properties.getProperty("app_secret");
-	}
+    @Override
+    public String getAppToken() {
+        return properties.getProperty("app_token");
+    }
+
+    @Override
+    public String getAppSecret() {
+        return properties.getProperty("app_secret");
+    }
 }

@@ -10,20 +10,20 @@ import uk.co.magictractor.oauth.processor.Processor;
  */
 public class TagFixProcessor implements Processor<Photo, MutablePhoto, PhotoProcessorContext> {
 
-	private final Tag wrongTag;
-	private final Tag rightTag;
+    private final Tag wrongTag;
+    private final Tag rightTag;
 
-	public TagFixProcessor(String wrongTag, String rightTag) {
-		this.wrongTag = Tag.fetchOrCreateTag(wrongTag);
-		this.rightTag = Tag.fetchTag(rightTag);
-	}
+    public TagFixProcessor(String wrongTag, String rightTag) {
+        this.wrongTag = Tag.fetchOrCreateTag(wrongTag);
+        this.rightTag = Tag.fetchTag(rightTag);
+    }
 
-	@Override
-	public void process(MutablePhoto photoChanges, PhotoProcessorContext context) {
-		if (photoChanges.getTagSet().getTags().contains(wrongTag)) {
-			photoChanges.getTagSet().removeTag(wrongTag);
-			photoChanges.getTagSet().addTag(rightTag);
-		}
-	}
+    @Override
+    public void process(MutablePhoto photoChanges, PhotoProcessorContext context) {
+        if (photoChanges.getTagSet().getTags().contains(wrongTag)) {
+            photoChanges.getTagSet().removeTag(wrongTag);
+            photoChanges.getTagSet().addTag(rightTag);
+        }
+    }
 
 }

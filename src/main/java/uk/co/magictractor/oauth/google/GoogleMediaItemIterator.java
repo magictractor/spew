@@ -18,47 +18,50 @@ import uk.co.magictractor.oauth.local.dates.DateRange;
 // https://developers.google.com/photos/library/guides/list
 //
 // https://developers.google.com/photos/library/reference/rest/v1/mediaItems#MediaItem
-public class GoogleMediaItemIterator extends GoogleServiceIterator<GoogleMediaItem> implements PhotoIterator<GoogleMediaItem> {
+public class GoogleMediaItemIterator extends GoogleServiceIterator<GoogleMediaItem>
+        implements PhotoIterator<GoogleMediaItem>
+{
 
-	private static final List<Class<? extends PhotoFilter>> SUPPORTED_FILTERS = Arrays
-			.asList(DateTakenPhotoFilter.class);
+    private static final List<Class<? extends PhotoFilter>> SUPPORTED_FILTERS = Arrays
+            .asList(DateTakenPhotoFilter.class);
 
-	private DateRange dateTakenRange;
+    private DateRange dateTakenRange;
 
-	@Override
-	public Collection<Class<? extends PhotoFilter>> supportedPhotoFilters() {
-		return SUPPORTED_FILTERS;
-	}
+    @Override
+    public Collection<Class<? extends PhotoFilter>> supportedPhotoFilters() {
+        return SUPPORTED_FILTERS;
+    }
 
-	@Override
-	public void setDateTakenPhotoFilter(DateTakenPhotoFilter filter) {
-		dateTakenRange = filter.getDateRange();
-	}
+    @Override
+    public void setDateTakenPhotoFilter(DateTakenPhotoFilter filter) {
+        dateTakenRange = filter.getDateRange();
+    }
 
-	@Override
-	protected OAuthRequest createPageRequest() {
-		OAuthRequest request = OAuthRequest.createPostRequest("https://photoslibrary.googleapis.com/v1/mediaItems:search");
+    @Override
+    protected OAuthRequest createPageRequest() {
+        OAuthRequest request = OAuthRequest
+                .createPostRequest("https://photoslibrary.googleapis.com/v1/mediaItems:search");
 
-		if (dateTakenRange != null) {
-			request.setParam("filters", new GoogleFilters(dateTakenRange));
-		}
+        if (dateTakenRange != null) {
+            request.setParam("filters", new GoogleFilters(dateTakenRange));
+        }
 
-		return request;
-	}
+        return request;
+    }
 
-	@Override
-	protected List<GoogleMediaItem> parsePageResponse(OAuthResponse response) {
-		return response.getObject("mediaItems", new TypeRef<List<GoogleMediaItem>>() {
-		});
-	}
+    @Override
+    protected List<GoogleMediaItem> parsePageResponse(OAuthResponse response) {
+        return response.getObject("mediaItems", new TypeRef<List<GoogleMediaItem>>() {
+        });
+    }
 
-	public static void main(String[] args) {
-		GoogleMediaItemIterator iter = new GoogleMediaItemIterator();
-		iter.addFilter(new DateTakenPhotoFilter(DateRange.forDay(2018, 11, 21)));
-		while (iter.hasNext()) {
-			GoogleMediaItem photo = iter.next();
-			System.err.println(photo.getFileName() + "  " + photo.getDateTimeTaken());
-		}
-	}
+    public static void main(String[] args) {
+        GoogleMediaItemIterator iter = new GoogleMediaItemIterator();
+        iter.addFilter(new DateTakenPhotoFilter(DateRange.forDay(2018, 11, 21)));
+        while (iter.hasNext()) {
+            GoogleMediaItem photo = iter.next();
+            System.err.println(photo.getFileName() + "  " + photo.getDateTimeTaken());
+        }
+    }
 
 }

@@ -10,41 +10,46 @@ import uk.co.magictractor.oauth.common.filter.PhotoFilter;
 
 public interface PhotoIterator<P extends Photo> extends Iterator<P> {
 
-	default void addFilter(PhotoFilter filter) {
-		if (!supportsFilter(filter)) {
-			throw new UnsupportedOperationException("Filter type " + filter.getClass().getSimpleName()
-					+ " is not supported. Use PhotoIterator.builder().addFilter() to apply the filter instead.");
-		}
+    default void addFilter(PhotoFilter filter) {
+        if (!supportsFilter(filter)) {
+            throw new UnsupportedOperationException("Filter type " + filter.getClass().getSimpleName()
+                    + " is not supported. Use PhotoIterator.builder().addFilter() to apply the filter instead.");
+        }
 
-		if (filter instanceof DateTakenPhotoFilter) {
-			setDateTakenPhotoFilter((DateTakenPhotoFilter) filter);
-		} else if (filter instanceof DateUploadedPhotoFilter) {
-			setDateUploadedPhotoFilter((DateUploadedPhotoFilter) filter);
-		} else {
-			throw new UnsupportedOperationException(
-					"Code must be modified to handle filter type " + filter.getClass().getSimpleName());
-		}
-	}
-	
-	default PhotoIteratorBuilder<P> builder() {
-		return new PhotoIteratorBuilder<>(this);
-	}
-	
-	default boolean supportsFilter(PhotoFilter filter) {
-		return supportedPhotoFilters().contains(filter.getClass());
-	}
+        if (filter instanceof DateTakenPhotoFilter) {
+            setDateTakenPhotoFilter((DateTakenPhotoFilter) filter);
+        }
+        else if (filter instanceof DateUploadedPhotoFilter) {
+            setDateUploadedPhotoFilter((DateUploadedPhotoFilter) filter);
+        }
+        else {
+            throw new UnsupportedOperationException(
+                "Code must be modified to handle filter type " + filter.getClass().getSimpleName());
+        }
+    }
 
-	/** This method should generally not be called directly, TODO... (and copy below). */
-	default void setDateTakenPhotoFilter(DateTakenPhotoFilter filter) {
-		throw new UnsupportedOperationException(
-				"setDateTakenPhotoFilter() must be overridden when DateTakenPhotoFilter is supported");
-	}
+    default PhotoIteratorBuilder<P> builder() {
+        return new PhotoIteratorBuilder<>(this);
+    }
 
-	default void setDateUploadedPhotoFilter(DateUploadedPhotoFilter filter) {
-		throw new UnsupportedOperationException(
-				"setDateUploadedPhotoFilter() must be overridden when DateUploadedPhotoFilter is supported");
-	}
+    default boolean supportsFilter(PhotoFilter filter) {
+        return supportedPhotoFilters().contains(filter.getClass());
+    }
 
-	public abstract Collection<Class<? extends PhotoFilter>> supportedPhotoFilters();
-	
+    /**
+     * This method should generally not be called directly, TODO... (and copy
+     * below).
+     */
+    default void setDateTakenPhotoFilter(DateTakenPhotoFilter filter) {
+        throw new UnsupportedOperationException(
+            "setDateTakenPhotoFilter() must be overridden when DateTakenPhotoFilter is supported");
+    }
+
+    default void setDateUploadedPhotoFilter(DateUploadedPhotoFilter filter) {
+        throw new UnsupportedOperationException(
+            "setDateUploadedPhotoFilter() must be overridden when DateUploadedPhotoFilter is supported");
+    }
+
+    public abstract Collection<Class<? extends PhotoFilter>> supportedPhotoFilters();
+
 }

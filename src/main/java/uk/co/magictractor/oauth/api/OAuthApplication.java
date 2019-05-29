@@ -2,10 +2,10 @@ package uk.co.magictractor.oauth.api;
 
 public interface OAuthApplication { // <SP extends OAuthServiceProvider> {
 
-	// generics for connection too?
-	OAuthConnection getConnection();
+    // generics for connection too?
+    OAuthConnection getConnection();
 
-	// SP getServiceProvider();
-	OAuthServiceProvider getServiceProvider();
+    // SP getServiceProvider();
+    OAuthServiceProvider getServiceProvider();
 
 }

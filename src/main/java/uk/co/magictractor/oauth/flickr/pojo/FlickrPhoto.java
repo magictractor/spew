@@ -11,103 +11,103 @@ import uk.co.magictractor.oauth.common.TagSet;
 
 public class FlickrPhoto implements Photo {
 
-	private String id;
-	private String owner;
-	private String secret;
-	private String server;
-	private String farm;
-	private String title;
-	// obj
-	// public String description;
-	// TODO! make these lists
-	// public List<String> tags;
-	// public String tags;
-	private TagSet tags;
-	// these are not Flickr's auto tags, they are tags using "x:y=z" syntax
-	private TagSet machineTagSet;
-	private boolean ispublic;
-	private boolean isfriend;
-	private boolean isfamily;
-//	public Boolean ispublic;
-//	public boolean isfriend;
-//	public boolean isfamily;
-	// ...
+    private String id;
+    private String owner;
+    private String secret;
+    private String server;
+    private String farm;
+    private String title;
+    // obj
+    // public String description;
+    // TODO! make these lists
+    // public List<String> tags;
+    // public String tags;
+    private TagSet tags;
+    // these are not Flickr's auto tags, they are tags using "x:y=z" syntax
+    private TagSet machineTagSet;
+    private boolean ispublic;
+    private boolean isfriend;
+    private boolean isfamily;
+    //	public Boolean ispublic;
+    //	public boolean isfriend;
+    //	public boolean isfamily;
+    // ...
 
-	// Flickr does not record the time zone for dateTaken
-	// Changing the user's timezone does not change this value
-	// TODO! test values in exif and uploaded to Flickr when changing time zones in camera settings
-	private LocalDateTime datetaken;
-	// private Instant dateTaken;
-	// public Instant dateTaken;
-	// dateupload=1534007093, datetaken=2018-06-23 13:52:33,
-	// datetakengranularity=0.0, datetakenunknown=0.0
-	private Instant dateupload;
-	// original names a
-	private Integer width_o;
-	private Integer height_o;
+    // Flickr does not record the time zone for dateTaken
+    // Changing the user's timezone does not change this value
+    // TODO! test values in exif and uploaded to Flickr when changing time zones in camera settings
+    private LocalDateTime datetaken;
+    // private Instant dateTaken;
+    // public Instant dateTaken;
+    // dateupload=1534007093, datetaken=2018-06-23 13:52:33,
+    // datetakengranularity=0.0, datetakenunknown=0.0
+    private Instant dateupload;
+    // original names a
+    private Integer width_o;
+    private Integer height_o;
 
-	@Override
-	public String getServiceProviderId() {
-		return id;
-	}
+    @Override
+    public String getServiceProviderId() {
+        return id;
+    }
 
-	@Override
-	public String getFileName() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public String getFileName() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	@Override
-	public String getTitle() {
-		return title;
-	}
+    @Override
+    public String getTitle() {
+        return title;
+    }
 
-	@Override
-	public String getDescription() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public String getDescription() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	@Override
-	public TagSet getTagSet() {
-		return tags;
-	}
+    @Override
+    public TagSet getTagSet() {
+        return tags;
+    }
 
-	// https://www.flickr.com/profile_edit.gne?from=personal to change user's
-	// timezone
-	@Override
-	public Instant getDateTimeTaken() {
-		// return dateTaken;
-		// TODO! can we get the user's Flcikr timezone rather than hardcoding UTC
-		// what comes back from Flickr?
-		return datetaken == null ? null : datetaken.toInstant(ZoneOffset.UTC);
-	}
+    // https://www.flickr.com/profile_edit.gne?from=personal to change user's
+    // timezone
+    @Override
+    public Instant getDateTimeTaken() {
+        // return dateTaken;
+        // TODO! can we get the user's Flcikr timezone rather than hardcoding UTC
+        // what comes back from Flickr?
+        return datetaken == null ? null : datetaken.toInstant(ZoneOffset.UTC);
+    }
 
-	public Instant getDateTimeUpload() {
-		return dateupload;
-	}
+    public Instant getDateTimeUpload() {
+        return dateupload;
+    }
 
-	public boolean isPublic() {
-		return ispublic;
-	}
+    public boolean isPublic() {
+        return ispublic;
+    }
 
-	public boolean isFamily() {
-		return isfamily;
-	}
+    public boolean isFamily() {
+        return isfamily;
+    }
 
-	public boolean isFriend() {
-		return isfriend;
-	}
+    public boolean isFriend() {
+        return isfriend;
+    }
 
-	@Override
-	public Integer getWidth() {
-		return width_o;
-	}
+    @Override
+    public Integer getWidth() {
+        return width_o;
+    }
 
-	@Override
-	public Integer getHeight() {
-		return height_o;
-	}
+    @Override
+    public Integer getHeight() {
+        return height_o;
+    }
 
 }
 

@@ -8,40 +8,40 @@ import uk.co.magictractor.oauth.processor.properties.ResourceFileProperties;
 
 public class MyFlickrApp implements OAuth1Application {
 
-	private static final MyFlickrApp INSTANCE = new MyFlickrApp();
+    private static final MyFlickrApp INSTANCE = new MyFlickrApp();
 
-	private final ResourceFileProperties properties = new ResourceFileProperties(MyFlickrApp.class);
+    private final ResourceFileProperties properties = new ResourceFileProperties(MyFlickrApp.class);
 
-	// TODO! want connection cache in a superclass
-	private OAuth1Connection connection;
+    // TODO! want connection cache in a superclass
+    private OAuth1Connection connection;
 
-	private MyFlickrApp() {
-	}
+    private MyFlickrApp() {
+    }
 
-	public static MyFlickrApp getInstance() {
-		return INSTANCE;
-	}
+    public static MyFlickrApp getInstance() {
+        return INSTANCE;
+    }
 
-	@Override
-	public OAuth1ServiceProvider getServiceProvider() {
-		return Flickr.getInstance();
-	}
+    @Override
+    public OAuth1ServiceProvider getServiceProvider() {
+        return Flickr.getInstance();
+    }
 
-	@Override
-	public OAuthConnection getConnection() {
-		if (connection == null) {
-			connection = new OAuth1Connection(this);
-		}
-		return connection;
-	}
+    @Override
+    public OAuthConnection getConnection() {
+        if (connection == null) {
+            connection = new OAuth1Connection(this);
+        }
+        return connection;
+    }
 
-	@Override
-	public String getAppToken() {
-		return properties.getProperty("app_token");
-	}
+    @Override
+    public String getAppToken() {
+        return properties.getProperty("app_token");
+    }
 
-	@Override
-	public String getAppSecret() {
-		return properties.getProperty("app_secret");
-	}
+    @Override
+    public String getAppSecret() {
+        return properties.getProperty("app_secret");
+    }
 }

@@ -11,8 +11,8 @@ import uk.co.magictractor.oauth.common.TagSet;
 
 public class TagSetTypeAdapter implements JsonDeserializer<TagSet> {
 
-	public TagSet deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
-			throws JsonParseException {
-		return new TagSet(json.getAsString());
-	}
+    public TagSet deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+            throws JsonParseException {
+        return new TagSet(json.getAsString());
+    }
 }

@@ -19,18 +19,20 @@ import com.jayway.jsonpath.spi.mapper.MappingProvider;
 // https://en.wikipedia.org/wiki/List_of_OAuth_providers
 public interface OAuthServiceProvider {
 
-	default GsonBuilder getGsonBuilder() {
-		return new GsonBuilder();
-	}
+    default GsonBuilder getGsonBuilder() {
+        return new GsonBuilder();
+    }
 
-	default Configuration getJsonConfiguration() {
-		Gson gson = getGsonBuilder().setPrettyPrinting().create();
-		JsonProvider jsonProvider = new GsonJsonProvider(gson);
-		MappingProvider mappingProvider = new GsonMappingProvider(gson);
+    default Configuration getJsonConfiguration() {
+        Gson gson = getGsonBuilder().setPrettyPrinting().create();
+        JsonProvider jsonProvider = new GsonJsonProvider(gson);
+        MappingProvider mappingProvider = new GsonMappingProvider(gson);
 
-		// Option.DEFAULT_PATH_LEAF_TO_NULL required for nextPageToken used with Google paged services
-		return new Configuration.ConfigurationBuilder().jsonProvider(jsonProvider).mappingProvider(mappingProvider)
-				.options(Option.DEFAULT_PATH_LEAF_TO_NULL).build();
-	}
+        // Option.DEFAULT_PATH_LEAF_TO_NULL required for nextPageToken used with Google paged services
+        return new Configuration.ConfigurationBuilder().jsonProvider(jsonProvider)
+                .mappingProvider(mappingProvider)
+                .options(Option.DEFAULT_PATH_LEAF_TO_NULL)
+                .build();
+    }
 
 }

@@ -7,56 +7,56 @@ import java.util.List;
 
 public class ProcessorChain<I, E, C extends ProcessorContext<? super I, E>> {
 
-	private final List<Processor<? super I, E, C>> processors = new ArrayList<>();
+    private final List<Processor<? super I, E, C>> processors = new ArrayList<>();
 
-	protected void addProcessor(Processor<? super I, E, C> processor) {
-		processors.add(processor);
-	}
+    protected void addProcessor(Processor<? super I, E, C> processor) {
+        processors.add(processor);
+    }
 
-	public final void execute(Iterator<? extends I> iterator, C context) {
-		boolean isDateAware = context instanceof DateAwareProcessorContext;
-		LocalDate date = null;
-		LocalDate previousDate = null;
-		// TODO! don't like DateAwareProcessorContext
-		DateAwareProcessorContext<I,E> dateAwareContext = isDateAware ? ((DateAwareProcessorContext<I,E>) context)
-				: null;
+    public final void execute(Iterator<? extends I> iterator, C context) {
+        boolean isDateAware = context instanceof DateAwareProcessorContext;
+        LocalDate date = null;
+        LocalDate previousDate = null;
+        // TODO! don't like DateAwareProcessorContext
+        DateAwareProcessorContext<I, E> dateAwareContext = isDateAware ? ((DateAwareProcessorContext<I, E>) context)
+                : null;
 
-		context.beforeProcessing();
+        context.beforeProcessing();
 
-		while (iterator.hasNext()) {
-			E element = context.beforeElement(iterator.next());
+        while (iterator.hasNext()) {
+            E element = context.beforeElement(iterator.next());
 
-			// TODO! doc what this is used for
-			// TODO! should be able to handle this in beforeElement impl?
-			if (isDateAware) {
-				date = dateAwareContext.getDate(element);
-				if (date == null) {
-					throw new IllegalStateException();
-				}
-				if (!date.equals(previousDate)) {
-					if (previousDate != null) {
-						dateAwareContext.afterDate(previousDate);
-					}
-					dateAwareContext.beforeDate(date);
-				}
-			}
+            // TODO! doc what this is used for
+            // TODO! should be able to handle this in beforeElement impl?
+            if (isDateAware) {
+                date = dateAwareContext.getDate(element);
+                if (date == null) {
+                    throw new IllegalStateException();
+                }
+                if (!date.equals(previousDate)) {
+                    if (previousDate != null) {
+                        dateAwareContext.afterDate(previousDate);
+                    }
+                    dateAwareContext.beforeDate(date);
+                }
+            }
 
-			for (Processor<? super I, E, C> processor : processors) {
-				processor.process(element, context);
-			}
+            for (Processor<? super I, E, C> processor : processors) {
+                processor.process(element, context);
+            }
 
-			context.afterElement(element);
+            context.afterElement(element);
 
-			if (isDateAware) {
-				previousDate = date;
-			}
-		}
+            if (isDateAware) {
+                previousDate = date;
+            }
+        }
 
-		if (isDateAware) {
-			dateAwareContext.afterDate(previousDate);
-		}
+        if (isDateAware) {
+            dateAwareContext.afterDate(previousDate);
+        }
 
-		context.afterProcessing();
-	}
+        context.afterProcessing();
+    }
 
 }

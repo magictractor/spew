@@ -9,58 +9,58 @@ import uk.co.magictractor.oauth.processor.properties.ResourceFileProperties;
 
 public class MyGooglePhotosApp implements OAuth2Application {
 
-	private static final MyGooglePhotosApp INSTANCE = new MyGooglePhotosApp();
+    private static final MyGooglePhotosApp INSTANCE = new MyGooglePhotosApp();
 
-	private final ResourceFileProperties properties = new ResourceFileProperties(MyGooglePhotosApp.class);
+    private final ResourceFileProperties properties = new ResourceFileProperties(MyGooglePhotosApp.class);
 
-// TODO! want connection cache in a superclass, not the file props
-	private OAuth2Connection connection;
+    // TODO! want connection cache in a superclass, not the file props
+    private OAuth2Connection connection;
 
-	private MyGooglePhotosApp() {
-	}
+    private MyGooglePhotosApp() {
+    }
 
-	public static MyGooglePhotosApp getInstance() {
-		return INSTANCE;
-	}
+    public static MyGooglePhotosApp getInstance() {
+        return INSTANCE;
+    }
 
-	@Override
-	public OAuth2ServiceProvider getServiceProvider() {
-		return Google.getInstance();
-	}
+    @Override
+    public OAuth2ServiceProvider getServiceProvider() {
+        return Google.getInstance();
+    }
 
-	@Override
-	public String getScope() {
-		// return "https://www.googleapis.com/auth/photoslibrary";
+    @Override
+    public String getScope() {
+        // return "https://www.googleapis.com/auth/photoslibrary";
 
-		// Do not need https://www.googleapis.com/auth/photoslibrary.sharing
-		// just use sharedAlbums/list to get list of shared albums
-		// Ah! do want album share info in order to get share Url
-		return "https://www.googleapis.com/auth/photoslibrary https://www.googleapis.com/auth/photoslibrary.sharing";
+        // Do not need https://www.googleapis.com/auth/photoslibrary.sharing
+        // just use sharedAlbums/list to get list of shared albums
+        // Ah! do want album share info in order to get share Url
+        return "https://www.googleapis.com/auth/photoslibrary https://www.googleapis.com/auth/photoslibrary.sharing";
 
-		// just sharing results in permission denied when listing albums
-		// return "https://www.googleapis.com/auth/photoslibrary.sharing";
-	}
+        // just sharing results in permission denied when listing albums
+        // return "https://www.googleapis.com/auth/photoslibrary.sharing";
+    }
 
-	@Override
-	public OAuthConnection getConnection() {
-		if (connection == null) {
-			connection = new OAuth2Connection(this);
-		}
-		return connection;
-	}
+    @Override
+    public OAuthConnection getConnection() {
+        if (connection == null) {
+            connection = new OAuth2Connection(this);
+        }
+        return connection;
+    }
 
-	@Override
-	public OAuth2AuthorizeResponseType defaultAuthorizeResponseType() {
-		return OAuth2AuthorizeResponseType.CODE;
-	}
+    @Override
+    public OAuth2AuthorizeResponseType defaultAuthorizeResponseType() {
+        return OAuth2AuthorizeResponseType.CODE;
+    }
 
-	@Override
-	public String getClientId() {
-		return properties.getProperty("client_id");
-	}
+    @Override
+    public String getClientId() {
+        return properties.getProperty("client_id");
+    }
 
-	@Override
-	public String getClientSecret() {
-		return properties.getProperty("client_secret");
-	}
+    @Override
+    public String getClientSecret() {
+        return properties.getProperty("client_secret");
+    }
 }
