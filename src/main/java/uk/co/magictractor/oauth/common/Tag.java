@@ -8,263 +8,286 @@ import java.util.Map;
 
 public class Tag {
 
-	public static Comparator<Tag> TAG_NAME_COMPARATOR = Comparator.comparing(Tag::getTagName);
-	// private static Comparator<Tag> TAG_TYPE_COMPARATOR =
-	// Comparator.comparing(Tag::getTagType);
+    public static Comparator<Tag> TAG_NAME_COMPARATOR = Comparator.comparing(Tag::getTagName);
+    // private static Comparator<Tag> TAG_TYPE_COMPARATOR =
+    // Comparator.comparing(Tag::getTagType);
 
-	private static final Map<String, Tag> TAG_MAP = new HashMap<>();
+    private static final Map<String, Tag> TAG_MAP = new HashMap<>();
 
-	static {
-		initTags();
-	}
+    static {
+        initTags();
+    }
 
-	private final TagType tagType;
-	private final Tag parent;
-	private final String tagName;
-	// Lowercase, spaces and punctation stripped
-	private final String compactTagName;
-	private final int depth;
-	private final List<Tag> children = new ArrayList<>();
+    private final TagType tagType;
+    private final Tag parent;
+    private final String tagName;
+    // Lowercase, spaces and punctation stripped
+    private final String compactTagName;
+    private final int depth;
+    private final List<Tag> children = new ArrayList<>();
 
-	private Tag(TagType tagType, String tagName) {
-		this(tagType, null, tagName, 0);
-	}
+    private Tag(TagType tagType, String tagName) {
+        this(tagType, null, tagName, 0);
+    }
 
-	private Tag(Tag parent, String tagName) {
-		this(parent.tagType, parent, tagName, parent.depth + 1);
-	}
+    private Tag(Tag parent, String tagName) {
+        this(parent.tagType, parent, tagName, parent.depth + 1);
+    }
 
-	private Tag(TagType tagType, Tag parent, String tagName, int depth) {
-		this.tagType = tagType;
-		this.parent = parent;
-		this.tagName = tagName;
-		this.compactTagName = compactName(tagName);
-		this.depth = depth;
+    private Tag(TagType tagType, Tag parent, String tagName, int depth) {
+        this.tagType = tagType;
+        this.parent = parent;
+        this.tagName = tagName;
+        this.compactTagName = compactName(tagName);
+        this.depth = depth;
 
-		if (parent != null) {
-			parent.children.add(this);
-		}
-	}
+        if (parent != null) {
+            parent.children.add(this);
+        }
+    }
 
-	public TagType getTagType() {
-		return tagType;
-	}
+    public TagType getTagType() {
+        return tagType;
+    }
 
-	public Tag getParent() {
-		return parent;
-	}
+    public Tag getParent() {
+        return parent;
+    }
 
-	public String getTagName() {
-		return tagName;
-	}
+    public String getTagName() {
+        return tagName;
+    }
 
-	public String getCompactTagName() {
-		return compactTagName;
-	}
+    public String getCompactTagName() {
+        return compactTagName;
+    }
 
-	public int getDepth() {
-		return depth;
-	}
+    public int getDepth() {
+        return depth;
+    }
 
-	public boolean isUnknown() {
-		return tagType == null;
-	}
+    public boolean isUnknown() {
+        return tagType == null;
+    }
 
-	public boolean hasChildren() {
-		return !children.isEmpty();
-	}
+    public boolean hasChildren() {
+        return !children.isEmpty();
+    }
 
-	private String compactName(String name) {
-		StringBuilder compactNameBuilder = new StringBuilder();
-		for (int i = 0; i < name.length(); i++) {
-			char c = name.charAt(i);
-			if (Character.isLetter(c)) {
-				compactNameBuilder.append(Character.toLowerCase(c));
-			}
-		}
+    private String compactName(String name) {
+        StringBuilder compactNameBuilder = new StringBuilder();
+        for (int i = 0; i < name.length(); i++) {
+            char c = name.charAt(i);
+            if (Character.isLetter(c)) {
+                compactNameBuilder.append(Character.toLowerCase(c));
+            }
+        }
 
-		return compactNameBuilder.toString();
-	}
+        return compactNameBuilder.toString();
+    }
 
-	private static void initTags() {
-		initLocations();
-		initSubjects();
-	}
+    private static void initTags() {
+        initLocations();
+        initSubjects();
+    }
 
-	private static void initLocations() {
-		Tag edinburgh = init(TagType.LOCATION, "Edinburgh");
-		Tag fife = init(TagType.LOCATION, "Fife");
-		init(TagType.LOCATION, "Esk", "Musselburgh lagoons", "Roslin glen");
+    private static void initLocations() {
+        Tag edinburgh = init(TagType.LOCATION, "Edinburgh");
+        Tag fife = init(TagType.LOCATION, "Fife");
+        init(TagType.LOCATION, "Esk", "Musselburgh lagoons", "Roslin glen");
 
-		init(edinburgh, "RBGE", "Almond", "Balgreen", "Bawsinch", "Calton Hill", "Cammo", "Corstorphine Hill",
-				"Fountainbridge", "Figgate Park", "Holyrood Park", "Inverleith Park", "Lochend Park",
-				"Montgomery Street Park", "Pilrig Park", "Portobello", "Princes Street Gardens", "Straighton",
-				"Water of Leith");
-	}
+        init(edinburgh, "RBGE", "Almond", "Balgreen", "Bawsinch", "Calton Hill", "Cammo", "Corstorphine Hill",
+            "Fountainbridge", "Figgate Park", "Holyrood Park", "Inverleith Park", "Lochend Park",
+            "Montgomery Street Park", "Pilrig Park", "Portobello", "Princes Street Gardens", "Straighton",
+            "Water of Leith");
+    }
 
-	private static void initSubjects() {
-		initBirds();
-		initRodents();
-		initInsects();
+    private static void initSubjects() {
+        initBirds();
+        initRodents();
+        initInsects();
 
-		Tag frog = init(TagType.SUBJECT, "Frog");
-		init(frog, "Common frog");
+        Tag frog = init(TagType.SUBJECT, "Frog");
+        init(frog, "Common frog");
 
-		Tag newt = init(TagType.SUBJECT, "Newt");
-		init(newt, "Smooth newt", "Palmate newt");
+        Tag newt = init(TagType.SUBJECT, "Newt");
+        init(newt, "Smooth newt", "Palmate newt");
 
-		// TODO! fungus?
-		init(TagType.SUBJECT, "Fungi");
-	}
+        // TODO! fungus?
+        init(TagType.SUBJECT, "Fungi");
+    }
 
-	private static void initBirds() {
-		Tag bird = init(TagType.SUBJECT, "Bird");
-		init(bird, "Blackbird", "Blackcap", "Blue tit", "Bullfinch", "Buzzard", "Chaffinch", "Coal Tit", "Coot",
-				"Dipper", "Dunnock", "Fieldfare", "Goldcrest", "Goldeneye", "Goldfinch", "Goosander", "Great tit",
-				"Kestrel", "Kingfisher", "Linnet", "Long-tailed tit", "Mallard", "Moorhen", "Nuthatch", "Oystercatcher",
-				"Pochard", "Redshank", "Redwing", "Robin", "Shag", "Siskin", "Sparrowhawk", "Starling", "Swallow",
-				"Teal", "Treecreeper", "Tufted duck", "Water rail", "Waxwing", "Wood pigeon", "Wren");
+    private static void initBirds() {
+        Tag bird = init(TagType.SUBJECT, "Bird");
+        init(bird, "Blackbird", "Blackcap", "Blue tit", "Bullfinch", "Buzzard", "Chaffinch", "Coal tit",
+            "Collared dove", "Coot", "Dipper", "Dunnock", "Fieldfare", "Goldcrest", "Goldeneye", "Goldfinch",
+            "Goosander", "Great tit", "Kestrel", "Kingfisher", "Linnet", "Long-tailed tit", "Mallard", "Moorhen",
+            "Nuthatch", "Oystercatcher", "Pochard", "Redshank", "Redwing", "Robin", "Shag", "Siskin", "Sparrowhawk",
+            "Starling", "Swallow", "Teal", "Treecreeper", "Tufted duck", "Water rail", "Waxwing", "Wren");
 
-		Tag crow = init(bird, "Crow");
-		init(crow, "Carrion crow");
+        Tag crow = init(bird, "Crow");
+        init(crow, "Carrion crow");
 
-		Tag grebe = init(bird, "Grebe");
-		init(grebe, "Little grebe", "Great crested grebe");
-		
-		Tag gull = init(bird, "Gull");
-		init(gull, "Black-headed gull", "Lesser black-backed gull");
+        Tag grebe = init(bird, "Grebe");
+        init(grebe, "Little grebe", "Great crested grebe");
 
-		Tag heron = init(bird, "Heron");
-		init(heron, "Grey heron");
+        Tag gull = init(bird, "Gull");
+        init(gull, "Black-headed gull", "Lesser black-backed gull");
 
-		Tag owl = init(bird, "Owl");
-		init(owl, "Tawny owl");
+        Tag heron = init(bird, "Heron");
+        init(heron, "Grey heron");
 
-		Tag pipit = init(bird, "Pipit");
-		init(pipit, "Meadow Pipit");
+        Tag owl = init(bird, "Owl");
+        init(owl, "Tawny owl");
 
-		Tag sparrow = init(bird, "Sparrow");
-		init(sparrow, "House sparrow");
+        Tag pigeon = init(bird, "Pigeon");
+        init(pigeon, "Feral pigeon", "Wood pigeon");
 
-		Tag swan = init(bird, "Swan");
-		init(swan, "Mute swan");
+        Tag pipit = init(bird, "Pipit");
+        init(pipit, "Meadow Pipit");
 
-		Tag wagtail = init(bird, "Wagtail");
-		init(wagtail, "Grey wagtail", "Pied wagtail");
+        Tag sparrow = init(bird, "Sparrow");
+        init(sparrow, "House sparrow");
 
-		Tag whiteThroat = init(bird, "White throat");
-		init(whiteThroat, "Common white throat");
+        Tag swan = init(bird, "Swan");
+        init(swan, "Mute swan");
 
-		Tag woodpecker = init(bird, "Woodpecker");
-		init(woodpecker, "Green woodpecker", "Great spotted woodpecker");
-		// gulls and woodpeckers and swans and warblers
-		// "Black-headed gull",
-	}
+        Tag thrush = init(bird, "Thrush");
+        init(thrush, "Mistle thrush", "Song thrush");
 
-	private static void initRodents() {
-		// Not a rodent!
-		init(TagType.SUBJECT, "Otter");
+        Tag wagtail = init(bird, "Wagtail");
+        init(wagtail, "Grey wagtail", "Pied wagtail");
 
-		Tag rodent = init(TagType.SUBJECT, "Rodent");
+        Tag warbler = init(bird, "Warbler");
+        init(warbler, "Chiffchaff", "Willow warbler");
 
-		Tag squirrel = init(rodent, "Squirrel");
-		init(squirrel, "Grey squirrel", "Red squirrel");
+        Tag whiteThroat = init(bird, "White throat");
+        init(whiteThroat, "Common white throat");
 
-		Tag rat = init(rodent, "Rat");
-		init(rat, "Brown rat");
-	}
+        Tag woodpecker = init(bird, "Woodpecker");
+        init(woodpecker, "Green woodpecker", "Great spotted woodpecker");
+        // gulls and woodpeckers and swans and warblers
+        // "Black-headed gull",
+    }
 
-	private static void initInsects() {
-		Tag insect = init(TagType.SUBJECT, "Insect");
-		init(insect, "Caddisfly");
+    private static void initRodents() {
+        // Not a rodent!
+        init(TagType.SUBJECT, "Otter");
 
-		Tag bee = init(insect, "Bee");
-		init(bee, "Honey bee");
-		Tag bumblebee = init(bee, "Bumblebee");
-		init(bumblebee, "Common carder bee", "Tree bumblebee", "Red-tailed bumblebee", "Buff-tailed bumbleebee");
+        Tag rodent = init(TagType.SUBJECT, "Rodent");
 
-		Tag wasp = init(insect, "Wasp");
-		init(wasp, "Common wasp");
+        Tag squirrel = init(rodent, "Squirrel");
+        init(squirrel, "Grey squirrel", "Red squirrel");
 
-		Tag hoverfly = init(insect, "Hoverfly");
-		Tag dronefly = init(hoverfly, "Drone fly");
-		init(dronefly, "Common drone fly", "Tapered drone fly");
+        Tag rat = init(rodent, "Rat");
+        init(rat, "Brown rat");
+    }
 
-		Tag fly = init(insect, "Fly");
-// more
+    private static void initInsects() {
+        Tag insect = init(TagType.SUBJECT, "Insect");
+        init(insect, "Caddisfly");
 
-		Tag lepidoptera = init(insect, "Lepidoptera");
+        Tag bee = init(insect, "Bee");
+        init(bee, "Honey bee", "Early mining bee");
+        Tag bumblebee = init(bee, "Bumblebee");
+        init(bumblebee, "Common carder bee", "Tree bumblebee", "Red-tailed bumblebee", "Buff-tailed bumbleebee");
 
-		Tag butterfly = init(lepidoptera, "Butterfly");
-		init(butterfly, "Peacock", "Green veined white", "Speckled wood", "Small copper", "Red admiral", "Comma",
-				"Painted lady", "Ringlet", "Small white");
+        Tag wasp = init(insect, "Wasp");
+        init(wasp, "Common wasp");
 
-		Tag moth = init(lepidoptera, "Moth");
-		init(moth, "Silver Y");
+        Tag hoverfly = init(insect, "Hoverfly");
+        init(hoverfly, "Footballer");
+        Tag dronefly = init(hoverfly, "Drone fly");
+        init(dronefly, "Common drone fly", "Tapered drone fly");
 
-		Tag odonata = init(insect, "Odonata");
-		Tag damselfly = init(odonata, "Damselfly");
-		Tag dragonfly = init(odonata, "Dragonfly");
-		init(damselfly, "Blue-tailed damselfly", "Common blue damselfly", "Azure damselfly", "Emerald damselfly",
-				"Large red damselfly");
-		init(dragonfly, "Common darter", "Black darter", "Common hawker", "Four-spotted chaser");
-	}
+        Tag diptera = init(insect, "Diptera");
 
-	private static void init(TagType tagType, String... tagNames) {
-		for (String tagName : tagNames) {
-			init(tagType, tagName);
-		}
-	}
+        // TODO! alias "crane fly"
+        Tag tipula = init(diptera, "Tipula");
+        init(tipula, "Tipula vittata");
+        // more
 
-	private static Tag init(TagType tagType, String tagName) {
-		Tag tag = new Tag(tagType, tagName);
-		addTag(tag);
-		return tag;
-	}
+        Tag shieldbug = init(insect, "Shield bug");
+        init(shieldbug, "Birch shield bug", "Gorse shield bug", "Hawthorn shield bug");
 
-	private static void init(Tag parentTag, String... tagNames) {
-		for (String tagName : tagNames) {
-			init(parentTag, tagName);
-		}
-	}
+        Tag snail = init(insect, "Snail");
+        init(snail, "Garden snail");
 
-	private static Tag init(Tag parentTag, String tagName) {
-		Tag tag = new Tag(parentTag, tagName);
-		addTag(tag);
-		return tag;
-	}
+        Tag lepidoptera = init(insect, "Lepidoptera");
 
-	private static void addTag(Tag tag) {
-		if (TAG_MAP.containsKey(tag.compactTagName)) {
-			throw new IllegalStateException("Tag already exists with compact name: " + tag.compactTagName);
-		}
+        Tag butterfly = init(lepidoptera, "Butterfly");
+        init(butterfly, "Peacock", "Green veined white", "Orange-tip", "Speckled wood", "Small copper", "Red admiral",
+            "Comma", "Painted lady", "Ringlet", "Small white");
 
-		TAG_MAP.put(tag.compactTagName, tag);
-	}
+        Tag moth = init(lepidoptera, "Moth");
+        init(moth, "Silver Y");
+        init(moth, "Copper underwing");
 
-	public static Tag fetchOrCreateTag(String compactTagName) {
-		if (!TAG_MAP.containsKey(compactTagName)) {
-			Tag tag = new Tag(null, null, compactTagName, 0);
-			addTag(tag);
-			return tag;
-		}
-		return TAG_MAP.get(compactTagName);
-	}
+        Tag odonata = init(insect, "Odonata");
+        Tag damselfly = init(odonata, "Damselfly");
+        Tag dragonfly = init(odonata, "Dragonfly");
+        init(damselfly, "Blue-tailed damselfly", "Common blue damselfly", "Azure damselfly", "Emerald damselfly",
+            "Large red damselfly");
+        init(dragonfly, "Common darter", "Black darter", "Common hawker", "Four-spotted chaser");
 
-	public static Tag fetchTag(String compactTagName) {
-		if (!TAG_MAP.containsKey(compactTagName)) {
-			throw new IllegalArgumentException("No tag has compact name '" + compactTagName + "'");
-		}
-		return TAG_MAP.get(compactTagName);
-	}
+        init(insect, "Mayfly");
+    }
 
-	public static Tag fetchTagIfPresent(String compactTagName) {
-		return TAG_MAP.get(compactTagName);
-	}
+    private static void init(TagType tagType, String... tagNames) {
+        for (String tagName : tagNames) {
+            init(tagType, tagName);
+        }
+    }
 
-	@Override
-	public String toString() {
-		return "Tag [compactTagName=" + compactTagName + ", depth=" + depth + "]";
-	}
+    private static Tag init(TagType tagType, String tagName) {
+        Tag tag = new Tag(tagType, tagName);
+        addTag(tag);
+        return tag;
+    }
+
+    private static void init(Tag parentTag, String... tagNames) {
+        for (String tagName : tagNames) {
+            init(parentTag, tagName);
+        }
+    }
+
+    private static Tag init(Tag parentTag, String tagName) {
+        Tag tag = new Tag(parentTag, tagName);
+        addTag(tag);
+        return tag;
+    }
+
+    private static void addTag(Tag tag) {
+        if (TAG_MAP.containsKey(tag.compactTagName)) {
+            throw new IllegalStateException("Tag already exists with compact name: " + tag.compactTagName);
+        }
+
+        TAG_MAP.put(tag.compactTagName, tag);
+    }
+
+    public static Tag fetchOrCreateTag(String compactTagName) {
+        if (!TAG_MAP.containsKey(compactTagName)) {
+            Tag tag = new Tag(null, null, compactTagName, 0);
+            addTag(tag);
+            return tag;
+        }
+        return TAG_MAP.get(compactTagName);
+    }
+
+    public static Tag fetchTag(String compactTagName) {
+        if (!TAG_MAP.containsKey(compactTagName)) {
+            throw new IllegalArgumentException("No tag has compact name '" + compactTagName + "'");
+        }
+        return TAG_MAP.get(compactTagName);
+    }
+
+    public static Tag fetchTagIfPresent(String compactTagName) {
+        return TAG_MAP.get(compactTagName);
+    }
+
+    @Override
+    public String toString() {
+        return "Tag [compactTagName=" + compactTagName + ", depth=" + depth + "]";
+    }
 
 }
