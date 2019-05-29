@@ -1,5 +1,9 @@
 package uk.co.magictractor.oauth.twitter;
 
+import java.util.List;
+
+import com.jayway.jsonpath.TypeRef;
+
 import uk.co.magictractor.oauth.api.OAuthApplication;
 import uk.co.magictractor.oauth.api.OAuthRequest;
 import uk.co.magictractor.oauth.api.OAuthResponse;
@@ -18,17 +22,49 @@ public class TweetIterator extends PageTokenServiceIterator<Tweet> {
         OAuthRequest request = OAuthRequest
                 .createGetRequest("https://api.twitter.com/1.1/statuses/user_timeline.json");
 
-        // See also GoogleServiceIterator
-        // TODO! must not have hard coded app in the middle of the iterator!
+        request.setParam("max_id", pageToken);
+
+        // temp
+        request.setParam("count", 10);
+
+        // Get full tweet text.
+        // See https://developer.twitter.com/en/docs/tweets/tweet-updates
+        request.setParam("tweet_mode", "extended");
+
+        // Exclude retweets
+        request.setParam("include_rts", "false");
+        // Exclude replies
+        request.setParam("exclude_replies", "true");
+
+        // Omit user info
+        request.setParam("trim_user", "true");
 
         OAuthResponse response = getConnection().request(request);
 
-        return null;
+        List<Tweet> page = response.getObject("$", new TypeRef<List<Tweet>>() {
+        });
+
+        // TODO! where is the token in the response??
+        // since_id is to get most recent (e.g. check for new tweets)
+        String nextToken;
+        if (!page.isEmpty()) {
+            Tweet lastTweet = page.get(page.size() - 1);
+            nextToken = Long.toString(lastTweet.getId() - 1);
+        }
+        else {
+            nextToken = null;
+        }
+
+        return new PageAndNextToken<>(page, nextToken);
     }
 
     // TODO! temp
     public static void main(String[] args) {
-        new TweetIterator(MyTwitterApp.getInstance()).next();
+        TweetIterator iter = new TweetIterator(MyTwitterApp.getInstance());
+        while (iter.hasNext()) {
+            Tweet tweet = iter.next();
+            System.out.println(tweet);
+        }
     }
 
 }

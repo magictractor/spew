@@ -91,7 +91,7 @@ public abstract class AbstractOAuthConnection<APP extends OAuthApplication, SP e
 
         // TODO! wrap/convert response json
         // if ("json".equals(request.getParam("format"))) {
-        if (responseBody.startsWith("{")) {
+        if (responseBody.startsWith("{") || responseBody.startsWith("[")) {
             OAuthJsonResponse response = new OAuthJsonResponse(responseBody, jsonConfiguration);
             // TODO! change to !"pass"
             // TODO! pass/fail specific to Flickr?
@@ -101,7 +101,7 @@ public abstract class AbstractOAuthConnection<APP extends OAuthApplication, SP e
             return response;
         }
         else {
-            // TODO! Google request hitting this...
+            // TODO! Google request hitting this... (perhaps starts with "[" - check above added after this comment))
             return new OAuthAuthResponse(responseBody);
         }
     }
