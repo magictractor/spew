@@ -1,4 +1,4 @@
-package uk.co.magictractor.oauth.processor.flickr;
+package uk.co.magictractor.oauth.flickr.processor;
 
 import uk.co.magictractor.oauth.flickr.FlickrPhotoIterator;
 import uk.co.magictractor.oauth.flickr.MyFlickrApp;
