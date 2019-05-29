@@ -20,9 +20,9 @@ import uk.co.magictractor.oauth.util.ExceptionUtil;
 import uk.co.magictractor.oauth.util.UrlEncoderUtil;
 
 // TODO! common interface for OAuth1 and OAuth2 connections (and no auth? / other auth?)
-public final class OAuth1Connection extends AbstractOAuthConnection {
+public final class OAuth1Connection extends AbstractOAuthConnection<OAuth1Application, OAuth1ServiceProvider> {
 
-	private final OAuth1Application application;
+	//private final OAuth1Application application;
 
 	// unit tests can call setSeed() on this
 	private final Random nonceGenerator = new Random();
@@ -39,7 +39,8 @@ public final class OAuth1Connection extends AbstractOAuthConnection {
 	 * OAuth1Application.getConnection().
 	 */
 	public OAuth1Connection(OAuth1Application application) {
-		this.application = application;
+		super(application);
+		//this.application = application;
 
 		this.userToken = new UserPreferencesPersister(application, "user_token");
 		this.userSecret = new UserPreferencesPersister(application, "user_secret");
@@ -53,12 +54,12 @@ public final class OAuth1Connection extends AbstractOAuthConnection {
 
 		forAll(apiRequest);
 		forApi(apiRequest);
-		return ExceptionUtil.call(() -> request0(apiRequest, application.getServiceProvider().getJsonConfiguration()));
+		return ExceptionUtil.call(() -> request0(apiRequest, getServiceProvider().getJsonConfiguration()));
 	}
 
 	private OAuthResponse authRequest(OAuthRequest apiRequest) {
 		forAll(apiRequest);
-		return ExceptionUtil.call(() -> request0(apiRequest, application.getServiceProvider().getJsonConfiguration()));
+		return ExceptionUtil.call(() -> request0(apiRequest, getServiceProvider().getJsonConfiguration()));
 	}
 
 	private void authenticateUser() {
@@ -78,7 +79,7 @@ public final class OAuth1Connection extends AbstractOAuthConnection {
 	private void authorize() {
 		// TODO! POST?
 		OAuthRequest request = OAuthRequest
-				.createGetRequest(application.getServiceProvider().getTemporaryCredentialRequestUri());
+				.createGetRequest(getServiceProvider().getTemporaryCredentialRequestUri());
 		OAuthResponse response = authRequest(request);
 
 		String authToken = response.getString("oauth_token");
@@ -89,7 +90,7 @@ public final class OAuth1Connection extends AbstractOAuthConnection {
 		userToken.setUnpersistedValue(authToken);
 		userSecret.setUnpersistedValue(authSecret);
 
-		String authUriBase = application.getServiceProvider().getResourceOwnerAuthorizationUri();
+		String authUriBase = getServiceProvider().getResourceOwnerAuthorizationUri();
 		StringBuilder authUriBuilder = new StringBuilder();
 		authUriBuilder.append(authUriBase);
 		if (authUriBase.contains("?")) {
@@ -114,7 +115,7 @@ public final class OAuth1Connection extends AbstractOAuthConnection {
 	private void fetchToken(String verification) {
 		// FlickrRequest request = FlickrRequest.forAuth("access_token");
 		// TODO! POST? - imagebam allows get or post
-		OAuthRequest request = OAuthRequest.createGetRequest(application.getServiceProvider().getTokenRequestUri());
+		OAuthRequest request = OAuthRequest.createGetRequest(getServiceProvider().getTokenRequestUri());
 		request.setParam("oauth_token", userToken.getValue());
 		request.setParam("oauth_verifier", verification);
 		OAuthResponse response = authRequest(request);
@@ -149,7 +150,7 @@ public final class OAuth1Connection extends AbstractOAuthConnection {
 		// TODO! consumer key only absent for auth
 		// TODO! different service providers have different strategies for the key?!
 		// Flickr:
-		String key = application.getAppSecret() + "&" + userSecret.getValue("");
+		String key = getApplication().getAppSecret() + "&" + userSecret.getValue("");
 		// ImageBam
 		// oauth_signature = MD5(API-key + API-secret + oauth_timestamp + oauth_nonce +
 		// oauth_token + oauth_token_secret)
@@ -159,7 +160,7 @@ public final class OAuth1Connection extends AbstractOAuthConnection {
 //		System.err.println("key: " + key);
 
 		// TODO! Java signature name and Api not identical
-		String signatureMethod = application.getServiceProvider().getJavaSignatureMethod();
+		String signatureMethod = getServiceProvider().getJavaSignatureMethod();
 		SecretKeySpec signingKey = new SecretKeySpec(key.getBytes(), signatureMethod);
 		Mac mac = ExceptionUtil.call(() -> Mac.getInstance(signatureMethod));
 		ExceptionUtil.call(() -> mac.init(signingKey));
@@ -167,7 +168,7 @@ public final class OAuth1Connection extends AbstractOAuthConnection {
 		// String signature =
 		// Base64.getEncoder().encodeToString(mac.doFinal(getSignatureBaseString(request).getBytes()));
 		String signature;
-		if (ImageBam.getInstance().equals(application.getServiceProvider())) {
+		if (ImageBam.getInstance().equals(getServiceProvider())) {
 			// PHP example on ImageBam wiki uses MD5() function which returns hex
 			// different base string, different hashing, and different encoding
 			// ah! it's md5 - not HMAC-md5?!
@@ -193,8 +194,8 @@ public final class OAuth1Connection extends AbstractOAuthConnection {
 	private String getImageBamSignatureBaseString(OAuthRequest request) {
 		StringBuilder signatureBaseStringBuilder = new StringBuilder();
 
-		signatureBaseStringBuilder.append(application.getAppToken());
-		signatureBaseStringBuilder.append(application.getAppSecret());
+		signatureBaseStringBuilder.append(getApplication().getAppToken());
+		signatureBaseStringBuilder.append(getApplication().getAppSecret());
 		signatureBaseStringBuilder.append(request.getParam("oauth_timestamp"));
 		signatureBaseStringBuilder.append(request.getParam("oauth_nonce"));
 		if (userToken.getValue() != null) {
@@ -233,7 +234,7 @@ public final class OAuth1Connection extends AbstractOAuthConnection {
 		// OAuthRequest request = new OAuthRequest(FLICKR_REST_ENDPOINT);
 //		setParam("oauth_consumer_key", FlickrConfig.API_KEY);
 
-		request.setParam("api_key", application.getAppToken());
+		request.setParam("api_key", getApplication().getAppToken());
 		request.setParam("oauth_token", userToken.getValue());
 		// request.setParam("method", flickrMethod);
 		request.setParam("format", "json");
@@ -244,7 +245,7 @@ public final class OAuth1Connection extends AbstractOAuthConnection {
 
 	private void forAll(OAuthRequest request) {
 		// hmm... same as api_key? (in forApi())
-		request.setParam("oauth_consumer_key", application.getAppToken());
+		request.setParam("oauth_consumer_key", getApplication().getAppToken());
 
 		// TODO! nonce should guarantee that it is never the same if the
 		// timestamp has not move on since the last API call. Not quite guaranteed here
@@ -257,7 +258,7 @@ public final class OAuth1Connection extends AbstractOAuthConnection {
 		// eh? should only need "oob" during authorization
 		request.setParam("oauth_callback", "oob");
 		request.setParam("oauth_version", "1.0");
-		request.setParam("oauth_signature_method", application.getServiceProvider().getRequestSignatureMethod());
+		request.setParam("oauth_signature_method", getServiceProvider().getRequestSignatureMethod());
 	}
 
 }

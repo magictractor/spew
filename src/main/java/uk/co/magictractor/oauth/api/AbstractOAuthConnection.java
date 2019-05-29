@@ -16,7 +16,12 @@ import com.jayway.jsonpath.Configuration;
 import uk.co.magictractor.oauth.util.IOUtil;
 
 // Common code for OAuth1 and OAuth2 implementations.
-public abstract class AbstractOAuthConnection implements OAuthConnection {
+public abstract class AbstractOAuthConnection<APP extends OAuthApplication, SP extends OAuthServiceProvider>
+		extends AbstractConnection<APP, SP> implements OAuthConnection {
+
+	public AbstractOAuthConnection(APP application) {
+		super(application);
+	}
 
 	// TODO! return Netty HttpResponse instead - Configuration shouldn't embedded
 	// here? - can remove configuration param and get via service provider

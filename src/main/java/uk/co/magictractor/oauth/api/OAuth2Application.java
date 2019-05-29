@@ -1,6 +1,6 @@
 package uk.co.magictractor.oauth.api;
 
-public interface OAuth2Application extends OAuthApplication {
+public interface OAuth2Application extends OAuthApplication { // <OAuth2ServiceProvider> {
 
 	OAuth2ServiceProvider getServiceProvider();
 

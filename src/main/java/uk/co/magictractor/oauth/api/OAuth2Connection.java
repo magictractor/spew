@@ -22,7 +22,7 @@ import uk.co.magictractor.oauth.util.ExceptionUtil;
 import uk.co.magictractor.oauth.util.UrlEncoderUtil;
 
 // https://developers.google.com/identity/protocols/OAuth2
-public class OAuth2Connection extends AbstractOAuthConnection {
+public class OAuth2Connection extends AbstractOAuthConnection<OAuth2Application, OAuth2ServiceProvider> {
 
 	private static final String OOB = "urn:ietf:wg:oauth:2.0:oob";
 	private static final String CALLBACK_SERVER = "http://127.0.0.1:8080";
@@ -33,7 +33,7 @@ public class OAuth2Connection extends AbstractOAuthConnection {
 	 */
 	private static final int EXPIRY_BUFFER = 60;
 
-	private final OAuth2Application application;
+	// private final OAuth2Application application;
 
 	private final UserPreferencesPersister accessToken;
 	// milliseconds since start of epoch
@@ -44,7 +44,8 @@ public class OAuth2Connection extends AbstractOAuthConnection {
 	/// OAuth2Application.getConnection(). */
 	// TODO! change to default?
 	public OAuth2Connection(OAuth2Application application) {
-		this.application = application;
+		super(application);
+		// this.application = application;
 
 		this.accessToken = new UserPreferencesPersister(application, "access_token");
 		this.accessTokenExpiry = new UserPreferencesPersister(application, "access_token_expiry");
@@ -77,7 +78,7 @@ public class OAuth2Connection extends AbstractOAuthConnection {
 	}
 
 	private Configuration getJsonConfiguration() {
-		return application.getServiceProvider().getJsonConfiguration();
+		return getServiceProvider().getJsonConfiguration();
 	}
 
 	private void setAuthHeader(HttpURLConnection con) {
@@ -120,9 +121,9 @@ public class OAuth2Connection extends AbstractOAuthConnection {
 
 	// https://developers.google.com/photos/library/guides/authentication-authorization
 	private void authorize() {
-		OAuthRequest request = OAuthRequest.createGetRequest(application.getServiceProvider().getAuthorizationUri());
+		OAuthRequest request = OAuthRequest.createGetRequest(getServiceProvider().getAuthorizationUri());
 
-		request.setParam("client_id", application.getClientId());
+		request.setParam("client_id", getApplication().getClientId());
 		String redirectUri = getAuthorizeRedirectUrl();
 		request.setParam("redirect_uri", redirectUri);
 
@@ -136,7 +137,7 @@ public class OAuth2Connection extends AbstractOAuthConnection {
 		// BUT! Google bombs with token plus redirect_uri
 		// redirect_uri not supported for response_type=token: urn:ietf:wg:oauth:2.0:oob
 
-		request.setParam("scope", application.getScope());
+		request.setParam("scope", getApplication().getScope());
 
 		// Igmur:
 		// http://127.0.0.1:8080/#access_token=76fc8472073f9ae9da616bae08fc686a6395a41d
@@ -206,12 +207,12 @@ public class OAuth2Connection extends AbstractOAuthConnection {
 
 	// future - perhaps allow connection to use value other than the default
 	private String getAuthorizeResponseType() {
-		return application.defaultAuthorizeResponseType().name().toLowerCase();
+		return getApplication().defaultAuthorizeResponseType().name().toLowerCase();
 	}
 
 	// future - perhaps allow connection to use value other than the default
 	private String getAuthorizeRedirectUrl() {
-		switch (application.defaultAuthorizeResponseType()) {
+		switch (getApplication().defaultAuthorizeResponseType()) {
 		case TOKEN:
 			return CALLBACK_SERVER;
 		default:
@@ -222,12 +223,12 @@ public class OAuth2Connection extends AbstractOAuthConnection {
 	// TODO! needs a tweak to handle pin
 	private void fetchAccessAndRefreshToken(String code) {
 		// ah! needed to be POST else 404 (Google)
-		OAuthRequest request = OAuthRequest.createPostRequest(application.getServiceProvider().getTokenUri());
+		OAuthRequest request = OAuthRequest.createPostRequest(getServiceProvider().getTokenUri());
 
 		request.setParam("code", code);
 		// request.setParam("pin", code);
-		request.setParam("client_id", application.getClientId());
-		request.setParam("client_secret", application.getClientSecret());
+		request.setParam("client_id", getApplication().getClientId());
+		request.setParam("client_secret", getApplication().getClientSecret());
 
 		request.setParam("grant_type", "authorization_code");
 		// request.setParam("grant_type", "pin");
@@ -253,11 +254,11 @@ public class OAuth2Connection extends AbstractOAuthConnection {
 	// TODO! handle invalid/expired refresh tokens
 	// https://developers.google.com/identity/protocols/OAuth2InstalledApp#offline
 	private void fetchRefreshedAccessToken() {
-		OAuthRequest request = OAuthRequest.createPostRequest(application.getServiceProvider().getTokenUri());
+		OAuthRequest request = OAuthRequest.createPostRequest(getServiceProvider().getTokenUri());
 
 		request.setParam("refresh_token", refreshToken.getValue());
-		request.setParam("client_id", application.getClientId());
-		request.setParam("client_secret", application.getClientSecret());
+		request.setParam("client_id", getApplication().getClientId());
+		request.setParam("client_secret", getApplication().getClientSecret());
 
 		request.setParam("grant_type", "refresh_token");
 		OAuthResponse response = authRequest(request);

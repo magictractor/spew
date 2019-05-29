@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import uk.co.magictractor.oauth.api.OAuthApplication;
+import uk.co.magictractor.oauth.api.OAuth1Application;
 import uk.co.magictractor.oauth.api.OAuthRequest;
 import uk.co.magictractor.oauth.api.OAuthResponse;
 import uk.co.magictractor.oauth.api.PageCountServiceIterator;
@@ -40,7 +40,8 @@ public class FlickrPhotoIterator extends PageCountServiceIterator<FlickrPhoto> i
 	// value will be returned. The date can be in the form of a mysql datetime or
 	// unix timestamp.
 
-	public FlickrPhotoIterator(OAuthApplication application) {
+	// hmm, not convinced about generics on OAuthApplication
+	public FlickrPhotoIterator(OAuth1Application application) {
 		super(application);
 	}
 
