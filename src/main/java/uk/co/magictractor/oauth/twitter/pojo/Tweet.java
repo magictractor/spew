@@ -11,15 +11,26 @@ public class Tweet {
     //private String id_str;
     // "text" for truncated tweets, "full_text" when extended
     private String full_text;
+    private int favorite_count;
+    private int retweet_count;
 
     public long getId() {
         return id;
     }
 
+    public String getText() {
+        return full_text;
+    }
+
+    public int getLikes() {
+        return favorite_count;
+    }
+
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this)
-                .add("text", full_text)
+                .add("likes", getLikes())
+                .add("text", getText())
                 .toString();
     }
 

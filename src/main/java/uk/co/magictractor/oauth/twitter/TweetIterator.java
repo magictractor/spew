@@ -63,7 +63,9 @@ public class TweetIterator extends PageTokenServiceIterator<Tweet> {
         TweetIterator iter = new TweetIterator(MyTwitterApp.getInstance());
         while (iter.hasNext()) {
             Tweet tweet = iter.next();
-            System.out.println(tweet);
+            if (tweet.getLikes() >= 100) {
+                System.out.println(tweet);
+            }
         }
     }
 
