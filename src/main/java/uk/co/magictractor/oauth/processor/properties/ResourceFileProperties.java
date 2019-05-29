@@ -3,90 +3,99 @@ package uk.co.magictractor.oauth.processor.properties;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
-import java.lang.ref.WeakReference;
 import java.util.Properties;
 
 import uk.co.magictractor.oauth.util.IOUtil;
 
 public class ResourceFileProperties {
 
-	private final Class<?> clazz;
-	private WeakReference<Properties> propertiesRef;
-	
-	// TODO! default should be null
-	private String resourceFolder = "oauth";
+    private final Class<?> clazz;
+    //private WeakReference<Properties> propertiesRef;
+    private Properties properties;
 
-	// TODO! bin this constructor?
-	public ResourceFileProperties(Class<?> clazz) {
-		this.clazz = clazz;
-	}
-	
-	public ResourceFileProperties(Object obj) {
-		clazz = obj.getClass();
-	}
+    // TODO! default should be null
+    private String resourceFolder = "oauth";
 
-	protected String getResourceName() {
-		// TODO! and dir
-		StringBuilder resourceNameBuilder = new StringBuilder();
+    // TODO! bin this constructor?
+    public ResourceFileProperties(Class<?> clazz) {
+        this.clazz = clazz;
+    }
 
-		if (resourceFolder != null) {
-			// leading slash??
-			resourceNameBuilder.append('/');
-			resourceNameBuilder.append(resourceFolder);
-			resourceNameBuilder.append('/');
-		}
+    public ResourceFileProperties(Object obj) {
+        clazz = obj.getClass();
+    }
 
-		resourceNameBuilder.append(clazz.getSimpleName().toLowerCase());
-		resourceNameBuilder.append(".properties");
+    protected String getResourceName() {
+        // TODO! and dir
+        StringBuilder resourceNameBuilder = new StringBuilder();
 
-		return resourceNameBuilder.toString();
-	}
+        if (resourceFolder != null) {
+            // leading slash??
+            resourceNameBuilder.append('/');
+            resourceNameBuilder.append(resourceFolder);
+            resourceNameBuilder.append('/');
+        }
 
-	// TODO! is "folder" the correct terminology
-//	private String getResourceFolder() {
-//		return null;
-//	}
+        resourceNameBuilder.append(clazz.getSimpleName().toLowerCase());
+        resourceNameBuilder.append(".properties");
 
-	public String getProperty(String key) {
-		String value = getProperties().getProperty(key);
-		if (value == null) {
-			throw new IllegalStateException("Missing property for key " + key + " in resource " + getResourceName());
-		}
-		return value;
-	}
+        return resourceNameBuilder.toString();
+    }
 
-	private Properties getProperties() {
-		if (propertiesRef == null) {
-			Properties properties = readProperties();
-			propertiesRef = new WeakReference<Properties>(properties);
-		}
-		// Hmm. Is there a (very small) possibility that Ref could have been reclaimed
-		// between the null check and here?
-		return propertiesRef.get();
-	}
+    // TODO! is "folder" the correct terminology
+    //	private String getResourceFolder() {
+    //		return null;
+    //	}
 
-	private Properties readProperties() {
-		Properties properties = new Properties();
+    public String getProperty(String key) {
+        String value = getProperties().getProperty(key);
+        if (value == null) {
+            throw new IllegalStateException("Missing property for key " + key + " in resource " + getResourceName());
+        }
+        return value;
+    }
 
-		String resourceName = getResourceName();
-		InputStream resourceStream = clazz.getResourceAsStream(resourceName);
-		if (resourceStream == null) {
-			throw new IllegalStateException(buildMissingResourceMessage(resourceName));
-		}
+    private Properties getProperties() {
+        if (properties == null) {
+            properties = readProperties();
+        }
+        return properties;
+    }
 
-		try {
-			properties.load(resourceStream);
-		} catch (IOException e) {
-			throw new UncheckedIOException(e);
-		} finally {
-			IOUtil.closeQuietly(resourceStream);
-		}
+    //    private Properties getProperties() {
+    //        if (propertiesRef == null) {
+    //            Properties properties = readProperties();
+    //            propertiesRef = new WeakReference<Properties>(properties);
+    //        }
+    //        // Hmm. Is there a (very small) possibility that Ref could have been reclaimed
+    //        // between the null check and here? Have seen one mystery NPE - perhaps from this.
+    //        return propertiesRef.get();
+    //    }
 
-		return properties;
-	}
+    private Properties readProperties() {
+        Properties properties = new Properties();
 
-	protected String buildMissingResourceMessage(String resourceName) {
-		return "Missing resouce file: " + resourceName;
-	}
+        String resourceName = getResourceName();
+        InputStream resourceStream = clazz.getResourceAsStream(resourceName);
+        if (resourceStream == null) {
+            throw new IllegalStateException(buildMissingResourceMessage(resourceName));
+        }
+
+        try {
+            properties.load(resourceStream);
+        }
+        catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+        finally {
+            IOUtil.closeQuietly(resourceStream);
+        }
+
+        return properties;
+    }
+
+    protected String buildMissingResourceMessage(String resourceName) {
+        return "Missing resouce file: " + resourceName;
+    }
 
 }
