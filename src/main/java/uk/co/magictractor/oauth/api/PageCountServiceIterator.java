@@ -14,20 +14,14 @@ public abstract class PageCountServiceIterator<E> extends PageServiceIterator<E>
 
     private static final int UNKNOWN = -1;
 
-    private final OAuthApplication application;
-
     private int nextPageNumber = 1;
 
     private int totalPageCount = UNKNOWN;
     private int totalItemCount = UNKNOWN;
 
     // TODO! also pass in expected service provider and add assertion??
-    public PageCountServiceIterator(OAuthApplication application) {
-        this.application = application;
-    }
-
-    protected OAuthConnection getConnection() {
-        return application.getConnection();
+    protected PageCountServiceIterator(OAuthApplication application) {
+        super(application);
     }
 
     @Override

@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.jayway.jsonpath.TypeRef;
 
+import uk.co.magictractor.oauth.api.OAuthApplication;
 import uk.co.magictractor.oauth.api.OAuthRequest;
 import uk.co.magictractor.oauth.api.OAuthResponse;
 import uk.co.magictractor.oauth.api.PhotoIterator;
@@ -26,6 +27,10 @@ public class GoogleMediaItemIterator extends GoogleServiceIterator<GoogleMediaIt
             .asList(DateTakenPhotoFilter.class);
 
     private DateRange dateTakenRange;
+
+    public GoogleMediaItemIterator(OAuthApplication application) {
+        super(application);
+    }
 
     @Override
     public Collection<Class<? extends PhotoFilter>> supportedPhotoFilters() {
@@ -56,7 +61,7 @@ public class GoogleMediaItemIterator extends GoogleServiceIterator<GoogleMediaIt
     }
 
     public static void main(String[] args) {
-        GoogleMediaItemIterator iter = new GoogleMediaItemIterator();
+        GoogleMediaItemIterator iter = new GoogleMediaItemIterator(MyGooglePhotosApp.getInstance());
         iter.addFilter(new DateTakenPhotoFilter(DateRange.forDay(2018, 11, 21)));
         while (iter.hasNext()) {
             GoogleMediaItem photo = iter.next();

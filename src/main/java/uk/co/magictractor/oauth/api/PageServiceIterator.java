@@ -7,8 +7,13 @@ import com.google.common.collect.AbstractIterator;
 
 public abstract class PageServiceIterator<E> extends AbstractIterator<E> {
 
+    private final OAuthApplication application;
     private List<? extends E> currentPage = Collections.emptyList();
     private int nextPageItemIndex;
+
+    protected PageServiceIterator(OAuthApplication application) {
+        this.application = application;
+    }
 
     @Override
     public E computeNext() {
@@ -25,5 +30,13 @@ public abstract class PageServiceIterator<E> extends AbstractIterator<E> {
     }
 
     protected abstract List<? extends E> nextPage();
+
+    //    protected OAuthApplication getApplication() {
+    //        return application;
+    //    }
+
+    protected OAuthConnection getConnection() {
+        return application.getConnection();
+    }
 
 }

@@ -16,6 +16,11 @@ public abstract class PageTokenServiceIterator<E> extends PageServiceIterator<E>
     private boolean first = true;
     private String nextPageToken = null;
 
+    protected PageTokenServiceIterator(OAuthApplication application) {
+        super(application);
+    }
+
+    @Override
     protected List<? extends E> nextPage() {
         if (first || nextPageToken != null) {
             // Get first page, or next page.
