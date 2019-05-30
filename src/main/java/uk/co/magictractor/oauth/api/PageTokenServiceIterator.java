@@ -16,8 +16,8 @@ public abstract class PageTokenServiceIterator<E> extends PageServiceIterator<E>
     private boolean first = true;
     private String nextPageToken = null;
 
-    protected PageTokenServiceIterator(OAuthApplication application) {
-        super(application);
+    protected PageTokenServiceIterator(OAuthConnection connection) {
+        super(connection);
     }
 
     @Override

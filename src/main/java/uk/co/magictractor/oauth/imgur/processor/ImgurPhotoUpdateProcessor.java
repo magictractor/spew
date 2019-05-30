@@ -24,7 +24,8 @@ public class ImgurPhotoUpdateProcessor extends PhotoUpdateProcessor {
 
     public static void main(String[] args) {
         PhotoTidyProcessorChain processorChain = new PhotoTidyProcessorChain(new ImgurPhotoUpdateProcessor());
-        processorChain.execute(new ImgurPhotoIterator(MyImgurApp.getInstance()), new PhotoProcessorContext());
+        processorChain.execute(new ImgurPhotoIterator(MyImgurApp.getInstance().getConnection()),
+            new PhotoProcessorContext());
     }
 
 }

@@ -20,8 +20,8 @@ public abstract class PageCountServiceIterator<E> extends PageServiceIterator<E>
     private int totalItemCount = UNKNOWN;
 
     // TODO! also pass in expected service provider and add assertion??
-    protected PageCountServiceIterator(OAuthApplication application) {
-        super(application);
+    protected PageCountServiceIterator(OAuthConnection connection) {
+        super(connection);
     }
 
     @Override

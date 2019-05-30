@@ -25,7 +25,7 @@ public class GooglePhotoUpdateProcessor extends PhotoUpdateProcessor {
     public static void main(String[] args) {
         PhotoTidyProcessorChain processorChain = new PhotoTidyProcessorChain(new GooglePhotoUpdateProcessor());
         // TODO! should be passing in App to iterator (as done for OAuth2 iterators)
-        processorChain.execute(new GoogleMediaItemIterator(MyGooglePhotosApp.getInstance()),
+        processorChain.execute(new GoogleMediaItemIterator(MyGooglePhotosApp.getInstance().getConnection()),
             new PhotoProcessorContext());
     }
 

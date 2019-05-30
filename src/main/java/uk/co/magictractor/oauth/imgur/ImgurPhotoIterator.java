@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import uk.co.magictractor.oauth.api.OAuthApplication;
+import uk.co.magictractor.oauth.api.OAuthConnection;
 import uk.co.magictractor.oauth.api.OAuthRequest;
 import uk.co.magictractor.oauth.api.OAuthResponse;
 import uk.co.magictractor.oauth.api.PageCountServiceIterator;
@@ -120,8 +120,8 @@ public class ImgurPhotoIterator extends PageCountServiceIterator<ImgurImage> imp
     // value will be returned. The date can be in the form of a mysql datetime or
     // unix timestamp.
 
-    public ImgurPhotoIterator(OAuthApplication application) {
-        super(application);
+    public ImgurPhotoIterator(OAuthConnection connection) {
+        super(connection);
     }
 
     @Override
@@ -158,7 +158,7 @@ public class ImgurPhotoIterator extends PageCountServiceIterator<ImgurImage> imp
     }
 
     public static void main(String[] args) {
-        Iterator<ImgurImage> iter = new ImgurPhotoIterator(MyImgurApp.getInstance()).builder()
+        Iterator<ImgurImage> iter = new ImgurPhotoIterator(MyImgurApp.getInstance().getConnection()).builder()
                 .withFilter(new DateTakenPhotoFilter(DateRange.forYear(2019)))
                 .build();
         while (iter.hasNext()) {

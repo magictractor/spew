@@ -5,7 +5,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import uk.co.magictractor.oauth.api.OAuthApplication;
+import uk.co.magictractor.oauth.api.OAuthConnection;
 import uk.co.magictractor.oauth.api.OAuthRequest;
 import uk.co.magictractor.oauth.api.OAuthResponse;
 import uk.co.magictractor.oauth.api.PageCountServiceIterator;
@@ -20,8 +20,8 @@ public class ImageBamPhotoIterator extends PageCountServiceIterator<ImageBamPhot
 
     private static final List<Class<? extends PhotoFilter>> SUPPORTED_FILTERS = Arrays.asList();
 
-    public ImageBamPhotoIterator(OAuthApplication application) {
-        super(application);
+    public ImageBamPhotoIterator(OAuthConnection connection) {
+        super(connection);
     }
 
     @Override
@@ -55,7 +55,7 @@ public class ImageBamPhotoIterator extends PageCountServiceIterator<ImageBamPhot
     }
 
     public static void main(String[] args) {
-        ImageBamPhotoIterator iter = new ImageBamPhotoIterator(MyImageBamApp.getInstance());
+        ImageBamPhotoIterator iter = new ImageBamPhotoIterator(MyImageBamApp.getInstance().getConnection());
         while (iter.hasNext()) {
             ImageBamPhoto photo = iter.next();
             System.err.println(photo.getTitle() + "  " + photo.getDateTimeTaken());
