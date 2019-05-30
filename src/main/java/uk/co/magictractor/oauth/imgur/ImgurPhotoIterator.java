@@ -11,11 +11,9 @@ import uk.co.magictractor.oauth.api.OAuthResponse;
 import uk.co.magictractor.oauth.api.PageCountServiceIterator;
 import uk.co.magictractor.oauth.api.PhotoIterator;
 import uk.co.magictractor.oauth.api.connection.OAuthConnectionFactory;
-import uk.co.magictractor.oauth.common.filter.DateTakenPhotoFilter;
 import uk.co.magictractor.oauth.common.filter.PhotoFilter;
 import uk.co.magictractor.oauth.imgur.pojo.ImgurImage;
 import uk.co.magictractor.oauth.imgur.pojo.ImgurImages;
-import uk.co.magictractor.oauth.local.dates.DateRange;
 
 /*
  * <pre>
@@ -114,6 +112,98 @@ import uk.co.magictractor.oauth.local.dates.DateRange;
 </pre>
  */
 /** https://apidocs.imgur.com/#2e45daca-bd44-47f8-84b0-b3f2aa861735 */
+//{
+//    "data": [{
+//        "id": "nFp4FhQ",
+//        "title": null,
+//        "description": null,
+//        "datetime": 1551631461,
+//        "type": "image\/jpeg",
+//        "animated": false,
+//        "width": 4522,
+//        "height": 2543,
+//        "size": 5021953,
+//        "views": 2,
+//        "bandwidth": 10043906,
+//        "vote": null,
+//        "favorite": false,
+//        "nsfw": null,
+//        "section": null,
+//        "account_url": "GazingAtTrees",
+//        "account_id": 96937645,
+//        "is_ad": false,
+//        "in_most_viral": false,
+//        "has_sound": false,
+//        "tags": [],
+//        "ad_type": 0,
+//        "ad_url": "",
+//        "edited": "0",
+//        "in_gallery": false,
+//        "deletehash": "PtMp42LRT2ruMwR",
+//        "name": null,
+//        "link": "https:\/\/i.imgur.com\/nFp4FhQ.jpg"
+//    }, {
+//        "id": "tKppqPo",
+//        "title": null,
+//        "description": null,
+//        "datetime": 1548526186,
+//        "type": "image\/jpeg",
+//        "animated": false,
+//        "width": 4046,
+//        "height": 3037,
+//        "size": 4814472,
+//        "views": 13,
+//        "bandwidth": 62588136,
+//        "vote": null,
+//        "favorite": false,
+//        "nsfw": null,
+//        "section": null,
+//        "account_url": "GazingAtTrees",
+//        "account_id": 96937645,
+//        "is_ad": false,
+//        "in_most_viral": false,
+//        "has_sound": false,
+//        "tags": [],
+//        "ad_type": 0,
+//        "ad_url": "",
+//        "edited": "0",
+//        "in_gallery": false,
+//        "deletehash": "b5YAoRBExapHy3c",
+//        "name": "PANA2005",
+//        "link": "https:\/\/i.imgur.com\/tKppqPo.jpg"
+//    }, {
+//        "id": "WtFB7Is",
+//        "title": "Kingfisher",
+//        "description": null,
+//        "datetime": 1541407541,
+//        "type": "image\/jpeg",
+//        "animated": false,
+//        "width": 1702,
+//        "height": 1702,
+//        "size": 613582,
+//        "views": 344,
+//        "bandwidth": 211072208,
+//        "vote": null,
+//        "favorite": false,
+//        "nsfw": null,
+//        "section": null,
+//        "account_url": "GazingAtTrees",
+//        "account_id": 96937645,
+//        "is_ad": false,
+//        "in_most_viral": false,
+//        "has_sound": false,
+//        "tags": [],
+//        "ad_type": 0,
+//        "ad_url": "",
+//        "edited": "0",
+//        "in_gallery": false,
+//        "deletehash": "4wG6JZriZ4gYlzK",
+//        "name": "IMG_0405",
+//        "link": "https:\/\/i.imgur.com\/WtFB7Is.jpg"
+//    }],
+//    "success": true,
+//    "status": 200
+//}
 public class ImgurPhotoIterator extends PageCountServiceIterator<ImgurImage> implements PhotoIterator<ImgurImage> {
 
     // min_taken_date (Optional)
@@ -159,7 +249,7 @@ public class ImgurPhotoIterator extends PageCountServiceIterator<ImgurImage> imp
     public static void main(String[] args) {
         OAuthConnection connection = OAuthConnectionFactory.getConnection(MyImgurApp.class);
         Iterator<ImgurImage> iter = new ImgurPhotoIterator(connection).builder()
-                .withFilter(new DateTakenPhotoFilter(DateRange.forYear(2019)))
+                //.withFilter(new DateTakenPhotoFilter(DateRange.forYear(2019)))
                 .build();
         while (iter.hasNext()) {
             ImgurImage photo = iter.next();
