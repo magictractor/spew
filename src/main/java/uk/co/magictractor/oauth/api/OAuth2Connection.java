@@ -52,6 +52,7 @@ public class OAuth2Connection extends AbstractOAuthConnection<OAuth2Application,
         this.refreshToken = new UserPreferencesPersister(application, "refresh_token");
     }
 
+    @Override
     public OAuthResponse request(OAuthRequest apiRequest) {
         // authenticate();
 
@@ -86,6 +87,7 @@ public class OAuth2Connection extends AbstractOAuthConnection<OAuth2Application,
         con.setRequestProperty("Authorization", "Bearer " + accessToken.getValue());
     }
 
+    @Override
     protected String getUrl(OAuthRequest request) {
         // String unsignedUrl = request.getUrl() + "?" +
         // getQueryString(request.getParams());
@@ -299,9 +301,11 @@ public class OAuth2Connection extends AbstractOAuthConnection<OAuth2Application,
         long expiry = System.currentTimeMillis() + expiresInMilliseconds - EXPIRY_BUFFER;
         accessTokenExpiry.setValue(Long.toString(expiry));
 
+        refreshToken.setValue(valueMap.apply("refresh_token"));
+
         // temp!
         long diff = expiry - new Date().getTime();
-        System.err.println("diff: " + diff); // -7696?!?
+        System.err.println("diff: " + diff);
 
         System.err.println("accessToken set: " + accessToken.getValue() + " expires " + accessTokenExpiry.getValue());
     }
