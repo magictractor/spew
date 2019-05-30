@@ -10,6 +10,7 @@ import uk.co.magictractor.oauth.api.OAuthRequest;
 import uk.co.magictractor.oauth.api.OAuthResponse;
 import uk.co.magictractor.oauth.api.PageCountServiceIterator;
 import uk.co.magictractor.oauth.api.PhotoIterator;
+import uk.co.magictractor.oauth.api.connection.OAuthConnectionFactory;
 import uk.co.magictractor.oauth.common.filter.DateTakenPhotoFilter;
 import uk.co.magictractor.oauth.common.filter.DateUploadedPhotoFilter;
 import uk.co.magictractor.oauth.common.filter.PhotoFilter;
@@ -110,7 +111,8 @@ public class FlickrPhotoIterator extends PageCountServiceIterator<FlickrPhoto> i
     }
 
     public static void main(String[] args) {
-        FlickrPhotoIterator iter = new FlickrPhotoIterator(MyFlickrApp.getInstance().getConnection());
+        OAuthConnection connection = OAuthConnectionFactory.getConnection(MyFlickrApp.class);
+        FlickrPhotoIterator iter = new FlickrPhotoIterator(connection);
         iter.addFilter(new DateTakenPhotoFilter(DateRange.forMonth(2019, 2)));
         // iter.addFilter(new DateUploadedPhotoFilter(DateRange.forMonth(2019, 3)));
         while (iter.hasNext()) {

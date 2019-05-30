@@ -1,8 +1,8 @@
 package uk.co.magictractor.oauth.flickr.processor;
 
-import uk.co.magictractor.oauth.api.OAuth1Connection;
+import uk.co.magictractor.oauth.api.OAuthConnection;
 import uk.co.magictractor.oauth.api.OAuthRequest;
-import uk.co.magictractor.oauth.api.OAuthResponse;
+import uk.co.magictractor.oauth.api.connection.OAuthConnectionFactory;
 import uk.co.magictractor.oauth.flickr.Flickr;
 import uk.co.magictractor.oauth.flickr.FlickrPhotoIterator;
 import uk.co.magictractor.oauth.flickr.MyFlickrApp;
@@ -47,7 +47,7 @@ public class FlickrPhotoUpdateProcessor extends PhotoUpdateProcessor {
         request.setParam("photo_id", photo.getServiceProviderId());
         request.setParam("title", photo.getTitle());
 
-        OAuthResponse response = new OAuth1Connection(MyFlickrApp.getInstance()).request(request);
+        OAuthConnectionFactory.getConnection(MyFlickrApp.class).request(request);
     }
 
     // TODO! move this - it's Flickr specific, perhaps impl for Google Photos too
@@ -63,7 +63,7 @@ public class FlickrPhotoUpdateProcessor extends PhotoUpdateProcessor {
         // TODO! refactor this method - a processor has added the parents already
         request.setParam("tags", photo.getTagSet().getCompactTagNamesWithParents());
 
-        OAuthResponse response = new OAuth1Connection(MyFlickrApp.getInstance()).request(request);
+        OAuthConnectionFactory.getConnection(MyFlickrApp.class).request(request);
     }
 
     // App Garden
@@ -75,8 +75,8 @@ public class FlickrPhotoUpdateProcessor extends PhotoUpdateProcessor {
 
     public static void main(String[] args) {
         PhotoTidyProcessorChain processorChain = new PhotoTidyProcessorChain(new FlickrPhotoUpdateProcessor());
-        processorChain.execute(new FlickrPhotoIterator(MyFlickrApp.getInstance().getConnection()),
-            new PhotoProcessorContext());
+        OAuthConnection connection = OAuthConnectionFactory.getConnection(MyFlickrApp.class);
+        processorChain.execute(new FlickrPhotoIterator(connection), new PhotoProcessorContext());
     }
 
 }

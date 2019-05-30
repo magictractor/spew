@@ -8,6 +8,7 @@ import uk.co.magictractor.oauth.api.OAuthConnection;
 import uk.co.magictractor.oauth.api.OAuthRequest;
 import uk.co.magictractor.oauth.api.OAuthResponse;
 import uk.co.magictractor.oauth.api.PageTokenServiceIterator;
+import uk.co.magictractor.oauth.api.connection.OAuthConnectionFactory;
 import uk.co.magictractor.oauth.twitter.pojo.Tweet;
 
 // https://developer.twitter.com/en/docs/tweets/timelines/api-reference/get-statuses-user_timeline.html
@@ -60,7 +61,8 @@ public class TweetIterator extends PageTokenServiceIterator<Tweet> {
 
     // TODO! temp
     public static void main(String[] args) {
-        TweetIterator iter = new TweetIterator(MyTwitterApp.getInstance().getConnection());
+        OAuthConnection connection = OAuthConnectionFactory.getConnection(MyTwitterApp.class);
+        TweetIterator iter = new TweetIterator(connection);
         while (iter.hasNext()) {
             Tweet tweet = iter.next();
             if (tweet.getLikes() >= 100) {

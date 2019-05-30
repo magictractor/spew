@@ -1,25 +1,12 @@
 package uk.co.magictractor.oauth.twitter;
 
 import uk.co.magictractor.oauth.api.OAuth1Application;
-import uk.co.magictractor.oauth.api.OAuth1Connection;
 import uk.co.magictractor.oauth.api.OAuth1ServiceProvider;
-import uk.co.magictractor.oauth.api.OAuthConnection;
 import uk.co.magictractor.oauth.processor.properties.ResourceFileProperties;
 
 public class MyTwitterApp implements OAuth1Application {
 
-    private static final MyTwitterApp INSTANCE = new MyTwitterApp();
-
     private final ResourceFileProperties properties = new ResourceFileProperties(MyTwitterApp.class);
-
-    private OAuthConnection connection;
-
-    private MyTwitterApp() {
-    }
-
-    public static MyTwitterApp getInstance() {
-        return INSTANCE;
-    }
 
     @Override
     public OAuth1ServiceProvider getServiceProvider() {
@@ -38,14 +25,6 @@ public class MyTwitterApp implements OAuth1Application {
     //        // just sharing results in permission denied when listing albums
     //        // return "https://www.googleapis.com/auth/photoslibrary.sharing";
     //    }
-
-    @Override
-    public OAuthConnection getConnection() {
-        if (connection == null) {
-            connection = new OAuth1Connection(this);
-        }
-        return connection;
-    }
 
     @Override
     public String getAppToken() {

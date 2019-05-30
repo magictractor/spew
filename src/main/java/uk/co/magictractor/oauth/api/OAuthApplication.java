@@ -1,11 +1,12 @@
 package uk.co.magictractor.oauth.api;
 
-public interface OAuthApplication { // <SP extends OAuthServiceProvider> {
+import java.util.function.Supplier;
 
-    // generics for connection too?
-    OAuthConnection getConnection();
+public interface OAuthApplication { // <SP extends OAuthServiceProvider> {
 
     // SP getServiceProvider();
     OAuthServiceProvider getServiceProvider();
+
+    Supplier<OAuthConnection> getNewConnectionSupplier();
 
 }

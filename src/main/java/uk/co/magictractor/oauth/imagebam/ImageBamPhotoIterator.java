@@ -10,6 +10,7 @@ import uk.co.magictractor.oauth.api.OAuthRequest;
 import uk.co.magictractor.oauth.api.OAuthResponse;
 import uk.co.magictractor.oauth.api.PageCountServiceIterator;
 import uk.co.magictractor.oauth.api.PhotoIterator;
+import uk.co.magictractor.oauth.api.connection.OAuthConnectionFactory;
 import uk.co.magictractor.oauth.common.filter.PhotoFilter;
 import uk.co.magictractor.oauth.flickr.pojo.FlickrPhotos;
 import uk.co.magictractor.oauth.imagebam.pojo.ImageBamPhoto;
@@ -33,6 +34,7 @@ public class ImageBamPhotoIterator extends PageCountServiceIterator<ImageBamPhot
     protected List<ImageBamPhoto> fetchPage(int pageNumber) {
         OAuthRequest request = OAuthRequest.createPostRequest(ImageBam.REST_ENDPOINT);
 
+        // TODO! obviously incomplete - this is a Flickr method not Imagebam
         request.setParam("method", "flickr.photos.search");
 
         request.setParam("user_id", "me");
@@ -55,7 +57,8 @@ public class ImageBamPhotoIterator extends PageCountServiceIterator<ImageBamPhot
     }
 
     public static void main(String[] args) {
-        ImageBamPhotoIterator iter = new ImageBamPhotoIterator(MyImageBamApp.getInstance().getConnection());
+        OAuthConnection connection = OAuthConnectionFactory.getConnection(MyImageBamApp.class);
+        ImageBamPhotoIterator iter = new ImageBamPhotoIterator(connection);
         while (iter.hasNext()) {
             ImageBamPhoto photo = iter.next();
             System.err.println(photo.getTitle() + "  " + photo.getDateTimeTaken());

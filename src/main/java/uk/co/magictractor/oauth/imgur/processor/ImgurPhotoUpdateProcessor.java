@@ -1,5 +1,7 @@
 package uk.co.magictractor.oauth.imgur.processor;
 
+import uk.co.magictractor.oauth.api.OAuthConnection;
+import uk.co.magictractor.oauth.api.connection.OAuthConnectionFactory;
 import uk.co.magictractor.oauth.imgur.ImgurPhotoIterator;
 import uk.co.magictractor.oauth.imgur.MyImgurApp;
 import uk.co.magictractor.oauth.processor.common.MutablePhoto;
@@ -24,8 +26,8 @@ public class ImgurPhotoUpdateProcessor extends PhotoUpdateProcessor {
 
     public static void main(String[] args) {
         PhotoTidyProcessorChain processorChain = new PhotoTidyProcessorChain(new ImgurPhotoUpdateProcessor());
-        processorChain.execute(new ImgurPhotoIterator(MyImgurApp.getInstance().getConnection()),
-            new PhotoProcessorContext());
+        OAuthConnection connection = OAuthConnectionFactory.getConnection(MyImgurApp.class);
+        processorChain.execute(new ImgurPhotoIterator(connection), new PhotoProcessorContext());
     }
 
 }

@@ -2,26 +2,12 @@ package uk.co.magictractor.oauth.google;
 
 import uk.co.magictractor.oauth.api.OAuth2Application;
 import uk.co.magictractor.oauth.api.OAuth2AuthorizeResponseType;
-import uk.co.magictractor.oauth.api.OAuth2Connection;
 import uk.co.magictractor.oauth.api.OAuth2ServiceProvider;
-import uk.co.magictractor.oauth.api.OAuthConnection;
 import uk.co.magictractor.oauth.processor.properties.ResourceFileProperties;
 
 public class MyGooglePhotosApp implements OAuth2Application {
 
-    private static final MyGooglePhotosApp INSTANCE = new MyGooglePhotosApp();
-
     private final ResourceFileProperties properties = new ResourceFileProperties(MyGooglePhotosApp.class);
-
-    // TODO! want connection cache in a superclass, not the file props
-    private OAuth2Connection connection;
-
-    private MyGooglePhotosApp() {
-    }
-
-    public static MyGooglePhotosApp getInstance() {
-        return INSTANCE;
-    }
 
     @Override
     public OAuth2ServiceProvider getServiceProvider() {
@@ -39,14 +25,6 @@ public class MyGooglePhotosApp implements OAuth2Application {
 
         // just sharing results in permission denied when listing albums
         // return "https://www.googleapis.com/auth/photoslibrary.sharing";
-    }
-
-    @Override
-    public OAuthConnection getConnection() {
-        if (connection == null) {
-            connection = new OAuth2Connection(this);
-        }
-        return connection;
     }
 
     @Override

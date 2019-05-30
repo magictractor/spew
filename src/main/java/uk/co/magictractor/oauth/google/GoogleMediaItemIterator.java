@@ -10,6 +10,7 @@ import uk.co.magictractor.oauth.api.OAuthConnection;
 import uk.co.magictractor.oauth.api.OAuthRequest;
 import uk.co.magictractor.oauth.api.OAuthResponse;
 import uk.co.magictractor.oauth.api.PhotoIterator;
+import uk.co.magictractor.oauth.api.connection.OAuthConnectionFactory;
 import uk.co.magictractor.oauth.common.filter.DateTakenPhotoFilter;
 import uk.co.magictractor.oauth.common.filter.PhotoFilter;
 import uk.co.magictractor.oauth.google.pojo.GoogleFilters;
@@ -61,7 +62,8 @@ public class GoogleMediaItemIterator extends GoogleServiceIterator<GoogleMediaIt
     }
 
     public static void main(String[] args) {
-        GoogleMediaItemIterator iter = new GoogleMediaItemIterator(MyGooglePhotosApp.getInstance().getConnection());
+        OAuthConnection connection = OAuthConnectionFactory.getConnection(MyGooglePhotosApp.class);
+        GoogleMediaItemIterator iter = new GoogleMediaItemIterator(connection);
         iter.addFilter(new DateTakenPhotoFilter(DateRange.forDay(2018, 11, 21)));
         while (iter.hasNext()) {
             GoogleMediaItem photo = iter.next();

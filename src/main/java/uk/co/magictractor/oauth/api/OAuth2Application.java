@@ -1,7 +1,10 @@
 package uk.co.magictractor.oauth.api;
 
+import java.util.function.Supplier;
+
 public interface OAuth2Application extends OAuthApplication { // <OAuth2ServiceProvider> {
 
+    @Override
     OAuth2ServiceProvider getServiceProvider();
 
     String getClientId();
@@ -13,5 +16,10 @@ public interface OAuth2Application extends OAuthApplication { // <OAuth2ServiceP
 
     // default?
     OAuth2AuthorizeResponseType defaultAuthorizeResponseType();
+
+    @Override
+    default Supplier<OAuthConnection> getNewConnectionSupplier() {
+        return () -> new OAuth2Connection(this);
+    }
 
 }

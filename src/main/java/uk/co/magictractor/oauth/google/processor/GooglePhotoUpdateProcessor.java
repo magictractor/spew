@@ -1,5 +1,7 @@
 package uk.co.magictractor.oauth.google.processor;
 
+import uk.co.magictractor.oauth.api.OAuthConnection;
+import uk.co.magictractor.oauth.api.connection.OAuthConnectionFactory;
 import uk.co.magictractor.oauth.google.GoogleMediaItemIterator;
 import uk.co.magictractor.oauth.google.MyGooglePhotosApp;
 import uk.co.magictractor.oauth.processor.common.MutablePhoto;
@@ -24,9 +26,8 @@ public class GooglePhotoUpdateProcessor extends PhotoUpdateProcessor {
 
     public static void main(String[] args) {
         PhotoTidyProcessorChain processorChain = new PhotoTidyProcessorChain(new GooglePhotoUpdateProcessor());
-        // TODO! should be passing in App to iterator (as done for OAuth2 iterators)
-        processorChain.execute(new GoogleMediaItemIterator(MyGooglePhotosApp.getInstance().getConnection()),
-            new PhotoProcessorContext());
+        OAuthConnection connection = OAuthConnectionFactory.getConnection(MyGooglePhotosApp.class);
+        processorChain.execute(new GoogleMediaItemIterator(connection), new PhotoProcessorContext());
     }
 
 }

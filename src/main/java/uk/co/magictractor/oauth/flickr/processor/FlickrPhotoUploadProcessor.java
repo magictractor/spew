@@ -1,5 +1,7 @@
 package uk.co.magictractor.oauth.flickr.processor;
 
+import uk.co.magictractor.oauth.api.OAuthConnection;
+import uk.co.magictractor.oauth.api.connection.OAuthConnectionFactory;
 import uk.co.magictractor.oauth.flickr.FlickrPhotoIterator;
 import uk.co.magictractor.oauth.flickr.MyFlickrApp;
 import uk.co.magictractor.oauth.processor.common.MutablePhoto;
@@ -19,8 +21,8 @@ public class FlickrPhotoUploadProcessor extends PhotoUploadProcessor {
 
     public static void main(String[] args) {
         PhotoUploadProcessorChain processorChain = new PhotoUploadProcessorChain(new FlickrPhotoUploadProcessor());
-        processorChain.execute(new FlickrPhotoIterator(MyFlickrApp.getInstance().getConnection()),
-            new PhotoProcessorContext());
+        OAuthConnection connection = OAuthConnectionFactory.getConnection(MyFlickrApp.class);
+        processorChain.execute(new FlickrPhotoIterator(connection), new PhotoProcessorContext());
     }
 
 }

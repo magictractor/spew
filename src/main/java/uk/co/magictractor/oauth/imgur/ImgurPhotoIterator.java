@@ -10,6 +10,7 @@ import uk.co.magictractor.oauth.api.OAuthRequest;
 import uk.co.magictractor.oauth.api.OAuthResponse;
 import uk.co.magictractor.oauth.api.PageCountServiceIterator;
 import uk.co.magictractor.oauth.api.PhotoIterator;
+import uk.co.magictractor.oauth.api.connection.OAuthConnectionFactory;
 import uk.co.magictractor.oauth.common.filter.DateTakenPhotoFilter;
 import uk.co.magictractor.oauth.common.filter.PhotoFilter;
 import uk.co.magictractor.oauth.imgur.pojo.ImgurImage;
@@ -144,9 +145,7 @@ public class ImgurPhotoIterator extends PageCountServiceIterator<ImgurImage> imp
         //		// default is 100, max is 500
         //		request.setParam("per_page", 500);
 
-        // TODO! must not have hard coded app in the middle of the iterator! app now in
-        // super class...
-        OAuthResponse response = MyImgurApp.getInstance().getConnection().request(request);
+        OAuthResponse response = getConnection().request(request);
 
         System.err.println(response);
 
@@ -158,7 +157,8 @@ public class ImgurPhotoIterator extends PageCountServiceIterator<ImgurImage> imp
     }
 
     public static void main(String[] args) {
-        Iterator<ImgurImage> iter = new ImgurPhotoIterator(MyImgurApp.getInstance().getConnection()).builder()
+        OAuthConnection connection = OAuthConnectionFactory.getConnection(MyImgurApp.class);
+        Iterator<ImgurImage> iter = new ImgurPhotoIterator(connection).builder()
                 .withFilter(new DateTakenPhotoFilter(DateRange.forYear(2019)))
                 .build();
         while (iter.hasNext()) {
@@ -166,4 +166,5 @@ public class ImgurPhotoIterator extends PageCountServiceIterator<ImgurImage> imp
             System.err.println(photo.getTitle() + " " + photo.getDateTimeTaken());
         }
     }
+
 }
