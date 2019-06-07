@@ -10,6 +10,8 @@ import uk.co.magictractor.oauth.common.filter.PhotoFilter;
 
 public interface PhotoIterator<P extends Photo> extends Iterator<P> {
 
+    // would be nice to make this non-public forcing filters to be added via the builder
+    // perhaps remove this method and move the logic into the builder
     default void addFilter(PhotoFilter filter) {
         if (!supportsFilter(filter)) {
             throw new UnsupportedOperationException("Filter type " + filter.getClass().getSimpleName()
