@@ -108,7 +108,7 @@ public class CallbackServer {
     }
 
     //    public boolean isRunning() {
-    //    	retunr 
+    //    	retunr
     //    }
 
     /**
@@ -217,6 +217,8 @@ public class CallbackServer {
         System.err.println("write xhr response and close");
 
         ctx.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
+
+        shutdown();
     }
 
     private void handleUnknown(ChannelHandlerContext ctx) {
