@@ -1,11 +1,17 @@
 package uk.co.magictractor.oauth.flickr.processor;
 
+import java.time.LocalDate;
+import java.util.Iterator;
+
 import uk.co.magictractor.oauth.api.OAuthConnection;
 import uk.co.magictractor.oauth.api.OAuthRequest;
 import uk.co.magictractor.oauth.api.connection.OAuthConnectionFactory;
+import uk.co.magictractor.oauth.common.filter.DateTakenPhotoFilter;
 import uk.co.magictractor.oauth.flickr.Flickr;
 import uk.co.magictractor.oauth.flickr.FlickrPhotoIterator;
 import uk.co.magictractor.oauth.flickr.MyFlickrApp;
+import uk.co.magictractor.oauth.flickr.pojo.FlickrPhoto;
+import uk.co.magictractor.oauth.local.dates.DateRange;
 import uk.co.magictractor.oauth.processor.common.MutablePhoto;
 import uk.co.magictractor.oauth.processor.common.PhotoProcessorContext;
 import uk.co.magictractor.oauth.processor.common.PhotoTidyProcessorChain;
@@ -76,7 +82,11 @@ public class FlickrPhotoUpdateProcessor extends PhotoUpdateProcessor {
     public static void main(String[] args) {
         PhotoTidyProcessorChain processorChain = new PhotoTidyProcessorChain(new FlickrPhotoUpdateProcessor());
         OAuthConnection connection = OAuthConnectionFactory.getConnection(MyFlickrApp.class);
-        processorChain.execute(new FlickrPhotoIterator(connection), new PhotoProcessorContext());
+        LocalDate since = LocalDate.now().minusMonths(1).withDayOfMonth(1);
+        Iterator<FlickrPhoto> iterator = new FlickrPhotoIterator(connection).builder()
+                .withFilter(new DateTakenPhotoFilter(DateRange.uptoToday(since)))
+                .build();
+        processorChain.execute(iterator, new PhotoProcessorContext());
     }
 
 }

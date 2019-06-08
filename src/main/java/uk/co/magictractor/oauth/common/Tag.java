@@ -201,6 +201,7 @@ public class Tag {
         init(dronefly, "Common drone fly", "Tapered drone fly");
 
         Tag diptera = init(insect, "Diptera");
+        init(diptera, "Tachina fera", "Tachina ursina");
 
         // TODO! alias "crane fly"
         Tag tipula = init(diptera, "Tipula");
@@ -216,8 +217,8 @@ public class Tag {
         Tag lepidoptera = init(insect, "Lepidoptera");
 
         Tag butterfly = init(lepidoptera, "Butterfly");
-        init(butterfly, "Peacock", "Green veined white", "Orange-tip", "Speckled wood", "Small copper", "Red admiral",
-            "Comma", "Painted lady", "Ringlet", "Small white");
+        init(butterfly, "Peacock", "Green veined white", "Large white", "Orange-tip", "Speckled wood", "Small copper",
+            "Red admiral", "Comma", "Painted lady", "Ringlet", "Small white");
 
         Tag moth = init(lepidoptera, "Moth");
         init(moth, "Silver Y");
@@ -231,6 +232,8 @@ public class Tag {
         init(dragonfly, "Common darter", "Black darter", "Common hawker", "Four-spotted chaser");
 
         init(insect, "Mayfly");
+
+        init(insect, "Slug");
     }
 
     private static void init(TagType tagType, String... tagNames) {

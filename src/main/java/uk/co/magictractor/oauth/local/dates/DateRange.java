@@ -8,6 +8,7 @@ public class DateRange {
     private LocalDate to;
 
     public DateRange(LocalDate from, LocalDate to) {
+        // TODO! could allow either (or both?) of these to be null
         if (from == null) {
             throw new IllegalArgumentException("from must not be null");
         }
@@ -38,6 +39,7 @@ public class DateRange {
         return !other.to.isBefore(from) && !other.from.isAfter(to);
     }
 
+    @Override
     public String toString() {
         return "DateRange[" + from + " to " + to + "]";
     }
@@ -45,7 +47,13 @@ public class DateRange {
     public static DateRange uptoToday(int daysBefore) {
         // TODO! pass a clock to now for unit testing
         LocalDate to = LocalDate.now();
-        LocalDate from = to.minusDays(0);
+        LocalDate from = to.minusDays(daysBefore);
+        return new DateRange(from, to);
+    }
+
+    public static DateRange uptoToday(LocalDate from) {
+        // TODO! pass a clock to now for unit testing
+        LocalDate to = LocalDate.now();
         return new DateRange(from, to);
     }
 
