@@ -46,6 +46,7 @@ public final class OAuth1Connection extends AbstractOAuthConnection<OAuth1Applic
         this.userSecret = new UserPreferencesPersister(application, "user_secret");
     }
 
+    @Override
     public OAuthResponse request(OAuthRequest apiRequest) {
         // TODO! (optionally?) verify existing tokens?
         if (userToken.getValue() == null) {
@@ -129,6 +130,7 @@ public final class OAuth1Connection extends AbstractOAuthConnection<OAuth1Applic
     }
 
     // hmms - push some of this up? - encode could be different per connection?
+    @Override
     protected String getUrl(OAuthRequest request) {
         // String unsignedUrl = request.getUrl() + "?" +
         // getQueryString(request.getParams());
@@ -189,7 +191,7 @@ public final class OAuth1Connection extends AbstractOAuthConnection<OAuth1Applic
             signature = BaseEncoding.base64().encode(mac.doFinal(getSignatureBaseString(request).getBytes()));
         }
 
-        System.err.println("signature: " + signature);
+        getLogger().trace("signature: " + signature);
 
         return ExceptionUtil.call(() -> URLEncoder.encode(signature, "UTF-8"));
     }

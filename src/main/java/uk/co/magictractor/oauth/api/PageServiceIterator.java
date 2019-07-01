@@ -5,7 +5,12 @@ import java.util.List;
 
 import com.google.common.collect.AbstractIterator;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public abstract class PageServiceIterator<E> extends AbstractIterator<E> {
+
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     private final OAuthConnection connection;
     private List<? extends E> currentPage = Collections.emptyList();
@@ -13,6 +18,10 @@ public abstract class PageServiceIterator<E> extends AbstractIterator<E> {
 
     protected PageServiceIterator(OAuthConnection connection) {
         this.connection = connection;
+    }
+
+    protected final Logger getLogger() {
+        return logger;
     }
 
     @Override

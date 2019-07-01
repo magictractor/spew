@@ -13,15 +13,23 @@ import java.util.function.Function;
 
 import com.jayway.jsonpath.Configuration;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import uk.co.magictractor.oauth.util.IOUtil;
 
 // Common code for OAuth1 and OAuth2 implementations.
 public abstract class AbstractOAuthConnection<APP extends OAuthApplication, SP extends OAuthServiceProvider>
-        extends AbstractConnection<APP, SP> implements OAuthConnection
-{
+        extends AbstractConnection<APP, SP> implements OAuthConnection {
+
+    private Logger logger = LoggerFactory.getLogger(getClass());
 
     public AbstractOAuthConnection(APP application) {
         super(application);
+    }
+
+    protected final Logger getLogger() {
+        return logger;
     }
 
     // TODO! return Netty HttpResponse instead - Configuration shouldn't embedded
@@ -54,7 +62,7 @@ public abstract class AbstractOAuthConnection<APP extends OAuthApplication, SP e
             if (!request.getParams().isEmpty()) {
                 con.setRequestProperty("content-type", "application/json");
                 String requestBody = buildRequestBody(request, jsonConfiguration);
-                System.err.println("request body: " + requestBody);
+                logger.trace("request body: " + requestBody);
                 // TODO! encoding
                 byte[] requestBodyBytes = requestBody.getBytes();
                 con.setFixedLengthStreamingMode(requestBodyBytes.length);
@@ -87,7 +95,7 @@ public abstract class AbstractOAuthConnection<APP extends OAuthApplication, SP e
         }
 
         // TODO! Very long Json does not get displayed in the console
-        System.err.println(responseBody);
+        logger.trace(responseBody);
 
         // TODO! wrap/convert response json
         // if ("json".equals(request.getParam("format"))) {
