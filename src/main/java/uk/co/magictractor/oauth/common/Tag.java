@@ -33,10 +33,12 @@ public class Tag {
     private final List<Tag> children = new ArrayList<>();
 
     public static Tag createRoot(TagType tagType, String tagName) {
+        System.err.println("create root: " + tagName);
         return new Tag(tagType, null, tagName, 0);
     }
 
     public static Tag createChild(Tag parent, String tagName) {
+        System.err.println("create child: " + tagName + " with parent " + parent.tagName);
         return new Tag(parent.tagType, parent, tagName, parent.depth + 1);
     }
 
@@ -108,7 +110,6 @@ public class Tag {
     public static Tag fetchOrCreateTag(String canonicalTagName) {
         if (!TAG_MAP.containsKey(canonicalTagName)) {
             Tag tag = new Tag(null, null, canonicalTagName, 0);
-            addTagToMap(canonicalTagName, tag);
             return tag;
         }
         return TAG_MAP.get(canonicalTagName);
