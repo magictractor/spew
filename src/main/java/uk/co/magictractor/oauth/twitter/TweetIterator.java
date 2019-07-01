@@ -12,10 +12,18 @@ import uk.co.magictractor.oauth.api.connection.OAuthConnectionFactory;
 import uk.co.magictractor.oauth.twitter.pojo.Tweet;
 
 // https://developer.twitter.com/en/docs/tweets/timelines/api-reference/get-statuses-user_timeline.html
-public class TweetIterator extends PageTokenServiceIterator<Tweet> {
+public class TweetIterator extends PageTokenServiceIterator<Tweet, TweetIterator> {
+
+    // If non-null fetch tweets for user with this screen name, otherwise tweets are fetched for the authenticated user.
+    private String screenName;
 
     public TweetIterator(OAuthConnection connection) {
         super(connection);
+    }
+
+    public TweetIterator withScreenName(String screenName) {
+        this.screenName = screenName;
+        return this;
     }
 
     @Override
@@ -25,8 +33,9 @@ public class TweetIterator extends PageTokenServiceIterator<Tweet> {
 
         request.setParam("max_id", pageToken);
 
-        // temp
-        request.setParam("count", 10);
+        request.setParam("screen_name", screenName);
+
+        request.setParam("count", getPageSize());
 
         // Get full tweet text.
         // See https://developer.twitter.com/en/docs/tweets/tweet-updates

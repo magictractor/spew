@@ -23,7 +23,8 @@ import uk.co.magictractor.oauth.local.dates.DateRange;
  * allows sort order to be specified. See
  * https://www.flickr.com/services/api/flickr.photos.search.html.
  */
-public class FlickrPhotoIterator extends PageCountServiceIterator<FlickrPhoto> implements PhotoIterator<FlickrPhoto> {
+public class FlickrPhotoIterator extends PageCountServiceIterator<FlickrPhoto, FlickrPhotoIterator>
+        implements PhotoIterator<FlickrPhoto> {
 
     private static final List<Class<? extends PhotoFilter>> SUPPORTED_FILTERS = Arrays
             .asList(DateTakenPhotoFilter.class, DateUploadedPhotoFilter.class);

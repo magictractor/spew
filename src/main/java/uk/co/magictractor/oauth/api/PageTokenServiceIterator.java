@@ -10,7 +10,8 @@ import java.util.List;
  * {@link #hasNext()} or {@link #next()}, and the next page is fetched only
  * after iterating over all items in the first page.
  */
-public abstract class PageTokenServiceIterator<E> extends PageServiceIterator<E> {
+public abstract class PageTokenServiceIterator<E, I extends PageTokenServiceIterator<E, I>>
+        extends PageServiceIterator<E, I> {
 
     // The first page should be fetched without a nextPageToken.
     private boolean first = true;

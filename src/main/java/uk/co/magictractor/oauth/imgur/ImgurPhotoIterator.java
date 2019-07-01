@@ -204,7 +204,8 @@ import uk.co.magictractor.oauth.imgur.pojo.ImgurImages;
 //    "success": true,
 //    "status": 200
 //}
-public class ImgurPhotoIterator extends PageCountServiceIterator<ImgurImage> implements PhotoIterator<ImgurImage> {
+public class ImgurPhotoIterator extends PageCountServiceIterator<ImgurImage, ImgurPhotoIterator>
+        implements PhotoIterator<ImgurImage> {
 
     // min_taken_date (Optional)
     // Minimum taken date. Photos with an taken date greater than or equal to this

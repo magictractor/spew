@@ -10,7 +10,8 @@ import java.util.List;
  * {@link #next()}, and the next page is fetched only after iterating over all
  * items in the first page.
  */
-public abstract class PageCountServiceIterator<E> extends PageServiceIterator<E> {
+public abstract class PageCountServiceIterator<E, I extends PageCountServiceIterator<E, I>>
+        extends PageServiceIterator<E, I> {
 
     private static final int UNKNOWN = -1;
 

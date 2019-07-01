@@ -11,7 +11,7 @@ import uk.co.magictractor.oauth.api.connection.OAuthConnectionFactory;
 import uk.co.magictractor.oauth.common.Album;
 import uk.co.magictractor.oauth.google.pojo.GoogleAlbum;
 
-public class GoogleSharedAlbumsIterator extends GoogleServiceIterator<Album> {
+public class GoogleSharedAlbumsIterator extends GoogleServiceIterator<Album, GoogleSharedAlbumsIterator> {
 
     protected GoogleSharedAlbumsIterator(OAuthConnection connection) {
         super(connection);

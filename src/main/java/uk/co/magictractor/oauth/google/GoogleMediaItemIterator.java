@@ -20,9 +20,8 @@ import uk.co.magictractor.oauth.local.dates.DateRange;
 // https://developers.google.com/photos/library/guides/list
 //
 // https://developers.google.com/photos/library/reference/rest/v1/mediaItems#MediaItem
-public class GoogleMediaItemIterator extends GoogleServiceIterator<GoogleMediaItem>
-        implements PhotoIterator<GoogleMediaItem>
-{
+public class GoogleMediaItemIterator extends GoogleServiceIterator<GoogleMediaItem, GoogleMediaItemIterator>
+        implements PhotoIterator<GoogleMediaItem> {
 
     private static final List<Class<? extends PhotoFilter>> SUPPORTED_FILTERS = Arrays
             .asList(DateTakenPhotoFilter.class);
