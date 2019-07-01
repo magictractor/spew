@@ -6,11 +6,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.google.common.base.MoreObjects;
+
 public class Tag {
 
     public static Comparator<Tag> TAG_NAME_COMPARATOR = Comparator.comparing(Tag::getTagName);
-    // private static Comparator<Tag> TAG_TYPE_COMPARATOR =
-    // Comparator.comparing(Tag::getTagType);
 
     private static final Map<String, Tag> TAG_MAP = new HashMap<>();
 
@@ -21,8 +21,8 @@ public class Tag {
     private final TagType tagType;
     private final Tag parent;
     private final String tagName;
-    // Lowercase, spaces and punctation stripped
-    private final String compactTagName;
+    // Lowercase, spaces and punctation stripped (Flickr specific)
+    private final String canonicalTagName;
     private final int depth;
     private final List<Tag> children = new ArrayList<>();
 
@@ -38,7 +38,7 @@ public class Tag {
         this.tagType = tagType;
         this.parent = parent;
         this.tagName = tagName;
-        this.compactTagName = compactName(tagName);
+        this.canonicalTagName = canonicalName(tagName);
         this.depth = depth;
 
         if (parent != null) {
@@ -58,10 +58,6 @@ public class Tag {
         return tagName;
     }
 
-    public String getCompactTagName() {
-        return compactTagName;
-    }
-
     public int getDepth() {
         return depth;
     }
@@ -74,16 +70,16 @@ public class Tag {
         return !children.isEmpty();
     }
 
-    private String compactName(String name) {
-        StringBuilder compactNameBuilder = new StringBuilder();
+    private String canonicalName(String name) {
+        StringBuilder canonicalNameBuilder = new StringBuilder();
         for (int i = 0; i < name.length(); i++) {
             char c = name.charAt(i);
             if (Character.isLetter(c)) {
-                compactNameBuilder.append(Character.toLowerCase(c));
+                canonicalNameBuilder.append(Character.toLowerCase(c));
             }
         }
 
-        return compactNameBuilder.toString();
+        return canonicalNameBuilder.toString();
     }
 
     private static void initTags() {
@@ -190,7 +186,8 @@ public class Tag {
         Tag bee = init(insect, "Bee");
         init(bee, "Honey bee", "Early mining bee");
         Tag bumblebee = init(bee, "Bumblebee");
-        init(bumblebee, "Common carder bee", "Tree bumblebee", "Red-tailed bumblebee", "Buff-tailed bumbleebee");
+        init(bumblebee, "Common carder bee", "Tree bumblebee", "Red-tailed bumblebee", "Buff-tailed bumbleebee",
+            "Wool carder bee");
 
         Tag wasp = init(insect, "Wasp");
         init(wasp, "Common wasp");
@@ -261,36 +258,38 @@ public class Tag {
     }
 
     private static void addTag(Tag tag) {
-        if (TAG_MAP.containsKey(tag.compactTagName)) {
-            throw new IllegalStateException("Tag already exists with compact name: " + tag.compactTagName);
+        if (TAG_MAP.containsKey(tag.canonicalTagName)) {
+            throw new IllegalStateException("Tag already exists with canonical name: " + tag.canonicalTagName);
         }
 
-        TAG_MAP.put(tag.compactTagName, tag);
+        TAG_MAP.put(tag.canonicalTagName, tag);
     }
 
-    public static Tag fetchOrCreateTag(String compactTagName) {
-        if (!TAG_MAP.containsKey(compactTagName)) {
-            Tag tag = new Tag(null, null, compactTagName, 0);
+    public static Tag fetchOrCreateTag(String canonicalTagName) {
+        if (!TAG_MAP.containsKey(canonicalTagName)) {
+            Tag tag = new Tag(null, null, canonicalTagName, 0);
             addTag(tag);
             return tag;
         }
-        return TAG_MAP.get(compactTagName);
+        return TAG_MAP.get(canonicalTagName);
     }
 
-    public static Tag fetchTag(String compactTagName) {
-        if (!TAG_MAP.containsKey(compactTagName)) {
-            throw new IllegalArgumentException("No tag has compact name '" + compactTagName + "'");
+    // For use with Flickr or other service providers which use the same
+    // TODO! perhaps have SPI for tag canonical form?
+    public static Tag fetchTag(String canonicalTagName) {
+        if (!TAG_MAP.containsKey(canonicalTagName)) {
+            throw new IllegalArgumentException("No tag has compact name '" + canonicalTagName + "'");
         }
-        return TAG_MAP.get(compactTagName);
+        return TAG_MAP.get(canonicalTagName);
     }
 
-    public static Tag fetchTagIfPresent(String compactTagName) {
-        return TAG_MAP.get(compactTagName);
+    public static Tag fetchTagIfPresent(String canonicalTagName) {
+        return TAG_MAP.get(canonicalTagName);
     }
 
     @Override
     public String toString() {
-        return "Tag [compactTagName=" + compactTagName + ", depth=" + depth + "]";
+        return MoreObjects.toStringHelper(this).add("tagName", tagName).toString();
     }
 
 }

@@ -12,7 +12,10 @@ public class TagSet {
     /**
      * @param tagString space separated tags
      */
+    // TODO! Flickr specific?
     public TagSet(String tagString) {
+        System.err.println("tagString: " + tagString);
+
         tags = new HashSet<>();
 
         for (String compactTagName : tagString.split(" ")) {
@@ -42,7 +45,7 @@ public class TagSet {
         return result;
     }
 
-    public String getCompactTagNamesWithParents() {
+    public String getQuotedTagNamesWithParents() {
         boolean first = true;
         StringBuilder compactTagNamesBuilder = new StringBuilder();
         for (Tag tag : getOrderedTagsWithParents()) {
@@ -53,7 +56,9 @@ public class TagSet {
                 compactTagNamesBuilder.append(' ');
             }
 
-            compactTagNamesBuilder.append(tag.getCompactTagName());
+            compactTagNamesBuilder.append('"');
+            compactTagNamesBuilder.append(tag.getTagName());
+            compactTagNamesBuilder.append('"');
         }
 
         return compactTagNamesBuilder.toString();
