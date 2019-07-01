@@ -5,10 +5,16 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.ServiceLoader;
 
 import com.google.common.base.MoreObjects;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class Tag {
+
+    private static Logger LOGGER = LoggerFactory.getLogger(Tag.class);
 
     public static Comparator<Tag> TAG_NAME_COMPARATOR = Comparator.comparing(Tag::getTagName);
 
@@ -26,12 +32,12 @@ public class Tag {
     private final int depth;
     private final List<Tag> children = new ArrayList<>();
 
-    private Tag(TagType tagType, String tagName) {
-        this(tagType, null, tagName, 0);
+    public static Tag createRoot(TagType tagType, String tagName) {
+        return new Tag(tagType, null, tagName, 0);
     }
 
-    private Tag(Tag parent, String tagName) {
-        this(parent.tagType, parent, tagName, parent.depth + 1);
+    public static Tag createChild(Tag parent, String tagName) {
+        return new Tag(parent.tagType, parent, tagName, parent.depth + 1);
     }
 
     private Tag(TagType tagType, Tag parent, String tagName, int depth) {
@@ -44,6 +50,8 @@ public class Tag {
         if (parent != null) {
             parent.children.add(this);
         }
+
+        addTagToMap(this.canonicalTagName, this);
     }
 
     public TagType getTagType() {
@@ -83,192 +91,24 @@ public class Tag {
     }
 
     private static void initTags() {
-        initLocations();
-        initSubjects();
+        ServiceLoader.load(TagLoader.class).forEach((loader) -> {
+            LOGGER.debug("loading tags with {}", loader);
+            loader.loadTags();
+        });
     }
 
-    private static void initLocations() {
-        Tag edinburgh = init(TagType.LOCATION, "Edinburgh");
-        Tag fife = init(TagType.LOCATION, "Fife");
-        init(TagType.LOCATION, "Esk", "Musselburgh lagoons", "Roslin glen");
-
-        init(edinburgh, "RBGE", "Almond", "Balgreen", "Bawsinch", "Calton Hill", "Cammo", "Corstorphine Hill",
-            "Fountainbridge", "Figgate Park", "Holyrood Park", "Inverleith Park", "Lochend Park",
-            "Montgomery Street Park", "Pilrig Park", "Portobello", "Princes Street Gardens", "Straighton",
-            "Water of Leith");
-    }
-
-    private static void initSubjects() {
-        initBirds();
-        initRodents();
-        initInsects();
-
-        Tag frog = init(TagType.SUBJECT, "Frog");
-        init(frog, "Common frog");
-
-        Tag newt = init(TagType.SUBJECT, "Newt");
-        init(newt, "Smooth newt", "Palmate newt");
-
-        // TODO! fungus?
-        init(TagType.SUBJECT, "Fungi");
-    }
-
-    private static void initBirds() {
-        Tag bird = init(TagType.SUBJECT, "Bird");
-        init(bird, "Blackbird", "Blackcap", "Blue tit", "Bullfinch", "Buzzard", "Chaffinch", "Coal tit",
-            "Collared dove", "Coot", "Dipper", "Dunnock", "Fieldfare", "Goldcrest", "Goldeneye", "Goldfinch",
-            "Goosander", "Great tit", "Kestrel", "Kingfisher", "Linnet", "Long-tailed tit", "Mallard", "Moorhen",
-            "Nuthatch", "Oystercatcher", "Pochard", "Redshank", "Redwing", "Robin", "Shag", "Siskin", "Sparrowhawk",
-            "Starling", "Swallow", "Teal", "Treecreeper", "Tufted duck", "Water rail", "Waxwing", "Wren");
-
-        Tag crow = init(bird, "Crow");
-        init(crow, "Carrion crow");
-
-        Tag grebe = init(bird, "Grebe");
-        init(grebe, "Little grebe", "Great crested grebe");
-
-        Tag gull = init(bird, "Gull");
-        init(gull, "Black-headed gull", "Lesser black-backed gull");
-
-        Tag heron = init(bird, "Heron");
-        init(heron, "Grey heron");
-
-        Tag owl = init(bird, "Owl");
-        init(owl, "Tawny owl");
-
-        Tag pigeon = init(bird, "Pigeon");
-        init(pigeon, "Feral pigeon", "Wood pigeon");
-
-        Tag pipit = init(bird, "Pipit");
-        init(pipit, "Meadow Pipit");
-
-        Tag sparrow = init(bird, "Sparrow");
-        init(sparrow, "House sparrow");
-
-        Tag swan = init(bird, "Swan");
-        init(swan, "Mute swan");
-
-        Tag thrush = init(bird, "Thrush");
-        init(thrush, "Mistle thrush", "Song thrush");
-
-        Tag wagtail = init(bird, "Wagtail");
-        init(wagtail, "Grey wagtail", "Pied wagtail");
-
-        Tag warbler = init(bird, "Warbler");
-        init(warbler, "Chiffchaff", "Willow warbler");
-
-        Tag whiteThroat = init(bird, "White throat");
-        init(whiteThroat, "Common white throat");
-
-        Tag woodpecker = init(bird, "Woodpecker");
-        init(woodpecker, "Green woodpecker", "Great spotted woodpecker");
-        // gulls and woodpeckers and swans and warblers
-        // "Black-headed gull",
-    }
-
-    private static void initRodents() {
-        // Not a rodent!
-        init(TagType.SUBJECT, "Otter");
-
-        Tag rodent = init(TagType.SUBJECT, "Rodent");
-
-        Tag squirrel = init(rodent, "Squirrel");
-        init(squirrel, "Grey squirrel", "Red squirrel");
-
-        Tag rat = init(rodent, "Rat");
-        init(rat, "Brown rat");
-    }
-
-    private static void initInsects() {
-        Tag insect = init(TagType.SUBJECT, "Insect");
-        init(insect, "Caddisfly");
-
-        Tag bee = init(insect, "Bee");
-        init(bee, "Honey bee", "Early mining bee");
-        Tag bumblebee = init(bee, "Bumblebee");
-        init(bumblebee, "Common carder bee", "Tree bumblebee", "Red-tailed bumblebee", "Buff-tailed bumbleebee",
-            "Wool carder bee");
-
-        Tag wasp = init(insect, "Wasp");
-        init(wasp, "Common wasp");
-
-        Tag hoverfly = init(insect, "Hoverfly");
-        init(hoverfly, "Footballer");
-        Tag dronefly = init(hoverfly, "Drone fly");
-        init(dronefly, "Common drone fly", "Tapered drone fly");
-
-        Tag diptera = init(insect, "Diptera");
-        init(diptera, "Tachina fera", "Tachina ursina");
-
-        // TODO! alias "crane fly"
-        Tag tipula = init(diptera, "Tipula");
-        init(tipula, "Tipula vittata");
-        // more
-
-        Tag shieldbug = init(insect, "Shield bug");
-        init(shieldbug, "Birch shield bug", "Gorse shield bug", "Hawthorn shield bug");
-
-        Tag snail = init(insect, "Snail");
-        init(snail, "Garden snail");
-
-        Tag lepidoptera = init(insect, "Lepidoptera");
-
-        Tag butterfly = init(lepidoptera, "Butterfly");
-        init(butterfly, "Peacock", "Green veined white", "Large white", "Orange-tip", "Speckled wood", "Small copper",
-            "Red admiral", "Comma", "Painted lady", "Ringlet", "Small white");
-
-        Tag moth = init(lepidoptera, "Moth");
-        init(moth, "Silver Y");
-        init(moth, "Copper underwing");
-
-        Tag odonata = init(insect, "Odonata");
-        Tag damselfly = init(odonata, "Damselfly");
-        Tag dragonfly = init(odonata, "Dragonfly");
-        init(damselfly, "Blue-tailed damselfly", "Common blue damselfly", "Azure damselfly", "Emerald damselfly",
-            "Large red damselfly");
-        init(dragonfly, "Common darter", "Black darter", "Common hawker", "Four-spotted chaser");
-
-        init(insect, "Mayfly");
-
-        init(insect, "Slug");
-    }
-
-    private static void init(TagType tagType, String... tagNames) {
-        for (String tagName : tagNames) {
-            init(tagType, tagName);
-        }
-    }
-
-    private static Tag init(TagType tagType, String tagName) {
-        Tag tag = new Tag(tagType, tagName);
-        addTag(tag);
-        return tag;
-    }
-
-    private static void init(Tag parentTag, String... tagNames) {
-        for (String tagName : tagNames) {
-            init(parentTag, tagName);
-        }
-    }
-
-    private static Tag init(Tag parentTag, String tagName) {
-        Tag tag = new Tag(parentTag, tagName);
-        addTag(tag);
-        return tag;
-    }
-
-    private static void addTag(Tag tag) {
-        if (TAG_MAP.containsKey(tag.canonicalTagName)) {
-            throw new IllegalStateException("Tag already exists with canonical name: " + tag.canonicalTagName);
+    private static void addTagToMap(String key, Tag tag) {
+        if (TAG_MAP.containsKey(key)) {
+            throw new IllegalStateException("Tag already exists with canonical name: " + key);
         }
 
-        TAG_MAP.put(tag.canonicalTagName, tag);
+        TAG_MAP.put(key, tag);
     }
 
     public static Tag fetchOrCreateTag(String canonicalTagName) {
         if (!TAG_MAP.containsKey(canonicalTagName)) {
             Tag tag = new Tag(null, null, canonicalTagName, 0);
-            addTag(tag);
+            addTagToMap(canonicalTagName, tag);
             return tag;
         }
         return TAG_MAP.get(canonicalTagName);
