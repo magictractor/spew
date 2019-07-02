@@ -45,7 +45,8 @@ public class TagSet {
         return result;
     }
 
-    public String getQuotedTagNamesWithParents() {
+    // TODO! this is Flickr specific
+    public String getQuotedTagNamesWithAliasesAndParents() {
         boolean first = true;
         StringBuilder compactTagNamesBuilder = new StringBuilder();
         for (Tag tag : getOrderedTagsWithParents()) {
@@ -59,6 +60,12 @@ public class TagSet {
             compactTagNamesBuilder.append('"');
             compactTagNamesBuilder.append(tag.getTagName());
             compactTagNamesBuilder.append('"');
+
+            for (String alias : tag.getAliases()) {
+                compactTagNamesBuilder.append(" \"");
+                compactTagNamesBuilder.append(alias);
+                compactTagNamesBuilder.append('"');
+            }
         }
 
         return compactTagNamesBuilder.toString();

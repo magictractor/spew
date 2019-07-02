@@ -67,7 +67,7 @@ public class FlickrPhotoUpdateProcessor extends PhotoUpdateProcessor {
 
         request.setParam("photo_id", photo.getServiceProviderId());
         // TODO! refactor this method - a processor has added the parents already
-        request.setParam("tags", photo.getTagSet().getQuotedTagNamesWithParents());
+        request.setParam("tags", photo.getTagSet().getQuotedTagNamesWithAliasesAndParents());
 
         OAuthConnectionFactory.getConnection(MyFlickrApp.class).request(request);
     }
