@@ -1,6 +1,6 @@
 package uk.co.magictractor.oauth.processor.common;
 
-import com.google.common.base.Strings;
+import java.util.function.Function;
 
 import uk.co.magictractor.oauth.common.Photo;
 import uk.co.magictractor.oauth.common.Tag;
@@ -16,14 +16,26 @@ public class TitleProcessor implements Processor<Photo, MutablePhoto, PhotoProce
 
     private final TagType titleTagType;
 
+    private Function<String, Boolean> defaultTitleFunction = (title) -> TitleProcessor.hasConsecutiveDigits(title, 4);
+
     public TitleProcessor(String titleTagTypeName) {
         // TODO! if there's no tag with this name throw an error rather than creating it (or skip this processor)
         this.titleTagType = TagType.valueOf(titleTagTypeName);
     }
 
+    /**
+     * Change the function which determines whether the current name of a photo
+     * is a default, probably based on a file name, which should be replaced
+     * with a better value. The better value is by default based on the deepest
+     * subject tag.
+     */
+    public void setDefaultTitleFunction(Function<String, Boolean> defaultTitleFunction) {
+        this.defaultTitleFunction = defaultTitleFunction;
+    }
+
     @Override
     public void process(MutablePhoto photo, PhotoProcessorContext context) {
-        if (isDefaultTitle(photo.getTitle())) {
+        if (defaultTitleFunction.apply(photo.getTitle())) {
             String newTitle = createTitle(photo);
 
             if (newTitle != null) {
@@ -55,17 +67,38 @@ public class TitleProcessor implements Processor<Photo, MutablePhoto, PhotoProce
         return createTitle(subject);
     }
 
+    // TODO! this is very specific to "common name (scientific name)"
     protected String createTitle(Tag tag) {
         String title = tag.getTagName();
-        return title.substring(0, 1).toUpperCase() + title.substring(1);
+        //return title.substring(0, 1).toUpperCase() + title.substring(1);
+
+        StringBuilder titleBuilder = new StringBuilder();
+        titleBuilder.append(title.substring(0, 1).toUpperCase());
+        titleBuilder.append(title.substring(1));
+
+        if (!tag.getAliases().isEmpty()) {
+            titleBuilder.append(" (");
+            titleBuilder.append(tag.getAliases().get(0));
+            titleBuilder.append(")");
+        }
+
+        return titleBuilder.toString();
     }
 
-    protected boolean isDefaultTitle(String title) {
-        // IMG_ for Canon Powershot SX60
-        // _MG_ for Canon EOS 60D
-        // PANA for Panasonic Lumix G9
-        return Strings.isNullOrEmpty(title) || title.startsWith("IMG_") || title.startsWith("_MG_")
-                || title.startsWith("PANA");
+    public static boolean hasConsecutiveDigits(String title, int digitCount) {
+        int consecutiveDigits = 0;
+        for (int i = 0; i < title.length(); i++) {
+            if (Character.isDigit(title.charAt(i))) {
+                if (++consecutiveDigits == digitCount) {
+                    return true;
+                }
+            }
+            else {
+                consecutiveDigits = 0;
+            }
+        }
+
+        return false;
     }
 
 }
