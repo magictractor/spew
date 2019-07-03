@@ -39,7 +39,7 @@ public class TagSetTest {
 
         // assertThat(tags.getCompactTagNamesWithParents(), equalTo("unknown rbge
         // edinburgh"));
-        assertThat(tags.getQuotedTagNamesWithAliasesAndParents()).isEqualTo("\"unknown\" \"RBGE\" \"Edinburgh\"");
+        assertThat(tags.getQuotedTagNamesWithAliasesAndParents()).isEqualTo("\"RBGE\" \"Edinburgh\" \"unknown\"");
     }
 
 }
