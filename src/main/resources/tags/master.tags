@@ -7,7 +7,8 @@ insect
   
   + bee.tags
   + odonata.tags
+  + other_insects.tags
 
-  
+
 !LOCATION
 + location.tags
