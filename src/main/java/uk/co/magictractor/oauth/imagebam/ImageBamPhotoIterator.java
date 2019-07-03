@@ -46,14 +46,14 @@ public class ImageBamPhotoIterator extends PageCountServiceIterator<ImageBamPhot
     public static class ImageBamPhotoIteratorBuilder extends
             PageCountServiceIteratorBuilder<ImageBamPhoto, ImageBamPhotoIterator, ImageBamPhotoIteratorBuilder> {
 
-        protected ImageBamPhotoIteratorBuilder() {
-            super(new ImageBamPhotoIterator());
+        protected ImageBamPhotoIteratorBuilder(OAuthConnection connection) {
+            super(connection, new ImageBamPhotoIterator());
         }
     }
 
     public static void main(String[] args) {
         OAuthConnection connection = OAuthConnectionFactory.getConnection(MyImageBamApp.class);
-        Iterator<ImageBamPhoto> iterator = new ImageBamPhotoIteratorBuilder().withConnection(connection).build();
+        Iterator<ImageBamPhoto> iterator = new ImageBamPhotoIteratorBuilder(connection).build();
         while (iterator.hasNext()) {
             ImageBamPhoto photo = iterator.next();
             System.err.println(photo.getTitle() + "  " + photo.getDateTimeTaken());

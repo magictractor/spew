@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.jayway.jsonpath.TypeRef;
 
+import uk.co.magictractor.oauth.api.OAuthConnection;
 import uk.co.magictractor.oauth.api.OAuthRequest;
 import uk.co.magictractor.oauth.api.OAuthResponse;
 import uk.co.magictractor.oauth.api.PageTokenServiceIterator;
@@ -68,8 +69,8 @@ public class TweetIterator extends PageTokenServiceIterator<Tweet> {
     public static class TweetIteratorBuilder
             extends PageTokenServiceIteratorBuilder<Tweet, TweetIterator, TweetIteratorBuilder> {
 
-        public TweetIteratorBuilder() {
-            super(new TweetIterator());
+        public TweetIteratorBuilder(OAuthConnection connection) {
+            super(connection, new TweetIterator());
         }
     }
 

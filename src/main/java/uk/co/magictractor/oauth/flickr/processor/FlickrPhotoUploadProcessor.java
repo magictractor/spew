@@ -25,7 +25,7 @@ public class FlickrPhotoUploadProcessor extends PhotoUploadProcessor {
     public static void main(String[] args) {
         PhotoUploadProcessorChain processorChain = new PhotoUploadProcessorChain(new FlickrPhotoUploadProcessor());
         OAuthConnection connection = OAuthConnectionFactory.getConnection(MyFlickrApp.class);
-        Iterator<FlickrPhoto> iterator = new FlickrPhotoIteratorBuilder().withConnection(connection).build();
+        Iterator<FlickrPhoto> iterator = new FlickrPhotoIteratorBuilder(connection).build();
         processorChain.execute(iterator, new PhotoProcessorContext());
     }
 

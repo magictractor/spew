@@ -72,8 +72,8 @@ public abstract class PageCountServiceIterator<E> extends PageServiceIterator<E>
     public static class PageCountServiceIteratorBuilder<E, I extends PageCountServiceIterator<E>, B>
             extends PageServiceIteratorBuilder<E, I, B> {
 
-        protected PageCountServiceIteratorBuilder(I iteratorInstance) {
-            super(iteratorInstance);
+        protected PageCountServiceIteratorBuilder(OAuthConnection connection, I iteratorInstance) {
+            super(connection, iteratorInstance);
         }
 
     }

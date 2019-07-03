@@ -30,7 +30,7 @@ public class ImgurPhotoUpdateProcessor extends PhotoUpdateProcessor {
     public static void main(String[] args) {
         PhotoTidyProcessorChain processorChain = new PhotoTidyProcessorChain(new ImgurPhotoUpdateProcessor());
         OAuthConnection connection = OAuthConnectionFactory.getConnection(MyImgurApp.class);
-        Iterator<ImgurImage> iterator = new ImgurPhotoIteratorBuilder().withConnection(connection).build();
+        Iterator<ImgurImage> iterator = new ImgurPhotoIteratorBuilder(connection).build();
         processorChain.execute(iterator, new PhotoProcessorContext());
     }
 

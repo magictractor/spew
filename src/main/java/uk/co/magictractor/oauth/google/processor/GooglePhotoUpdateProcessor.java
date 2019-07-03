@@ -30,7 +30,7 @@ public class GooglePhotoUpdateProcessor extends PhotoUpdateProcessor {
     public static void main(String[] args) {
         PhotoTidyProcessorChain processorChain = new PhotoTidyProcessorChain(new GooglePhotoUpdateProcessor());
         OAuthConnection connection = OAuthConnectionFactory.getConnection(MyGooglePhotosApp.class);
-        Iterator<GoogleMediaItem> iterator = new GoogleMediaItemIteratorBuilder().withConnection(connection).build();
+        Iterator<GoogleMediaItem> iterator = new GoogleMediaItemIteratorBuilder(connection).build();
         processorChain.execute(iterator, new PhotoProcessorContext());
     }
 

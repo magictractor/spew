@@ -238,15 +238,14 @@ public class ImgurPhotoIterator extends PageCountServiceIterator<ImgurImage> {
     public static class ImgurPhotoIteratorBuilder
             extends PageCountServiceIteratorBuilder<ImgurImage, ImgurPhotoIterator, ImgurPhotoIteratorBuilder> {
 
-        public ImgurPhotoIteratorBuilder() {
-            super(new ImgurPhotoIterator());
+        public ImgurPhotoIteratorBuilder(OAuthConnection connection) {
+            super(connection, new ImgurPhotoIterator());
         }
     }
 
     public static void main(String[] args) {
         OAuthConnection connection = OAuthConnectionFactory.getConnection(MyImgurApp.class);
-        Iterator<ImgurImage> iter = new ImgurPhotoIteratorBuilder()
-                .withConnection(connection)
+        Iterator<ImgurImage> iter = new ImgurPhotoIteratorBuilder(connection)
                 .build();
         while (iter.hasNext()) {
             ImgurImage photo = iter.next();

@@ -36,8 +36,8 @@ public class GoogleSharedAlbumsIterator extends GoogleServiceIterator<GoogleAlbu
     public static class GoogleSharedAlbumsIteratorBuilder extends
             GoogleServiceIteratorBuilder<GoogleAlbum, GoogleSharedAlbumsIterator, GoogleSharedAlbumsIteratorBuilder> {
 
-        public GoogleSharedAlbumsIteratorBuilder() {
-            super(new GoogleSharedAlbumsIterator());
+        public GoogleSharedAlbumsIteratorBuilder(OAuthConnection connection) {
+            super(connection, new GoogleSharedAlbumsIterator());
         }
 
     }
@@ -45,7 +45,7 @@ public class GoogleSharedAlbumsIterator extends GoogleServiceIterator<GoogleAlbu
     // https://developers.google.com/photos/library/reference/rest/v1/albums#Album
     public static void main(String[] args) {
         OAuthConnection connection = OAuthConnectionFactory.getConnection(MyGooglePhotosApp.class);
-        Iterator<GoogleAlbum> iter = new GoogleSharedAlbumsIteratorBuilder().withConnection(connection).build();
+        Iterator<GoogleAlbum> iter = new GoogleSharedAlbumsIteratorBuilder(connection).build();
         while (iter.hasNext()) {
             Album album = iter.next();
             System.err.println(

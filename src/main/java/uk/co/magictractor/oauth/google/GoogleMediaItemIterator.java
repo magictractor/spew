@@ -45,8 +45,8 @@ public class GoogleMediaItemIterator extends GoogleServiceIterator<GoogleMediaIt
     public static class GoogleMediaItemIteratorBuilder extends
             GoogleServiceIteratorBuilder<GoogleMediaItem, GoogleMediaItemIterator, GoogleMediaItemIteratorBuilder> {
 
-        public GoogleMediaItemIteratorBuilder() {
-            super(new GoogleMediaItemIterator());
+        public GoogleMediaItemIteratorBuilder(OAuthConnection connection) {
+            super(connection, new GoogleMediaItemIterator());
             addServerSideFilterHandler(DateTakenPhotoFilter.class, this::setDateTakenPhotoFilter);
         }
 
@@ -58,8 +58,7 @@ public class GoogleMediaItemIterator extends GoogleServiceIterator<GoogleMediaIt
 
     public static void main(String[] args) {
         OAuthConnection connection = OAuthConnectionFactory.getConnection(MyGooglePhotosApp.class);
-        Iterator<GoogleMediaItem> iterator = new GoogleMediaItemIteratorBuilder()
-                .withConnection(connection)
+        Iterator<GoogleMediaItem> iterator = new GoogleMediaItemIteratorBuilder(connection)
                 .withFilter(new DateTakenPhotoFilter(DateRange.forDay(2018, 11, 21)))
                 .build();
         while (iterator.hasNext()) {

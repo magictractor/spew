@@ -2,6 +2,7 @@ package uk.co.magictractor.oauth.google;
 
 import java.util.List;
 
+import uk.co.magictractor.oauth.api.OAuthConnection;
 import uk.co.magictractor.oauth.api.OAuthRequest;
 import uk.co.magictractor.oauth.api.OAuthResponse;
 import uk.co.magictractor.oauth.api.PageTokenServiceIterator;
@@ -32,8 +33,8 @@ public abstract class GoogleServiceIterator<E> extends PageTokenServiceIterator<
     public static class GoogleServiceIteratorBuilder<E, I extends GoogleServiceIterator<E>, B>
             extends PageServiceIteratorBuilder<E, I, B> {
 
-        protected GoogleServiceIteratorBuilder(I iteratorInstance) {
-            super(iteratorInstance);
+        protected GoogleServiceIteratorBuilder(OAuthConnection connection, I iteratorInstance) {
+            super(connection, iteratorInstance);
         }
     }
 

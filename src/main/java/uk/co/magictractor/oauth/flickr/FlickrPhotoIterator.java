@@ -85,8 +85,8 @@ public class FlickrPhotoIterator extends PageCountServiceIterator<FlickrPhoto> {
     public static class FlickrPhotoIteratorBuilder
             extends PageCountServiceIteratorBuilder<FlickrPhoto, FlickrPhotoIterator, FlickrPhotoIteratorBuilder> {
 
-        public FlickrPhotoIteratorBuilder() {
-            super(new FlickrPhotoIterator());
+        public FlickrPhotoIteratorBuilder(OAuthConnection connection) {
+            super(connection, new FlickrPhotoIterator());
             addServerSideFilterHandler(DateTakenPhotoFilter.class, this::setDateTakenPhotoFilter);
             addServerSideFilterHandler(DateUploadedPhotoFilter.class, this::setDateUploadedPhotoFilter);
         }
@@ -109,8 +109,7 @@ public class FlickrPhotoIterator extends PageCountServiceIterator<FlickrPhoto> {
 
     public static void main(String[] args) {
         OAuthConnection connection = OAuthConnectionFactory.getConnection(MyFlickrApp.class);
-        Iterator<FlickrPhoto> iter = new FlickrPhotoIteratorBuilder()
-                .withConnection(connection)
+        Iterator<FlickrPhoto> iter = new FlickrPhotoIteratorBuilder(connection)
                 .withFilter(new DateTakenPhotoFilter(DateRange.forMonth(2019, 2)))
                 .build();
         while (iter.hasNext()) {

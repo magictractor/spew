@@ -19,7 +19,7 @@ public abstract class PageServiceIterator<E> extends AbstractIterator<E> {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
-    /* default */ OAuthConnection connection;
+    private OAuthConnection connection;
 
     /**
      * <p>
@@ -32,7 +32,7 @@ public abstract class PageServiceIterator<E> extends AbstractIterator<E> {
      * </p>
      * *
      */
-    /* default */ Integer pageSize;
+    private Integer pageSize;
 
     private List<? extends E> currentPage = Collections.emptyList();
     private int nextPageItemIndex;
@@ -75,12 +75,16 @@ public abstract class PageServiceIterator<E> extends AbstractIterator<E> {
      */
     public static class PageServiceIteratorBuilder<E, I extends PageServiceIterator<E>, B> {
 
+        // Same iterator twice to avoid repeated casting
         private final I iteratorInstance;
+        private final PageServiceIterator<E> iter;
         private final Map<Class, Consumer> serverSideFilterHandlers = new HashMap<>();
         private List<Predicate<? super E>> clientSideFilters = null;
 
-        protected PageServiceIteratorBuilder(I iteratorInstance) {
+        protected PageServiceIteratorBuilder(OAuthConnection connection, I iteratorInstance) {
             this.iteratorInstance = iteratorInstance;
+            this.iter = iteratorInstance;
+            iter.connection = connection;
         }
 
         protected I getIteratorInstance() {
@@ -91,13 +95,8 @@ public abstract class PageServiceIterator<E> extends AbstractIterator<E> {
             serverSideFilterHandlers.put(filterType, filterConsumer);
         }
 
-        public B withConnection(OAuthConnection connection) {
-            iteratorInstance.connection = connection;
-            return (B) this;
-        }
-
         public B withPageSize(int pageSize) {
-            iteratorInstance.pageSize = pageSize;
+            iter.pageSize = pageSize;
             return (B) this;
         }
 
