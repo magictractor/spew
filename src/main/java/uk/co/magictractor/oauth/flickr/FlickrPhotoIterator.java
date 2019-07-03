@@ -1,19 +1,16 @@
 package uk.co.magictractor.oauth.flickr;
 
 import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 import uk.co.magictractor.oauth.api.OAuthConnection;
 import uk.co.magictractor.oauth.api.OAuthRequest;
 import uk.co.magictractor.oauth.api.OAuthResponse;
 import uk.co.magictractor.oauth.api.PageCountServiceIterator;
-import uk.co.magictractor.oauth.api.PhotoIterator;
 import uk.co.magictractor.oauth.api.connection.OAuthConnectionFactory;
 import uk.co.magictractor.oauth.common.filter.DateTakenPhotoFilter;
 import uk.co.magictractor.oauth.common.filter.DateUploadedPhotoFilter;
-import uk.co.magictractor.oauth.common.filter.PhotoFilter;
 import uk.co.magictractor.oauth.flickr.pojo.FlickrPhoto;
 import uk.co.magictractor.oauth.flickr.pojo.FlickrPhotos;
 import uk.co.magictractor.oauth.local.dates.DateRange;
@@ -23,11 +20,7 @@ import uk.co.magictractor.oauth.local.dates.DateRange;
  * allows sort order to be specified. See
  * https://www.flickr.com/services/api/flickr.photos.search.html.
  */
-public class FlickrPhotoIterator extends PageCountServiceIterator<FlickrPhoto, FlickrPhotoIterator>
-        implements PhotoIterator<FlickrPhoto> {
-
-    private static final List<Class<? extends PhotoFilter>> SUPPORTED_FILTERS = Arrays
-            .asList(DateTakenPhotoFilter.class, DateUploadedPhotoFilter.class);
+public class FlickrPhotoIterator extends PageCountServiceIterator<FlickrPhoto> {
 
     // From API doc: "The date can be in the form of a unix timestamp or mysql
     // datetime."
@@ -40,15 +33,6 @@ public class FlickrPhotoIterator extends PageCountServiceIterator<FlickrPhoto, F
     // Minimum taken date. Photos with an taken date greater than or equal to this
     // value will be returned. The date can be in the form of a mysql datetime or
     // unix timestamp.
-
-    public FlickrPhotoIterator(OAuthConnection connection) {
-        super(connection);
-    }
-
-    @Override
-    public Collection<Class<? extends PhotoFilter>> supportedPhotoFilters() {
-        return SUPPORTED_FILTERS;
-    }
 
     @Override
     protected List<FlickrPhoto> fetchPage(int pageNumber) {
@@ -95,27 +79,37 @@ public class FlickrPhotoIterator extends PageCountServiceIterator<FlickrPhoto, F
         return photos.photo;
     }
 
-    @Override
-    public void setDateTakenPhotoFilter(DateTakenPhotoFilter filter) {
-        minTakenDate = convert(filter.getFrom());
-        maxTakenDate = convert(filter.getTo());
-    }
+    public static class FlickrPhotoIteratorBuilder
+            extends PageCountServiceIteratorBuilder<FlickrPhoto, FlickrPhotoIterator, FlickrPhotoIteratorBuilder> {
 
-    @Override
-    public void setDateUploadedPhotoFilter(DateUploadedPhotoFilter filter) {
-        minUploadedDate = convert(filter.getFrom());
-        maxUploadedDate = convert(filter.getTo());
-    }
+        public FlickrPhotoIteratorBuilder() {
+            super(new FlickrPhotoIterator());
+            addServerSideFilterHandler(DateTakenPhotoFilter.class, this::setDateTakenPhotoFilter);
+            addServerSideFilterHandler(DateUploadedPhotoFilter.class, this::setDateUploadedPhotoFilter);
+        }
 
-    private String convert(LocalDate localDate) {
-        return localDate.getYear() + "-" + localDate.getMonthValue() + "-" + localDate.getDayOfMonth();
+        public void setDateTakenPhotoFilter(DateTakenPhotoFilter filter) {
+            getIteratorInstance().minTakenDate = convert(filter.getFrom());
+            getIteratorInstance().maxTakenDate = convert(filter.getTo());
+        }
+
+        public void setDateUploadedPhotoFilter(DateUploadedPhotoFilter filter) {
+            getIteratorInstance().minUploadedDate = convert(filter.getFrom());
+            getIteratorInstance().maxUploadedDate = convert(filter.getTo());
+        }
+
+        private String convert(LocalDate localDate) {
+            return localDate.getYear() + "-" + localDate.getMonthValue() + "-" + localDate.getDayOfMonth();
+        }
+
     }
 
     public static void main(String[] args) {
         OAuthConnection connection = OAuthConnectionFactory.getConnection(MyFlickrApp.class);
-        FlickrPhotoIterator iter = new FlickrPhotoIterator(connection);
-        iter.addFilter(new DateTakenPhotoFilter(DateRange.forMonth(2019, 2)));
-        // iter.addFilter(new DateUploadedPhotoFilter(DateRange.forMonth(2019, 3)));
+        Iterator<FlickrPhoto> iter = new FlickrPhotoIteratorBuilder()
+                .withConnection(connection)
+                .withFilter(new DateTakenPhotoFilter(DateRange.forMonth(2019, 2)))
+                .build();
         while (iter.hasNext()) {
             FlickrPhoto photo = iter.next();
             System.err.println(photo.getTitle() + "  " + photo.getDateTimeTaken());

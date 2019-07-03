@@ -11,7 +11,7 @@ import uk.co.magictractor.oauth.api.PageTokenServiceIterator;
 import uk.co.magictractor.oauth.twitter.pojo.Tweet;
 
 // https://developer.twitter.com/en/docs/tweets/timelines/api-reference/get-statuses-user_timeline.html
-public class TweetIterator extends PageTokenServiceIterator<Tweet, TweetIterator> {
+public class TweetIterator extends PageTokenServiceIterator<Tweet> {
 
     // If non-null fetch tweets for user with this screen name, otherwise tweets are fetched for the authenticated user.
     private String screenName;

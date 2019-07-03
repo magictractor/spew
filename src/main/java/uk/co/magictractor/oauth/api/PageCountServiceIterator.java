@@ -10,8 +10,7 @@ import java.util.List;
  * {@link #next()}, and the next page is fetched only after iterating over all
  * items in the first page.
  */
-public abstract class PageCountServiceIterator<E, I extends PageCountServiceIterator<E, I>>
-        extends PageServiceIterator<E, I> {
+public abstract class PageCountServiceIterator<E> extends PageServiceIterator<E> {
 
     private static final int UNKNOWN = -1;
 
@@ -20,7 +19,10 @@ public abstract class PageCountServiceIterator<E, I extends PageCountServiceIter
     private int totalPageCount = UNKNOWN;
     private int totalItemCount = UNKNOWN;
 
-    // TODO! also pass in expected service provider and add assertion??
+    protected PageCountServiceIterator() {
+    }
+
+    // TODO! bin this
     protected PageCountServiceIterator(OAuthConnection connection) {
         super(connection);
     }
@@ -71,4 +73,14 @@ public abstract class PageCountServiceIterator<E, I extends PageCountServiceIter
             throw new IllegalStateException("totalItemCount should not be changed after it has been set");
         }
     }
+
+    public static class PageCountServiceIteratorBuilder<E, I extends PageCountServiceIterator<E>, B>
+            extends PageServiceIteratorBuilder<E, I, B> {
+
+        protected PageCountServiceIteratorBuilder(I iteratorInstance) {
+            super(iteratorInstance);
+        }
+
+    }
+
 }

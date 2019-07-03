@@ -6,9 +6,9 @@ import uk.co.magictractor.oauth.api.OAuthConnection;
 import uk.co.magictractor.oauth.api.OAuthRequest;
 import uk.co.magictractor.oauth.api.OAuthResponse;
 import uk.co.magictractor.oauth.api.PageTokenServiceIterator;
+import uk.co.magictractor.oauth.api.PageTokenServiceIterator.PageAndNextToken;
 
-public abstract class GoogleServiceIterator<E, I extends GoogleServiceIterator<E, I>>
-        extends PageTokenServiceIterator<E, I> {
+public abstract class GoogleServiceIterator<E> extends PageTokenServiceIterator<E> {
 
     protected GoogleServiceIterator(OAuthConnection connection) {
         super(connection);

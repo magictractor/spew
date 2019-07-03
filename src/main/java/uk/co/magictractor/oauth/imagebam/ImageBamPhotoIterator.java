@@ -15,7 +15,7 @@ import uk.co.magictractor.oauth.common.filter.PhotoFilter;
 import uk.co.magictractor.oauth.flickr.pojo.FlickrPhotos;
 import uk.co.magictractor.oauth.imagebam.pojo.ImageBamPhoto;
 
-public class ImageBamPhotoIterator extends PageCountServiceIterator<ImageBamPhoto, ImageBamPhotoIterator>
+public class ImageBamPhotoIterator extends PageCountServiceIterator<ImageBamPhoto>
         implements PhotoIterator<ImageBamPhoto> {
 
     private static final List<Class<? extends PhotoFilter>> SUPPORTED_FILTERS = Arrays.asList();
