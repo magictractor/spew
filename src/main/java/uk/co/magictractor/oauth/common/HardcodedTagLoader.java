@@ -25,8 +25,6 @@ public class HardcodedTagLoader implements TagLoader {
     public void loadTags() {
         initLocations();
         initSubjects();
-
-        addAlias("wool carder bee", "Anthidium manicatum");
     }
 
     private void initLocations() {
@@ -199,13 +197,6 @@ public class HardcodedTagLoader implements TagLoader {
         }
 
         return Tag.createChild(parentTag, tagName);
-    }
-
-    private void addAlias(String tagName, String... aliases) {
-        Tag tag = Tag.fetchOrCreateTag(tagName);
-        for (String alias : aliases) {
-            tag.addAlias(alias);
-        }
     }
 
 }

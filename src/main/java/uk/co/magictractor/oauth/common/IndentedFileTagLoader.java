@@ -25,6 +25,9 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.Iterator;
+
+import com.google.common.base.Splitter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -127,15 +130,23 @@ public class IndentedFileTagLoader implements TagLoader {
                 "Missing tag type - tag types are on a line starting with an exclamation mark");
         }
 
-        // TODO! split out aliases
+        // String[] tagNameAndAliases = line.split("=");
+        Iterator<String> tagNameAndAliases = Splitter.on("=")
+                .trimResults()
+                .splitToList(line)
+                .iterator();
 
-        String tagName = line;
+        String tagName = tagNameAndAliases.next();
         Tag tag;
         if (tagsAndIndents.isEmpty()) {
             tag = Tag.createRoot(tagType, tagName);
         }
         else {
             tag = Tag.createChild(tagsAndIndents.peek().tag, tagName);
+        }
+
+        while (tagNameAndAliases.hasNext()) {
+            tag.addAlias(tagNameAndAliases.next());
         }
 
         tagsAndIndents.push(new TagAndIndent(tag, indent));

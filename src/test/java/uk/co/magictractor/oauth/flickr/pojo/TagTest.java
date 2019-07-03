@@ -13,16 +13,21 @@ public class TagTest {
     public void fetchTag_canonical() {
         Tag tag = Tag.fetchTag("four-spotted chaser");
 
-        assertThat(tag).isNotNull();
         assertThat(tag.getTagName()).isEqualTo("four-spotted chaser");
     }
 
     @Test
-    public void fetchTag_non_canonical() {
+    public void fetchTag_nonCanonical() {
         Tag tag = Tag.fetchTag("fourspottedchaser");
 
-        assertThat(tag).isNotNull();
         assertThat(tag.getTagName()).isEqualTo("four-spotted chaser");
+    }
+
+    @Test
+    public void fetchTag_hasAlias() {
+        Tag tag = Tag.fetchTag("wool carder bee");
+
+        assertThat(tag.getAliases()).containsExactly("Anthidium manicatum");
     }
 
     @Test
