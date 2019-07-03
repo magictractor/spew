@@ -1,5 +1,9 @@
 !SUBJECT
 
 insect
-  + moth.tags
+  lepidoptera
+    + butterfly.tags
+    + moth.tags
+  
+  + bee.tags
   + odonata.tags

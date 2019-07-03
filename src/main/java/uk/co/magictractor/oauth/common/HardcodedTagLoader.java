@@ -125,11 +125,11 @@ public class HardcodedTagLoader implements TagLoader {
         Tag insect = init(TagType.SUBJECT, "Insect");
         init(insect, "Caddisfly");
 
-        Tag bee = init(insect, "Bee");
-        init(bee, "Honey bee", "Early mining bee");
-        Tag bumblebee = init(bee, "Bumblebee");
-        init(bumblebee, "Common carder bee", "Tree bumblebee", "Red-tailed bumblebee", "Buff-tailed bumbleebee",
-            "Wool carder bee");
+        //        Tag bee = init(insect, "Bee");
+        //        init(bee, "Honey bee", "Early mining bee");
+        //        Tag bumblebee = init(bee, "Bumblebee");
+        //        init(bumblebee, "Common carder bee", "Tree bumblebee", "Red-tailed bumblebee", "Buff-tailed bumbleebee",
+        //            "Wool carder bee");
 
         Tag wasp = init(insect, "Wasp");
         init(wasp, "Common wasp");
@@ -152,23 +152,6 @@ public class HardcodedTagLoader implements TagLoader {
 
         Tag snail = init(insect, "Snail");
         init(snail, "Garden snail");
-
-        Tag lepidoptera = init(insect, "Lepidoptera");
-
-        Tag butterfly = init(lepidoptera, "Butterfly");
-        init(butterfly, "Peacock", "Green veined white", "Large white", "Orange-tip", "Speckled wood", "Small copper",
-            "Red admiral", "Comma", "Painted lady", "Ringlet", "Small white");
-
-        //        Tag moth = init(lepidoptera, "Moth");
-        //        init(moth, "Silver Y");
-        //        init(moth, "Copper underwing");
-
-        //        Tag odonata = init(insect, "Odonata");
-        //        Tag damselfly = init(odonata, "Damselfly");
-        //        Tag dragonfly = init(odonata, "Dragonfly");
-        //        init(damselfly, "Blue-tailed damselfly", "Common blue damselfly", "Azure damselfly", "Emerald damselfly",
-        //            "Large red damselfly");
-        //        init(dragonfly, "Common darter", "Black darter", "Common hawker", "Four-spotted chaser");
 
         init(insect, "Mayfly");
 
@@ -205,8 +188,16 @@ public class HardcodedTagLoader implements TagLoader {
     }
 
     private Tag init(Tag parentTag, String tagName) {
-        //        Tag tag = new Tag(parentTag, tagName);
-        //        return tag;
+        // Allow child to already have been defined in a resource file while
+        // hardcoded values are migrated.
+        Tag existing = Tag.fetchTagIfPresent(tagName);
+        if (existing != null) {
+            if (!parentTag.equals(existing.getParent())) {
+                throw new IllegalStateException("Existing tag has a different parent");
+            }
+            return existing;
+        }
+
         return Tag.createChild(parentTag, tagName);
     }
 
