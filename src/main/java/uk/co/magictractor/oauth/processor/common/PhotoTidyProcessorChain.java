@@ -14,7 +14,7 @@ public class PhotoTidyProcessorChain extends ProcessorChain<Photo, MutablePhoto,
         addProcessor(new TagHierarchyProcessor());
 
         // not default title
-        addProcessor(new TitleProcessor());
+        addProcessor(new TitleProcessor("SUBJECT"));
 
         // add "(record shot)" to title
         // upload date same as taken date

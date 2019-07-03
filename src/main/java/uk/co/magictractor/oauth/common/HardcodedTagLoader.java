@@ -21,6 +21,9 @@ package uk.co.magictractor.oauth.common;
 // bin this once better approach has been coded
 public class HardcodedTagLoader implements TagLoader {
 
+    private static final String SUBJECT = "SUBJECT";
+    private static final String LOCATION = "LOCATION";
+
     @Override
     public void loadTags() {
         initLocations();
@@ -28,9 +31,9 @@ public class HardcodedTagLoader implements TagLoader {
     }
 
     private void initLocations() {
-        Tag edinburgh = init(TagType.LOCATION, "Edinburgh");
-        Tag fife = init(TagType.LOCATION, "Fife");
-        init(TagType.LOCATION, "Esk", "Musselburgh lagoons", "Roslin glen");
+        Tag edinburgh = init(LOCATION, "Edinburgh");
+        Tag fife = init(LOCATION, "Fife");
+        init(LOCATION, "Esk", "Musselburgh lagoons", "Roslin glen");
 
         init(edinburgh, "RBGE", "Almond", "Balgreen", "Bawsinch", "Calton Hill", "Cammo", "Corstorphine Hill",
             "Fountainbridge", "Figgate Park", "Holyrood Park", "Inverleith Park", "Lochend Park",
@@ -43,18 +46,18 @@ public class HardcodedTagLoader implements TagLoader {
         initRodents();
         initInsects();
 
-        Tag frog = init(TagType.SUBJECT, "Frog");
+        Tag frog = init(SUBJECT, "Frog");
         init(frog, "Common frog");
 
-        Tag newt = init(TagType.SUBJECT, "Newt");
+        Tag newt = init(SUBJECT, "Newt");
         init(newt, "Smooth newt", "Palmate newt");
 
         // TODO! fungus?
-        init(TagType.SUBJECT, "Fungi");
+        init(SUBJECT, "Fungi");
     }
 
     private void initBirds() {
-        Tag bird = init(TagType.SUBJECT, "Bird");
+        Tag bird = init(SUBJECT, "Bird");
         init(bird, "Blackbird", "Blackcap", "Blue tit", "Bullfinch", "Buzzard", "Chaffinch", "Coal tit",
             "Collared dove", "Coot", "Dipper", "Dunnock", "Fieldfare", "Goldcrest", "Goldeneye", "Goldfinch",
             "Goosander", "Great tit", "Kestrel", "Kingfisher", "Linnet", "Long-tailed tit", "Mallard", "Moorhen",
@@ -108,9 +111,9 @@ public class HardcodedTagLoader implements TagLoader {
 
     private void initRodents() {
         // Not a rodent!
-        init(TagType.SUBJECT, "Otter");
+        init(SUBJECT, "Otter");
 
-        Tag rodent = init(TagType.SUBJECT, "Rodent");
+        Tag rodent = init(SUBJECT, "Rodent");
 
         Tag squirrel = init(rodent, "Squirrel");
         init(squirrel, "Grey squirrel", "Red squirrel");
@@ -120,7 +123,7 @@ public class HardcodedTagLoader implements TagLoader {
     }
 
     private void initInsects() {
-        Tag insect = init(TagType.SUBJECT, "Insect");
+        Tag insect = init(SUBJECT, "Insect");
         init(insect, "Caddisfly");
 
         //        Tag bee = init(insect, "Bee");
@@ -156,10 +159,15 @@ public class HardcodedTagLoader implements TagLoader {
         init(insect, "Slug");
     }
 
-    private void init(TagType tagType, String... tagNames) {
+    private void init(String tagTypeName, String... tagNames) {
+        TagType tagType = TagType.valueOf(tagTypeName);
         for (String tagName : tagNames) {
             init(tagType, tagName);
         }
+    }
+
+    private Tag init(String tagTypeName, String tagName) {
+        return init(TagType.valueOf(tagTypeName), tagName);
     }
 
     private Tag init(TagType tagType, String tagName) {
@@ -168,7 +176,8 @@ public class HardcodedTagLoader implements TagLoader {
         Tag existing = Tag.fetchTagIfPresent(tagName);
         if (existing != null) {
             if (!tagType.equals(existing.getTagType())) {
-                throw new IllegalStateException("Existing tag has different type");
+                throw new IllegalStateException("Existing tag has different type. Existing type is '"
+                        + existing.getTagType() + ", expected type " + tagType);
             }
             if (existing.getParent() != null) {
                 throw new IllegalStateException("Existing tag is not a root tag");

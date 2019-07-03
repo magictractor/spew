@@ -14,24 +14,53 @@ import uk.co.magictractor.oauth.processor.Processor;
  */
 public class TitleProcessor implements Processor<Photo, MutablePhoto, PhotoProcessorContext> {
 
+    private final TagType titleTagType;
+
+    public TitleProcessor(String titleTagTypeName) {
+        // TODO! if there's no tag with this name throw an error rather than creating it (or skip this processor)
+        this.titleTagType = TagType.valueOf(titleTagTypeName);
+    }
+
     @Override
     public void process(MutablePhoto photo, PhotoProcessorContext context) {
         if (isDefaultTitle(photo.getTitle())) {
-            TagSet tagSet = photo.getTagSet();
-            if (tagSet == null) {
-                // TODO! log a warning (via context)
-                System.err.println("No tags, so cannot create title");
-                return;
-            }
+            String newTitle = createTitle(photo);
 
-            Tag subject = photo.getTagSet().getDeepestTag(TagType.SUBJECT);
-            if (subject != null && !subject.hasChildren()) {
-                photo.setTitle(subject.getTagName());
+            if (newTitle != null) {
+                photo.setTitle(newTitle);
             }
         }
     }
 
-    private boolean isDefaultTitle(String title) {
+    protected String createTitle(Photo photo) {
+        TagSet tagSet = photo.getTagSet();
+        if (tagSet == null) {
+            // TODO! log a warning (via context)
+            System.err.println("No tags, so cannot create title");
+            return null;
+        }
+
+        Tag subject = photo.getTagSet().getDeepestTag(titleTagType);
+        if (subject == null) {
+            // TODO! log a warning (via context)
+            System.err.println("No subject tags, so cannot create title");
+            return null;
+        }
+        if (subject.hasChildren()) {
+            // TODO! log a warning (via context)
+            System.err.println("Deepest subject tag has children, so not creating title");
+            return null;
+        }
+
+        return createTitle(subject);
+    }
+
+    protected String createTitle(Tag tag) {
+        String title = tag.getTagName();
+        return title.substring(0, 1).toUpperCase() + title.substring(1);
+    }
+
+    protected boolean isDefaultTitle(String title) {
         // IMG_ for Canon Powershot SX60
         // _MG_ for Canon EOS 60D
         // PANA for Panasonic Lumix G9

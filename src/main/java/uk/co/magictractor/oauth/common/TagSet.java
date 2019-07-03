@@ -34,6 +34,10 @@ public class TagSet {
         tags = new HashSet<>(cloneTagSet.tags);
     }
 
+    public Tag getDeepestTag(String tagTypeName) {
+        return getDeepestTag(TagType.valueOf(tagTypeName));
+    }
+
     // TODO! unknown tags will break this
     public Tag getDeepestTag(TagType tagType) {
         Tag result = null;

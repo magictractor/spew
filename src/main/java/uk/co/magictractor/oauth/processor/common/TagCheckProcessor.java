@@ -19,8 +19,9 @@ public class TagCheckProcessor implements Processor<Photo, MutablePhoto, PhotoPr
             return;
         }
 
-        checkTagType(TagType.SUBJECT, tagSet, context);
-        checkTagType(TagType.LOCATION, tagSet, context);
+        for (TagType tagType : TagType.values()) {
+            checkTagType(tagType, tagSet, context);
+        }
         checkNoUnknownTags(tagSet, context);
     }
 

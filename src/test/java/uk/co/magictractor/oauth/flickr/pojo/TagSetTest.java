@@ -5,7 +5,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.Test;
 
 import uk.co.magictractor.oauth.common.TagSet;
-import uk.co.magictractor.oauth.common.TagType;
 
 public class TagSetTest {
 
@@ -13,14 +12,14 @@ public class TagSetTest {
     public void getDeepestTag() {
         TagSet tags = new TagSet("rbge fourspottedchaser");
 
-        assertThat(tags.getDeepestTag(TagType.SUBJECT).getTagName()).isEqualTo("four-spotted chaser");
+        assertThat(tags.getDeepestTag("SUBJECT").getTagName()).isEqualTo("four-spotted chaser");
     }
 
     @Test
     public void getDeepestTag_null() {
         TagSet tags = new TagSet("rbge");
 
-        assertThat(tags.getDeepestTag(TagType.SUBJECT)).isNull();
+        assertThat(tags.getDeepestTag("SUBJECT")).isNull();
     }
 
     @Test
