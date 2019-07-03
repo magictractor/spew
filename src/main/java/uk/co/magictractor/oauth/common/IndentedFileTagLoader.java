@@ -16,8 +16,12 @@
 package uk.co.magictractor.oauth.common;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UncheckedIOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -33,8 +37,7 @@ public class IndentedFileTagLoader implements TagLoader {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(IndentedFileTagLoader.class);
 
-    private final String resourceName;
-    //private int depth;
+    private final URL resource;
 
     private TagType tagType;
     private Deque<TagAndIndent> tagsAndIndents = new ArrayDeque<>();
@@ -43,23 +46,28 @@ public class IndentedFileTagLoader implements TagLoader {
     private boolean hasSpaces;
 
     public IndentedFileTagLoader() {
-        this("/tags.txt", 0);
+        // TODO! allow system property to override the default name and encoding (UTF-8 default)
+        this(rootResource("master.tags"));
     }
 
-    private IndentedFileTagLoader(String resourceName, int depth) {
-        this.resourceName = resourceName;
-        //this.depth = depth;
+    private static URL rootResource(String resource) {
+        // Use ClassLoader because the root resource should not be relative to this class.
+        return IndentedFileTagLoader.class.getClassLoader().getResource(resource);
+    }
+
+    private IndentedFileTagLoader(URL resource) {
+        this.resource = resource;
     }
 
     @Override
     public void loadTags() {
-        InputStream fileStream = getClass().getResourceAsStream(resourceName);
-        if (fileStream == null) {
-            LOGGER.info("resource not found: {}", resourceName);
+        try (InputStream fileStream = resource.openStream()) {
+            BufferedReader fileReader = new BufferedReader(new InputStreamReader(fileStream, StandardCharsets.UTF_8));
+            fileReader.lines().forEach(this::handleLine);
         }
-
-        BufferedReader fileReader = new BufferedReader(new InputStreamReader(fileStream, StandardCharsets.UTF_8));
-        fileReader.lines().forEach(this::handleLine);
+        catch (IOException e) {
+            throw new UncheckedIOException("Cannot find tag resource: " + resource, e);
+        }
     }
 
     private void handleLine(String line) {
@@ -69,47 +77,59 @@ public class IndentedFileTagLoader implements TagLoader {
             return;
         }
 
-        if (line.charAt(0) == '!') {
-            handleNewRoot(line);
+        IndentAndRemainder indentAndRemainder = handleIndent(line);
+        String remainder = indentAndRemainder.remainder;
+
+        if (remainder.charAt(0) == '!') {
+            handleNewTagType(remainder.substring(1).trim());
         }
-        else if (line.charAt(0) == '+') {
-            handleOtherFile(line);
+        else if (remainder.charAt(0) == '+') {
+            handleOtherFile(remainder.substring(1).trim());
         }
         else {
-            handleChild(line);
+            handleChild(remainder, indentAndRemainder.indent);
         }
     }
 
-    private void handleNewRoot(String line) {
-        String tagTypeName = line.substring(1).trim();
+    private void handleNewTagType(String tagTypeName) {
         tagType = TagType.valueOf(tagTypeName);
         tagsAndIndents.clear();
     }
 
-    private void handleOtherFile(String line) {
-        throw new UnsupportedOperationException();
+    private void handleOtherFile(String otherFileName) {
+        URL otherResource;
+        try {
+            otherResource = new URL(resource, otherFileName);
+        }
+        catch (MalformedURLException e) {
+            throw new IllegalArgumentException(e);
+        }
+        System.err.println("other: " + otherResource);
+
+        IndentedFileTagLoader other = new IndentedFileTagLoader(otherResource);
+        other.tagType = tagType;
+        if (!tagsAndIndents.isEmpty()) {
+            /*
+             * The current tags serves as a parent for the other file with
+             * lowest possible indent so it cannot be popped while handling the
+             * other file.
+             */
+            Tag otherRootTag = tagsAndIndents.peek().tag;
+            other.tagsAndIndents.push(new TagAndIndent(otherRootTag, Integer.MIN_VALUE));
+        }
+
+        other.loadTags();
     }
 
-    private void handleChild(String line) {
+    private void handleChild(String line, int indent) {
         if (tagType == null) {
             throw new IllegalStateException(
                 "Missing tag type - tag types are on a line starting with an exclamation mark");
         }
 
-        int indent = parseIndent(line);
-        //        while (tagsAndIndents.peek().indent >= indent) {
-        //            tagsAndIndents.pop();
-        //        }
-        for (int i = tagsAndIndents.size(); i > 0; i--) {
-            if (tagsAndIndents.peek().indent >= indent) {
-                tagsAndIndents.pop();
-            }
-            else {
-                break;
-            }
-        }
+        // TODO! split out aliases
 
-        String tagName = line.trim();
+        String tagName = line;
         Tag tag;
         if (tagsAndIndents.isEmpty()) {
             tag = Tag.createRoot(tagType, tagName);
@@ -121,7 +141,22 @@ public class IndentedFileTagLoader implements TagLoader {
         tagsAndIndents.push(new TagAndIndent(tag, indent));
     }
 
-    private int parseIndent(String line) {
+    private IndentAndRemainder handleIndent(String line) {
+        IndentAndRemainder indentAndRemainder = parseIndent(line);
+        int indent = indentAndRemainder.indent;
+        for (int i = tagsAndIndents.size(); i > 0; i--) {
+            if (tagsAndIndents.peek().indent >= indent) {
+                tagsAndIndents.pop();
+            }
+            else {
+                break;
+            }
+        }
+
+        return indentAndRemainder;
+    }
+
+    private IndentAndRemainder parseIndent(String line) {
         int i = 0;
         while (Character.isWhitespace(line.charAt(i))) {
             boolean isTab = (line.charAt(i) == '\t');
@@ -139,7 +174,27 @@ public class IndentedFileTagLoader implements TagLoader {
             i++;
         }
 
-        return i;
+        // Leading "<" reduces the indent, allowing negative indent
+        // << bird
+        // < sparrow
+        // tree sparrow
+        int indent = i;
+        while (line.charAt(i) == '<') {
+            i++;
+            indent--;
+        }
+
+        return new IndentAndRemainder(indent, line.substring(i).trim());
+    }
+
+    private static final class IndentAndRemainder {
+        private final int indent;
+        private final String remainder;
+
+        IndentAndRemainder(int indent, String remainder) {
+            this.indent = indent;
+            this.remainder = remainder;
+        }
     }
 
     private static final class TagAndIndent {

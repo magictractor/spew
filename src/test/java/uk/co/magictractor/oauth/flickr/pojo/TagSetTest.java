@@ -13,7 +13,7 @@ public class TagSetTest {
     public void getDeepestTag() {
         TagSet tags = new TagSet("rbge fourspottedchaser");
 
-        assertThat(tags.getDeepestTag(TagType.SUBJECT).getTagName()).isEqualTo("Four-spotted chaser");
+        assertThat(tags.getDeepestTag(TagType.SUBJECT).getTagName()).isEqualTo("four-spotted chaser");
     }
 
     @Test
@@ -30,7 +30,7 @@ public class TagSetTest {
         // assertThat(tags.getCompactTagNamesWithParents(), equalTo("fourspottedchaser
         // dragonfly odonata insect rbge edinburgh"));
         assertThat(tags.getQuotedTagNamesWithAliasesAndParents())
-                .isEqualTo("\"Four-spotted chaser\" \"Dragonfly\" \"Odonata\" \"Insect\" \"RBGE\" \"Edinburgh\"");
+                .isEqualTo("\"four-spotted chaser\" \"dragonfly\" \"odonata\" \"insect\" \"RBGE\" \"Edinburgh\"");
     }
 
     @Test
@@ -40,17 +40,6 @@ public class TagSetTest {
         // assertThat(tags.getCompactTagNamesWithParents(), equalTo("unknown rbge
         // edinburgh"));
         assertThat(tags.getQuotedTagNamesWithAliasesAndParents()).isEqualTo("\"unknown\" \"RBGE\" \"Edinburgh\"");
-    }
-
-    // TEMP while moving tags to config files
-    @Test
-    public void getQuotedTagNamesWithParents_config_file() {
-        TagSet tags = new TagSet("rbge redparrot");
-
-        // assertThat(tags.getCompactTagNamesWithParents(), equalTo("fourspottedchaser
-        // dragonfly odonata insect rbge edinburgh"));
-        assertThat(tags.getQuotedTagNamesWithAliasesAndParents())
-                .isEqualTo("\"red parrot\" \"parrot\" \"birdie\" \"RBGE\" \"Edinburgh\"");
     }
 
 }

@@ -159,16 +159,16 @@ public class HardcodedTagLoader implements TagLoader {
         init(butterfly, "Peacock", "Green veined white", "Large white", "Orange-tip", "Speckled wood", "Small copper",
             "Red admiral", "Comma", "Painted lady", "Ringlet", "Small white");
 
-        Tag moth = init(lepidoptera, "Moth");
-        init(moth, "Silver Y");
-        init(moth, "Copper underwing");
+        //        Tag moth = init(lepidoptera, "Moth");
+        //        init(moth, "Silver Y");
+        //        init(moth, "Copper underwing");
 
-        Tag odonata = init(insect, "Odonata");
-        Tag damselfly = init(odonata, "Damselfly");
-        Tag dragonfly = init(odonata, "Dragonfly");
-        init(damselfly, "Blue-tailed damselfly", "Common blue damselfly", "Azure damselfly", "Emerald damselfly",
-            "Large red damselfly");
-        init(dragonfly, "Common darter", "Black darter", "Common hawker", "Four-spotted chaser");
+        //        Tag odonata = init(insect, "Odonata");
+        //        Tag damselfly = init(odonata, "Damselfly");
+        //        Tag dragonfly = init(odonata, "Dragonfly");
+        //        init(damselfly, "Blue-tailed damselfly", "Common blue damselfly", "Azure damselfly", "Emerald damselfly",
+        //            "Large red damselfly");
+        //        init(dragonfly, "Common darter", "Black darter", "Common hawker", "Four-spotted chaser");
 
         init(insect, "Mayfly");
 
@@ -182,8 +182,19 @@ public class HardcodedTagLoader implements TagLoader {
     }
 
     private Tag init(TagType tagType, String tagName) {
-        //        Tag tag = new Tag(tagType, tagName);
-        //        return tag;
+        // Allow root to already have been defined in a resource file while
+        // hardcoded values are migrated.
+        Tag existing = Tag.fetchTagIfPresent(tagName);
+        if (existing != null) {
+            if (!tagType.equals(existing.getTagType())) {
+                throw new IllegalStateException("Existing tag has different type");
+            }
+            if (existing.getParent() != null) {
+                throw new IllegalStateException("Existing tag is not a root tag");
+            }
+            return existing;
+        }
+
         return Tag.createRoot(tagType, tagName);
     }
 

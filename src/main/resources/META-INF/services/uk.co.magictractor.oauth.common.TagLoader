@@ -1,2 +1,2 @@
-uk.co.magictractor.oauth.common.HardcodedTagLoader
 uk.co.magictractor.oauth.common.IndentedFileTagLoader
+uk.co.magictractor.oauth.common.HardcodedTagLoader

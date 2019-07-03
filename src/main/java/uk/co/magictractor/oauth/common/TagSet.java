@@ -20,6 +20,7 @@ public class TagSet {
 
         for (String compactTagName : tagString.split(" ")) {
 
+            // TODO! something here to check whether all aliases are included??
             Tag tag = Tag.fetchOrCreateTag(compactTagName);
             if (tag == null) {
                 throw new IllegalStateException();
