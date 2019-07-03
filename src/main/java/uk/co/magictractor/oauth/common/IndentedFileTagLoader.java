@@ -50,7 +50,7 @@ public class IndentedFileTagLoader implements TagLoader {
 
     public IndentedFileTagLoader() {
         // TODO! allow system property to override the default name and encoding (UTF-8 default)
-        this(rootResource("master.tags"));
+        this(rootResource("tags/master.tags"));
     }
 
     private static URL rootResource(String resource) {
