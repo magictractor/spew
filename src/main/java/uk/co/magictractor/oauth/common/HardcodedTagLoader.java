@@ -22,23 +22,10 @@ package uk.co.magictractor.oauth.common;
 public class HardcodedTagLoader implements TagLoader {
 
     private static final String SUBJECT = "SUBJECT";
-    private static final String LOCATION = "LOCATION";
 
     @Override
     public void loadTags() {
-        initLocations();
         initSubjects();
-    }
-
-    private void initLocations() {
-        Tag edinburgh = init(LOCATION, "Edinburgh");
-        Tag fife = init(LOCATION, "Fife");
-        init(LOCATION, "Esk", "Musselburgh lagoons", "Roslin glen");
-
-        init(edinburgh, "RBGE", "Almond", "Balgreen", "Bawsinch", "Calton Hill", "Cammo", "Corstorphine Hill",
-            "Fountainbridge", "Figgate Park", "Holyrood Park", "Inverleith Park", "Lochend Park",
-            "Montgomery Street Park", "Pilrig Park", "Portobello", "Princes Street Gardens", "Straighton",
-            "Water of Leith");
     }
 
     private void initSubjects() {
