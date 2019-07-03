@@ -34,6 +34,9 @@ public class FlickrPhotoIterator extends PageCountServiceIterator<FlickrPhoto> {
     // value will be returned. The date can be in the form of a mysql datetime or
     // unix timestamp.
 
+    private FlickrPhotoIterator() {
+    }
+
     @Override
     protected List<FlickrPhoto> fetchPage(int pageNumber) {
         OAuthRequest request = OAuthRequest.createPostRequest(Flickr.REST_ENDPOINT);

@@ -4,7 +4,6 @@ import java.util.List;
 
 import com.jayway.jsonpath.TypeRef;
 
-import uk.co.magictractor.oauth.api.OAuthConnection;
 import uk.co.magictractor.oauth.api.OAuthRequest;
 import uk.co.magictractor.oauth.api.OAuthResponse;
 import uk.co.magictractor.oauth.api.PageTokenServiceIterator;
@@ -16,8 +15,7 @@ public class TweetIterator extends PageTokenServiceIterator<Tweet> {
     // If non-null fetch tweets for user with this screen name, otherwise tweets are fetched for the authenticated user.
     private String screenName;
 
-    public TweetIterator(OAuthConnection connection) {
-        super(connection);
+    private TweetIterator() {
     }
 
     public TweetIterator withScreenName(String screenName) {
@@ -65,6 +63,14 @@ public class TweetIterator extends PageTokenServiceIterator<Tweet> {
         }
 
         return new PageAndNextToken<>(page, nextToken);
+    }
+
+    public static class TweetIteratorBuilder
+            extends PageTokenServiceIteratorBuilder<Tweet, TweetIterator, TweetIteratorBuilder> {
+
+        public TweetIteratorBuilder() {
+            super(new TweetIterator());
+        }
     }
 
 }

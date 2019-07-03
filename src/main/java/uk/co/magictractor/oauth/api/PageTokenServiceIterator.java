@@ -16,8 +16,7 @@ public abstract class PageTokenServiceIterator<E> extends PageServiceIterator<E>
     private boolean first = true;
     private String nextPageToken = null;
 
-    protected PageTokenServiceIterator(OAuthConnection connection) {
-        super(connection);
+    protected PageTokenServiceIterator() {
     }
 
     @Override
@@ -48,6 +47,14 @@ public abstract class PageTokenServiceIterator<E> extends PageServiceIterator<E>
         public PageAndNextToken(List<? extends E> page, String nextToken) {
             this.page = page == null ? Collections.emptyList() : page;
             this.nextToken = nextToken;
+        }
+    }
+
+    public static class PageTokenServiceIteratorBuilder<E, I extends PageTokenServiceIterator<E>, B>
+            extends PageServiceIteratorBuilder<E, I, B> {
+
+        protected PageTokenServiceIteratorBuilder(I iteratorInstance) {
+            super(iteratorInstance);
         }
     }
 

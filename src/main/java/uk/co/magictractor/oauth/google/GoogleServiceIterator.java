@@ -2,16 +2,13 @@ package uk.co.magictractor.oauth.google;
 
 import java.util.List;
 
-import uk.co.magictractor.oauth.api.OAuthConnection;
 import uk.co.magictractor.oauth.api.OAuthRequest;
 import uk.co.magictractor.oauth.api.OAuthResponse;
 import uk.co.magictractor.oauth.api.PageTokenServiceIterator;
-import uk.co.magictractor.oauth.api.PageTokenServiceIterator.PageAndNextToken;
 
 public abstract class GoogleServiceIterator<E> extends PageTokenServiceIterator<E> {
 
-    protected GoogleServiceIterator(OAuthConnection connection) {
-        super(connection);
+    protected GoogleServiceIterator() {
     }
 
     @Override
@@ -20,9 +17,6 @@ public abstract class GoogleServiceIterator<E> extends PageTokenServiceIterator<
 
         request.setParam("pageToken", pageToken);
 
-        // OAuthResponse response = new OAuth2Connection(MyGooglePhotosApp.getInstance()).request(request);
-
-        // TODO! must not have hard coded app in the middle of the iterator!
         OAuthResponse response = getConnection().request(request);
 
         List<? extends E> page = parsePageResponse(response);
@@ -34,5 +28,13 @@ public abstract class GoogleServiceIterator<E> extends PageTokenServiceIterator<
     protected abstract OAuthRequest createPageRequest();
 
     protected abstract List<? extends E> parsePageResponse(OAuthResponse response);
+
+    public static class GoogleServiceIteratorBuilder<E, I extends GoogleServiceIterator<E>, B>
+            extends PageServiceIteratorBuilder<E, I, B> {
+
+        protected GoogleServiceIteratorBuilder(I iteratorInstance) {
+            super(iteratorInstance);
+        }
+    }
 
 }

@@ -22,11 +22,6 @@ public abstract class PageCountServiceIterator<E> extends PageServiceIterator<E>
     protected PageCountServiceIterator() {
     }
 
-    // TODO! bin this
-    protected PageCountServiceIterator(OAuthConnection connection) {
-        super(connection);
-    }
-
     @Override
     protected List<E> nextPage() {
         /*

@@ -1,7 +1,5 @@
 package uk.co.magictractor.oauth.imgur;
 
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -9,9 +7,7 @@ import uk.co.magictractor.oauth.api.OAuthConnection;
 import uk.co.magictractor.oauth.api.OAuthRequest;
 import uk.co.magictractor.oauth.api.OAuthResponse;
 import uk.co.magictractor.oauth.api.PageCountServiceIterator;
-import uk.co.magictractor.oauth.api.PhotoIterator;
 import uk.co.magictractor.oauth.api.connection.OAuthConnectionFactory;
-import uk.co.magictractor.oauth.common.filter.PhotoFilter;
 import uk.co.magictractor.oauth.imgur.pojo.ImgurImage;
 import uk.co.magictractor.oauth.imgur.pojo.ImgurImages;
 
@@ -204,21 +200,14 @@ import uk.co.magictractor.oauth.imgur.pojo.ImgurImages;
 //    "success": true,
 //    "status": 200
 //}
-public class ImgurPhotoIterator extends PageCountServiceIterator<ImgurImage> implements PhotoIterator<ImgurImage> {
+public class ImgurPhotoIterator extends PageCountServiceIterator<ImgurImage> {
 
     // min_taken_date (Optional)
     // Minimum taken date. Photos with an taken date greater than or equal to this
     // value will be returned. The date can be in the form of a mysql datetime or
     // unix timestamp.
 
-    public ImgurPhotoIterator(OAuthConnection connection) {
-        super(connection);
-    }
-
-    @Override
-    public Collection<Class<? extends PhotoFilter>> supportedPhotoFilters() {
-        // Imgur /images/ does not support filters.
-        return Collections.emptySet();
+    private ImgurPhotoIterator() {
     }
 
     // Get images https://apidocs.imgur.com/#2e45daca-bd44-47f8-84b0-b3f2aa861735
@@ -246,10 +235,18 @@ public class ImgurPhotoIterator extends PageCountServiceIterator<ImgurImage> imp
         return images.getImages();
     }
 
+    public static class ImgurPhotoIteratorBuilder
+            extends PageCountServiceIteratorBuilder<ImgurImage, ImgurPhotoIterator, ImgurPhotoIteratorBuilder> {
+
+        public ImgurPhotoIteratorBuilder() {
+            super(new ImgurPhotoIterator());
+        }
+    }
+
     public static void main(String[] args) {
         OAuthConnection connection = OAuthConnectionFactory.getConnection(MyImgurApp.class);
-        Iterator<ImgurImage> iter = new ImgurPhotoIterator(connection).builder()
-                //.withFilter(new DateTakenPhotoFilter(DateRange.forYear(2019)))
+        Iterator<ImgurImage> iter = new ImgurPhotoIteratorBuilder()
+                .withConnection(connection)
                 .build();
         while (iter.hasNext()) {
             ImgurImage photo = iter.next();

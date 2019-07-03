@@ -1,32 +1,20 @@
 package uk.co.magictractor.oauth.imagebam;
 
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 import uk.co.magictractor.oauth.api.OAuthConnection;
 import uk.co.magictractor.oauth.api.OAuthRequest;
 import uk.co.magictractor.oauth.api.OAuthResponse;
 import uk.co.magictractor.oauth.api.PageCountServiceIterator;
-import uk.co.magictractor.oauth.api.PhotoIterator;
 import uk.co.magictractor.oauth.api.connection.OAuthConnectionFactory;
-import uk.co.magictractor.oauth.common.filter.PhotoFilter;
 import uk.co.magictractor.oauth.flickr.pojo.FlickrPhotos;
 import uk.co.magictractor.oauth.imagebam.pojo.ImageBamPhoto;
 
-public class ImageBamPhotoIterator extends PageCountServiceIterator<ImageBamPhoto>
-        implements PhotoIterator<ImageBamPhoto> {
+public class ImageBamPhotoIterator extends PageCountServiceIterator<ImageBamPhoto> {
 
-    private static final List<Class<? extends PhotoFilter>> SUPPORTED_FILTERS = Arrays.asList();
-
-    public ImageBamPhotoIterator(OAuthConnection connection) {
-        super(connection);
-    }
-
-    @Override
-    public Collection<Class<? extends PhotoFilter>> supportedPhotoFilters() {
-        return SUPPORTED_FILTERS;
+    private ImageBamPhotoIterator() {
     }
 
     @Override
@@ -55,11 +43,19 @@ public class ImageBamPhotoIterator extends PageCountServiceIterator<ImageBamPhot
         return Collections.emptyList();
     }
 
+    public static class ImageBamPhotoIteratorBuilder extends
+            PageCountServiceIteratorBuilder<ImageBamPhoto, ImageBamPhotoIterator, ImageBamPhotoIteratorBuilder> {
+
+        protected ImageBamPhotoIteratorBuilder() {
+            super(new ImageBamPhotoIterator());
+        }
+    }
+
     public static void main(String[] args) {
         OAuthConnection connection = OAuthConnectionFactory.getConnection(MyImageBamApp.class);
-        ImageBamPhotoIterator iter = new ImageBamPhotoIterator(connection);
-        while (iter.hasNext()) {
-            ImageBamPhoto photo = iter.next();
+        Iterator<ImageBamPhoto> iterator = new ImageBamPhotoIteratorBuilder().withConnection(connection).build();
+        while (iterator.hasNext()) {
+            ImageBamPhoto photo = iterator.next();
             System.err.println(photo.getTitle() + "  " + photo.getDateTimeTaken());
         }
     }

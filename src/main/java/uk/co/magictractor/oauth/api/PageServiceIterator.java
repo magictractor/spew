@@ -40,11 +40,6 @@ public abstract class PageServiceIterator<E> extends AbstractIterator<E> {
     protected PageServiceIterator() {
     }
 
-    // TODO! bin this once builder pattern is rolled out to all iterators
-    protected PageServiceIterator(OAuthConnection connection) {
-        this.connection = connection;
-    }
-
     protected final Logger getLogger() {
         return logger;
     }

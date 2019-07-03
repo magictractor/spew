@@ -1,5 +1,6 @@
 package uk.co.magictractor.oauth.google;
 
+import java.util.Iterator;
 import java.util.List;
 
 import com.jayway.jsonpath.TypeRef;
@@ -11,10 +12,9 @@ import uk.co.magictractor.oauth.api.connection.OAuthConnectionFactory;
 import uk.co.magictractor.oauth.common.Album;
 import uk.co.magictractor.oauth.google.pojo.GoogleAlbum;
 
-public class GoogleSharedAlbumsIterator extends GoogleServiceIterator<Album> {
+public class GoogleSharedAlbumsIterator extends GoogleServiceIterator<GoogleAlbum> {
 
-    protected GoogleSharedAlbumsIterator(OAuthConnection connection) {
-        super(connection);
+    private GoogleSharedAlbumsIterator() {
     }
 
     @Override
@@ -33,10 +33,19 @@ public class GoogleSharedAlbumsIterator extends GoogleServiceIterator<Album> {
         });
     }
 
+    public static class GoogleSharedAlbumsIteratorBuilder extends
+            GoogleServiceIteratorBuilder<GoogleAlbum, GoogleSharedAlbumsIterator, GoogleSharedAlbumsIteratorBuilder> {
+
+        public GoogleSharedAlbumsIteratorBuilder() {
+            super(new GoogleSharedAlbumsIterator());
+        }
+
+    }
+
     // https://developers.google.com/photos/library/reference/rest/v1/albums#Album
     public static void main(String[] args) {
         OAuthConnection connection = OAuthConnectionFactory.getConnection(MyGooglePhotosApp.class);
-        GoogleSharedAlbumsIterator iter = new GoogleSharedAlbumsIterator(connection);
+        Iterator<GoogleAlbum> iter = new GoogleSharedAlbumsIteratorBuilder().withConnection(connection).build();
         while (iter.hasNext()) {
             Album album = iter.next();
             System.err.println(
