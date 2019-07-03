@@ -14,8 +14,6 @@ public class TagSet {
      */
     // TODO! Flickr specific?
     public TagSet(String tagString) {
-        System.err.println("tagString: " + tagString);
-
         tags = new HashSet<>();
 
         for (String compactTagName : tagString.split(" ")) {

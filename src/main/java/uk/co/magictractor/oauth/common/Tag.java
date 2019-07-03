@@ -35,12 +35,12 @@ public class Tag {
     private final List<Tag> children = new ArrayList<>();
 
     public static Tag createRoot(TagType tagType, String tagName) {
-        System.err.println("create root: " + tagName);
+        // System.err.println("create root: " + tagName);
         return new Tag(tagType, null, tagName, 0);
     }
 
     public static Tag createChild(Tag parent, String tagName) {
-        System.err.println("create child: " + tagName + " with parent " + parent.tagName);
+        // System.err.println("create child: " + tagName + " with parent " + parent.tagName);
         return new Tag(parent.tagType, parent, tagName, parent.depth + 1);
     }
 

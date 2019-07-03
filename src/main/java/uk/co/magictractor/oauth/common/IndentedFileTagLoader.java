@@ -74,8 +74,6 @@ public class IndentedFileTagLoader implements TagLoader {
     }
 
     private void handleLine(String line) {
-        System.err.println(line);
-
         if (line.trim().isEmpty()) {
             return;
         }
@@ -107,7 +105,6 @@ public class IndentedFileTagLoader implements TagLoader {
         catch (MalformedURLException e) {
             throw new IllegalArgumentException(e);
         }
-        System.err.println("other: " + otherResource);
 
         IndentedFileTagLoader other = new IndentedFileTagLoader(otherResource);
         other.tagType = tagType;
@@ -130,7 +127,6 @@ public class IndentedFileTagLoader implements TagLoader {
                 "Missing tag type - tag types are on a line starting with an exclamation mark");
         }
 
-        // String[] tagNameAndAliases = line.split("=");
         Iterator<String> tagNameAndAliases = Splitter.on("=")
                 .trimResults()
                 .splitToList(line)
