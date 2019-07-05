@@ -34,6 +34,7 @@ public abstract class PageServiceIterator<E> extends AbstractIterator<E> {
      */
     private Integer pageSize;
 
+    private boolean hasNextPage = true;
     private List<? extends E> currentPage = Collections.emptyList();
     private int nextPageItemIndex;
 
@@ -50,17 +51,34 @@ public abstract class PageServiceIterator<E> extends AbstractIterator<E> {
 
     @Override
     public E computeNext() {
+        // while loop because a Twitter page could (theoretically) be empty
+        // but still have subsequent pages to fetch, for example if retweets
+        // are excluded and the page contained only retweets
         if (nextPageItemIndex >= currentPage.size()) {
-            currentPage = nextPage();
-            if (currentPage.isEmpty()) {
-                // Freshly fetched page is empty - we're done.
-                // TODO! not necessarily true with small pages from Twitter?
+            if (!hasNextPage) {
+                // No more data and no more pages - we're done.
                 return endOfData();
             }
+            currentPage = nextPage();
             nextPageItemIndex = 0;
         }
 
         return currentPage.get(nextPageItemIndex++);
+    }
+
+    /**
+     * <p>
+     * Note that this could be called from a nextPage() implementation which
+     * returns a non-empty List. This may be done if the implementation knows
+     * that it's the last page.
+     * </p>
+     * <p>
+     * Like AbstractIterator#endOfData().
+     * </p>
+     */
+    protected List<E> endOfPages() {
+        hasNextPage = false;
+        return Collections.emptyList();
     }
 
     protected abstract List<? extends E> nextPage();

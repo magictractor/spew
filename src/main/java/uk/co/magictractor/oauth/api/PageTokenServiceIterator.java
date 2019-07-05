@@ -12,8 +12,6 @@ import java.util.List;
  */
 public abstract class PageTokenServiceIterator<E> extends PageServiceIterator<E> {
 
-    // The first page should be fetched without a nextPageToken.
-    private boolean first = true;
     private String nextPageToken = null;
 
     protected PageTokenServiceIterator() {
@@ -21,17 +19,13 @@ public abstract class PageTokenServiceIterator<E> extends PageServiceIterator<E>
 
     @Override
     protected List<? extends E> nextPage() {
-        if (first || nextPageToken != null) {
-            // Get first page, or next page.
-            PageAndNextToken<E> pageAndNextToken = fetchPage(nextPageToken);
-            first = false;
-            nextPageToken = pageAndNextToken.nextToken;
-            return pageAndNextToken.page;
+        // Get first page, or next page.
+        PageAndNextToken<E> pageAndNextToken = fetchPage(nextPageToken);
+        nextPageToken = pageAndNextToken.nextToken;
+        if (nextPageToken == null) {
+            endOfPages();
         }
-        else {
-            // Previously fetched page had no nextPageToken, so we're done.
-            return Collections.emptyList();
-        }
+        return pageAndNextToken.page;
     }
 
     protected abstract PageAndNextToken<E> fetchPage(String pageToken);

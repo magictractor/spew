@@ -1,6 +1,5 @@
 package uk.co.magictractor.oauth.api;
 
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -32,7 +31,7 @@ public abstract class PageCountServiceIterator<E> extends PageServiceIterator<E>
         // TODO! could check total item count too
         if (totalPageCount != UNKNOWN && nextPageNumber > totalPageCount) {
             // TODO! logging
-            return Collections.emptyList();
+            return endOfPages();
         }
         else {
             return fetchPage(nextPageNumber++);
