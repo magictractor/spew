@@ -13,6 +13,9 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import uk.co.magictractor.spew.local.files.PathComparators;
+import uk.co.magictractor.spew.local.files.PathIterator;
+
 public class PathIteratorTest {
 
     private static Path testResourcesDirectory;

@@ -8,9 +8,9 @@ import java.nio.file.Paths;
 
 import org.junit.jupiter.api.Test;
 
-import uk.co.magictractor.oauth.common.Photo;
-import uk.co.magictractor.oauth.local.LocalPhoto;
-import uk.co.magictractor.oauth.util.ExceptionUtil;
+import uk.co.magictractor.spew.common.Photo;
+import uk.co.magictractor.spew.local.LocalPhoto;
+import uk.co.magictractor.spew.util.ExceptionUtil;
 
 public class LocalPhotoTest {
 

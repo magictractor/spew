@@ -2,9 +2,10 @@ package uk.co.magictractor.oauth.util;
 
 import java.io.InputStream;
 
-import uk.co.magictractor.oauth.api.OAuthJsonResponse;
-import uk.co.magictractor.oauth.api.OAuthResponse;
-import uk.co.magictractor.oauth.google.Google;
+import uk.co.magictractor.spew.api.OAuthJsonResponse;
+import uk.co.magictractor.spew.api.OAuthResponse;
+import uk.co.magictractor.spew.google.Google;
+import uk.co.magictractor.spew.util.IOUtil;
 
 public final class ResourceUtil {
 

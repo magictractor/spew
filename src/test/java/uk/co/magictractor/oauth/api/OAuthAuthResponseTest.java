@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
 
+import uk.co.magictractor.spew.api.OAuthAuthResponse;
+
 public class OAuthAuthResponseTest {
 
     private static final String RESPONSE = "oauth_callback_confirmed=true&oauth_token=72157697915783691-9402de420a27bdea&oauth_token_secret=a1b946e524187d3d";

@@ -6,6 +6,9 @@ import java.time.LocalDate;
 
 import org.junit.jupiter.api.Test;
 
+import uk.co.magictractor.spew.local.dates.DateRange;
+import uk.co.magictractor.spew.local.dates.DefaultLocalDirectoryDatesStrategy;
+
 public class DefaultLocalDirectoryDatesStrategyTest {
 
     private DefaultLocalDirectoryDatesStrategy strategy = new DefaultLocalDirectoryDatesStrategy();

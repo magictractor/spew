@@ -9,11 +9,12 @@ import java.time.ZonedDateTime;
 
 import org.junit.jupiter.api.Test;
 
-import uk.co.magictractor.oauth.api.OAuthJsonResponse;
-import uk.co.magictractor.oauth.api.OAuthResponse;
-import uk.co.magictractor.oauth.common.TagSet;
-import uk.co.magictractor.oauth.flickr.pojo.FlickrPhoto;
-import uk.co.magictractor.oauth.util.IOUtil;
+import uk.co.magictractor.spew.api.OAuthJsonResponse;
+import uk.co.magictractor.spew.api.OAuthResponse;
+import uk.co.magictractor.spew.common.TagSet;
+import uk.co.magictractor.spew.flickr.Flickr;
+import uk.co.magictractor.spew.flickr.pojo.FlickrPhoto;
+import uk.co.magictractor.spew.util.IOUtil;
 
 public class FlickrResponseTest {
 

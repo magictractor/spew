@@ -10,8 +10,10 @@ import java.time.ZonedDateTime;
 
 import org.junit.jupiter.api.Test;
 
-import uk.co.magictractor.oauth.common.Photo;
-import uk.co.magictractor.oauth.util.ExceptionUtil;
+import uk.co.magictractor.spew.common.Photo;
+import uk.co.magictractor.spew.local.ExifPropertiesSupplierFactory;
+import uk.co.magictractor.spew.local.PropertySuppliedPhoto;
+import uk.co.magictractor.spew.util.ExceptionUtil;
 
 public class ExifPropertiesSupplierFactoryTest {
 
