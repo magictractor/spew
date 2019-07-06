@@ -7,6 +7,7 @@ import uk.co.magictractor.spew.api.OAuthApplication;
 import uk.co.magictractor.spew.api.OAuthConnection;
 import uk.co.magictractor.spew.util.ExceptionUtil;
 
+//
 public class OAuthConnectionFactory {
 
     private static Map<Class<? extends OAuthApplication>, OAuthConnection> connections = new HashMap<>();

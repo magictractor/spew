@@ -4,8 +4,9 @@ public interface OAuthConnection { // <APP extends OAuthApplication, SP extends 
 
     OAuthResponse request(OAuthRequest apiRequest);
 
-    //	OAuthApplication getApplication();
-    //	
+    //OAuthApplication getApplication();
+
+    //
     //	// ?
     //	default OAuthServiceProvider getServiceProvider() {
     //		return getApplication().getServiceProvider();
