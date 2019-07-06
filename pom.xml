@@ -3,7 +3,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>uk.co.magictractor</groupId>
-	<artifactId>oauth</artifactId>
+	<artifactId>spew</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 
 	<!-- https://stackoverflow.com/questions/38993446/cannot-create-launcher-without-at-least-one-testengine-consider-adding-an-engin -->
