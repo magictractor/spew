@@ -4,7 +4,7 @@ Spew provides code for use by clients interacting with service providers such as
 
 There is also code for managing photos hosted by service providers which also have a local copy.
 
-===== Should you use it?
+=== Should you use it?
 
 Probably not. This code is experimental and subject to radical change at no notice. It's being used and maintained by a single developer and is not ready for sharing.
 
@@ -12,13 +12,13 @@ The OAuth client implementation is hand-rolled. That will probably change so tha
 
 If you're having trouble connecting to one of the services which Spew interacts with, looking at the code here might be helpful. TODO! more pointers.
 
-===== Why Spew?
+=== Why Spew?
 
 Spew stands for Service Provider Easy Win.
 
 When thinking of words beginning with "sp", "spew" jumped to mind, and Easy Win was extrapolated from that.
 
-===== History
+=== History
 
 This project started with a hand-rolled OAuth client to help manage photographs hosted on Flickr.
 
