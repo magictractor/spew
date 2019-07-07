@@ -91,8 +91,8 @@ public class HardcodedTagLoader implements TagLoader {
         Tag whiteThroat = init(bird, "White throat");
         init(whiteThroat, "Common white throat");
 
-        Tag woodpecker = init(bird, "Woodpecker");
-        init(woodpecker, "Green woodpecker", "Great spotted woodpecker");
+        //Tag woodpecker = init(bird, "Woodpecker");
+        //init(woodpecker, "Green woodpecker", "Great spotted woodpecker");
         // gulls and woodpeckers and swans and warblers
         // "Black-headed gull",
     }
