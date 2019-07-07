@@ -3,9 +3,9 @@ package uk.co.magictractor.spew.imgur;
 import java.util.Iterator;
 import java.util.List;
 
-import uk.co.magictractor.spew.api.OAuthConnection;
-import uk.co.magictractor.spew.api.OAuthRequest;
-import uk.co.magictractor.spew.api.OAuthResponse;
+import uk.co.magictractor.spew.api.SpewConnection;
+import uk.co.magictractor.spew.api.SpewRequest;
+import uk.co.magictractor.spew.api.SpewResponse;
 import uk.co.magictractor.spew.api.PageCountServiceIterator;
 import uk.co.magictractor.spew.api.connection.OAuthConnectionFactory;
 import uk.co.magictractor.spew.imgur.pojo.ImgurImage;
@@ -213,7 +213,7 @@ public class ImgurPhotoIterator extends PageCountServiceIterator<ImgurImage> {
     // Get images https://apidocs.imgur.com/#2e45daca-bd44-47f8-84b0-b3f2aa861735
     @Override
     protected List<ImgurImage> fetchPage(int pageNumber) {
-        OAuthRequest request = OAuthRequest
+        SpewRequest request = SpewRequest
                 .createGetRequest(Imgur.REST_ENDPOINT + "/account/me/images/" + (pageNumber - 1));
 
         // request.setParam("method", "account/me/images/page/" + (pageNumber - 1));
@@ -224,7 +224,7 @@ public class ImgurPhotoIterator extends PageCountServiceIterator<ImgurImage> {
         //		// default is 100, max is 500
         //		request.setParam("per_page", 500);
 
-        OAuthResponse response = getConnection().request(request);
+        SpewResponse response = getConnection().request(request);
 
         System.err.println(response);
 
@@ -238,13 +238,13 @@ public class ImgurPhotoIterator extends PageCountServiceIterator<ImgurImage> {
     public static class ImgurPhotoIteratorBuilder
             extends PageCountServiceIteratorBuilder<ImgurImage, ImgurPhotoIterator, ImgurPhotoIteratorBuilder> {
 
-        public ImgurPhotoIteratorBuilder(OAuthConnection connection) {
+        public ImgurPhotoIteratorBuilder(SpewConnection connection) {
             super(connection, new ImgurPhotoIterator());
         }
     }
 
     public static void main(String[] args) {
-        OAuthConnection connection = OAuthConnectionFactory.getConnection(MyImgurApp.class);
+        SpewConnection connection = OAuthConnectionFactory.getConnection(MyImgurApp.class);
         Iterator<ImgurImage> iter = new ImgurPhotoIteratorBuilder(connection)
                 .build();
         while (iter.hasNext()) {

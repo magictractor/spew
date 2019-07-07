@@ -10,7 +10,7 @@ import java.time.ZonedDateTime;
 import org.junit.jupiter.api.Test;
 
 import uk.co.magictractor.spew.api.OAuthJsonResponse;
-import uk.co.magictractor.spew.api.OAuthResponse;
+import uk.co.magictractor.spew.api.SpewResponse;
 import uk.co.magictractor.spew.common.TagSet;
 import uk.co.magictractor.spew.flickr.Flickr;
 import uk.co.magictractor.spew.flickr.pojo.FlickrPhoto;
@@ -20,7 +20,7 @@ public class FlickrResponseTest {
 
     @Test
     void t() {
-        OAuthResponse response = buildResponse("getPhotos.json");
+        SpewResponse response = buildResponse("getPhotos.json");
 
         System.err.println(response);
         Object photos = response.getObject("photos");
@@ -55,7 +55,7 @@ public class FlickrResponseTest {
         assertThat(photo.getDateTimeUpload()).isEqualTo(Instant.ofEpochMilli(1534007093L));
     }
 
-    private OAuthResponse buildResponse(String fileName) {
+    private SpewResponse buildResponse(String fileName) {
         InputStream in = getClass().getResourceAsStream(fileName);
         String json = IOUtil.readStringAndClose(in);
         return new OAuthJsonResponse(json, Flickr.getInstance().getJsonConfiguration());

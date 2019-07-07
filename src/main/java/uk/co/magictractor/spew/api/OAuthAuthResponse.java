@@ -6,7 +6,7 @@ import java.util.Map;
 import com.jayway.jsonpath.TypeRef;
 
 //TODO! bin this?
-public class OAuthAuthResponse implements OAuthResponse {
+public class OAuthAuthResponse implements SpewResponse {
 
     private final Map<String, String> values = new HashMap<>();
 

@@ -7,7 +7,7 @@ import com.jayway.jsonpath.TypeRef;
 
 // https://stackoverflow.com/questions/34111276/jsonpath-with-jackson-or-gson
 // https://github.com/json-path/JsonPath
-public class OAuthJsonResponse implements OAuthResponse {
+public class OAuthJsonResponse implements SpewResponse {
 
     private ReadContext ctx;
 

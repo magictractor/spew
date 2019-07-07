@@ -2,7 +2,7 @@ package uk.co.magictractor.spew.api;
 
 import com.jayway.jsonpath.TypeRef;
 
-public interface OAuthResponse {
+public interface SpewResponse {
 
     <T> T getObject(String key, Class<T> type);
 

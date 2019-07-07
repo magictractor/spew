@@ -20,12 +20,12 @@ import org.springframework.social.oauth1.OAuthToken;
 import org.springframework.web.client.RestOperations;
 
 import uk.co.magictractor.spew.api.OAuth1Application;
-import uk.co.magictractor.spew.api.OAuthConnection;
-import uk.co.magictractor.spew.api.OAuthRequest;
-import uk.co.magictractor.spew.api.OAuthResponse;
+import uk.co.magictractor.spew.api.SpewConnection;
+import uk.co.magictractor.spew.api.SpewRequest;
+import uk.co.magictractor.spew.api.SpewResponse;
 import uk.co.magictractor.spew.token.UserPreferencesPersister;
 
-public class SpringSocialOAuth1Connection implements OAuthConnection {
+public class SpringSocialOAuth1Connection implements SpewConnection {
 
     private UserPreferencesPersister userToken;
     private UserPreferencesPersister userSecret;
@@ -43,7 +43,7 @@ public class SpringSocialOAuth1Connection implements OAuthConnection {
     }
 
     @Override
-    public OAuthResponse request(OAuthRequest apiRequest) {
+    public SpewResponse request(SpewRequest apiRequest) {
         connection.createData();
 
         return null;

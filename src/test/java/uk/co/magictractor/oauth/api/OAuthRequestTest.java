@@ -4,13 +4,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
 
-import uk.co.magictractor.spew.api.OAuthRequest;
+import uk.co.magictractor.spew.api.SpewRequest;
 
 class OAuthRequestTest {
 
     @Test
     void testUrl() {
-        OAuthRequest request = setUpExampleRequest();
+        SpewRequest request = setUpExampleRequest();
         // TODO! hamcrest
         // assertThat(request.getUrl(), Matchers.eq)
         assertEquals("https://api.flickr.com/services/rest/request_token", request.getUrl());
@@ -35,8 +35,8 @@ class OAuthRequestTest {
     /**
      * Set up example from https://www.flickr.com/services/api/auth.oauth.html
      */
-    private OAuthRequest setUpExampleRequest() {
-        OAuthRequest request = OAuthRequest.createPostRequest("https://api.flickr.com/services/rest/request_token");
+    private SpewRequest setUpExampleRequest() {
+        SpewRequest request = SpewRequest.createPostRequest("https://api.flickr.com/services/rest/request_token");
 
         // request.removeParam("format");
         // request.removeParam("nojsoncallback");

@@ -20,7 +20,7 @@ import uk.co.magictractor.spew.util.IOUtil;
 
 // Common code for OAuth1 and OAuth2 implementations.
 public abstract class AbstractOAuthConnection<APP extends OAuthApplication, SP extends OAuthServiceProvider>
-        extends AbstractConnection<APP, SP> implements OAuthConnection {
+        extends AbstractConnection<APP, SP> implements SpewConnection {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -34,12 +34,12 @@ public abstract class AbstractOAuthConnection<APP extends OAuthApplication, SP e
 
     // TODO! return Netty HttpResponse instead - Configuration shouldn't embedded
     // here? - can remove configuration param and get via service provider
-    protected OAuthResponse request0(OAuthRequest request, Configuration jsonConfiguration) throws IOException {
+    protected SpewResponse request0(SpewRequest request, Configuration jsonConfiguration) throws IOException {
         return request0(request, jsonConfiguration, null);
     }
 
     // http://www.baeldung.com/java-http-request
-    protected OAuthResponse request0(OAuthRequest request, Configuration jsonConfiguration,
+    protected SpewResponse request0(SpewRequest request, Configuration jsonConfiguration,
             Consumer<HttpURLConnection> initConnection) throws IOException {
 
         // To look at URLStreamHandler
@@ -114,11 +114,11 @@ public abstract class AbstractOAuthConnection<APP extends OAuthApplication, SP e
         }
     }
 
-    private String buildRequestBody(OAuthRequest request, Configuration jsonConfiguration) {
+    private String buildRequestBody(SpewRequest request, Configuration jsonConfiguration) {
         return jsonConfiguration.jsonProvider().toJson(request.getParams());
     }
 
-    abstract protected String getUrl(OAuthRequest request);
+    abstract protected String getUrl(SpewRequest request);
 
     // make this private?
     protected final String getQueryString(Map<String, Object> params, Function<String, String> valueEncoder) {

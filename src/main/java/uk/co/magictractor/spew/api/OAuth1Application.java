@@ -14,7 +14,7 @@ public interface OAuth1Application extends OAuthApplication { // <OAuth1ServiceP
     String getAppSecret();
 
     @Override
-    default Supplier<OAuthConnection> getNewConnectionSupplier() {
+    default Supplier<SpewConnection> getNewConnectionSupplier() {
         //
         return () -> new OAuth1Connection(this);
     }

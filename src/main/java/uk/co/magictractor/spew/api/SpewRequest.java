@@ -3,33 +3,33 @@ package uk.co.magictractor.spew.api;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class OAuthRequest {
+public class SpewRequest {
 
     private final String httpMethod;
     private final String url;
     private final Map<String, Object> params = new LinkedHashMap<>();
 
-    public static final OAuthRequest createGetRequest(String url) {
-        return new OAuthRequest("GET", url);
+    public static final SpewRequest createGetRequest(String url) {
+        return new SpewRequest("GET", url);
     }
 
-    public static final OAuthRequest createPostRequest(String url) {
-        return new OAuthRequest("POST", url);
+    public static final SpewRequest createPostRequest(String url) {
+        return new SpewRequest("POST", url);
     }
 
-    public static final OAuthRequest createDelRequest(String url) {
-        return new OAuthRequest("DEL", url);
+    public static final SpewRequest createDelRequest(String url) {
+        return new SpewRequest("DEL", url);
     }
 
-    public static final OAuthRequest createPutRequest(String url) {
-        return new OAuthRequest("PUT", url);
+    public static final SpewRequest createPutRequest(String url) {
+        return new SpewRequest("PUT", url);
     }
 
-    public static final OAuthRequest createRequest(String httpMethod, String url) {
-        return new OAuthRequest(httpMethod, url);
+    public static final SpewRequest createRequest(String httpMethod, String url) {
+        return new SpewRequest(httpMethod, url);
     }
 
-    private OAuthRequest(String httpMethod, String url) {
+    private SpewRequest(String httpMethod, String url) {
         this.httpMethod = httpMethod;
         this.url = url;
     }

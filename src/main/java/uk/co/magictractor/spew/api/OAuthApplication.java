@@ -7,6 +7,6 @@ public interface OAuthApplication { // <SP extends OAuthServiceProvider> {
     // SP getServiceProvider();
     OAuthServiceProvider getServiceProvider();
 
-    Supplier<OAuthConnection> getNewConnectionSupplier();
+    Supplier<SpewConnection> getNewConnectionSupplier();
 
 }

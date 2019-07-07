@@ -53,7 +53,7 @@ public class OAuth2Connection extends AbstractOAuthConnection<OAuth2Application,
     }
 
     @Override
-    public OAuthResponse request(OAuthRequest apiRequest) {
+    public SpewResponse request(SpewRequest apiRequest) {
         // authenticate();
 
         if (accessToken.getValue() == null) {
@@ -88,7 +88,7 @@ public class OAuth2Connection extends AbstractOAuthConnection<OAuth2Application,
     }
 
     @Override
-    protected String getUrl(OAuthRequest request) {
+    protected String getUrl(SpewRequest request) {
         // String unsignedUrl = request.getUrl() + "?" +
         // getQueryString(request.getParams());
 
@@ -125,7 +125,7 @@ public class OAuth2Connection extends AbstractOAuthConnection<OAuth2Application,
 
     // https://developers.google.com/photos/library/guides/authentication-authorization
     private void authorize() {
-        OAuthRequest request = OAuthRequest.createGetRequest(getServiceProvider().getAuthorizationUri());
+        SpewRequest request = SpewRequest.createGetRequest(getServiceProvider().getAuthorizationUri());
 
         request.setParam("client_id", getApplication().getClientId());
         String redirectUri = getAuthorizeRedirectUrl();
@@ -228,7 +228,7 @@ public class OAuth2Connection extends AbstractOAuthConnection<OAuth2Application,
     // TODO! needs a tweak to handle pin
     private void fetchAccessAndRefreshToken(String code) {
         // ah! needed to be POST else 404 (Google)
-        OAuthRequest request = OAuthRequest.createPostRequest(getServiceProvider().getTokenUri());
+        SpewRequest request = SpewRequest.createPostRequest(getServiceProvider().getTokenUri());
 
         request.setParam("code", code);
         // request.setParam("pin", code);
@@ -248,7 +248,7 @@ public class OAuth2Connection extends AbstractOAuthConnection<OAuth2Application,
         request.setParam("redirect_uri", OOB);
         // request.setParam("scope", "");
 
-        OAuthResponse response = authRequest(request);
+        SpewResponse response = authRequest(request);
 
         refreshToken.setValue(response.getString("refresh_token"));
         // accessToken.setValue(response.getString("access_token"));
@@ -259,14 +259,14 @@ public class OAuth2Connection extends AbstractOAuthConnection<OAuth2Application,
     // TODO! handle invalid/expired refresh tokens
     // https://developers.google.com/identity/protocols/OAuth2InstalledApp#offline
     private void fetchRefreshedAccessToken() {
-        OAuthRequest request = OAuthRequest.createPostRequest(getServiceProvider().getTokenUri());
+        SpewRequest request = SpewRequest.createPostRequest(getServiceProvider().getTokenUri());
 
         request.setParam("refresh_token", refreshToken.getValue());
         request.setParam("client_id", getApplication().getClientId());
         request.setParam("client_secret", getApplication().getClientSecret());
 
         request.setParam("grant_type", "refresh_token");
-        OAuthResponse response = authRequest(request);
+        SpewResponse response = authRequest(request);
 
         // accessToken.setValue(response.getString("access_token"));
         // System.err.println("accessToken refreshed to " + accessToken.getValue());
@@ -329,7 +329,7 @@ public class OAuth2Connection extends AbstractOAuthConnection<OAuth2Application,
     //		  "token_type": "Bearer"
     //		}
 
-    private OAuthResponse authRequest(OAuthRequest apiRequest) {
+    private SpewResponse authRequest(SpewRequest apiRequest) {
         // forAll(apiRequest);
         return ExceptionUtil.call(() -> request0(apiRequest, getJsonConfiguration()));
     }

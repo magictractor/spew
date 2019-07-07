@@ -47,7 +47,7 @@ public final class OAuth1Connection extends AbstractOAuthConnection<OAuth1Applic
     }
 
     @Override
-    public OAuthResponse request(OAuthRequest apiRequest) {
+    public SpewResponse request(SpewRequest apiRequest) {
         // TODO! (optionally?) verify existing tokens?
         if (userToken.getValue() == null) {
             authenticateUser();
@@ -58,7 +58,7 @@ public final class OAuth1Connection extends AbstractOAuthConnection<OAuth1Applic
         return ExceptionUtil.call(() -> request0(apiRequest, getServiceProvider().getJsonConfiguration()));
     }
 
-    private OAuthResponse authRequest(OAuthRequest apiRequest) {
+    private SpewResponse authRequest(SpewRequest apiRequest) {
         forAll(apiRequest);
         return ExceptionUtil.call(() -> request0(apiRequest, getServiceProvider().getJsonConfiguration()));
     }
@@ -79,9 +79,9 @@ public final class OAuth1Connection extends AbstractOAuthConnection<OAuth1Applic
 
     private void authorize() {
         // TODO! POST?
-        OAuthRequest request = OAuthRequest
+        SpewRequest request = SpewRequest
                 .createGetRequest(getServiceProvider().getTemporaryCredentialRequestUri());
-        OAuthResponse response = authRequest(request);
+        SpewResponse response = authRequest(request);
 
         String authToken = response.getString("oauth_token");
         String authSecret = response.getString("oauth_token_secret");
@@ -118,10 +118,10 @@ public final class OAuth1Connection extends AbstractOAuthConnection<OAuth1Applic
     private void fetchToken(String verification) {
         // FlickrRequest request = FlickrRequest.forAuth("access_token");
         // TODO! POST? - imagebam allows get or post
-        OAuthRequest request = OAuthRequest.createGetRequest(getServiceProvider().getTokenRequestUri());
+        SpewRequest request = SpewRequest.createGetRequest(getServiceProvider().getTokenRequestUri());
         request.setParam("oauth_token", userToken.getValue());
         request.setParam("oauth_verifier", verification);
-        OAuthResponse response = authRequest(request);
+        SpewResponse response = authRequest(request);
 
         String authToken = response.getString("oauth_token");
         String authSecret = response.getString("oauth_token_secret");
@@ -131,7 +131,7 @@ public final class OAuth1Connection extends AbstractOAuthConnection<OAuth1Applic
 
     // hmms - push some of this up? - encode could be different per connection?
     @Override
-    protected String getUrl(OAuthRequest request) {
+    protected String getUrl(SpewRequest request) {
         // String unsignedUrl = request.getUrl() + "?" +
         // getQueryString(request.getParams());
 
@@ -144,7 +144,7 @@ public final class OAuth1Connection extends AbstractOAuthConnection<OAuth1Applic
 
     // See https://www.flickr.com/services/api/auth.oauth.html
     // https://gist.github.com/ishikawa/88599/3195bdeecabeb38aa62872ab61877aefa6aef89e
-    private String getSignature(OAuthRequest request) {
+    private String getSignature(SpewRequest request) {
         //		if (userSecret == null) {
         //			throw new IllegalArgumentException("userSecret must not be null (it may be an empty string)");
         //		}
@@ -196,7 +196,7 @@ public final class OAuth1Connection extends AbstractOAuthConnection<OAuth1Applic
         return ExceptionUtil.call(() -> URLEncoder.encode(signature, "UTF-8"));
     }
 
-    private String getImageBamSignatureBaseString(OAuthRequest request) {
+    private String getImageBamSignatureBaseString(SpewRequest request) {
         StringBuilder signatureBaseStringBuilder = new StringBuilder();
 
         signatureBaseStringBuilder.append(getApplication().getAppToken());
@@ -212,7 +212,7 @@ public final class OAuth1Connection extends AbstractOAuthConnection<OAuth1Applic
     }
 
     // See https://www.flickr.com/services/api/auth.oauth.html
-    private String getSignatureBaseString(OAuthRequest request) {
+    private String getSignatureBaseString(SpewRequest request) {
         StringBuilder signatureBaseStringBuilder = new StringBuilder();
         signatureBaseStringBuilder.append(request.getHttpMethod());
         signatureBaseStringBuilder.append('&');
@@ -229,13 +229,13 @@ public final class OAuth1Connection extends AbstractOAuthConnection<OAuth1Applic
     //	}
 
     /** @return ordered params for building signature key */
-    private Map<String, Object> getBaseStringParams(OAuthRequest request) {
+    private Map<String, Object> getBaseStringParams(SpewRequest request) {
         // TODO! some params should be ignored
         // TODO! where should params be escaped??
         return new TreeMap<>(request.getParams());
     }
 
-    private void forApi(OAuthRequest request) {
+    private void forApi(SpewRequest request) {
         // OAuthRequest request = new OAuthRequest(FLICKR_REST_ENDPOINT);
         //		setParam("oauth_consumer_key", FlickrConfig.API_KEY);
 
@@ -248,7 +248,7 @@ public final class OAuth1Connection extends AbstractOAuthConnection<OAuth1Applic
         // return request;
     }
 
-    private void forAll(OAuthRequest request) {
+    private void forAll(SpewRequest request) {
         // hmm... same as api_key? (in forApi())
         request.setParam("oauth_consumer_key", getApplication().getAppToken());
 

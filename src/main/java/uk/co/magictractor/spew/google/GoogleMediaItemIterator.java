@@ -5,9 +5,9 @@ import java.util.List;
 
 import com.jayway.jsonpath.TypeRef;
 
-import uk.co.magictractor.spew.api.OAuthConnection;
-import uk.co.magictractor.spew.api.OAuthRequest;
-import uk.co.magictractor.spew.api.OAuthResponse;
+import uk.co.magictractor.spew.api.SpewConnection;
+import uk.co.magictractor.spew.api.SpewRequest;
+import uk.co.magictractor.spew.api.SpewResponse;
 import uk.co.magictractor.spew.api.connection.OAuthConnectionFactory;
 import uk.co.magictractor.spew.common.filter.DateTakenPhotoFilter;
 import uk.co.magictractor.spew.google.pojo.GoogleFilters;
@@ -25,8 +25,8 @@ public class GoogleMediaItemIterator extends GoogleServiceIterator<GoogleMediaIt
     }
 
     @Override
-    protected OAuthRequest createPageRequest() {
-        OAuthRequest request = OAuthRequest
+    protected SpewRequest createPageRequest() {
+        SpewRequest request = SpewRequest
                 .createPostRequest("https://photoslibrary.googleapis.com/v1/mediaItems:search");
 
         if (dateTakenRange != null) {
@@ -37,7 +37,7 @@ public class GoogleMediaItemIterator extends GoogleServiceIterator<GoogleMediaIt
     }
 
     @Override
-    protected List<GoogleMediaItem> parsePageResponse(OAuthResponse response) {
+    protected List<GoogleMediaItem> parsePageResponse(SpewResponse response) {
         return response.getObject("mediaItems", new TypeRef<List<GoogleMediaItem>>() {
         });
     }
@@ -45,7 +45,7 @@ public class GoogleMediaItemIterator extends GoogleServiceIterator<GoogleMediaIt
     public static class GoogleMediaItemIteratorBuilder extends
             GoogleServiceIteratorBuilder<GoogleMediaItem, GoogleMediaItemIterator, GoogleMediaItemIteratorBuilder> {
 
-        public GoogleMediaItemIteratorBuilder(OAuthConnection connection) {
+        public GoogleMediaItemIteratorBuilder(SpewConnection connection) {
             super(connection, new GoogleMediaItemIterator());
             addServerSideFilterHandler(DateTakenPhotoFilter.class, this::setDateTakenPhotoFilter);
         }
@@ -57,7 +57,7 @@ public class GoogleMediaItemIterator extends GoogleServiceIterator<GoogleMediaIt
     }
 
     public static void main(String[] args) {
-        OAuthConnection connection = OAuthConnectionFactory.getConnection(MyGooglePhotosApp.class);
+        SpewConnection connection = OAuthConnectionFactory.getConnection(MyGooglePhotosApp.class);
         Iterator<GoogleMediaItem> iterator = new GoogleMediaItemIteratorBuilder(connection)
                 .withFilter(new DateTakenPhotoFilter(DateRange.forDay(2018, 11, 21)))
                 .build();

@@ -1,8 +1,8 @@
 package uk.co.magictractor.spew.api;
 
-public interface OAuthConnection { // <APP extends OAuthApplication, SP extends ServiceProvider> {
+public interface SpewConnection { // <APP extends OAuthApplication, SP extends ServiceProvider> {
 
-    OAuthResponse request(OAuthRequest apiRequest);
+    SpewResponse request(SpewRequest apiRequest);
 
     //OAuthApplication getApplication();
 

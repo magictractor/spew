@@ -18,7 +18,7 @@ public interface OAuth2Application extends OAuthApplication { // <OAuth2ServiceP
     OAuth2AuthorizeResponseType defaultAuthorizeResponseType();
 
     @Override
-    default Supplier<OAuthConnection> getNewConnectionSupplier() {
+    default Supplier<SpewConnection> getNewConnectionSupplier() {
         return () -> new OAuth2Connection(this);
     }
 

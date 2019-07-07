@@ -2,7 +2,7 @@ package uk.co.magictractor.spew.twitter.processor;
 
 import java.util.Iterator;
 
-import uk.co.magictractor.spew.api.OAuthConnection;
+import uk.co.magictractor.spew.api.SpewConnection;
 import uk.co.magictractor.spew.api.connection.OAuthConnectionFactory;
 import uk.co.magictractor.spew.processor.SimpleProcessor;
 import uk.co.magictractor.spew.processor.SimpleProcessorContext;
@@ -18,7 +18,7 @@ public class TweetProcessor implements SimpleProcessor<Tweet> {
     }
 
     public static void main(String[] args) {
-        OAuthConnection connection = OAuthConnectionFactory.getConnection(MyTwitterApp.class);
+        SpewConnection connection = OAuthConnectionFactory.getConnection(MyTwitterApp.class);
         Iterator<Tweet> iter = new TweetIteratorBuilder(connection).build();
         while (iter.hasNext()) {
             Tweet tweet = iter.next();

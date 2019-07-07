@@ -2,9 +2,9 @@ package uk.co.magictractor.spew.oauth.springsocial.spike;
 
 import java.util.Iterator;
 
-import uk.co.magictractor.spew.api.OAuthConnection;
-import uk.co.magictractor.spew.api.OAuthRequest;
-import uk.co.magictractor.spew.api.OAuthResponse;
+import uk.co.magictractor.spew.api.SpewConnection;
+import uk.co.magictractor.spew.api.SpewRequest;
+import uk.co.magictractor.spew.api.SpewResponse;
 import uk.co.magictractor.spew.api.PageTokenServiceIterator;
 import uk.co.magictractor.spew.twitter.MyTwitterApp;
 import uk.co.magictractor.spew.twitter.pojo.Tweet;
@@ -25,7 +25,7 @@ public class SpringSocialTweetIterator extends PageTokenServiceIterator<Tweet> {
 
     @Override
     protected PageAndNextToken<Tweet> fetchPage(String pageToken) {
-        OAuthRequest request = OAuthRequest
+        SpewRequest request = SpewRequest
                 .createGetRequest("https://api.twitter.com/1.1/statuses/user_timeline.json");
 
         request.setParam("max_id", pageToken);
@@ -46,7 +46,7 @@ public class SpringSocialTweetIterator extends PageTokenServiceIterator<Tweet> {
         // Omit user info
         request.setParam("trim_user", "true");
 
-        OAuthResponse response = getConnection().request(request);
+        SpewResponse response = getConnection().request(request);
 
         return null;
     }
@@ -96,13 +96,13 @@ public class SpringSocialTweetIterator extends PageTokenServiceIterator<Tweet> {
     public static class TweetIteratorBuilder
             extends PageTokenServiceIteratorBuilder<Tweet, SpringSocialTweetIterator, TweetIteratorBuilder> {
 
-        public TweetIteratorBuilder(OAuthConnection connection) {
+        public TweetIteratorBuilder(SpewConnection connection) {
             super(connection, new SpringSocialTweetIterator());
         }
     }
 
     public static void main(String[] args) {
-        OAuthConnection connection = new SpringSocialOAuth1Connection(new MyTwitterApp());
+        SpewConnection connection = new SpringSocialOAuth1Connection(new MyTwitterApp());
         Iterator<Tweet> iter = new TweetIteratorBuilder(connection).build();
         while (iter.hasNext()) {
             Tweet tweet = iter.next();

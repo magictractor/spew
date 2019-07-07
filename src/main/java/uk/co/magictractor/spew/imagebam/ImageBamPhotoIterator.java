@@ -4,9 +4,9 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import uk.co.magictractor.spew.api.OAuthConnection;
-import uk.co.magictractor.spew.api.OAuthRequest;
-import uk.co.magictractor.spew.api.OAuthResponse;
+import uk.co.magictractor.spew.api.SpewConnection;
+import uk.co.magictractor.spew.api.SpewRequest;
+import uk.co.magictractor.spew.api.SpewResponse;
 import uk.co.magictractor.spew.api.PageCountServiceIterator;
 import uk.co.magictractor.spew.api.connection.OAuthConnectionFactory;
 import uk.co.magictractor.spew.flickr.pojo.FlickrPhotos;
@@ -19,7 +19,7 @@ public class ImageBamPhotoIterator extends PageCountServiceIterator<ImageBamPhot
 
     @Override
     protected List<ImageBamPhoto> fetchPage(int pageNumber) {
-        OAuthRequest request = OAuthRequest.createPostRequest(ImageBam.REST_ENDPOINT);
+        SpewRequest request = SpewRequest.createPostRequest(ImageBam.REST_ENDPOINT);
 
         // TODO! obviously incomplete - this is a Flickr method not Imagebam
         request.setParam("method", "flickr.photos.search");
@@ -30,7 +30,7 @@ public class ImageBamPhotoIterator extends PageCountServiceIterator<ImageBamPhot
         // default is 100, max is 500
         // request.setParam("per_page", 500);
 
-        OAuthResponse response = getConnection().request(request);
+        SpewResponse response = getConnection().request(request);
 
         System.err.println(response);
 
@@ -46,13 +46,13 @@ public class ImageBamPhotoIterator extends PageCountServiceIterator<ImageBamPhot
     public static class ImageBamPhotoIteratorBuilder extends
             PageCountServiceIteratorBuilder<ImageBamPhoto, ImageBamPhotoIterator, ImageBamPhotoIteratorBuilder> {
 
-        protected ImageBamPhotoIteratorBuilder(OAuthConnection connection) {
+        protected ImageBamPhotoIteratorBuilder(SpewConnection connection) {
             super(connection, new ImageBamPhotoIterator());
         }
     }
 
     public static void main(String[] args) {
-        OAuthConnection connection = OAuthConnectionFactory.getConnection(MyImageBamApp.class);
+        SpewConnection connection = OAuthConnectionFactory.getConnection(MyImageBamApp.class);
         Iterator<ImageBamPhoto> iterator = new ImageBamPhotoIteratorBuilder(connection).build();
         while (iterator.hasNext()) {
             ImageBamPhoto photo = iterator.next();

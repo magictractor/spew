@@ -4,9 +4,9 @@ import java.time.LocalDate;
 import java.util.Iterator;
 import java.util.List;
 
-import uk.co.magictractor.spew.api.OAuthConnection;
-import uk.co.magictractor.spew.api.OAuthRequest;
-import uk.co.magictractor.spew.api.OAuthResponse;
+import uk.co.magictractor.spew.api.SpewConnection;
+import uk.co.magictractor.spew.api.SpewRequest;
+import uk.co.magictractor.spew.api.SpewResponse;
 import uk.co.magictractor.spew.api.PageCountServiceIterator;
 import uk.co.magictractor.spew.api.connection.OAuthConnectionFactory;
 import uk.co.magictractor.spew.common.filter.DateTakenPhotoFilter;
@@ -39,7 +39,7 @@ public class FlickrPhotoIterator extends PageCountServiceIterator<FlickrPhoto> {
 
     @Override
     protected List<FlickrPhoto> fetchPage(int pageNumber) {
-        OAuthRequest request = OAuthRequest.createPostRequest(Flickr.REST_ENDPOINT);
+        SpewRequest request = SpewRequest.createPostRequest(Flickr.REST_ENDPOINT);
 
         request.setParam("method", "flickr.photos.search");
 
@@ -62,7 +62,7 @@ public class FlickrPhotoIterator extends PageCountServiceIterator<FlickrPhoto> {
         // https://www.flickr.com/groups/51035612836@N01/discuss/72157649995435595/
         request.setParam("extras", "date_upload,date_taken,description,tags,machine_tags,url_o");
         // request.setParam("extras", ALL_EXTRAS);
-        OAuthResponse response = getConnection().request(request);
+        SpewResponse response = getConnection().request(request);
 
         // https://stackoverflow.com/questions/13686284/parsing-jsonobject-to-listmapstring-object-using-gson
 
@@ -85,7 +85,7 @@ public class FlickrPhotoIterator extends PageCountServiceIterator<FlickrPhoto> {
     public static class FlickrPhotoIteratorBuilder
             extends PageCountServiceIteratorBuilder<FlickrPhoto, FlickrPhotoIterator, FlickrPhotoIteratorBuilder> {
 
-        public FlickrPhotoIteratorBuilder(OAuthConnection connection) {
+        public FlickrPhotoIteratorBuilder(SpewConnection connection) {
             super(connection, new FlickrPhotoIterator());
             addServerSideFilterHandler(DateTakenPhotoFilter.class, this::setDateTakenPhotoFilter);
             addServerSideFilterHandler(DateUploadedPhotoFilter.class, this::setDateUploadedPhotoFilter);
@@ -108,7 +108,7 @@ public class FlickrPhotoIterator extends PageCountServiceIterator<FlickrPhoto> {
     }
 
     public static void main(String[] args) {
-        OAuthConnection connection = OAuthConnectionFactory.getConnection(MyFlickrApp.class);
+        SpewConnection connection = OAuthConnectionFactory.getConnection(MyFlickrApp.class);
         Iterator<FlickrPhoto> iter = new FlickrPhotoIteratorBuilder(connection)
                 .withFilter(new DateTakenPhotoFilter(DateRange.forMonth(2019, 2)))
                 .build();

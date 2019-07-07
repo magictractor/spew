@@ -3,8 +3,8 @@ package uk.co.magictractor.spew.flickr.processor;
 import java.time.LocalDate;
 import java.util.Iterator;
 
-import uk.co.magictractor.spew.api.OAuthConnection;
-import uk.co.magictractor.spew.api.OAuthRequest;
+import uk.co.magictractor.spew.api.SpewConnection;
+import uk.co.magictractor.spew.api.SpewRequest;
 import uk.co.magictractor.spew.api.connection.OAuthConnectionFactory;
 import uk.co.magictractor.spew.common.filter.DateTakenPhotoFilter;
 import uk.co.magictractor.spew.flickr.Flickr;
@@ -46,7 +46,7 @@ public class FlickrPhotoUpdateProcessor extends PhotoUpdateProcessor {
         // TODO Auto-generated method stub
         System.err.println("set title: " + photo.getTitle());
 
-        OAuthRequest request = OAuthRequest.createPostRequest(Flickr.REST_ENDPOINT);
+        SpewRequest request = SpewRequest.createPostRequest(Flickr.REST_ENDPOINT);
 
         request.setParam("method", "flickr.photos.setMeta");
 
@@ -61,7 +61,7 @@ public class FlickrPhotoUpdateProcessor extends PhotoUpdateProcessor {
         // TODO Auto-generated method stub
         System.err.println("set tags: " + photo.getTagSet());
 
-        OAuthRequest request = OAuthRequest.createPostRequest(Flickr.REST_ENDPOINT);
+        SpewRequest request = SpewRequest.createPostRequest(Flickr.REST_ENDPOINT);
 
         request.setParam("method", "flickr.photos.setTags");
 
@@ -81,7 +81,7 @@ public class FlickrPhotoUpdateProcessor extends PhotoUpdateProcessor {
 
     public static void main(String[] args) {
         PhotoTidyProcessorChain processorChain = new PhotoTidyProcessorChain(new FlickrPhotoUpdateProcessor());
-        OAuthConnection connection = OAuthConnectionFactory.getConnection(MyFlickrApp.class);
+        SpewConnection connection = OAuthConnectionFactory.getConnection(MyFlickrApp.class);
         LocalDate since = LocalDate.now().minusMonths(1).withDayOfMonth(1);
         Iterator<FlickrPhoto> iterator = new FlickrPhotoIteratorBuilder(connection)
                 .withFilter(new DateTakenPhotoFilter(DateRange.uptoToday(since)))

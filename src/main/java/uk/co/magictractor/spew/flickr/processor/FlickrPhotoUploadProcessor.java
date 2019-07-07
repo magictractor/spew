@@ -2,7 +2,7 @@ package uk.co.magictractor.spew.flickr.processor;
 
 import java.util.Iterator;
 
-import uk.co.magictractor.spew.api.OAuthConnection;
+import uk.co.magictractor.spew.api.SpewConnection;
 import uk.co.magictractor.spew.api.connection.OAuthConnectionFactory;
 import uk.co.magictractor.spew.flickr.MyFlickrApp;
 import uk.co.magictractor.spew.flickr.FlickrPhotoIterator.FlickrPhotoIteratorBuilder;
@@ -24,7 +24,7 @@ public class FlickrPhotoUploadProcessor extends PhotoUploadProcessor {
 
     public static void main(String[] args) {
         PhotoUploadProcessorChain processorChain = new PhotoUploadProcessorChain(new FlickrPhotoUploadProcessor());
-        OAuthConnection connection = OAuthConnectionFactory.getConnection(MyFlickrApp.class);
+        SpewConnection connection = OAuthConnectionFactory.getConnection(MyFlickrApp.class);
         Iterator<FlickrPhoto> iterator = new FlickrPhotoIteratorBuilder(connection).build();
         processorChain.execute(iterator, new PhotoProcessorContext());
     }
