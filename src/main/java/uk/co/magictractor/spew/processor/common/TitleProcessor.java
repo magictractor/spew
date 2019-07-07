@@ -1,5 +1,7 @@
 package uk.co.magictractor.spew.processor.common;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.function.Function;
 
 import uk.co.magictractor.spew.common.Photo;
@@ -16,7 +18,9 @@ public class TitleProcessor implements Processor<Photo, MutablePhoto, PhotoProce
 
     private final TagType titleTagType;
 
-    private Function<String, Boolean> defaultTitleFunction = (title) -> TitleProcessor.hasConsecutiveDigits(title, 4);
+    private List<Function<Photo, Boolean>> unwantedTitleFunctions = Arrays.asList(
+        photo -> TitleProcessor.hasConsecutiveDigits(photo, 4),
+        photo -> hasIncompleteTitle(photo));
 
     public TitleProcessor(String titleTagTypeName) {
         // TODO! if there's no tag with this name throw an error rather than creating it (or skip this processor)
@@ -29,19 +33,23 @@ public class TitleProcessor implements Processor<Photo, MutablePhoto, PhotoProce
      * with a better value. The better value is by default based on the deepest
      * subject tag.
      */
-    public void setDefaultTitleFunction(Function<String, Boolean> defaultTitleFunction) {
-        this.defaultTitleFunction = defaultTitleFunction;
+    public void setUnwantedTitleFunction(Function<Photo, Boolean>... unwantedTitleFunctions) {
+        this.unwantedTitleFunctions = Arrays.asList(unwantedTitleFunctions);
     }
 
     @Override
     public void process(MutablePhoto photo, PhotoProcessorContext context) {
-        if (defaultTitleFunction.apply(photo.getTitle())) {
+        if (isUnwantedTitlePhoto(photo)) {
             String newTitle = createTitle(photo);
 
             if (newTitle != null) {
                 photo.setTitle(newTitle);
             }
         }
+    }
+
+    private boolean isUnwantedTitlePhoto(Photo photo) {
+        return unwantedTitleFunctions.stream().anyMatch(func -> func.apply(photo));
     }
 
     protected String createTitle(Photo photo) {
@@ -52,7 +60,7 @@ public class TitleProcessor implements Processor<Photo, MutablePhoto, PhotoProce
             return null;
         }
 
-        Tag subject = photo.getTagSet().getDeepestTag(titleTagType);
+        Tag subject = getTitleTag(photo);
         if (subject == null) {
             // TODO! log a warning (via context)
             System.err.println("No subject tags, so cannot create title");
@@ -65,6 +73,10 @@ public class TitleProcessor implements Processor<Photo, MutablePhoto, PhotoProce
         }
 
         return createTitle(subject);
+    }
+
+    private Tag getTitleTag(Photo photo) {
+        return photo.getTagSet().getDeepestTag(titleTagType);
     }
 
     // TODO! this is very specific to "common name (scientific name)"
@@ -85,7 +97,8 @@ public class TitleProcessor implements Processor<Photo, MutablePhoto, PhotoProce
         return titleBuilder.toString();
     }
 
-    public static boolean hasConsecutiveDigits(String title, int digitCount) {
+    public static boolean hasConsecutiveDigits(Photo photo, int digitCount) {
+        String title = photo.getTitle();
         int consecutiveDigits = 0;
         for (int i = 0; i < title.length(); i++) {
             if (Character.isDigit(title.charAt(i))) {
@@ -99,6 +112,23 @@ public class TitleProcessor implements Processor<Photo, MutablePhoto, PhotoProce
         }
 
         return false;
+    }
+
+    /**
+     * @param photo
+     * @return
+     */
+    public boolean hasIncompleteTitle(Photo photo) {
+        Tag titleTag = getTitleTag(photo);
+        if (titleTag == null) {
+            return false;
+        }
+        if (titleTag.getAliases().isEmpty()) {
+            return false;
+        }
+
+        return photo.getTitle().equalsIgnoreCase(titleTag.getTagName())
+                || photo.getTitle().equalsIgnoreCase(titleTag.getAliases().get(0));
     }
 
 }
