@@ -1,13 +1,13 @@
-<butterfly
-comma
-common blue
-green-veined white
-large white
-orange-tip
-painted lady
-peacock
-red admiral
-ringlet
-small copper
-small white
-speckled wood
+comma = Polygonia c-album
+common blue = Polyommatus icarus
+green-veined white = Pieris napi
+large white = Pieris brassicae
+orange-tip = Anthocharis cardamines
+painted lady = Vanessa cardui
+peacock = Aglais io
+red admiral = Vanessa atalanta
+ringlet = Aphantopus hyperantus
+small copper = Lycaena phlaeas
+small white = Pieris rapae
+speckled wood = Pararge aegeria
+meadow brown = Maniola jurtina

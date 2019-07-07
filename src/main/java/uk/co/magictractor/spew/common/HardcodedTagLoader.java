@@ -45,11 +45,11 @@ public class HardcodedTagLoader implements TagLoader {
 
     private void initBirds() {
         Tag bird = init(SUBJECT, "Bird");
-        init(bird, "Blackbird", "Blackcap", "Blue tit", "Bullfinch", "Buzzard", "Chaffinch", "Coal tit",
-            "Collared dove", "Coot", "Dipper", "Dunnock", "Fieldfare", "Goldcrest", "Goldeneye", "Goldfinch",
-            "Goosander", "Great tit", "Kestrel", "Kingfisher", "Linnet", "Long-tailed tit", "Mallard", "Moorhen",
-            "Nuthatch", "Oystercatcher", "Pochard", "Redshank", "Redwing", "Robin", "Shag", "Siskin", "Sparrowhawk",
-            "Starling", "Swallow", "Teal", "Treecreeper", "Tufted duck", "Water rail", "Waxwing", "Wren");
+        //        init(bird, "Blackbird", "Blackcap", "Blue tit", "Bullfinch", "Buzzard", "Chaffinch", "Coal tit",
+        //            "Collared dove", "Coot", "Dipper", "Dunnock", "Fieldfare", "Goldcrest", "Goldeneye", "Goldfinch",
+        //            "Goosander", "Great tit", "Kestrel", "Kingfisher", "Linnet", "Long-tailed tit", "Mallard", "Moorhen",
+        //            "Nuthatch", "Oystercatcher", "Pochard", "Redshank", "Redwing", "Robin", "Shag", "Siskin", "Sparrowhawk",
+        //            "Starling", "Swallow", "Teal", "Treecreeper", "Tufted duck", "Water rail", "Waxwing", "Wren");
 
         Tag crow = init(bird, "Crow");
         init(crow, "Carrion crow");
@@ -63,8 +63,8 @@ public class HardcodedTagLoader implements TagLoader {
         Tag heron = init(bird, "Heron");
         init(heron, "Grey heron");
 
-        Tag owl = init(bird, "Owl");
-        init(owl, "Tawny owl");
+        //Tag owl = init(bird, "Owl");
+        //init(owl, "Tawny owl");
 
         Tag pigeon = init(bird, "Pigeon");
         init(pigeon, "Feral pigeon", "Wood pigeon");
@@ -78,8 +78,8 @@ public class HardcodedTagLoader implements TagLoader {
         Tag swan = init(bird, "Swan");
         init(swan, "Mute swan");
 
-        Tag thrush = init(bird, "Thrush");
-        init(thrush, "Mistle thrush", "Song thrush");
+        //        Tag thrush = init(bird, "Thrush");
+        //        init(thrush, "Mistle thrush", "Song thrush");
 
         Tag wagtail = init(bird, "Wagtail");
         init(wagtail, "Grey wagtail", "Pied wagtail");
@@ -87,6 +87,7 @@ public class HardcodedTagLoader implements TagLoader {
         Tag warbler = init(bird, "Warbler");
         init(warbler, "Chiffchaff", "Willow warbler");
 
+        // also a warbler
         Tag whiteThroat = init(bird, "White throat");
         init(whiteThroat, "Common white throat");
 

@@ -54,7 +54,7 @@ public abstract class PageServiceIterator<E> extends AbstractIterator<E> {
         // while loop because a Twitter page could (theoretically) be empty
         // but still have subsequent pages to fetch, for example if retweets
         // are excluded and the page contained only retweets
-        if (nextPageItemIndex >= currentPage.size()) {
+        while (nextPageItemIndex >= currentPage.size()) {
             if (!hasNextPage) {
                 // No more data and no more pages - we're done.
                 return endOfData();
