@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.Consumer;
@@ -110,7 +111,10 @@ public abstract class AbstractOAuthConnection<APP extends OAuthApplication, SP e
         // TODO! wrap/convert response json
         // if ("json".equals(request.getParam("format"))) {
         // TODO! check header for content type
-        if (responseBody.startsWith("{") || responseBody.startsWith("[")) {
+        // TODO! make case insensitive?
+        String contentType = getHeader(con, "content-type");
+        if ("application/json".equals(contentType) || contentType.startsWith("application/json;")) {
+            //        if (responseBody.startsWith("{") || responseBody.startsWith("[")) {
             SpewJaywayResponse response = new SpewJaywayResponse(responseBody, jsonConfiguration);
             // TODO! change to !"pass"
             // TODO! pass/fail specific to Flickr?
@@ -120,9 +124,29 @@ public abstract class AbstractOAuthConnection<APP extends OAuthApplication, SP e
             return response;
         }
         else {
-            // TODO! Google request hitting this... (perhaps starts with "[" - check above added after this comment))
-            return new OAuthAuthResponse(responseBody);
+            throw new IllegalStateException("code needs modified to handle Content-Type " + contentType);
         }
+    }
+
+    private String getHeader(HttpURLConnection con, String headerKey) {
+        //List<String> headerValues = con.getHeaderFields().get(headerKey);
+
+        String lowerCaseHeaderKey = headerKey.toLowerCase();
+        List<String> headerValues = con.getHeaderFields()
+                .entrySet()
+                .stream()
+                .filter(e -> e.getKey() != null && e.getKey().toLowerCase().equals(lowerCaseHeaderKey))
+                .map(Map.Entry::getValue)
+                .findFirst()
+                .orElse(null);
+
+        if (headerValues == null) {
+            return null;
+        }
+        if (headerValues.size() > 1) {
+            throw new IllegalStateException();
+        }
+        return headerValues.get(0);
     }
 
     //    private String buildRequestBody(SpewRequest request, Configuration jsonConfiguration) {
