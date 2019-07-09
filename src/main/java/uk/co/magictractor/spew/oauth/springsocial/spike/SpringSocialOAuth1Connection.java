@@ -15,14 +15,24 @@
  */
 package uk.co.magictractor.spew.oauth.springsocial.spike;
 
+import java.io.IOException;
+import java.util.Arrays;
+
+import com.jayway.jsonpath.Configuration;
+
+import org.springframework.http.HttpMethod;
+import org.springframework.http.client.ClientHttpRequest;
 import org.springframework.social.connect.Connection;
 import org.springframework.social.oauth1.OAuthToken;
+import org.springframework.web.client.HttpMessageConverterExtractor;
+import org.springframework.web.client.RequestCallback;
 import org.springframework.web.client.RestOperations;
 
 import uk.co.magictractor.spew.api.OAuth1Application;
 import uk.co.magictractor.spew.api.SpewConnection;
 import uk.co.magictractor.spew.api.SpewRequest;
 import uk.co.magictractor.spew.api.SpewResponse;
+import uk.co.magictractor.spew.connection.ConnectionRequestFactory;
 import uk.co.magictractor.spew.token.UserPreferencesPersister;
 
 public class SpringSocialOAuth1Connection implements SpewConnection {
@@ -32,6 +42,9 @@ public class SpringSocialOAuth1Connection implements SpewConnection {
 
     private Connection<RestOperations> connection;
 
+    // hmm... specific to Jayway, want this to be pluggable too
+    private Configuration jsonConfiguration;
+
     public SpringSocialOAuth1Connection(OAuth1Application application) {
         SpewOAuth1ConnectionFactory connectionFactory = new SpewOAuth1ConnectionFactory(application);
 
@@ -40,13 +53,31 @@ public class SpringSocialOAuth1Connection implements SpewConnection {
 
         OAuthToken token = new OAuthToken(userToken.getValue(), userSecret.getValue());
         connection = connectionFactory.createConnection(token);
+
+        jsonConfiguration = application.getServiceProvider().getJsonConfiguration();
     }
 
     @Override
     public SpewResponse request(SpewRequest apiRequest) {
-        connection.createData();
+        //ConnectionData data = connection.createData();
 
-        return null;
+        String url = apiRequest.getUrl();
+        HttpMethod method = HttpMethod.valueOf(apiRequest.getHttpMethod());
+        // RequestCallback requestCallback = System.err::println;
+        RequestCallback requestCallback = httpRequest -> populateHttpRequest(httpRequest, apiRequest);
+        SpewResponseHttpMessageConverter converter = new SpewResponseHttpMessageConverter(jsonConfiguration);
+        HttpMessageConverterExtractor<SpewResponse> responseExtractor = new HttpMessageConverterExtractor<SpewResponse>(
+            String.class, Arrays.asList(converter));
+
+        //connection.getApi().postForEntity(url, request, responseType)
+
+        SpewResponse response = connection.getApi().execute(url, method, requestCallback, responseExtractor);
+
+        return response;
+    }
+
+    private void populateHttpRequest(ClientHttpRequest httpRequest, SpewRequest apiRequest) throws IOException {
+        ConnectionRequestFactory.createConnectionRequest(httpRequest).writeParams(apiRequest, jsonConfiguration);
     }
 
 }

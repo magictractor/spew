@@ -16,6 +16,8 @@ import com.jayway.jsonpath.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import uk.co.magictractor.spew.connection.ConnectionRequest;
+import uk.co.magictractor.spew.connection.ConnectionRequestFactory;
 import uk.co.magictractor.spew.util.IOUtil;
 
 // Common code for OAuth1 and OAuth2 implementations.
@@ -56,23 +58,31 @@ public abstract class AbstractOAuthConnection<APP extends OAuthApplication, SP e
             initConnection.accept(con);
         }
 
-        if (request.hasParamsInBody()) {
-            con.setDoOutput(true);
+        //        if (request.hasParamsInBody()) {
+        //            // moves this too?
+        //            con.setDoOutput(true);
+        //
+        //            if (!request.getParams().isEmpty()) {
+        //                con.setRequestProperty("content-type", "application/json");
+        //                String requestBody = buildRequestBody(request, jsonConfiguration);
+        //                logger.trace("request body: " + requestBody);
+        //                // TODO! encoding
+        //                byte[] requestBodyBytes = requestBody.getBytes();
+        //                con.setFixedLengthStreamingMode(requestBodyBytes.length);
+        //                con.getOutputStream().write(requestBodyBytes);
+        //            }
+        //            else {
+        //                // Prevent 411 Content Length Required
+        //                con.setFixedLengthStreamingMode(0);
+        //            }
+        //
+        //           ConnectionRequest connectionRequest = ConnectionRequestFactory.createConnectionRequest(request);
+        //           connectionRequest.setRequestBody(request, jsonConfiguration);
+        //
+        //        }
 
-            if (!request.getParams().isEmpty()) {
-                con.setRequestProperty("content-type", "application/json");
-                String requestBody = buildRequestBody(request, jsonConfiguration);
-                logger.trace("request body: " + requestBody);
-                // TODO! encoding
-                byte[] requestBodyBytes = requestBody.getBytes();
-                con.setFixedLengthStreamingMode(requestBodyBytes.length);
-                con.getOutputStream().write(requestBodyBytes);
-            }
-            else {
-                // Prevent 411 Content Length Required
-                con.setFixedLengthStreamingMode(0);
-            }
-        }
+        ConnectionRequest connectionRequest = ConnectionRequestFactory.createConnectionRequest(con);
+        connectionRequest.writeParams(request, jsonConfiguration);
 
         boolean isOK;
         String responseBody;
@@ -99,6 +109,7 @@ public abstract class AbstractOAuthConnection<APP extends OAuthApplication, SP e
 
         // TODO! wrap/convert response json
         // if ("json".equals(request.getParam("format"))) {
+        // TODO! check header for content type
         if (responseBody.startsWith("{") || responseBody.startsWith("[")) {
             OAuthJsonResponse response = new OAuthJsonResponse(responseBody, jsonConfiguration);
             // TODO! change to !"pass"
@@ -114,9 +125,9 @@ public abstract class AbstractOAuthConnection<APP extends OAuthApplication, SP e
         }
     }
 
-    private String buildRequestBody(SpewRequest request, Configuration jsonConfiguration) {
-        return jsonConfiguration.jsonProvider().toJson(request.getParams());
-    }
+    //    private String buildRequestBody(SpewRequest request, Configuration jsonConfiguration) {
+    //        return jsonConfiguration.jsonProvider().toJson(request.getParams());
+    //    }
 
     abstract protected String getUrl(SpewRequest request);
 

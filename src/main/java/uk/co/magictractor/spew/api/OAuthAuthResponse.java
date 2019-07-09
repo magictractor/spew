@@ -11,10 +11,12 @@ public class OAuthAuthResponse implements SpewResponse {
     private final Map<String, String> values = new HashMap<>();
 
     public OAuthAuthResponse(String response) {
-        for (String entry : response.split("&")) {
-            String[] keyAndValue = entry.split("=");
-            values.put(keyAndValue[0], keyAndValue[1]);
-        }
+        throw new UnsupportedOperationException("Figure out what is hitting this");
+
+        //        for (String entry : response.split("&")) {
+        //            String[] keyAndValue = entry.split("=");
+        //            values.put(keyAndValue[0], keyAndValue[1]);
+        //        }
     }
 
     @Override

@@ -1,11 +1,14 @@
 package uk.co.magictractor.spew.oauth.springsocial.spike;
 
 import java.util.Iterator;
+import java.util.List;
 
+import com.jayway.jsonpath.TypeRef;
+
+import uk.co.magictractor.spew.api.PageTokenServiceIterator;
 import uk.co.magictractor.spew.api.SpewConnection;
 import uk.co.magictractor.spew.api.SpewRequest;
 import uk.co.magictractor.spew.api.SpewResponse;
-import uk.co.magictractor.spew.api.PageTokenServiceIterator;
 import uk.co.magictractor.spew.twitter.MyTwitterApp;
 import uk.co.magictractor.spew.twitter.pojo.Tweet;
 
@@ -48,7 +51,23 @@ public class SpringSocialTweetIterator extends PageTokenServiceIterator<Tweet> {
 
         SpewResponse response = getConnection().request(request);
 
-        return null;
+        System.err.println(response);
+
+        List<Tweet> page = response.getObject("$", new TypeRef<List<Tweet>>() {
+        });
+
+        // TODO! where is the token in the response??
+        // since_id is to get most recent (e.g. check for new tweets)
+        String nextToken;
+        if (!page.isEmpty()) {
+            Tweet lastTweet = page.get(page.size() - 1);
+            nextToken = Long.toString(lastTweet.getId() - 1);
+        }
+        else {
+            nextToken = null;
+        }
+
+        return new PageAndNextToken<>(page, nextToken);
     }
 
     //    @Override
