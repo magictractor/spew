@@ -1,5 +1,9 @@
 package uk.co.magictractor.spew.api;
 
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.List;
+
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.ReadContext;
@@ -21,8 +25,29 @@ public class OAuthJsonResponse implements SpewResponse {
     }
 
     @Override
-    public <T> T getObject(String key, TypeRef<? extends T> type) {
-        return ctx.read(key, type);
+    public <T> List<T> getList(String key, Class<T> elementType) {
+        return ctx.read(key, new TypeRef<List<T>>() {
+            @Override
+            public Type getType() {
+                return new ParameterizedType() {
+
+                    @Override
+                    public Type getRawType() {
+                        return List.class;
+                    }
+
+                    @Override
+                    public Type getOwnerType() {
+                        return null;
+                    }
+
+                    @Override
+                    public Type[] getActualTypeArguments() {
+                        return new Type[] { elementType };
+                    }
+                };
+            }
+        });
     }
 
 }

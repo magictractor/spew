@@ -3,8 +3,6 @@ package uk.co.magictractor.spew.google;
 import java.util.Iterator;
 import java.util.List;
 
-import com.jayway.jsonpath.TypeRef;
-
 import uk.co.magictractor.spew.api.SpewConnection;
 import uk.co.magictractor.spew.api.SpewRequest;
 import uk.co.magictractor.spew.api.SpewResponse;
@@ -29,8 +27,7 @@ public class GoogleSharedAlbumsIterator extends GoogleServiceIterator<GoogleAlbu
 
     @Override
     protected List<GoogleAlbum> parsePageResponse(SpewResponse response) {
-        return response.getObject("sharedAlbums", new TypeRef<List<GoogleAlbum>>() {
-        });
+        return response.getList("sharedAlbums", GoogleAlbum.class);
     }
 
     public static class GoogleSharedAlbumsIteratorBuilder extends

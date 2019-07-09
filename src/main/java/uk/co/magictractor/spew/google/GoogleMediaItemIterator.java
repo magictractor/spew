@@ -3,8 +3,6 @@ package uk.co.magictractor.spew.google;
 import java.util.Iterator;
 import java.util.List;
 
-import com.jayway.jsonpath.TypeRef;
-
 import uk.co.magictractor.spew.api.SpewConnection;
 import uk.co.magictractor.spew.api.SpewRequest;
 import uk.co.magictractor.spew.api.SpewResponse;
@@ -38,8 +36,7 @@ public class GoogleMediaItemIterator extends GoogleServiceIterator<GoogleMediaIt
 
     @Override
     protected List<GoogleMediaItem> parsePageResponse(SpewResponse response) {
-        return response.getObject("mediaItems", new TypeRef<List<GoogleMediaItem>>() {
-        });
+        return response.getList("mediaItems", GoogleMediaItem.class);
     }
 
     public static class GoogleMediaItemIteratorBuilder extends

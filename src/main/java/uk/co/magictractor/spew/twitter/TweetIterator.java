@@ -2,12 +2,10 @@ package uk.co.magictractor.spew.twitter;
 
 import java.util.List;
 
-import com.jayway.jsonpath.TypeRef;
-
+import uk.co.magictractor.spew.api.PageTokenServiceIterator;
 import uk.co.magictractor.spew.api.SpewConnection;
 import uk.co.magictractor.spew.api.SpewRequest;
 import uk.co.magictractor.spew.api.SpewResponse;
-import uk.co.magictractor.spew.api.PageTokenServiceIterator;
 import uk.co.magictractor.spew.twitter.pojo.Tweet;
 
 // https://developer.twitter.com/en/docs/tweets/timelines/api-reference/get-statuses-user_timeline.html
@@ -49,8 +47,9 @@ public class TweetIterator extends PageTokenServiceIterator<Tweet> {
 
         SpewResponse response = getConnection().request(request);
 
-        List<Tweet> page = response.getObject("$", new TypeRef<List<Tweet>>() {
-        });
+        //List<Tweet> page = response.getObject("$", new TypeRef<List<Tweet>>() {
+        //});
+        List<Tweet> page = response.getList("$", Tweet.class);
 
         // TODO! where is the token in the response??
         // since_id is to get most recent (e.g. check for new tweets)

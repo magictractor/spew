@@ -3,8 +3,6 @@ package uk.co.magictractor.spew.oauth.springsocial.spike;
 import java.util.Iterator;
 import java.util.List;
 
-import com.jayway.jsonpath.TypeRef;
-
 import uk.co.magictractor.spew.api.PageTokenServiceIterator;
 import uk.co.magictractor.spew.api.SpewConnection;
 import uk.co.magictractor.spew.api.SpewRequest;
@@ -53,8 +51,7 @@ public class SpringSocialTweetIterator extends PageTokenServiceIterator<Tweet> {
 
         System.err.println(response);
 
-        List<Tweet> page = response.getObject("$", new TypeRef<List<Tweet>>() {
-        });
+        List<Tweet> page = response.getList("$", Tweet.class);
 
         // TODO! where is the token in the response??
         // since_id is to get most recent (e.g. check for new tweets)

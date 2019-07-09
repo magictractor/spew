@@ -1,13 +1,12 @@
 package uk.co.magictractor.spew.api;
 
-import com.jayway.jsonpath.TypeRef;
+import java.util.List;
 
 public interface SpewResponse {
 
     <T> T getObject(String key, Class<T> type);
 
-    // hmm, don't want this here - it's Json specific
-    <T> T getObject(String key, TypeRef<? extends T> type);
+    <T> List<T> getList(String key, Class<T> type);
 
     default Object getObject(String key) {
         return getObject(key, Object.class);

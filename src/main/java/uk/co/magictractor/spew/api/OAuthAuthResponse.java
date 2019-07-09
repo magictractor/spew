@@ -1,9 +1,8 @@
 package uk.co.magictractor.spew.api;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-
-import com.jayway.jsonpath.TypeRef;
 
 //TODO! bin this?
 public class OAuthAuthResponse implements SpewResponse {
@@ -26,7 +25,7 @@ public class OAuthAuthResponse implements SpewResponse {
     }
 
     @Override
-    public <T> T getObject(String key, TypeRef<? extends T> type) {
+    public <T> List<T> getList(String key, Class<T> type) {
         throw new UnsupportedOperationException("Not a Json response");
     }
 
