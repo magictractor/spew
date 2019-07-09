@@ -11,11 +11,11 @@ import com.jayway.jsonpath.TypeRef;
 
 // https://stackoverflow.com/questions/34111276/jsonpath-with-jackson-or-gson
 // https://github.com/json-path/JsonPath
-public class OAuthJsonResponse implements SpewResponse {
+public class SpewJaywayResponse implements SpewResponse {
 
     private ReadContext ctx;
 
-    public OAuthJsonResponse(String response, Configuration jsonConfiguration) {
+    public SpewJaywayResponse(String response, Configuration jsonConfiguration) {
         ctx = JsonPath.parse(response, jsonConfiguration);
     }
 

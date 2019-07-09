@@ -2,7 +2,7 @@ package uk.co.magictractor.oauth.util;
 
 import java.io.InputStream;
 
-import uk.co.magictractor.spew.api.OAuthJsonResponse;
+import uk.co.magictractor.spew.api.SpewJaywayResponse;
 import uk.co.magictractor.spew.api.SpewResponse;
 import uk.co.magictractor.spew.google.Google;
 import uk.co.magictractor.spew.util.IOUtil;
@@ -30,7 +30,7 @@ public final class ResourceUtil {
         }
 
         String json = IOUtil.readStringAndClose(in);
-        return new OAuthJsonResponse(json, Google.getInstance().getJsonConfiguration());
+        return new SpewJaywayResponse(json, Google.getInstance().getJsonConfiguration());
     }
 
 }

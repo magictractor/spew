@@ -28,7 +28,7 @@ import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.converter.HttpMessageNotWritableException;
 
-import uk.co.magictractor.spew.api.OAuthJsonResponse;
+import uk.co.magictractor.spew.api.SpewJaywayResponse;
 import uk.co.magictractor.spew.api.SpewResponse;
 import uk.co.magictractor.spew.util.IOUtil;
 
@@ -69,7 +69,7 @@ public class SpewResponseHttpMessageConverter implements HttpMessageConverter<Sp
         String body = IOUtil.readStringAndClose(inputMessage.getBody());
         System.out.println(body);
 
-        return new OAuthJsonResponse(body, jsonConfiguration);
+        return new SpewJaywayResponse(body, jsonConfiguration);
     }
 
     @Override

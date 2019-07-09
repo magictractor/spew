@@ -111,7 +111,7 @@ public abstract class AbstractOAuthConnection<APP extends OAuthApplication, SP e
         // if ("json".equals(request.getParam("format"))) {
         // TODO! check header for content type
         if (responseBody.startsWith("{") || responseBody.startsWith("[")) {
-            OAuthJsonResponse response = new OAuthJsonResponse(responseBody, jsonConfiguration);
+            SpewJaywayResponse response = new SpewJaywayResponse(responseBody, jsonConfiguration);
             // TODO! change to !"pass"
             // TODO! pass/fail specific to Flickr?
             //			if ("fail".equals(response.getString("stat"))) {

@@ -9,7 +9,7 @@ import java.time.ZonedDateTime;
 
 import org.junit.jupiter.api.Test;
 
-import uk.co.magictractor.spew.api.OAuthJsonResponse;
+import uk.co.magictractor.spew.api.SpewJaywayResponse;
 import uk.co.magictractor.spew.api.SpewResponse;
 import uk.co.magictractor.spew.common.TagSet;
 import uk.co.magictractor.spew.flickr.Flickr;
@@ -58,6 +58,6 @@ public class FlickrResponseTest {
     private SpewResponse buildResponse(String fileName) {
         InputStream in = getClass().getResourceAsStream(fileName);
         String json = IOUtil.readStringAndClose(in);
-        return new OAuthJsonResponse(json, Flickr.getInstance().getJsonConfiguration());
+        return new SpewJaywayResponse(json, Flickr.getInstance().getJsonConfiguration());
     }
 }

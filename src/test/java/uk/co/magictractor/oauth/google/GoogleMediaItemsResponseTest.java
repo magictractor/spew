@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 import org.junit.jupiter.api.Test;
 
 import uk.co.magictractor.oauth.util.ResourceUtil;
-import uk.co.magictractor.spew.api.OAuthJsonResponse;
+import uk.co.magictractor.spew.api.SpewJaywayResponse;
 import uk.co.magictractor.spew.google.Google;
 import uk.co.magictractor.spew.google.pojo.GoogleMediaItem;
 
@@ -16,7 +16,7 @@ public class GoogleMediaItemsResponseTest {
     @Test
     void t() {
         String json = ResourceUtil.readResource(this.getClass(), "mediaItems.json");
-        OAuthJsonResponse response = new OAuthJsonResponse(json, Google.getInstance().getJsonConfiguration());
+        SpewJaywayResponse response = new SpewJaywayResponse(json, Google.getInstance().getJsonConfiguration());
 
         System.err.println(response);
         Object photos = response.getObject("mediaItems");
