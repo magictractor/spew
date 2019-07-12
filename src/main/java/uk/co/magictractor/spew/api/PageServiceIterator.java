@@ -20,6 +20,7 @@ public abstract class PageServiceIterator<E> extends AbstractIterator<E> {
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
     private SpewConnection connection;
+    private Class<E> elementType;
 
     /**
      * <p>
@@ -39,6 +40,10 @@ public abstract class PageServiceIterator<E> extends AbstractIterator<E> {
     private int nextPageItemIndex;
 
     protected PageServiceIterator() {
+    }
+
+    protected Class<E> getElementType() {
+        return elementType;
     }
 
     protected final Logger getLogger() {
@@ -99,10 +104,11 @@ public abstract class PageServiceIterator<E> extends AbstractIterator<E> {
         private final Map<Class, Consumer> serverSideFilterHandlers = new HashMap<>();
         private List<Predicate<? super E>> clientSideFilters = null;
 
-        protected PageServiceIteratorBuilder(SpewConnection connection, I iteratorInstance) {
+        protected PageServiceIteratorBuilder(SpewConnection connection, Class<E> elementType, I iteratorInstance) {
             this.iteratorInstance = iteratorInstance;
             this.iter = iteratorInstance;
             iter.connection = connection;
+            iter.elementType = elementType;
         }
 
         protected I getIteratorInstance() {

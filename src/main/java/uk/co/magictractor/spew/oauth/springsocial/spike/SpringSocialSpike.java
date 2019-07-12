@@ -15,12 +15,34 @@
  */
 package uk.co.magictractor.spew.oauth.springsocial.spike;
 
+import java.util.Iterator;
+
+import uk.co.magictractor.spew.api.SpewConnection;
+import uk.co.magictractor.spew.twitter.MyTwitterApp;
+import uk.co.magictractor.spew.twitter.TweetIterator.TweetIteratorBuilder;
+import uk.co.magictractor.spew.twitter.pojo.Tweet;
+
 /**
  * <p>
  * Spike using Spring Social's OAuth to connect to Twitter.
  * </p>
+ * <p>
  * https://docs.spring.io/spring-social/docs/2.0.0.M4/reference/htmlsingle/
+ * </p>
  */
 public class SpringSocialSpike {
+
+    // TODO! broken because Twitter needs args to be set in query params of GET
+    public static void main(String[] args) {
+        // Same as else, but with different connection
+        SpewConnection connection = new SpringSocialOAuth1Connection(new MyTwitterApp());
+        Iterator<Tweet> iter = new TweetIteratorBuilder<>(connection, Tweet.class).build();
+        while (iter.hasNext()) {
+            Tweet tweet = iter.next();
+            if (tweet.getLikes() >= 100) {
+                System.out.println(tweet);
+            }
+        }
+    }
 
 }

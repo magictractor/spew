@@ -6,10 +6,9 @@ import uk.co.magictractor.spew.api.PageTokenServiceIterator;
 import uk.co.magictractor.spew.api.SpewConnection;
 import uk.co.magictractor.spew.api.SpewRequest;
 import uk.co.magictractor.spew.api.SpewResponse;
-import uk.co.magictractor.spew.twitter.pojo.Tweet;
 
 // https://developer.twitter.com/en/docs/tweets/timelines/api-reference/get-statuses-user_timeline.html
-public class TweetIterator extends PageTokenServiceIterator<Tweet> {
+public class TweetIterator<E> extends PageTokenServiceIterator<E> {
 
     // If non-null fetch tweets for user with this screen name, otherwise tweets are fetched for the authenticated user.
     private String screenName;
@@ -17,16 +16,12 @@ public class TweetIterator extends PageTokenServiceIterator<Tweet> {
     private TweetIterator() {
     }
 
-    public TweetIterator withScreenName(String screenName) {
-        this.screenName = screenName;
-        return this;
-    }
-
     @Override
-    protected PageAndNextToken<Tweet> fetchPage(String pageToken) {
+    protected PageAndNextToken<E> fetchPage(String pageToken) {
         SpewRequest request = SpewRequest
                 .createGetRequest("https://api.twitter.com/1.1/statuses/user_timeline.json");
 
+        System.err.println("set max_id=" + pageToken);
         request.setParam("max_id", pageToken);
 
         request.setParam("screen_name", screenName);
@@ -47,16 +42,12 @@ public class TweetIterator extends PageTokenServiceIterator<Tweet> {
 
         SpewResponse response = getConnection().request(request);
 
-        //List<Tweet> page = response.getObject("$", new TypeRef<List<Tweet>>() {
-        //});
-        List<Tweet> page = response.getList("$", Tweet.class);
+        List<E> page = response.getList("$", getElementType());
 
-        // TODO! where is the token in the response??
-        // since_id is to get most recent (e.g. check for new tweets)
         String nextToken;
         if (!page.isEmpty()) {
-            Tweet lastTweet = page.get(page.size() - 1);
-            nextToken = Long.toString(lastTweet.getId() - 1);
+            long lastTweetId = response.getLong("$.[-1].id");
+            nextToken = Long.toString(lastTweetId - 1);
         }
         else {
             nextToken = null;
@@ -65,11 +56,16 @@ public class TweetIterator extends PageTokenServiceIterator<Tweet> {
         return new PageAndNextToken<>(page, nextToken);
     }
 
-    public static class TweetIteratorBuilder
-            extends PageTokenServiceIteratorBuilder<Tweet, TweetIterator, TweetIteratorBuilder> {
+    public static class TweetIteratorBuilder<E>
+            extends PageTokenServiceIteratorBuilder<E, TweetIterator<E>, TweetIteratorBuilder<E>> {
 
-        public TweetIteratorBuilder(SpewConnection connection) {
-            super(connection, new TweetIterator());
+        public TweetIteratorBuilder(SpewConnection connection, Class<E> elementType) {
+            super(connection, elementType, new TweetIterator<>());
+        }
+
+        public TweetIteratorBuilder<E> withScreenName(String screenName) {
+            getIteratorInstance().screenName = screenName;
+            return this;
         }
     }
 

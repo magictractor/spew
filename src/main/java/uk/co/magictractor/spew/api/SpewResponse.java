@@ -15,4 +15,13 @@ public interface SpewResponse {
     default String getString(String key) {
         return getObject(key, String.class);
     }
+
+    default int getInt(String key) {
+        return getObject(key, Integer.class);
+    }
+
+    default long getLong(String key) {
+        return getObject(key, Long.class);
+    }
+
 }

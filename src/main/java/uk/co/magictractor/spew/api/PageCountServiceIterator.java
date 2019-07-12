@@ -34,8 +34,13 @@ public abstract class PageCountServiceIterator<E> extends PageServiceIterator<E>
             return endOfPages();
         }
         else {
-            return fetchPage(nextPageNumber++);
+            List<E> page = fetchPage(nextPageNumber++);
+            if (totalPageCount == UNKNOWN && page.isEmpty()) {
+                return endOfPages();
+            }
+            return page;
         }
+        // TODO! perhaps endOfPages() if page size is smaller than max?
     }
 
     // pageNumber is one based in this iterator. If the service uses zero based page
@@ -71,8 +76,8 @@ public abstract class PageCountServiceIterator<E> extends PageServiceIterator<E>
     public static class PageCountServiceIteratorBuilder<E, I extends PageCountServiceIterator<E>, B>
             extends PageServiceIteratorBuilder<E, I, B> {
 
-        protected PageCountServiceIteratorBuilder(SpewConnection connection, I iteratorInstance) {
-            super(connection, iteratorInstance);
+        protected PageCountServiceIteratorBuilder(SpewConnection connection, Class<E> elementType, I iteratorInstance) {
+            super(connection, elementType, iteratorInstance);
         }
 
     }

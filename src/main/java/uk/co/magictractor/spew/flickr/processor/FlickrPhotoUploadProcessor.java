@@ -4,8 +4,8 @@ import java.util.Iterator;
 
 import uk.co.magictractor.spew.api.SpewConnection;
 import uk.co.magictractor.spew.api.connection.OAuthConnectionFactory;
-import uk.co.magictractor.spew.flickr.MyFlickrApp;
 import uk.co.magictractor.spew.flickr.FlickrPhotoIterator.FlickrPhotoIteratorBuilder;
+import uk.co.magictractor.spew.flickr.MyFlickrApp;
 import uk.co.magictractor.spew.flickr.pojo.FlickrPhoto;
 import uk.co.magictractor.spew.processor.common.MutablePhoto;
 import uk.co.magictractor.spew.processor.common.PhotoProcessorContext;
@@ -25,7 +25,7 @@ public class FlickrPhotoUploadProcessor extends PhotoUploadProcessor {
     public static void main(String[] args) {
         PhotoUploadProcessorChain processorChain = new PhotoUploadProcessorChain(new FlickrPhotoUploadProcessor());
         SpewConnection connection = OAuthConnectionFactory.getConnection(MyFlickrApp.class);
-        Iterator<FlickrPhoto> iterator = new FlickrPhotoIteratorBuilder(connection).build();
+        Iterator<FlickrPhoto> iterator = new FlickrPhotoIteratorBuilder<>(connection, FlickrPhoto.class).build();
         processorChain.execute(iterator, new PhotoProcessorContext());
     }
 

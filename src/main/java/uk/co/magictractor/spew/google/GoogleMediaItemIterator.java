@@ -15,7 +15,7 @@ import uk.co.magictractor.spew.local.dates.DateRange;
 // https://developers.google.com/photos/library/guides/list
 //
 // https://developers.google.com/photos/library/reference/rest/v1/mediaItems#MediaItem
-public class GoogleMediaItemIterator extends GoogleServiceIterator<GoogleMediaItem> {
+public class GoogleMediaItemIterator<E> extends GoogleServiceIterator<E> {
 
     private DateRange dateTakenRange;
 
@@ -35,15 +35,15 @@ public class GoogleMediaItemIterator extends GoogleServiceIterator<GoogleMediaIt
     }
 
     @Override
-    protected List<GoogleMediaItem> parsePageResponse(SpewResponse response) {
-        return response.getList("mediaItems", GoogleMediaItem.class);
+    protected List<E> parsePageResponse(SpewResponse response) {
+        return response.getList("mediaItems", getElementType());
     }
 
-    public static class GoogleMediaItemIteratorBuilder extends
-            GoogleServiceIteratorBuilder<GoogleMediaItem, GoogleMediaItemIterator, GoogleMediaItemIteratorBuilder> {
+    public static class GoogleMediaItemIteratorBuilder<E> extends
+            GoogleServiceIteratorBuilder<E, GoogleMediaItemIterator<E>, GoogleMediaItemIteratorBuilder<E>> {
 
-        public GoogleMediaItemIteratorBuilder(SpewConnection connection) {
-            super(connection, new GoogleMediaItemIterator());
+        public GoogleMediaItemIteratorBuilder(SpewConnection connection, Class<E> elementType) {
+            super(connection, elementType, new GoogleMediaItemIterator<E>());
             addServerSideFilterHandler(DateTakenPhotoFilter.class, this::setDateTakenPhotoFilter);
         }
 
@@ -55,7 +55,7 @@ public class GoogleMediaItemIterator extends GoogleServiceIterator<GoogleMediaIt
 
     public static void main(String[] args) {
         SpewConnection connection = OAuthConnectionFactory.getConnection(MyGooglePhotosApp.class);
-        Iterator<GoogleMediaItem> iterator = new GoogleMediaItemIteratorBuilder(connection)
+        Iterator<GoogleMediaItem> iterator = new GoogleMediaItemIteratorBuilder<>(connection, GoogleMediaItem.class)
                 .withFilter(new DateTakenPhotoFilter(DateRange.forDay(2018, 11, 21)))
                 .build();
         while (iterator.hasNext()) {

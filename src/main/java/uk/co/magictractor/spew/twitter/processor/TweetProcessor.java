@@ -19,7 +19,7 @@ public class TweetProcessor implements SimpleProcessor<Tweet> {
 
     public static void main(String[] args) {
         SpewConnection connection = OAuthConnectionFactory.getConnection(MyTwitterApp.class);
-        Iterator<Tweet> iter = new TweetIteratorBuilder(connection).build();
+        Iterator<Tweet> iter = new TweetIteratorBuilder<>(connection, Tweet.class).build();
         while (iter.hasNext()) {
             Tweet tweet = iter.next();
             if (tweet.getLikes() >= 100) {

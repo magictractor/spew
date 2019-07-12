@@ -10,7 +10,7 @@ import uk.co.magictractor.spew.api.connection.OAuthConnectionFactory;
 import uk.co.magictractor.spew.common.Album;
 import uk.co.magictractor.spew.google.pojo.GoogleAlbum;
 
-public class GoogleSharedAlbumsIterator extends GoogleServiceIterator<GoogleAlbum> {
+public class GoogleSharedAlbumsIterator<E> extends GoogleServiceIterator<E> {
 
     private GoogleSharedAlbumsIterator() {
     }
@@ -26,15 +26,15 @@ public class GoogleSharedAlbumsIterator extends GoogleServiceIterator<GoogleAlbu
     }
 
     @Override
-    protected List<GoogleAlbum> parsePageResponse(SpewResponse response) {
-        return response.getList("sharedAlbums", GoogleAlbum.class);
+    protected List<E> parsePageResponse(SpewResponse response) {
+        return response.getList("sharedAlbums", getElementType());
     }
 
-    public static class GoogleSharedAlbumsIteratorBuilder extends
-            GoogleServiceIteratorBuilder<GoogleAlbum, GoogleSharedAlbumsIterator, GoogleSharedAlbumsIteratorBuilder> {
+    public static class GoogleSharedAlbumsIteratorBuilder<E> extends
+            GoogleServiceIteratorBuilder<E, GoogleSharedAlbumsIterator<E>, GoogleSharedAlbumsIteratorBuilder<E>> {
 
-        public GoogleSharedAlbumsIteratorBuilder(SpewConnection connection) {
-            super(connection, new GoogleSharedAlbumsIterator());
+        public GoogleSharedAlbumsIteratorBuilder(SpewConnection connection, Class<E> elementType) {
+            super(connection, elementType, new GoogleSharedAlbumsIterator<>());
         }
 
     }
@@ -42,7 +42,7 @@ public class GoogleSharedAlbumsIterator extends GoogleServiceIterator<GoogleAlbu
     // https://developers.google.com/photos/library/reference/rest/v1/albums#Album
     public static void main(String[] args) {
         SpewConnection connection = OAuthConnectionFactory.getConnection(MyGooglePhotosApp.class);
-        Iterator<GoogleAlbum> iter = new GoogleSharedAlbumsIteratorBuilder(connection).build();
+        Iterator<GoogleAlbum> iter = new GoogleSharedAlbumsIteratorBuilder<>(connection, GoogleAlbum.class).build();
         while (iter.hasNext()) {
             Album album = iter.next();
             System.err.println(

@@ -8,8 +8,8 @@ import uk.co.magictractor.spew.api.SpewRequest;
 import uk.co.magictractor.spew.api.connection.OAuthConnectionFactory;
 import uk.co.magictractor.spew.common.filter.DateTakenPhotoFilter;
 import uk.co.magictractor.spew.flickr.Flickr;
-import uk.co.magictractor.spew.flickr.MyFlickrApp;
 import uk.co.magictractor.spew.flickr.FlickrPhotoIterator.FlickrPhotoIteratorBuilder;
+import uk.co.magictractor.spew.flickr.MyFlickrApp;
 import uk.co.magictractor.spew.flickr.pojo.FlickrPhoto;
 import uk.co.magictractor.spew.local.dates.DateRange;
 import uk.co.magictractor.spew.processor.common.MutablePhoto;
@@ -83,7 +83,7 @@ public class FlickrPhotoUpdateProcessor extends PhotoUpdateProcessor {
         PhotoTidyProcessorChain processorChain = new PhotoTidyProcessorChain(new FlickrPhotoUpdateProcessor());
         SpewConnection connection = OAuthConnectionFactory.getConnection(MyFlickrApp.class);
         LocalDate since = LocalDate.now().minusMonths(1).withDayOfMonth(1);
-        Iterator<FlickrPhoto> iterator = new FlickrPhotoIteratorBuilder(connection)
+        Iterator<FlickrPhoto> iterator = new FlickrPhotoIteratorBuilder<>(connection, FlickrPhoto.class)
                 .withFilter(new DateTakenPhotoFilter(DateRange.uptoToday(since)))
                 .build();
         processorChain.execute(iterator, new PhotoProcessorContext());

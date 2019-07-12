@@ -3,13 +3,12 @@ package uk.co.magictractor.spew.imgur;
 import java.util.Iterator;
 import java.util.List;
 
+import uk.co.magictractor.spew.api.PageCountServiceIterator;
 import uk.co.magictractor.spew.api.SpewConnection;
 import uk.co.magictractor.spew.api.SpewRequest;
 import uk.co.magictractor.spew.api.SpewResponse;
-import uk.co.magictractor.spew.api.PageCountServiceIterator;
 import uk.co.magictractor.spew.api.connection.OAuthConnectionFactory;
 import uk.co.magictractor.spew.imgur.pojo.ImgurImage;
-import uk.co.magictractor.spew.imgur.pojo.ImgurImages;
 
 /*
  * <pre>
@@ -200,7 +199,7 @@ import uk.co.magictractor.spew.imgur.pojo.ImgurImages;
 //    "success": true,
 //    "status": 200
 //}
-public class ImgurPhotoIterator extends PageCountServiceIterator<ImgurImage> {
+public class ImgurPhotoIterator<E> extends PageCountServiceIterator<E> {
 
     // min_taken_date (Optional)
     // Minimum taken date. Photos with an taken date greater than or equal to this
@@ -212,7 +211,7 @@ public class ImgurPhotoIterator extends PageCountServiceIterator<ImgurImage> {
 
     // Get images https://apidocs.imgur.com/#2e45daca-bd44-47f8-84b0-b3f2aa861735
     @Override
-    protected List<ImgurImage> fetchPage(int pageNumber) {
+    protected List<E> fetchPage(int pageNumber) {
         SpewRequest request = SpewRequest
                 .createGetRequest(Imgur.REST_ENDPOINT + "/account/me/images/" + (pageNumber - 1));
 
@@ -228,24 +227,20 @@ public class ImgurPhotoIterator extends PageCountServiceIterator<ImgurImage> {
 
         System.err.println(response);
 
-        ImgurImages images = response.getObject("$", ImgurImages.class);
-        //		setTotalItemCount(photos.total);
-        //		setTotalPageCount(photos.pages);
-
-        return images.getImages();
+        return response.getList("$.data", getElementType());
     }
 
-    public static class ImgurPhotoIteratorBuilder
-            extends PageCountServiceIteratorBuilder<ImgurImage, ImgurPhotoIterator, ImgurPhotoIteratorBuilder> {
+    public static class ImgurPhotoIteratorBuilder<E>
+            extends PageCountServiceIteratorBuilder<E, ImgurPhotoIterator<E>, ImgurPhotoIteratorBuilder<E>> {
 
-        public ImgurPhotoIteratorBuilder(SpewConnection connection) {
-            super(connection, new ImgurPhotoIterator());
+        public ImgurPhotoIteratorBuilder(SpewConnection connection, Class<E> elementType) {
+            super(connection, elementType, new ImgurPhotoIterator<>());
         }
     }
 
     public static void main(String[] args) {
         SpewConnection connection = OAuthConnectionFactory.getConnection(MyImgurApp.class);
-        Iterator<ImgurImage> iter = new ImgurPhotoIteratorBuilder(connection)
+        Iterator<ImgurImage> iter = new ImgurPhotoIteratorBuilder<>(connection, ImgurImage.class)
                 .build();
         while (iter.hasNext()) {
             ImgurImage photo = iter.next();
