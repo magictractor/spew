@@ -16,7 +16,7 @@ public abstract class GoogleServiceIterator<E> extends PageTokenServiceIterator<
     protected final PageAndNextToken<E> fetchPage(String pageToken) {
         SpewRequest request = createPageRequest();
 
-        request.setParam("pageToken", pageToken);
+        request.setQueryStringParam("pageToken", pageToken);
 
         SpewResponse response = getConnection().request(request);
 

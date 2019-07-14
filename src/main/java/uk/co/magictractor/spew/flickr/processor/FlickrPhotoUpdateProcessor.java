@@ -48,10 +48,10 @@ public class FlickrPhotoUpdateProcessor extends PhotoUpdateProcessor {
 
         SpewRequest request = SpewRequest.createPostRequest(Flickr.REST_ENDPOINT);
 
-        request.setParam("method", "flickr.photos.setMeta");
+        request.setQueryStringParam("method", "flickr.photos.setMeta");
 
-        request.setParam("photo_id", photo.getServiceProviderId());
-        request.setParam("title", photo.getTitle());
+        request.setQueryStringParam("photo_id", photo.getServiceProviderId());
+        request.setQueryStringParam("title", photo.getTitle());
 
         OAuthConnectionFactory.getConnection(MyFlickrApp.class).request(request);
     }
@@ -63,11 +63,11 @@ public class FlickrPhotoUpdateProcessor extends PhotoUpdateProcessor {
 
         SpewRequest request = SpewRequest.createPostRequest(Flickr.REST_ENDPOINT);
 
-        request.setParam("method", "flickr.photos.setTags");
+        request.setQueryStringParam("method", "flickr.photos.setTags");
 
-        request.setParam("photo_id", photo.getServiceProviderId());
+        request.setQueryStringParam("photo_id", photo.getServiceProviderId());
         // TODO! refactor this method - a processor has added the parents already
-        request.setParam("tags", photo.getTagSet().getQuotedTagNamesWithAliasesAndParents());
+        request.setQueryStringParam("tags", photo.getTagSet().getQuotedTagNamesWithAliasesAndParents());
 
         OAuthConnectionFactory.getConnection(MyFlickrApp.class).request(request);
     }

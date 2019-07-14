@@ -1,58 +1,49 @@
 package uk.co.magictractor.spew.imagebam;
 
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import uk.co.magictractor.spew.api.PageCountServiceIterator;
+import uk.co.magictractor.spew.api.SingleCallServiceIterator;
 import uk.co.magictractor.spew.api.SpewConnection;
 import uk.co.magictractor.spew.api.SpewRequest;
 import uk.co.magictractor.spew.api.SpewResponse;
 import uk.co.magictractor.spew.api.connection.OAuthConnectionFactory;
 import uk.co.magictractor.spew.imagebam.pojo.ImageBamPhoto;
 
-public class ImageBamPhotoIterator extends PageCountServiceIterator<ImageBamPhoto> {
+/**
+ * It appears the the ImageBam API only supports listing Photos which are in a
+ * gallery - there doesn't appear to be a way to list photos which are not in a
+ * gallery, or to list all photos.
+ */
+public class ImageBamPhotoIterator<E> extends SingleCallServiceIterator<E> {
 
     private ImageBamPhotoIterator() {
     }
 
     @Override
-    protected List<ImageBamPhoto> fetchPage(int pageNumber) {
-        SpewRequest request = SpewRequest.createPostRequest(ImageBam.REST_ENDPOINT);
+    protected List<E> fetchPage() {
+        SpewRequest request = SpewRequest.createPostRequest(ImageBam.REST_ENDPOINT + "get_gallery_images");
 
-        // TODO! obviously incomplete - this is a Flickr method not Imagebam
-        request.setParam("method", "flickr.photos.search");
-
-        request.setParam("user_id", "me");
-        request.setParam("sort", "date-taken-desc");
-        request.setParam("page", pageNumber);
-        // default is 100, max is 500
-        // request.setParam("per_page", 500);
+        // TODO! set gallery id
 
         SpewResponse response = getConnection().request(request);
 
         System.err.println(response);
 
-        //        FlickrPhotos photos = response.getObject("photos", FlickrPhotos.class);
-        //        setTotalItemCount(photos.total);
-        //        setTotalPageCount(photos.pages);
-
-        // return photos.photo;
-
-        return Collections.emptyList();
+        return response.getList("$.rsp.images", getElementType());
     }
 
-    public static class ImageBamPhotoIteratorBuilder extends
-            PageCountServiceIteratorBuilder<ImageBamPhoto, ImageBamPhotoIterator, ImageBamPhotoIteratorBuilder> {
+    public static class ImageBamPhotoIteratorBuilder<E> extends
+            SingleCallServiceIteratorBuilder<E, ImageBamPhotoIterator<E>, ImageBamPhotoIteratorBuilder<E>> {
 
-        protected ImageBamPhotoIteratorBuilder(SpewConnection connection) {
-            super(connection, ImageBamPhoto.class, new ImageBamPhotoIterator());
+        protected ImageBamPhotoIteratorBuilder(SpewConnection connection, Class<E> elementType) {
+            super(connection, elementType, new ImageBamPhotoIterator<>());
         }
     }
 
     public static void main(String[] args) {
         SpewConnection connection = OAuthConnectionFactory.getConnection(MyImageBamApp.class);
-        Iterator<ImageBamPhoto> iterator = new ImageBamPhotoIteratorBuilder(connection).build();
+        Iterator<ImageBamPhoto> iterator = new ImageBamPhotoIteratorBuilder<>(connection, ImageBamPhoto.class).build();
         while (iterator.hasNext()) {
             ImageBamPhoto photo = iterator.next();
             System.err.println(photo.getTitle() + "  " + photo.getDateTimeTaken());

@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 
 import uk.co.magictractor.spew.connection.ConnectionRequest;
 import uk.co.magictractor.spew.connection.ConnectionRequestFactory;
+import uk.co.magictractor.spew.imagebam.ImageBam;
 import uk.co.magictractor.spew.util.IOUtil;
 
 // Common code for OAuth1 and OAuth2 implementations.
@@ -108,6 +109,8 @@ public abstract class AbstractOAuthConnection<APP extends OAuthApplication, SP e
         // TODO! Very long Json does not get displayed in the console
         logger.trace(responseBody);
 
+        SpewResponse response;
+
         // TODO! wrap/convert response json
         // if ("json".equals(request.getParam("format"))) {
         // TODO! check header for content type
@@ -115,17 +118,25 @@ public abstract class AbstractOAuthConnection<APP extends OAuthApplication, SP e
         String contentType = getHeader(con, "content-type");
         if ("application/json".equals(contentType) || contentType.startsWith("application/json;")) {
             //        if (responseBody.startsWith("{") || responseBody.startsWith("[")) {
-            SpewJaywayResponse response = new SpewJaywayResponse(responseBody, jsonConfiguration);
+            response = new SpewJaywayResponse(responseBody, jsonConfiguration);
             // TODO! change to !"pass"
             // TODO! pass/fail specific to Flickr?
             //			if ("fail".equals(response.getString("stat"))) {
             //				throw new IllegalStateException(body);
             //			}
-            return response;
+        }
+        // TODO! Imagebam "text/html; charset=UTF-8"
+        else if (getServiceProvider() instanceof ImageBam) {
+            response = new SpewJaywayResponse(responseBody, jsonConfiguration);
         }
         else {
-            throw new IllegalStateException("code needs modified to handle Content-Type " + contentType);
+            throw new IllegalStateException(
+                "code needs modified to handle Content-Type " + contentType + " " + responseBody);
         }
+
+        getServiceProvider().verifyResponse(response);
+
+        return response;
     }
 
     private String getHeader(HttpURLConnection con, String headerKey) {

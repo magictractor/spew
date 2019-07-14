@@ -15,7 +15,7 @@ import com.jayway.jsonpath.spi.mapper.MappingProvider;
 // imgur responses also give information about how many calls by follow in the same hour
 // google photos uses "next page" tokens
 // interesting! https://hueniverse.com/oauth-2-0-and-the-road-to-hell-8eec45921529
-// 
+//
 // https://en.wikipedia.org/wiki/List_of_OAuth_providers
 public interface OAuthServiceProvider {
 
@@ -33,6 +33,19 @@ public interface OAuthServiceProvider {
                 .mappingProvider(mappingProvider)
                 .options(Option.DEFAULT_PATH_LEAF_TO_NULL)
                 .build();
+    }
+
+    /**
+     * Check that the response has an "ok" status (if it contains a status) and
+     * no error message (if it can contain an error message). TODO! what should
+     * this throw?
+     *
+     * @throws BadResponseException if the response contains an error message or
+     *         has a status other than "ok".
+     */
+    // TODO! force all service providers to implement this
+    // void verifyResponse(SpewResponse response);
+    default void verifyResponse(SpewResponse response) {
     }
 
 }

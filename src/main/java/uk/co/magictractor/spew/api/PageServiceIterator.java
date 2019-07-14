@@ -31,7 +31,6 @@ public abstract class PageServiceIterator<E> extends AbstractIterator<E> {
      * <p>
      * If null (the default) use the service provider's default page size.
      * </p>
-     * *
      */
     private Integer pageSize;
 

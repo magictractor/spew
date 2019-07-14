@@ -40,26 +40,26 @@ public class FlickrPhotoIterator<E> extends PageCountServiceIterator<E> {
     protected List<E> fetchPage(int pageNumber) {
         SpewRequest request = SpewRequest.createPostRequest(Flickr.REST_ENDPOINT);
 
-        request.setParam("method", "flickr.photos.search");
+        request.setQueryStringParam("method", "flickr.photos.search");
 
-        request.setParam("user_id", "me");
-        request.setParam("sort", "date-taken-desc");
-        request.setParam("page", pageNumber);
+        request.setQueryStringParam("user_id", "me");
+        request.setQueryStringParam("sort", "date-taken-desc");
+        request.setQueryStringParam("page", pageNumber);
         // default is 100, max is 500
         // request.setParam("per_page", 500);
 
         // Filters
-        request.setParam("min_taken_date", minTakenDate);
-        request.setParam("max_taken_date", maxTakenDate);
-        request.setParam("min_upload_date", minUploadedDate);
-        request.setParam("max_upload_date", maxUploadedDate);
+        request.setQueryStringParam("min_taken_date", minTakenDate);
+        request.setQueryStringParam("max_taken_date", maxTakenDate);
+        request.setQueryStringParam("min_upload_date", minUploadedDate);
+        request.setQueryStringParam("max_upload_date", maxUploadedDate);
 
         // machine_tags are no auto tags
         // https://www.flickr.com/groups/51035612836@N01/discuss/72157594497877875/
         //
         // url_o is a workaround for o_dims not working
         // https://www.flickr.com/groups/51035612836@N01/discuss/72157649995435595/
-        request.setParam("extras", "date_upload,date_taken,description,tags,machine_tags,url_o");
+        request.setQueryStringParam("extras", "date_upload,date_taken,description,tags,machine_tags,url_o");
         // request.setParam("extras", ALL_EXTRAS);
         SpewResponse response = getConnection().request(request);
 

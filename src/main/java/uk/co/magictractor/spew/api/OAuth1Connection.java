@@ -119,8 +119,8 @@ public final class OAuth1Connection extends AbstractOAuthConnection<OAuth1Applic
         // FlickrRequest request = FlickrRequest.forAuth("access_token");
         // TODO! POST? - imagebam allows get or post
         SpewRequest request = SpewRequest.createGetRequest(getServiceProvider().getTokenRequestUri());
-        request.setParam("oauth_token", userToken.getValue());
-        request.setParam("oauth_verifier", verification);
+        request.setQueryStringParam("oauth_token", userToken.getValue());
+        request.setQueryStringParam("oauth_verifier", verification);
         SpewResponse response = authRequest(request);
 
         String authToken = response.getString("oauth_token");
@@ -138,7 +138,7 @@ public final class OAuth1Connection extends AbstractOAuthConnection<OAuth1Applic
         // urlBuilder.append("oauth_signature=");
         // urlBuilder.append(getSignature());
 
-        return request.getUrl() + "?" + getQueryString(request.getParams(), UrlEncoderUtil::paramEncode)
+        return request.getUrl() + "?" + getQueryString(request.getQueryStringParams(), UrlEncoderUtil::paramEncode)
                 + "&oauth_signature=" + getSignature(request);
     }
 
@@ -201,8 +201,8 @@ public final class OAuth1Connection extends AbstractOAuthConnection<OAuth1Applic
 
         signatureBaseStringBuilder.append(getApplication().getAppToken());
         signatureBaseStringBuilder.append(getApplication().getAppSecret());
-        signatureBaseStringBuilder.append(request.getParam("oauth_timestamp"));
-        signatureBaseStringBuilder.append(request.getParam("oauth_nonce"));
+        signatureBaseStringBuilder.append(request.getQueryStringParam("oauth_timestamp"));
+        signatureBaseStringBuilder.append(request.getQueryStringParam("oauth_nonce"));
         if (userToken.getValue() != null) {
             signatureBaseStringBuilder.append(userToken.getValue());
             signatureBaseStringBuilder.append(userSecret.getValue());
@@ -218,6 +218,7 @@ public final class OAuth1Connection extends AbstractOAuthConnection<OAuth1Applic
         signatureBaseStringBuilder.append('&');
         signatureBaseStringBuilder.append(UrlEncoderUtil.oauthEncode(request.getUrl()));
         signatureBaseStringBuilder.append('&');
+        // aah
         signatureBaseStringBuilder.append(
             UrlEncoderUtil.oauthEncode(getQueryString(getBaseStringParams(request), UrlEncoderUtil::oauthEncode)));
 
@@ -232,38 +233,38 @@ public final class OAuth1Connection extends AbstractOAuthConnection<OAuth1Applic
     private Map<String, Object> getBaseStringParams(SpewRequest request) {
         // TODO! some params should be ignored
         // TODO! where should params be escaped??
-        return new TreeMap<>(request.getParams());
+        return new TreeMap<>(request.getQueryStringParams());
     }
 
     private void forApi(SpewRequest request) {
         // OAuthRequest request = new OAuthRequest(FLICKR_REST_ENDPOINT);
         //		setParam("oauth_consumer_key", FlickrConfig.API_KEY);
 
-        request.setParam("api_key", getApplication().getAppToken());
-        request.setParam("oauth_token", userToken.getValue());
+        request.setQueryStringParam("api_key", getApplication().getAppToken());
+        request.setQueryStringParam("oauth_token", userToken.getValue());
         // request.setParam("method", flickrMethod);
-        request.setParam("format", "json");
-        request.setParam("nojsoncallback", "1");
+        request.setQueryStringParam("format", "json");
+        request.setQueryStringParam("nojsoncallback", "1");
 
         // return request;
     }
 
     private void forAll(SpewRequest request) {
         // hmm... same as api_key? (in forApi())
-        request.setParam("oauth_consumer_key", getApplication().getAppToken());
+        request.setQueryStringParam("oauth_consumer_key", getApplication().getAppToken());
 
         // TODO! nonce should guarantee that it is never the same if the
         // timestamp has not move on since the last API call. Not quite guaranteed here
         // - but pretty darned likely.
         // https://oauth.net/core/1.0a/#nonce
-        request.setParam("oauth_nonce", nonceGenerator.nextInt());
-        request.setParam("oauth_timestamp", System.currentTimeMillis() / 1000);
+        request.setQueryStringParam("oauth_nonce", nonceGenerator.nextInt());
+        request.setQueryStringParam("oauth_timestamp", System.currentTimeMillis() / 1000);
         // setParam("oauth_callback", "www.google.com");
         // "oob" so that web shows the verifier which can then be copied
         // eh? should only need "oob" during authorization
-        request.setParam("oauth_callback", "oob");
-        request.setParam("oauth_version", "1.0");
-        request.setParam("oauth_signature_method", getServiceProvider().getRequestSignatureMethod());
+        request.setQueryStringParam("oauth_callback", "oob");
+        request.setQueryStringParam("oauth_version", "1.0");
+        request.setQueryStringParam("oauth_signature_method", getServiceProvider().getRequestSignatureMethod());
     }
 
 }

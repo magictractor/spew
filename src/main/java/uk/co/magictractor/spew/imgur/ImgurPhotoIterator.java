@@ -213,7 +213,7 @@ public class ImgurPhotoIterator<E> extends PageCountServiceIterator<E> {
     @Override
     protected List<E> fetchPage(int pageNumber) {
         SpewRequest request = SpewRequest
-                .createGetRequest(Imgur.REST_ENDPOINT + "/account/me/images/" + (pageNumber - 1));
+                .createGetRequest(Imgur.REST_ENDPOINT + "account/me/images/" + (pageNumber - 1));
 
         // request.setParam("method", "account/me/images/page/" + (pageNumber - 1));
 

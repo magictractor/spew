@@ -2,7 +2,9 @@ package uk.co.magictractor.spew.imagebam;
 
 import com.google.gson.GsonBuilder;
 
+import uk.co.magictractor.spew.api.BadResponseException;
 import uk.co.magictractor.spew.api.OAuth1ServiceProvider;
+import uk.co.magictractor.spew.api.SpewResponse;
 
 /**
  * Meh, Imagebam doesn't look promising. API is patchy - looks like we can't
@@ -46,6 +48,7 @@ public class ImageBam implements OAuth1ServiceProvider {
         return "MD5";
     }
 
+    @Override
     public GsonBuilder getGsonBuilder() {
         GsonBuilder gsonBuilder = new GsonBuilder();
 
@@ -58,4 +61,16 @@ public class ImageBam implements OAuth1ServiceProvider {
 
         return gsonBuilder;
     }
+
+    // {"rsp":{"status":"fail","error_code":108,"error_message":"permission denied: gallery_id"}}
+    @Override
+    public void verifyResponse(SpewResponse response) {
+        String status = response.getString("$.rsp.status");
+        if (!"ok".equals(status)) {
+            String errorCode = response.getString("$.rsp.error_code");
+            String errorMessage = response.getString("$.rsp.error_message");
+            throw new BadResponseException(status, errorCode, errorMessage);
+        }
+    }
+
 }

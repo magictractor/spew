@@ -43,10 +43,10 @@ class OAuthRequestTest {
 
         // Note that the nonce and timestamp in the example doesn't match in the example
         // request and base string
-        request.setParam("oauth_nonce", "95613465");
-        request.setParam("oauth_timestamp", "1305586162");
-        request.setParam("oauth_consumer_key", "653e7a6ecc1d528c516cc8f92cf98611");
-        request.setParam("oauth_callback", "oob");
+        request.setQueryStringParam("oauth_nonce", "95613465");
+        request.setQueryStringParam("oauth_timestamp", "1305586162");
+        request.setQueryStringParam("oauth_consumer_key", "653e7a6ecc1d528c516cc8f92cf98611");
+        request.setQueryStringParam("oauth_callback", "oob");
 
         //		https://www.flickr.com/services/oauth/request_token
         //?oauth_nonce=89601180

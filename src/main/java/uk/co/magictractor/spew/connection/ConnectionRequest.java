@@ -29,15 +29,12 @@ import uk.co.magictractor.spew.api.SpewRequest;
 public interface ConnectionRequest {
 
     public default void writeParams(SpewRequest request, Configuration jsonConfiguration) throws IOException {
-        //        String json = jsonConfiguration.jsonProvider().toJson(request.getParams());
-        //        setRequestBody(json);
-
-        if (request.hasParamsInBody()) {
+        // TODO! not just POST?
+        if ("POST".equals(request.getHttpMethod())) {
             setDoOutput(true);
-
-            if (!request.getParams().isEmpty()) {
+            if (!request.getBodyParams().isEmpty()) {
                 setHeader("content-type", "application/json");
-                String requestBody = jsonConfiguration.jsonProvider().toJson(request.getParams());
+                String requestBody = jsonConfiguration.jsonProvider().toJson(request.getBodyParams());
                 //logger.trace("request body: " + requestBody);
                 // TODO! encoding
                 byte[] requestBodyBytes = requestBody.getBytes();
@@ -49,13 +46,10 @@ public interface ConnectionRequest {
                 setFixedLengthStreamingMode(0);
             }
         }
-        else {
-            // Write params to the query string
-            if (!request.getParams().isEmpty()) {
-                throw new UnsupportedOperationException("change code to write params to the query string");
-            }
+        else if (!request.getBodyParams().isEmpty()) {
+            // Move this check into setBodyParam()?
+            throw new IllegalStateException("Body params not supported for HTTP method " + request.getHttpMethod());
         }
-
     }
 
     public OutputStream getOutputStream() throws IOException;

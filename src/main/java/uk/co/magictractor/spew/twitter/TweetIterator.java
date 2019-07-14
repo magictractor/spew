@@ -22,23 +22,23 @@ public class TweetIterator<E> extends PageTokenServiceIterator<E> {
                 .createGetRequest("https://api.twitter.com/1.1/statuses/user_timeline.json");
 
         System.err.println("set max_id=" + pageToken);
-        request.setParam("max_id", pageToken);
+        request.setQueryStringParam("max_id", pageToken);
 
-        request.setParam("screen_name", screenName);
+        request.setQueryStringParam("screen_name", screenName);
 
-        request.setParam("count", getPageSize());
+        request.setQueryStringParam("count", getPageSize());
 
         // Get full tweet text.
         // See https://developer.twitter.com/en/docs/tweets/tweet-updates
-        request.setParam("tweet_mode", "extended");
+        request.setQueryStringParam("tweet_mode", "extended");
 
         // Exclude retweets
-        request.setParam("include_rts", "false");
+        request.setQueryStringParam("include_rts", "false");
         // Exclude replies
-        request.setParam("exclude_replies", "true");
+        request.setQueryStringParam("exclude_replies", "true");
 
         // Omit user info
-        request.setParam("trim_user", "true");
+        request.setQueryStringParam("trim_user", "true");
 
         SpewResponse response = getConnection().request(request);
 

@@ -28,7 +28,7 @@ public class GoogleMediaItemIterator<E> extends GoogleServiceIterator<E> {
                 .createPostRequest("https://photoslibrary.googleapis.com/v1/mediaItems:search");
 
         if (dateTakenRange != null) {
-            request.setParam("filters", new GoogleFilters(dateTakenRange));
+            request.setBodyParam("filters", new GoogleFilters(dateTakenRange));
         }
 
         return request;

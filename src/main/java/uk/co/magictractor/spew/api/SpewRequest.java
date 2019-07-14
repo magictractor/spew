@@ -7,7 +7,8 @@ public class SpewRequest {
 
     private final String httpMethod;
     private final String url;
-    private final Map<String, Object> params = new LinkedHashMap<>();
+    private final Map<String, Object> queryStringParams = new LinkedHashMap<>();
+    private final Map<String, Object> bodyParams = new LinkedHashMap<>();
 
     public static final SpewRequest createGetRequest(String url) {
         return new SpewRequest("GET", url);
@@ -42,32 +43,43 @@ public class SpewRequest {
         return httpMethod;
     }
 
-    public boolean hasParamsInBody() {
-        // TODO! check whether DEL or other method types support a body
-        return !"GET".equals(httpMethod);
-    }
-
-    public void setParam(String key, Object value) {
-        // Escape value to handle spaces in titles etc. - nope gubs oauth
-        // params.put(key, UrlEncoderUtil.urlEncode(value));
+    public void setQueryStringParam(String key, Object value) {
         if (value != null) {
-            params.put(key, value);
+            queryStringParams.put(key, value);
         }
         else {
-            params.remove(key);
+            queryStringParams.remove(key);
         }
     }
 
-    public void removeParam(String key) {
-        params.remove(key);
+    public void removeQueryStringParam(String key) {
+        queryStringParams.remove(key);
     }
 
-    public Object getParam(String key) {
-        // TODO! do not commit - do null handling where it's needed
-        return params.containsKey(key) ? params.get(key) : "";
+    public void setBodyParam(String key, Object value) {
+        if (value != null) {
+            bodyParams.put(key, value);
+        }
+        else {
+            bodyParams.remove(key);
+        }
     }
 
-    public Map<String, Object> getParams() {
-        return params;
+    public void removeBodyParam(String key) {
+        bodyParams.remove(key);
     }
+
+    public Object getQueryStringParam(String key) {
+        // TODO! do not convert to empty string - do null handling where it's needed
+        return queryStringParams.containsKey(key) ? queryStringParams.get(key) : "";
+    }
+
+    public Map<String, Object> getBodyParams() {
+        return bodyParams;
+    }
+
+    public Map<String, Object> getQueryStringParams() {
+        return queryStringParams;
+    }
+
 }

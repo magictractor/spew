@@ -31,7 +31,7 @@ public class OAuth2Connection extends AbstractOAuthConnection<OAuth2Application,
      * milliseconds to remove from expiry to ensure that we refresh if getting
      * close to the server's expiry time
      */
-    private static final int EXPIRY_BUFFER = 60;
+    private static final int EXPIRY_BUFFER = 60 * 1000;
 
     // private final OAuth2Application application;
 
@@ -96,8 +96,8 @@ public class OAuth2Connection extends AbstractOAuthConnection<OAuth2Application,
         // urlBuilder.append(getSignature());
 
         // TODO! may need to have both query params and body params
-        if (!request.hasParamsInBody()) {
-            return request.getUrl() + "?" + getQueryString(request.getParams(), UrlEncoderUtil::paramEncode);
+        if (!request.getQueryStringParams().isEmpty()) {
+            return request.getUrl() + "?" + getQueryString(request.getQueryStringParams(), UrlEncoderUtil::paramEncode);
         }
         else {
             // Params will go in the request body.
@@ -127,9 +127,9 @@ public class OAuth2Connection extends AbstractOAuthConnection<OAuth2Application,
     private void authorize() {
         SpewRequest request = SpewRequest.createGetRequest(getServiceProvider().getAuthorizationUri());
 
-        request.setParam("client_id", getApplication().getClientId());
+        request.setQueryStringParam("client_id", getApplication().getClientId());
         String redirectUri = getAuthorizeRedirectUrl();
-        request.setParam("redirect_uri", redirectUri);
+        request.setQueryStringParam("redirect_uri", redirectUri);
 
         // Ah! was using code, but should be token? see
         // https://apidocs.imgur.com/#authorization-and-oauth
@@ -137,11 +137,11 @@ public class OAuth2Connection extends AbstractOAuthConnection<OAuth2Application,
         // convert pin to access token
         // Google does not like "pin": Invalid response_type: pin
         // request.setParam("response_type", "pin");
-        request.setParam("response_type", getAuthorizeResponseType());
+        request.setQueryStringParam("response_type", getAuthorizeResponseType());
         // BUT! Google bombs with token plus redirect_uri
         // redirect_uri not supported for response_type=token: urn:ietf:wg:oauth:2.0:oob
 
-        request.setParam("scope", getApplication().getScope());
+        request.setQueryStringParam("scope", getApplication().getScope());
 
         // Igmur:
         // http://127.0.0.1:8080/#access_token=76fc8472073f9ae9da616bae08fc686a6395a41d
@@ -230,12 +230,12 @@ public class OAuth2Connection extends AbstractOAuthConnection<OAuth2Application,
         // ah! needed to be POST else 404 (Google)
         SpewRequest request = SpewRequest.createPostRequest(getServiceProvider().getTokenUri());
 
-        request.setParam("code", code);
+        request.setBodyParam("code", code);
         // request.setParam("pin", code);
-        request.setParam("client_id", getApplication().getClientId());
-        request.setParam("client_secret", getApplication().getClientSecret());
+        request.setBodyParam("client_id", getApplication().getClientId());
+        request.setBodyParam("client_secret", getApplication().getClientSecret());
 
-        request.setParam("grant_type", "authorization_code");
+        request.setBodyParam("grant_type", "authorization_code");
         // request.setParam("grant_type", "pin");
 
         // request.setParam("redirect_uri",
@@ -245,7 +245,7 @@ public class OAuth2Connection extends AbstractOAuthConnection<OAuth2Application,
         // request.setParam("redirect_uri", "urn:ietf:wg:oauth:2.0:oob:auto");
         // Hmm. This looks unnecessary... but Google needs it
         // request.setParam("redirect_uri", "urn:ietf:wg:oauth:2.0:oob");
-        request.setParam("redirect_uri", OOB);
+        request.setBodyParam("redirect_uri", OOB);
         // request.setParam("scope", "");
 
         SpewResponse response = authRequest(request);
@@ -261,11 +261,11 @@ public class OAuth2Connection extends AbstractOAuthConnection<OAuth2Application,
     private void fetchRefreshedAccessToken() {
         SpewRequest request = SpewRequest.createPostRequest(getServiceProvider().getTokenUri());
 
-        request.setParam("refresh_token", refreshToken.getValue());
-        request.setParam("client_id", getApplication().getClientId());
-        request.setParam("client_secret", getApplication().getClientSecret());
+        request.setBodyParam("refresh_token", refreshToken.getValue());
+        request.setBodyParam("client_id", getApplication().getClientId());
+        request.setBodyParam("client_secret", getApplication().getClientSecret());
 
-        request.setParam("grant_type", "refresh_token");
+        request.setBodyParam("grant_type", "refresh_token");
         SpewResponse response = authRequest(request);
 
         // accessToken.setValue(response.getString("access_token"));
@@ -301,7 +301,11 @@ public class OAuth2Connection extends AbstractOAuthConnection<OAuth2Application,
         long expiry = System.currentTimeMillis() + expiresInMilliseconds - EXPIRY_BUFFER;
         accessTokenExpiry.setValue(Long.toString(expiry));
 
-        refreshToken.setValue(valueMap.apply("refresh_token"));
+        // some service providers update the refresh token, others do not
+        String newRefreshToken = valueMap.apply("refresh_token");
+        if (newRefreshToken != null) {
+            refreshToken.setValue(newRefreshToken);
+        }
 
         // temp!
         long diff = expiry - new Date().getTime();
