@@ -14,46 +14,19 @@ public class ProcessorChain<I, E, C extends ProcessorContext<? super I, E>> {
     }
 
     public final void execute(Iterator<? extends I> iterator, C context) {
-        boolean isDateAware = context instanceof DateAwareProcessorContext;
         LocalDate date = null;
         LocalDate previousDate = null;
-        // TODO! don't like DateAwareProcessorContext
-        DateAwareProcessorContext<I, E> dateAwareContext = isDateAware ? ((DateAwareProcessorContext<I, E>) context)
-                : null;
 
         context.beforeProcessing();
 
         while (iterator.hasNext()) {
             E element = context.beforeElement(iterator.next());
 
-            // TODO! doc what this is used for
-            // TODO! should be able to handle this in beforeElement impl?
-            if (isDateAware) {
-                date = dateAwareContext.getDate(element);
-                if (date == null) {
-                    throw new IllegalStateException();
-                }
-                if (!date.equals(previousDate)) {
-                    if (previousDate != null) {
-                        dateAwareContext.afterDate(previousDate);
-                    }
-                    dateAwareContext.beforeDate(date);
-                }
-            }
-
             for (Processor<? super I, E, C> processor : processors) {
                 processor.process(element, context);
             }
 
             context.afterElement(element);
-
-            if (isDateAware) {
-                previousDate = date;
-            }
-        }
-
-        if (isDateAware) {
-            dateAwareContext.afterDate(previousDate);
         }
 
         for (Processor<? super I, E, C> processor : processors) {

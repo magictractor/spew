@@ -1,7 +1,11 @@
 package uk.co.magictractor.spew.processor.common;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import uk.co.magictractor.spew.common.Photo;
 import uk.co.magictractor.spew.common.Tag;
+import uk.co.magictractor.spew.common.TagComparator;
 import uk.co.magictractor.spew.common.TagSet;
 import uk.co.magictractor.spew.common.TagType;
 import uk.co.magictractor.spew.processor.Processor;
@@ -11,6 +15,8 @@ import uk.co.magictractor.spew.processor.Processor;
  * admiral" rather than just "butterfly").
  */
 public class TagCheckProcessor implements Processor<Photo, MutablePhoto, PhotoProcessorContext> {
+
+    private Set<Tag> unknownTags = new HashSet<>();
 
     @Override
     public void process(MutablePhoto photo, PhotoProcessorContext context) {
@@ -38,8 +44,18 @@ public class TagCheckProcessor implements Processor<Photo, MutablePhoto, PhotoPr
     private void checkNoUnknownTags(TagSet tagSet, PhotoProcessorContext context) {
         for (Tag tag : tagSet.getTags()) {
             if (tag.isUnknown()) {
-                context.addUnknownTag(tag);
+                unknownTags.add(tag);
             }
+        }
+    }
+
+    @Override
+    public void afterProcessing(PhotoProcessorContext context) {
+        System.err.println("afterProcessing");
+
+        if (!unknownTags.isEmpty()) {
+            System.err.println("Unknown tags");
+            unknownTags.stream().sorted(TagComparator.ASCENDING).map(Tag::getTagName).forEach(System.err::println);
         }
     }
 }

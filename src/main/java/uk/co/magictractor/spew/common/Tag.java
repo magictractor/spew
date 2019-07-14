@@ -2,7 +2,6 @@ package uk.co.magictractor.spew.common;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,8 +15,6 @@ import org.slf4j.LoggerFactory;
 public class Tag {
 
     private static Logger LOGGER = LoggerFactory.getLogger(Tag.class);
-
-    public static Comparator<Tag> TAG_NAME_COMPARATOR = Comparator.comparing(Tag::getTagName);
 
     private static final Map<String, Tag> TAG_MAP = new HashMap<>();
 
