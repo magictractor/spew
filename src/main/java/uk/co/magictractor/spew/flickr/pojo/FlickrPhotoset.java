@@ -19,13 +19,15 @@ import java.time.Instant;
 
 import com.google.common.base.MoreObjects;
 
+import uk.co.magictractor.spew.common.Album;
+
 /**
  * Album or collection
  */
 //{ "id": "72157706928593651", "primary": "40806373843", "secret": "9f5650cffd", "server": "65535", "farm": 66, "photos": 7, "videos": 0,
 //    "title": { "_content": "RBGE 201904 Unidentified" },
 //    "description": { "_content": "Images which I'm trying to identify." }, "needs_interstitial": 0, "visibility_can_see_set": 1, "count_views": 4, "count_comments": 0, "can_comment": 1, "date_create": "1557050307", "date_update": "1557310045" }
-public class FlickrPhotoset {
+public class FlickrPhotoset implements Album {
 
     private String id;
     private Content title;
@@ -34,6 +36,7 @@ public class FlickrPhotoset {
     private Instant date_create;
     private Instant date_update;
 
+    @Override
     public String getTitle() {
         return title == null ? null : title._content;
     }
@@ -50,6 +53,26 @@ public class FlickrPhotoset {
                 .add("date_create", date_create)
                 .add("date_update", date_update)
                 .toString();
+    }
+
+    @Override
+    public String getServiceProviderId() {
+        return id;
+    }
+
+    @Override
+    public String getAlbumUrl() {
+        throw new UnsupportedOperationException("not yet implemented");
+    }
+
+    @Override
+    public String getCoverPhotoBaseUrl() {
+        throw new UnsupportedOperationException("not yet implemented");
+    }
+
+    @Override
+    public int getPhotoCount() {
+        return photos;
     }
 
 }

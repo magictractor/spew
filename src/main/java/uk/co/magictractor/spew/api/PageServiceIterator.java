@@ -8,9 +8,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 import com.google.common.collect.AbstractIterator;
 import com.google.common.collect.Iterators;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Streams;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -154,6 +157,14 @@ public abstract class PageServiceIterator<E> extends AbstractIterator<E> {
             else {
                 return Iterators.filter(iteratorInstance, this::clientSideFilter);
             }
+        }
+
+        public List<E> buildList() {
+            return Lists.newArrayList(build());
+        }
+
+        public Stream<E> buildStream() {
+            return Streams.stream(build());
         }
 
         private boolean clientSideFilter(E element) {

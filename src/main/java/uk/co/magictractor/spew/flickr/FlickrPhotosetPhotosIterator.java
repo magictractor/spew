@@ -8,25 +8,28 @@ import uk.co.magictractor.spew.api.SpewConnection;
 import uk.co.magictractor.spew.api.SpewRequest;
 import uk.co.magictractor.spew.api.SpewResponse;
 import uk.co.magictractor.spew.api.connection.OAuthConnectionFactory;
+import uk.co.magictractor.spew.flickr.FlickrPhotosetIterator.FlickrPhotosetIteratorBuilder;
 import uk.co.magictractor.spew.flickr.pojo.FlickrPhotoset;
 
 /**
- * Lists albums and collections (collectively known as photosets in the API).
- * https://www.flickr.com/services/api/flickr.photosets.getList.htm
+ * Lists the photos in a photoset.
+ * https://www.flickr.com/services/api/flickr.photosets.getPhotos.html
  */
-public class FlickrPhotosetIterator<E> extends PageCountServiceIterator<E> {
+public class FlickrPhotosetPhotosIterator<E> extends PageCountServiceIterator<E> {
 
-    private FlickrPhotosetIterator() {
+    private FlickrPhotosetPhotosIterator() {
     }
 
+    private String photosetId;
     private String userId;
 
     @Override
     protected List<E> fetchPage(int pageNumber) {
         SpewRequest request = SpewRequest.createPostRequest(Flickr.REST_ENDPOINT);
 
-        request.setQueryStringParam("method", "flickr.photosets.getList");
+        request.setQueryStringParam("method", "flickr.photosets.getPhotos");
 
+        request.setQueryStringParam("photoset_id", photosetId);
         request.setQueryStringParam("user_id", userId);
 
         request.setQueryStringParam("page", pageNumber);
@@ -37,22 +40,19 @@ public class FlickrPhotosetIterator<E> extends PageCountServiceIterator<E> {
 
         System.err.println(response);
 
-        setTotalItemCount(response.getInt("$.photosets.total"));
-        setTotalPageCount(response.getInt("$.photosets.pages"));
+        setTotalItemCount(response.getInt("$.photoset.total"));
+        setTotalPageCount(response.getInt("$.photoset.pages"));
 
-        return response.getList("$.photosets.photoset", getElementType());
+        return response.getList("$.photoset.photo", getElementType());
     }
 
-    public static class FlickrPhotosetIteratorBuilder<E>
-            extends PageCountServiceIteratorBuilder<E, FlickrPhotosetIterator<E>, FlickrPhotosetIteratorBuilder<E>> {
+    public static class FlickrPhotosetPhotosIteratorBuilder<E>
+            extends
+            PageCountServiceIteratorBuilder<E, FlickrPhotosetPhotosIterator<E>, FlickrPhotosetIteratorBuilder<E>> {
 
-        public FlickrPhotosetIteratorBuilder(SpewConnection connection, Class<E> elementType) {
-            super(connection, elementType, new FlickrPhotosetIterator<>());
-        }
-
-        public FlickrPhotosetIteratorBuilder<E> withUserId(String userId) {
-            getIteratorInstance().userId = userId;
-            return this;
+        public FlickrPhotosetPhotosIteratorBuilder(SpewConnection connection, Class<E> elementType, String photosetId) {
+            super(connection, elementType, new FlickrPhotosetPhotosIterator<>());
+            getIteratorInstance().photosetId = photosetId;
         }
     }
 

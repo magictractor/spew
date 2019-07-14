@@ -2,7 +2,7 @@ package uk.co.magictractor.spew.common;
 
 public interface Album {
 
-    String getId();
+    String getServiceProviderId();
 
     String getTitle();
 

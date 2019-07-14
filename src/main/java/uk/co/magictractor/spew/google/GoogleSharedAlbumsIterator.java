@@ -46,7 +46,7 @@ public class GoogleSharedAlbumsIterator<E> extends GoogleServiceIterator<E> {
         while (iter.hasNext()) {
             Album album = iter.next();
             System.err.println(
-                album.getTitle() + " " + album.getId() + " " + album.getAlbumUrl() + " " + album.getPhotoCount());
+                album.getTitle() + " " + album.getServiceProviderId() + " " + album.getAlbumUrl() + " " + album.getPhotoCount());
         }
     }
 }

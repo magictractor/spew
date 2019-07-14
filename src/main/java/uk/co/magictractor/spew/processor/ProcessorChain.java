@@ -56,6 +56,11 @@ public class ProcessorChain<I, E, C extends ProcessorContext<? super I, E>> {
             dateAwareContext.afterDate(previousDate);
         }
 
+        for (Processor<? super I, E, C> processor : processors) {
+            processor.afterProcessing(context);
+        }
+
+        // TODO! remove this from context??
         context.afterProcessing();
     }
 

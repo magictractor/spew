@@ -16,6 +16,8 @@ public class PhotoTidyProcessorChain extends ProcessorChain<Photo, MutablePhoto,
         // not default title
         addProcessor(new TitleProcessor("SUBJECT"));
 
+        addProcessor(new BotanicsAlbumProcessor());
+
         // add "(record shot)" to title
         // upload date same as taken date
         // aliases for some tags (e.g. "gull" and "seagull", "RBGE" and "Botanics")

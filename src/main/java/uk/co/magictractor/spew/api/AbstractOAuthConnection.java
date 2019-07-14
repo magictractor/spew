@@ -99,7 +99,7 @@ public abstract class AbstractOAuthConnection<APP extends OAuthApplication, SP e
             con.disconnect();
         }
 
-        // TODO! what to do when !isOK
+        // TODO! what to do when !isOK - now have BadResponseException
         if (!isOK) {
             // TODO! logger?
             throw new IllegalStateException(url + " response was " + con.getResponseCode() + " "

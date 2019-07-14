@@ -15,7 +15,7 @@ public class GoogleAlbum implements Album {
     private String coverPhotoMediaItemId;
     // TODO! shareInfo
 
-    public String getId() {
+    public String getServiceProviderId() {
         return id;
     }
 

@@ -30,6 +30,7 @@ public class TagType implements Comparable<TagType> {
         return order - other.order;
     }
 
+    // TODO! change to fetch() and fetchOrCreate() - like Tag
     public static TagType valueOf(String name) {
         TagType tagType = INSTANCES.get(name);
         if (tagType == null) {
