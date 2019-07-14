@@ -5,7 +5,9 @@ import java.time.LocalDateTime;
 
 import com.google.gson.GsonBuilder;
 
+import uk.co.magictractor.spew.api.BadResponseException;
 import uk.co.magictractor.spew.api.OAuth1ServiceProvider;
+import uk.co.magictractor.spew.api.SpewResponse;
 import uk.co.magictractor.spew.common.TagSet;
 import uk.co.magictractor.spew.flickr.json.TagSetTypeAdapter;
 import uk.co.magictractor.spew.json.BooleanTypeAdapter;
@@ -51,6 +53,7 @@ public class Flickr implements OAuth1ServiceProvider {
         return "HMAC-SHA1";
     }
 
+    @Override
     public GsonBuilder getGsonBuilder() {
         GsonBuilder gsonBuilder = new GsonBuilder();
 
@@ -71,5 +74,16 @@ public class Flickr implements OAuth1ServiceProvider {
         // gsonBuilder.registerTypeAdapterFactory(new FlickrTagsTypeAdapterFactory());
 
         return gsonBuilder;
+    }
+
+    // {"stat":"fail","code":1,"message":"User not found"}
+    @Override
+    public void verifyResponse(SpewResponse response) {
+        String status = response.getString("$.stat");
+        if (!"ok".equals(status)) {
+            String errorCode = response.getString("$.code");
+            String errorMessage = response.getString("$.message");
+            throw new BadResponseException(status, errorCode, errorMessage);
+        }
     }
 }

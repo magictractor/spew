@@ -4,6 +4,7 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.List;
 
+import com.google.common.base.MoreObjects;
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.ReadContext;
@@ -48,6 +49,13 @@ public class SpewJaywayResponse implements SpewResponse {
                 };
             }
         });
+    }
+
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this)
+                .add("ctx.json", ctx.json())
+                .toString();
     }
 
 }
