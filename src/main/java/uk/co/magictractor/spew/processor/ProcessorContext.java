@@ -6,7 +6,6 @@ public interface ProcessorContext<I, E> {
 
     // Called before the first element.
     default void beforeProcessing() {
-        System.err.println("beforeProcessing");
     }
 
     // Called before all of the processors in the processor chain are run against an element.
@@ -20,6 +19,6 @@ public interface ProcessorContext<I, E> {
 
     // Called after the last element.
     default void afterProcessing() {
-        System.err.println("afterProcessing");
     }
+
 }

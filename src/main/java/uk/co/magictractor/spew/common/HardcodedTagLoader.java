@@ -60,8 +60,8 @@ public class HardcodedTagLoader implements TagLoader {
         Tag gull = init(bird, "Gull");
         init(gull, "Black-headed gull", "Lesser black-backed gull");
 
-        Tag heron = init(bird, "Heron");
-        init(heron, "Grey heron");
+        //Tag heron = init(bird, "Heron");
+        //init(heron, "Grey heron");
 
         //Tag owl = init(bird, "Owl");
         //init(owl, "Tawny owl");
@@ -75,8 +75,8 @@ public class HardcodedTagLoader implements TagLoader {
         Tag sparrow = init(bird, "Sparrow");
         init(sparrow, "House sparrow");
 
-        Tag swan = init(bird, "Swan");
-        init(swan, "Mute swan");
+        //Tag swan = init(bird, "Swan");
+        //init(swan, "Mute swan");
 
         //        Tag thrush = init(bird, "Thrush");
         //        init(thrush, "Mistle thrush", "Song thrush");
@@ -103,8 +103,8 @@ public class HardcodedTagLoader implements TagLoader {
 
         Tag rodent = init(SUBJECT, "Rodent");
 
-        Tag squirrel = init(rodent, "Squirrel");
-        init(squirrel, "Grey squirrel", "Red squirrel");
+        //        Tag squirrel = init(rodent, "Squirrel");
+        //        init(squirrel, "Grey squirrel", "Red squirrel");
 
         Tag rat = init(rodent, "Rat");
         init(rat, "Brown rat");

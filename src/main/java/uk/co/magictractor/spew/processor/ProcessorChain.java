@@ -1,6 +1,5 @@
 package uk.co.magictractor.spew.processor;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -9,13 +8,21 @@ public class ProcessorChain<I, E, C extends ProcessorContext<? super I, E>> {
 
     private final List<Processor<? super I, E, C>> processors = new ArrayList<>();
 
+    public static <I, E, C extends ProcessorContext<? super I, E>> ProcessorChain<I, E, C> of(
+            Processor<? super I, E, C>... processors) {
+        ProcessorChain<I, E, C> chain = new ProcessorChain<>();
+        for (Processor<? super I, E, C> processor : processors) {
+            chain.addProcessor(processor);
+        }
+
+        return chain;
+    }
+
     protected void addProcessor(Processor<? super I, E, C> processor) {
         processors.add(processor);
     }
 
     public final void execute(Iterator<? extends I> iterator, C context) {
-        LocalDate date = null;
-        LocalDate previousDate = null;
 
         context.beforeProcessing();
 
@@ -33,7 +40,6 @@ public class ProcessorChain<I, E, C extends ProcessorContext<? super I, E>> {
             processor.afterProcessing(context);
         }
 
-        // TODO! remove this from context??
         context.afterProcessing();
     }
 

@@ -21,7 +21,7 @@ public class TweetIterator<E> extends PageTokenServiceIterator<E> {
         SpewRequest request = SpewRequest
                 .createGetRequest("https://api.twitter.com/1.1/statuses/user_timeline.json");
 
-        System.err.println("set max_id=" + pageToken);
+        getLogger().debug("set max_id={}", pageToken);
         request.setQueryStringParam("max_id", pageToken);
 
         request.setQueryStringParam("screen_name", screenName);

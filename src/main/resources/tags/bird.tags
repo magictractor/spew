@@ -16,6 +16,7 @@ goldfinch
 goosander
 great tit
 greenfinch = Chloris chloris
+grey heron = Ardea cinerea = heron
 kestrel
 kingfisher
 linnet
@@ -35,7 +36,10 @@ shag
 siskin = Spinus spinus
 sparrowhawk
 starling
+stonechat
 swallow
+swan
+  mute swan = Cygnus olor
 teal
 thrush
   mistle thrush = Turdus viscivorus

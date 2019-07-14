@@ -1,11 +1,14 @@
 package uk.co.magictractor.spew.common;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.ServiceLoader;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.google.common.base.MoreObjects;
 
@@ -81,6 +84,19 @@ public class Tag {
         return aliases;
     }
 
+    public List<String> getTagNameAndAliases() {
+        if (aliases.isEmpty()) {
+            return Collections.singletonList(tagName);
+        }
+        else {
+            int aliasCount = aliases.size();
+            List<String> tagNameAndAliases = new ArrayList<>(aliasCount + 1);
+            tagNameAndAliases.add(tagName);
+            tagNameAndAliases.addAll(aliases);
+            return tagNameAndAliases;
+        }
+    }
+
     public int getDepth() {
         return depth;
     }
@@ -151,6 +167,20 @@ public class Tag {
 
     public static Tag fetchTagIfPresentCanonical(String canonicalTagName) {
         return TAG_MAP.get(canonicalTagName);
+    }
+
+    public static Collection<Tag> fetchTags(TagType tagType) {
+        return tagStream(tagType).collect(Collectors.toList());
+    }
+
+    public static Collection<Tag> fetchTerminalTags(TagType tagType) {
+        return tagStream(tagType)
+                .filter(tag -> !tag.hasChildren())
+                .collect(Collectors.toList());
+    }
+
+    private static Stream<Tag> tagStream(TagType tagType) {
+        return TAG_MAP.values().stream().filter(tag -> tagType.equals(tag.getTagType()));
     }
 
     @Override
