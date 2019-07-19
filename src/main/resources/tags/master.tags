@@ -11,7 +11,13 @@ insect
       + moth.tags
 
   + bee.tags
-  + odonata.tags
+  
+  odonata
+    damselflies
+      + damselfly.tags
+    dragonflies
+      + dragonfly.tags
+      
   + other_insects.tags
 
 + mammal.tags
