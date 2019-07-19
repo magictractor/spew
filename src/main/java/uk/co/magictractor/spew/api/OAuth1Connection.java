@@ -129,26 +129,26 @@ public final class OAuth1Connection extends AbstractOAuthConnection<OAuth1Applic
         userSecret.setValue(authSecret);
     }
 
-    // hmms - push some of this up? - encode could be different per connection?
     @Override
     protected String getUrl(SpewRequest request) {
-        // String unsignedUrl = request.getUrl() + "?" +
-        // getQueryString(request.getParams());
+        StringBuilder urlBuilder = new StringBuilder();
+        urlBuilder.append(request.getBaseUrl());
+        UrlEncoderUtil.appendQueryString(urlBuilder, "?", request.getQueryStringParams(), UrlEncoderUtil::paramEncode);
+        if (request.getQueryStringParams().isEmpty()) {
+            urlBuilder.append('?');
+        }
+        else {
+            urlBuilder.append('&');
+        }
+        urlBuilder.append("oauth_signature=");
+        urlBuilder.append(getSignature(request));
 
-        // urlBuilder.append("oauth_signature=");
-        // urlBuilder.append(getSignature());
-
-        return request.getUrl() + "?" + getQueryString(request.getQueryStringParams(), UrlEncoderUtil::paramEncode)
-                + "&oauth_signature=" + getSignature(request);
+        return urlBuilder.toString();
     }
 
     // See https://www.flickr.com/services/api/auth.oauth.html
     // https://gist.github.com/ishikawa/88599/3195bdeecabeb38aa62872ab61877aefa6aef89e
     private String getSignature(SpewRequest request) {
-        //		if (userSecret == null) {
-        //			throw new IllegalArgumentException("userSecret must not be null (it may be an empty string)");
-        //		}
-
         // AARGH - ImageBam refers to "key" where I have used
         // getSignatureBaseString(request)
         // TODO! consumer key only absent for auth
@@ -216,37 +216,25 @@ public final class OAuth1Connection extends AbstractOAuthConnection<OAuth1Applic
         StringBuilder signatureBaseStringBuilder = new StringBuilder();
         signatureBaseStringBuilder.append(request.getHttpMethod());
         signatureBaseStringBuilder.append('&');
-        signatureBaseStringBuilder.append(UrlEncoderUtil.oauthEncode(request.getUrl()));
+        signatureBaseStringBuilder.append(UrlEncoderUtil.oauthEncode(request.getBaseUrl()));
         signatureBaseStringBuilder.append('&');
-        // aah
         signatureBaseStringBuilder.append(
-            UrlEncoderUtil.oauthEncode(getQueryString(getBaseStringParams(request), UrlEncoderUtil::oauthEncode)));
+            UrlEncoderUtil.oauthEncode(
+                UrlEncoderUtil.queryString(null, getOrderedQueryParams(request), UrlEncoderUtil::oauthEncode)));
 
         return signatureBaseStringBuilder.toString();
     }
 
-    //	private String urlEncode(String string) {
-    //		return ExceptionUtil.call(() -> URLEncoder.encode(string, "UTF-8"));
-    //	}
-
     /** @return ordered params for building signature key */
-    private Map<String, Object> getBaseStringParams(SpewRequest request) {
-        // TODO! some params should be ignored
-        // TODO! where should params be escaped??
+    private Map<String, Object> getOrderedQueryParams(SpewRequest request) {
         return new TreeMap<>(request.getQueryStringParams());
     }
 
     private void forApi(SpewRequest request) {
-        // OAuthRequest request = new OAuthRequest(FLICKR_REST_ENDPOINT);
-        //		setParam("oauth_consumer_key", FlickrConfig.API_KEY);
-
         request.setQueryStringParam("api_key", getApplication().getAppToken());
         request.setQueryStringParam("oauth_token", userToken.getValue());
-        // request.setParam("method", flickrMethod);
         request.setQueryStringParam("format", "json");
         request.setQueryStringParam("nojsoncallback", "1");
-
-        // return request;
     }
 
     private void forAll(SpewRequest request) {

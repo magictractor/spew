@@ -19,7 +19,6 @@ import io.netty.handler.codec.http.QueryStringDecoder;
 import uk.co.magictractor.spew.server.CallbackServer;
 import uk.co.magictractor.spew.token.UserPreferencesPersister;
 import uk.co.magictractor.spew.util.ExceptionUtil;
-import uk.co.magictractor.spew.util.UrlEncoderUtil;
 
 // https://developers.google.com/identity/protocols/OAuth2
 public class OAuth2Connection extends AbstractOAuthConnection<OAuth2Application, OAuth2ServiceProvider> {
@@ -89,39 +88,8 @@ public class OAuth2Connection extends AbstractOAuthConnection<OAuth2Application,
 
     @Override
     protected String getUrl(SpewRequest request) {
-        // String unsignedUrl = request.getUrl() + "?" +
-        // getQueryString(request.getParams());
-
-        // urlBuilder.append("oauth_signature=");
-        // urlBuilder.append(getSignature());
-
-        // TODO! may need to have both query params and body params
-        if (!request.getQueryStringParams().isEmpty()) {
-            return request.getUrl() + "?" + getQueryString(request.getQueryStringParams(), UrlEncoderUtil::paramEncode);
-        }
-        else {
-            // Params will go in the request body.
-            return request.getUrl();
-        }
-        // return request.getUrl() + "?" + getQueryString(request.getParams(), (s) ->
-        // s);
+        return request.getUrl();
     }
-
-    //	private void authenticateUser() {
-    //		authorize();
-    //
-    //		Scanner scanner = new Scanner(System.in);
-    //		// System.err.println("Enter verification code for oauth_token=" + requestToken
-    //		// + ": ");
-    //		System.err.println("Enter verification code: ");
-    //		String verification = scanner.nextLine().trim();
-    //		// FlickrConfig.setUserAuthVerifier(verification);
-    //		scanner.close();
-    //
-    //		// verify(verification);
-    //
-    //		fetchAccessAndRefreshToken(verification);
-    //	}
 
     // https://developers.google.com/photos/library/guides/authentication-authorization
     private void authorize() {
@@ -184,7 +152,7 @@ public class OAuth2Connection extends AbstractOAuthConnection<OAuth2Application,
         //			captureManuallyPastedGrant();
         //		}
 
-        String authUrl = getUrl(request);
+        String authUrl = request.getUrl();
         ExceptionUtil.call(() -> Desktop.getDesktop().browse(new URI(authUrl)));
 
         if (callbackServer != null) {

@@ -8,9 +8,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 import com.jayway.jsonpath.Configuration;
 
@@ -46,9 +44,7 @@ public abstract class AbstractOAuthConnection<APP extends OAuthApplication, SP e
     protected SpewResponse request0(SpewRequest request, Configuration jsonConfiguration,
             Consumer<HttpURLConnection> initConnection) throws IOException {
 
-        // To look at URLStreamHandler
         URL url = new URL(getUrl(request));
-        // TODO! add query string...
         HttpURLConnection con = (HttpURLConnection) url.openConnection();
         con.setRequestMethod(request.getHttpMethod());
 
@@ -166,23 +162,4 @@ public abstract class AbstractOAuthConnection<APP extends OAuthApplication, SP e
 
     abstract protected String getUrl(SpewRequest request);
 
-    // make this private?
-    protected final String getQueryString(Map<String, Object> params, Function<String, String> valueEncoder) {
-        StringBuilder queryStringBuilder = new StringBuilder();
-
-        boolean isFirstParam = true;
-        for (Entry<String, Object> paramEntry : params.entrySet()) {
-            if (isFirstParam) {
-                isFirstParam = false;
-            }
-            else {
-                queryStringBuilder.append("&");
-            }
-            queryStringBuilder.append(paramEntry.getKey());
-            queryStringBuilder.append("=");
-            queryStringBuilder.append(valueEncoder.apply(paramEntry.getValue().toString()));
-        }
-
-        return queryStringBuilder.toString();
-    }
 }

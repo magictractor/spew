@@ -3,10 +3,12 @@ package uk.co.magictractor.spew.api;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import uk.co.magictractor.spew.util.UrlEncoderUtil;
+
 public class SpewRequest {
 
     private final String httpMethod;
-    private final String url;
+    private final String baseUrl;
     private final Map<String, Object> queryStringParams = new LinkedHashMap<>();
     private final Map<String, Object> bodyParams = new LinkedHashMap<>();
 
@@ -32,11 +34,15 @@ public class SpewRequest {
 
     private SpewRequest(String httpMethod, String url) {
         this.httpMethod = httpMethod;
-        this.url = url;
+        this.baseUrl = url;
+    }
+
+    public String getBaseUrl() {
+        return baseUrl;
     }
 
     public String getUrl() {
-        return url;
+        return baseUrl + UrlEncoderUtil.queryString("?", queryStringParams);
     }
 
     public String getHttpMethod() {
