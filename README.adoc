@@ -1,26 +1,46 @@
 = Spew
 
-Spew provides code for use by clients interacting with service providers such as Flickr, Google Photos and Twitter. Currently OAuth1 and OAuth2 over REST is supported.
+Spew provides code for use by clients interacting with service providers such as Flickr,
+Google Photos and Twitter. Currently OAuth1 and OAuth2 over REST is supported.
 
-There is also code for managing photos hosted by service providers which also have a local copy.
+There are some POJOs which could be reused, but it's more likely that a client will chose
+to create their own POJOs and use Spew's iterators and bindings.
 
-=== Should you use it?
+There is also code for managing photos hosted by service providers which may also have
+a local copy.
 
-Probably not. This code is experimental and subject to radical change at no notice. It's being used and maintained by a single developer and is not ready for sharing.
 
-The OAuth client implementation is hand-rolled. That will probably change so that the OAuth client implementation is pluggable, allowing Spring Social or Google OAuth Client to be used instead of the hand-rolled OAuth code.
+== Should you use it?
 
-If you're having trouble connecting to one of the services which Spew interacts with, looking at the code here might be helpful. TODO! more pointers.
+Probably not. This code is experimental and subject to radical change at no notice. It's being used and maintained part-time by a single developer and is not ready for sharing.
 
-=== Why Spew?
+The primary OAuth client implementation is hand-rolled. That will probably change so that the OAuth client implementation is pluggable, allowing Spring Social or Google OAuth Client to be used instead of the hand-rolled OAuth code.
+
+If you're having trouble connecting to one of the services which Spew interacts with,
+having a look at the code here might be helpful, but this code is not production-ready.
+TODO! more pointers.
+
+
+== Why Spew?
 
 Spew stands for Service Provider Easy Win.
 
-When thinking of words beginning with "sp", "spew" jumped to mind, and Easy Win was extrapolated from that.
+When thinking of words beginning with "sp", "spew" jumped to mind, and Easy Win
+was extrapolated from that.
 
-=== History
 
-This project started with a hand-rolled OAuth client to help manage photographs hosted on Flickr.
+== What is Boa?
+
+Boa stands for Bad OAuth.
+
+This is a hand-rolled implementation of OAuth1 and OAuth2 client code. This will
+be split into a separate project, with alternative OAuth implementations wrapping
+Google and/or Spring's OAuth code being added to Spew.
+
+
+== History
+
+This project started with a hand-rolled OAuth client to help manage photographs hosted on Flickr. Hand-rolling OAuth was an exercise to understand OAuth better, it is almost certainly a worse choice 
 
 The decision to hand-roll to OAuth client was an exercise to help the developer understand the nuances of OAuth.
 
