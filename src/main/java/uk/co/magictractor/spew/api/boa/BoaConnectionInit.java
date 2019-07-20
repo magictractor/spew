@@ -19,12 +19,12 @@ import uk.co.magictractor.spew.api.OAuth1Application;
 import uk.co.magictractor.spew.api.OAuth2Application;
 import uk.co.magictractor.spew.api.SpewApplication;
 import uk.co.magictractor.spew.api.SpewConnection;
-import uk.co.magictractor.spew.api.connection.OAuthConnectionInit;
+import uk.co.magictractor.spew.api.connection.SpewConnectionInit;
 
 /**
  *
  */
-public class BoaConnectionInit implements OAuthConnectionInit {
+public class BoaConnectionInit implements SpewConnectionInit {
 
     @Override
     public SpewConnection createConnection(SpewApplication application) {

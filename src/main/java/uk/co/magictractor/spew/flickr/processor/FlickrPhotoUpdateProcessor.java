@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 import uk.co.magictractor.spew.api.SpewConnection;
 import uk.co.magictractor.spew.api.SpewRequest;
 import uk.co.magictractor.spew.api.SpewResponse;
-import uk.co.magictractor.spew.api.connection.OAuthConnectionFactory;
+import uk.co.magictractor.spew.api.connection.SpewConnectionFactory;
 import uk.co.magictractor.spew.common.Photo;
 import uk.co.magictractor.spew.common.filter.DateTakenPhotoFilter;
 import uk.co.magictractor.spew.flickr.Flickr;
@@ -189,7 +189,7 @@ public class FlickrPhotoUpdateProcessor extends PhotoUpdateProcessor {
     // https://api.flickr.com/services/rest/?method=flickr.photos.setMeta&api_key=5939e168bc6ea2e41e83b74f6f0b3e2d&photo_id=45249983521&title=API+test&format=json&nojsoncallback=1&auth_token=72157672277056577-9fa9087d61430e0a&api_sig=50453767437b384152449e7cb561ac02
 
     public static void main(String[] args) {
-        SpewConnection connection = OAuthConnectionFactory.getConnection(MyFlickrApp.class);
+        SpewConnection connection = SpewConnectionFactory.getConnection(MyFlickrApp.class);
         PhotoTidyProcessorChain processorChain = new PhotoTidyProcessorChain(
             new FlickrPhotoUpdateProcessor(connection));
         LocalDate since = LocalDate.now().minusMonths(1).withDayOfMonth(1);

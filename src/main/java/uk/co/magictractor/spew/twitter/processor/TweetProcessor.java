@@ -12,7 +12,7 @@ import java.util.function.Function;
 import com.google.common.collect.Iterables;
 
 import uk.co.magictractor.spew.api.SpewConnection;
-import uk.co.magictractor.spew.api.connection.OAuthConnectionFactory;
+import uk.co.magictractor.spew.api.connection.SpewConnectionFactory;
 import uk.co.magictractor.spew.common.Tag;
 import uk.co.magictractor.spew.common.TagType;
 import uk.co.magictractor.spew.processor.ProcessorChain;
@@ -143,7 +143,7 @@ public class TweetProcessor implements SimpleProcessor<Tweet> {
     public static void main(String[] args) {
         ProcessorChain processorChain = ProcessorChain.of(new TweetProcessor());
 
-        SpewConnection connection = OAuthConnectionFactory.getConnection(MyTwitterApp.class);
+        SpewConnection connection = SpewConnectionFactory.getConnection(MyTwitterApp.class);
         Iterator<Tweet> iterator = new TweetIteratorBuilder<>(connection, Tweet.class).build();
 
         processorChain.execute(iterator, new SimpleProcessorContext<>());

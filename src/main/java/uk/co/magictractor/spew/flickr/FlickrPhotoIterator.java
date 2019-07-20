@@ -8,7 +8,7 @@ import uk.co.magictractor.spew.api.PageCountServiceIterator;
 import uk.co.magictractor.spew.api.SpewConnection;
 import uk.co.magictractor.spew.api.SpewRequest;
 import uk.co.magictractor.spew.api.SpewResponse;
-import uk.co.magictractor.spew.api.connection.OAuthConnectionFactory;
+import uk.co.magictractor.spew.api.connection.SpewConnectionFactory;
 import uk.co.magictractor.spew.common.filter.DateTakenPhotoFilter;
 import uk.co.magictractor.spew.common.filter.DateUploadedPhotoFilter;
 import uk.co.magictractor.spew.flickr.pojo.FlickrPhoto;
@@ -101,7 +101,7 @@ public class FlickrPhotoIterator<E> extends PageCountServiceIterator<E> {
     }
 
     public static void main(String[] args) {
-        SpewConnection connection = OAuthConnectionFactory.getConnection(MyFlickrApp.class);
+        SpewConnection connection = SpewConnectionFactory.getConnection(MyFlickrApp.class);
         Iterator<FlickrPhoto> iter = new FlickrPhotoIteratorBuilder<>(connection, FlickrPhoto.class)
                 .withFilter(new DateTakenPhotoFilter(DateRange.forMonth(2019, 2)))
                 .build();

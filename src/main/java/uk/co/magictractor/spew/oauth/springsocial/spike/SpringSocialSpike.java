@@ -15,7 +15,7 @@
  */
 package uk.co.magictractor.spew.oauth.springsocial.spike;
 
-import uk.co.magictractor.spew.api.connection.OAuthConnectionFactory;
+import uk.co.magictractor.spew.api.connection.SpewConnectionFactory;
 import uk.co.magictractor.spew.twitter.processor.TweetProcessor;
 
 /**
@@ -41,7 +41,7 @@ public class SpringSocialSpike {
     //    }
 
     public static void main(String[] args) {
-        OAuthConnectionFactory.CONNECTION_INIT = new SpringSocialConnectionInit();
+        SpewConnectionFactory.CONNECTION_INIT = new SpringSocialConnectionInit();
         // TweetProcessor works
         TweetProcessor.main(args);
         // Flickr blows up because response is XML rather than JSON

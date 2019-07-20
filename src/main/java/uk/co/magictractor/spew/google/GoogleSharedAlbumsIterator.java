@@ -6,7 +6,7 @@ import java.util.List;
 import uk.co.magictractor.spew.api.SpewConnection;
 import uk.co.magictractor.spew.api.SpewRequest;
 import uk.co.magictractor.spew.api.SpewResponse;
-import uk.co.magictractor.spew.api.connection.OAuthConnectionFactory;
+import uk.co.magictractor.spew.api.connection.SpewConnectionFactory;
 import uk.co.magictractor.spew.common.Album;
 import uk.co.magictractor.spew.google.pojo.GoogleAlbum;
 
@@ -41,7 +41,7 @@ public class GoogleSharedAlbumsIterator<E> extends GoogleServiceIterator<E> {
 
     // https://developers.google.com/photos/library/reference/rest/v1/albums#Album
     public static void main(String[] args) {
-        SpewConnection connection = OAuthConnectionFactory.getConnection(MyGooglePhotosApp.class);
+        SpewConnection connection = SpewConnectionFactory.getConnection(MyGooglePhotosApp.class);
         Iterator<GoogleAlbum> iter = new GoogleSharedAlbumsIteratorBuilder<>(connection, GoogleAlbum.class).build();
         while (iter.hasNext()) {
             Album album = iter.next();

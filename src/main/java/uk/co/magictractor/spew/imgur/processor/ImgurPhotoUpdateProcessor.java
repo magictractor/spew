@@ -3,7 +3,7 @@ package uk.co.magictractor.spew.imgur.processor;
 import java.util.Iterator;
 
 import uk.co.magictractor.spew.api.SpewConnection;
-import uk.co.magictractor.spew.api.connection.OAuthConnectionFactory;
+import uk.co.magictractor.spew.api.connection.SpewConnectionFactory;
 import uk.co.magictractor.spew.imgur.ImgurPhotoIterator.ImgurPhotoIteratorBuilder;
 import uk.co.magictractor.spew.imgur.MyImgurApp;
 import uk.co.magictractor.spew.imgur.pojo.ImgurImage;
@@ -29,7 +29,7 @@ public class ImgurPhotoUpdateProcessor extends PhotoUpdateProcessor {
 
     public static void main(String[] args) {
         PhotoTidyProcessorChain processorChain = new PhotoTidyProcessorChain(new ImgurPhotoUpdateProcessor());
-        SpewConnection connection = OAuthConnectionFactory.getConnection(MyImgurApp.class);
+        SpewConnection connection = SpewConnectionFactory.getConnection(MyImgurApp.class);
         Iterator<ImgurImage> iterator = new ImgurPhotoIteratorBuilder<>(connection, ImgurImage.class).build();
         processorChain.execute(iterator, new PhotoProcessorContext());
     }

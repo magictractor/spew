@@ -7,7 +7,7 @@ import uk.co.magictractor.spew.api.PageCountServiceIterator;
 import uk.co.magictractor.spew.api.SpewConnection;
 import uk.co.magictractor.spew.api.SpewRequest;
 import uk.co.magictractor.spew.api.SpewResponse;
-import uk.co.magictractor.spew.api.connection.OAuthConnectionFactory;
+import uk.co.magictractor.spew.api.connection.SpewConnectionFactory;
 import uk.co.magictractor.spew.imgur.pojo.ImgurImage;
 
 /*
@@ -239,7 +239,7 @@ public class ImgurPhotoIterator<E> extends PageCountServiceIterator<E> {
     }
 
     public static void main(String[] args) {
-        SpewConnection connection = OAuthConnectionFactory.getConnection(MyImgurApp.class);
+        SpewConnection connection = SpewConnectionFactory.getConnection(MyImgurApp.class);
         Iterator<ImgurImage> iter = new ImgurPhotoIteratorBuilder<>(connection, ImgurImage.class)
                 .build();
         while (iter.hasNext()) {

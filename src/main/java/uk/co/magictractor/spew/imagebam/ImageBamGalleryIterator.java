@@ -7,7 +7,7 @@ import uk.co.magictractor.spew.api.SingleCallServiceIterator;
 import uk.co.magictractor.spew.api.SpewConnection;
 import uk.co.magictractor.spew.api.SpewRequest;
 import uk.co.magictractor.spew.api.SpewResponse;
-import uk.co.magictractor.spew.api.connection.OAuthConnectionFactory;
+import uk.co.magictractor.spew.api.connection.SpewConnectionFactory;
 import uk.co.magictractor.spew.imagebam.pojo.ImageBamGallery;
 
 public class ImageBamGalleryIterator<E> extends SingleCallServiceIterator<E> {
@@ -35,7 +35,7 @@ public class ImageBamGalleryIterator<E> extends SingleCallServiceIterator<E> {
     }
 
     public static void main(String[] args) {
-        SpewConnection connection = OAuthConnectionFactory.getConnection(MyImageBamApp.class);
+        SpewConnection connection = SpewConnectionFactory.getConnection(MyImageBamApp.class);
         Iterator<ImageBamGallery> iterator = new ImageBamGalleryIteratorBuilder<>(connection, ImageBamGallery.class)
                 .build();
         while (iterator.hasNext()) {

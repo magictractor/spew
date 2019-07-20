@@ -7,7 +7,7 @@ import uk.co.magictractor.spew.api.PageCountServiceIterator;
 import uk.co.magictractor.spew.api.SpewConnection;
 import uk.co.magictractor.spew.api.SpewRequest;
 import uk.co.magictractor.spew.api.SpewResponse;
-import uk.co.magictractor.spew.api.connection.OAuthConnectionFactory;
+import uk.co.magictractor.spew.api.connection.SpewConnectionFactory;
 import uk.co.magictractor.spew.flickr.FlickrPhotosetIterator.FlickrPhotosetIteratorBuilder;
 import uk.co.magictractor.spew.flickr.pojo.FlickrPhotoset;
 
@@ -57,7 +57,7 @@ public class FlickrPhotosetPhotosIterator<E> extends PageCountServiceIterator<E>
     }
 
     public static void main(String[] args) {
-        SpewConnection connection = OAuthConnectionFactory.getConnection(MyFlickrApp.class);
+        SpewConnection connection = SpewConnectionFactory.getConnection(MyFlickrApp.class);
         Iterator<FlickrPhotoset> iter = new FlickrPhotosetIteratorBuilder<>(connection, FlickrPhotoset.class)
                 .build();
         while (iter.hasNext()) {

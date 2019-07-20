@@ -6,7 +6,7 @@ import java.util.List;
 import uk.co.magictractor.spew.api.SpewConnection;
 import uk.co.magictractor.spew.api.SpewRequest;
 import uk.co.magictractor.spew.api.SpewResponse;
-import uk.co.magictractor.spew.api.connection.OAuthConnectionFactory;
+import uk.co.magictractor.spew.api.connection.SpewConnectionFactory;
 import uk.co.magictractor.spew.common.filter.DateTakenPhotoFilter;
 import uk.co.magictractor.spew.google.pojo.GoogleFilters;
 import uk.co.magictractor.spew.google.pojo.GoogleMediaItem;
@@ -54,7 +54,7 @@ public class GoogleMediaItemIterator<E> extends GoogleServiceIterator<E> {
     }
 
     public static void main(String[] args) {
-        SpewConnection connection = OAuthConnectionFactory.getConnection(MyGooglePhotosApp.class);
+        SpewConnection connection = SpewConnectionFactory.getConnection(MyGooglePhotosApp.class);
         Iterator<GoogleMediaItem> iterator = new GoogleMediaItemIteratorBuilder<>(connection, GoogleMediaItem.class)
                 .withFilter(new DateTakenPhotoFilter(DateRange.forDay(2018, 11, 21)))
                 .build();

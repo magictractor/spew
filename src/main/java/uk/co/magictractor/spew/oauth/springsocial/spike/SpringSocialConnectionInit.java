@@ -18,12 +18,12 @@ package uk.co.magictractor.spew.oauth.springsocial.spike;
 import uk.co.magictractor.spew.api.OAuth1Application;
 import uk.co.magictractor.spew.api.SpewApplication;
 import uk.co.magictractor.spew.api.SpewConnection;
-import uk.co.magictractor.spew.api.connection.OAuthConnectionInit;
+import uk.co.magictractor.spew.api.connection.SpewConnectionInit;
 
 /**
  *
  */
-public class SpringSocialConnectionInit implements OAuthConnectionInit {
+public class SpringSocialConnectionInit implements SpewConnectionInit {
 
     @Override
     public SpewConnection createConnection(SpewApplication application) {
