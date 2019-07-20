@@ -17,7 +17,7 @@ import com.jayway.jsonpath.spi.mapper.MappingProvider;
 // interesting! https://hueniverse.com/oauth-2-0-and-the-road-to-hell-8eec45921529
 //
 // https://en.wikipedia.org/wiki/List_of_OAuth_providers
-public interface OAuthServiceProvider {
+public interface SpewServiceProvider {
 
     default GsonBuilder getGsonBuilder() {
         return new GsonBuilder();

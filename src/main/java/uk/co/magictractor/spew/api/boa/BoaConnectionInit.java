@@ -17,7 +17,7 @@ package uk.co.magictractor.spew.api.boa;
 
 import uk.co.magictractor.spew.api.OAuth1Application;
 import uk.co.magictractor.spew.api.OAuth2Application;
-import uk.co.magictractor.spew.api.OAuthApplication;
+import uk.co.magictractor.spew.api.SpewApplication;
 import uk.co.magictractor.spew.api.SpewConnection;
 import uk.co.magictractor.spew.api.connection.OAuthConnectionInit;
 
@@ -27,7 +27,7 @@ import uk.co.magictractor.spew.api.connection.OAuthConnectionInit;
 public class BoaConnectionInit implements OAuthConnectionInit {
 
     @Override
-    public SpewConnection createConnection(OAuthApplication application) {
+    public SpewConnection createConnection(SpewApplication application) {
         if (application instanceof OAuth1Application) {
             return new BoaOAuth1Connection((OAuth1Application) application);
         }

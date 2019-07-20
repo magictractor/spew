@@ -1,6 +1,6 @@
 package uk.co.magictractor.spew.api;
 
-public interface OAuth2Application extends OAuthApplication { // <OAuth2ServiceProvider> {
+public interface OAuth2Application extends SpewApplication { // <OAuth2ServiceProvider> {
 
     @Override
     OAuth2ServiceProvider getServiceProvider();

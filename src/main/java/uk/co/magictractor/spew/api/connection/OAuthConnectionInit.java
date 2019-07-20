@@ -15,7 +15,7 @@
  */
 package uk.co.magictractor.spew.api.connection;
 
-import uk.co.magictractor.spew.api.OAuthApplication;
+import uk.co.magictractor.spew.api.SpewApplication;
 import uk.co.magictractor.spew.api.SpewConnection;
 
 /**
@@ -30,6 +30,6 @@ public interface OAuthConnectionInit {
      *         case other implementations may be available (via SPI) to create
      *         the implementation
      */
-    public SpewConnection createConnection(OAuthApplication application);
+    public SpewConnection createConnection(SpewApplication application);
 
 }

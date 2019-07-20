@@ -1,6 +1,6 @@
 package uk.co.magictractor.spew.api;
 
-public interface OAuth2ServiceProvider extends OAuthServiceProvider {
+public interface OAuth2ServiceProvider extends SpewServiceProvider {
 
     String getAuthorizationUri();
 

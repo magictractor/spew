@@ -1,6 +1,6 @@
 package uk.co.magictractor.spew.api;
 
-public class AbstractConnection<APP extends OAuthApplication, SP extends OAuthServiceProvider> {
+public class AbstractConnection<APP extends SpewApplication, SP extends SpewServiceProvider> {
 
     private final APP application;
 

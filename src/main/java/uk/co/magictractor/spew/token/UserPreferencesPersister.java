@@ -3,7 +3,7 @@ package uk.co.magictractor.spew.token;
 import java.util.Optional;
 import java.util.prefs.Preferences;
 
-import uk.co.magictractor.spew.api.OAuthApplication;
+import uk.co.magictractor.spew.api.SpewApplication;
 import uk.co.magictractor.spew.util.ExceptionUtil;
 
 public class UserPreferencesPersister {
@@ -12,7 +12,7 @@ public class UserPreferencesPersister {
     private final String key;
     private Optional<String> value;
 
-    public UserPreferencesPersister(OAuthApplication application, String key) {
+    public UserPreferencesPersister(SpewApplication application, String key) {
         // Hmm. regedit shows slashes before capital letters
         // See
         // https://stackoverflow.com/questions/23001152/in-java-why-does-windowspreferences-use-slashes-for-capital-letters
