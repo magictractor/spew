@@ -5,8 +5,8 @@ import java.util.Objects;
 
 import com.google.common.base.MoreObjects.ToStringHelper;
 
-import uk.co.magictractor.spew.common.Photo;
-import uk.co.magictractor.spew.common.TagSet;
+import uk.co.magictractor.spew.photo.Photo;
+import uk.co.magictractor.spew.photo.TagSet;
 
 /**
  * It is expected that all other Photo implementations will be immutable and any

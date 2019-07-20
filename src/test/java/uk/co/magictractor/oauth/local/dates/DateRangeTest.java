@@ -7,7 +7,7 @@ import java.time.LocalDate;
 
 import org.junit.jupiter.api.Test;
 
-import uk.co.magictractor.spew.local.dates.DateRange;
+import uk.co.magictractor.spew.photo.local.dates.DateRange;
 
 public class DateRangeTest {
 

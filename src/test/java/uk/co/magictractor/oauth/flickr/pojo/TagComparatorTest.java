@@ -7,8 +7,8 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-import uk.co.magictractor.spew.common.Tag;
-import uk.co.magictractor.spew.common.TagComparator;
+import uk.co.magictractor.spew.photo.Tag;
+import uk.co.magictractor.spew.photo.TagComparator;
 
 public class TagComparatorTest {
 

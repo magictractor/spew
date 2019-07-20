@@ -20,9 +20,9 @@ import java.time.LocalDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import uk.co.magictractor.spew.common.Photo;
-import uk.co.magictractor.spew.common.Tag;
-import uk.co.magictractor.spew.common.TagType;
+import uk.co.magictractor.spew.photo.Photo;
+import uk.co.magictractor.spew.photo.Tag;
+import uk.co.magictractor.spew.photo.TagType;
 import uk.co.magictractor.spew.processor.Processor;
 
 public class BotanicsAlbumProcessor implements Processor<Photo, MutablePhoto, PhotoProcessorContext> {

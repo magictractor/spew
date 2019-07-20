@@ -11,9 +11,9 @@ import org.junit.jupiter.api.Test;
 
 import uk.co.magictractor.spew.api.SpewJaywayResponse;
 import uk.co.magictractor.spew.api.SpewResponse;
-import uk.co.magictractor.spew.common.TagSet;
 import uk.co.magictractor.spew.flickr.Flickr;
 import uk.co.magictractor.spew.flickr.pojo.FlickrPhoto;
+import uk.co.magictractor.spew.photo.TagSet;
 import uk.co.magictractor.spew.util.IOUtil;
 
 public class FlickrResponseTest {

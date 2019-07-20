@@ -8,8 +8,8 @@ import java.nio.file.Paths;
 
 import org.junit.jupiter.api.Test;
 
-import uk.co.magictractor.spew.common.Photo;
-import uk.co.magictractor.spew.local.LocalPhoto;
+import uk.co.magictractor.spew.photo.Photo;
+import uk.co.magictractor.spew.photo.local.LocalPhoto;
 import uk.co.magictractor.spew.util.ExceptionUtil;
 
 public class LocalPhotoTest {

@@ -1,6 +1,6 @@
 package uk.co.magictractor.spew.google.pojo;
 
-import uk.co.magictractor.spew.common.Album;
+import uk.co.magictractor.spew.photo.Album;
 
 // https://developers.google.com/photos/library/reference/rest/v1/albums#Album
 public class GoogleAlbum implements Album {

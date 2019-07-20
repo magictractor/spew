@@ -3,11 +3,11 @@ package uk.co.magictractor.spew.processor.common;
 import java.util.HashSet;
 import java.util.Set;
 
-import uk.co.magictractor.spew.common.Photo;
-import uk.co.magictractor.spew.common.Tag;
-import uk.co.magictractor.spew.common.TagComparator;
-import uk.co.magictractor.spew.common.TagSet;
-import uk.co.magictractor.spew.common.TagType;
+import uk.co.magictractor.spew.photo.Photo;
+import uk.co.magictractor.spew.photo.Tag;
+import uk.co.magictractor.spew.photo.TagComparator;
+import uk.co.magictractor.spew.photo.TagSet;
+import uk.co.magictractor.spew.photo.TagType;
 import uk.co.magictractor.spew.processor.Processor;
 
 /**

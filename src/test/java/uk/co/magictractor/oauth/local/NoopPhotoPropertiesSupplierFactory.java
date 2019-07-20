@@ -3,9 +3,9 @@ package uk.co.magictractor.oauth.local;
 import java.time.Instant;
 import java.util.stream.Stream;
 
-import uk.co.magictractor.spew.common.TagSet;
-import uk.co.magictractor.spew.local.PhotoPropertiesSupplier;
-import uk.co.magictractor.spew.local.PhotoPropertiesSupplierFactory;
+import uk.co.magictractor.spew.photo.TagSet;
+import uk.co.magictractor.spew.photo.local.PhotoPropertiesSupplier;
+import uk.co.magictractor.spew.photo.local.PhotoPropertiesSupplierFactory;
 
 public class NoopPhotoPropertiesSupplierFactory implements PhotoPropertiesSupplierFactory {
 

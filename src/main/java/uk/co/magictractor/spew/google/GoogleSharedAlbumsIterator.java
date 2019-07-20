@@ -7,8 +7,8 @@ import uk.co.magictractor.spew.api.SpewConnection;
 import uk.co.magictractor.spew.api.SpewRequest;
 import uk.co.magictractor.spew.api.SpewResponse;
 import uk.co.magictractor.spew.api.connection.SpewConnectionFactory;
-import uk.co.magictractor.spew.common.Album;
 import uk.co.magictractor.spew.google.pojo.GoogleAlbum;
+import uk.co.magictractor.spew.photo.Album;
 
 public class GoogleSharedAlbumsIterator<E> extends GoogleServiceIterator<E> {
 

@@ -1,6 +1,6 @@
 package uk.co.magictractor.spew.google.pojo;
 
-import uk.co.magictractor.spew.local.dates.DateRange;
+import uk.co.magictractor.spew.photo.local.dates.DateRange;
 
 /**
  * Used when making requests with a date range.

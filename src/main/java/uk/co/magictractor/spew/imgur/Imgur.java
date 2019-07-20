@@ -6,11 +6,11 @@ import java.time.LocalDateTime;
 import com.google.gson.GsonBuilder;
 
 import uk.co.magictractor.spew.api.OAuth2ServiceProvider;
-import uk.co.magictractor.spew.common.TagSet;
 import uk.co.magictractor.spew.flickr.json.TagSetTypeAdapter;
 import uk.co.magictractor.spew.json.BooleanTypeAdapter;
 import uk.co.magictractor.spew.json.InstantTypeAdapter;
 import uk.co.magictractor.spew.json.LocalDateTimeTypeAdapter;
+import uk.co.magictractor.spew.photo.TagSet;
 
 /**
  * From https://imgur.com/tos: "don't use Imgur to host image libraries you link

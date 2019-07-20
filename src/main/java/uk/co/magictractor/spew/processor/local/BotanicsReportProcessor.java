@@ -1,6 +1,6 @@
 package uk.co.magictractor.spew.processor.local;
 
-import uk.co.magictractor.spew.common.Photo;
+import uk.co.magictractor.spew.photo.Photo;
 import uk.co.magictractor.spew.processor.Processor;
 import uk.co.magictractor.spew.processor.SimpleProcessorContext;
 

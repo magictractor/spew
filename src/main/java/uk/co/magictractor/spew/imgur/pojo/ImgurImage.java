@@ -2,8 +2,8 @@ package uk.co.magictractor.spew.imgur.pojo;
 
 import java.time.Instant;
 
-import uk.co.magictractor.spew.common.Photo;
-import uk.co.magictractor.spew.common.TagSet;
+import uk.co.magictractor.spew.photo.Photo;
+import uk.co.magictractor.spew.photo.TagSet;
 
 public class ImgurImage implements Photo {
 

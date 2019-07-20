@@ -18,7 +18,7 @@ package uk.co.magictractor.spew.processor.common;
 import java.util.ArrayList;
 import java.util.List;
 
-import uk.co.magictractor.spew.common.Album;
+import uk.co.magictractor.spew.photo.Album;
 
 public class MutableAlbum implements Album {
 

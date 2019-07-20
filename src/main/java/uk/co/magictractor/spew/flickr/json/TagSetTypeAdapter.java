@@ -7,7 +7,7 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
 
-import uk.co.magictractor.spew.common.TagSet;
+import uk.co.magictractor.spew.photo.TagSet;
 
 public class TagSetTypeAdapter implements JsonDeserializer<TagSet> {
 

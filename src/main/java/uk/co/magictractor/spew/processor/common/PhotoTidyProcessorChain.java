@@ -1,6 +1,6 @@
 package uk.co.magictractor.spew.processor.common;
 
-import uk.co.magictractor.spew.common.Photo;
+import uk.co.magictractor.spew.photo.Photo;
 import uk.co.magictractor.spew.processor.ProcessorChain;
 
 // Tidies tags, descriptions etc for photos already uploaded to Flickr.

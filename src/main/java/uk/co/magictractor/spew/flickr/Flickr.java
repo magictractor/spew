@@ -8,11 +8,11 @@ import com.google.gson.GsonBuilder;
 import uk.co.magictractor.spew.api.BadResponseException;
 import uk.co.magictractor.spew.api.OAuth1ServiceProvider;
 import uk.co.magictractor.spew.api.SpewResponse;
-import uk.co.magictractor.spew.common.TagSet;
 import uk.co.magictractor.spew.flickr.json.TagSetTypeAdapter;
 import uk.co.magictractor.spew.json.BooleanTypeAdapter;
 import uk.co.magictractor.spew.json.InstantTypeAdapter;
 import uk.co.magictractor.spew.json.LocalDateTimeTypeAdapter;
+import uk.co.magictractor.spew.photo.TagSet;
 
 // https://www.flickr.com/services/apps/create/
 public class Flickr implements OAuth1ServiceProvider {

@@ -13,8 +13,8 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import uk.co.magictractor.spew.local.files.PathComparators;
-import uk.co.magictractor.spew.local.files.PathIterator;
+import uk.co.magictractor.spew.photo.local.files.PathComparators;
+import uk.co.magictractor.spew.photo.local.files.PathIterator;
 
 public class PathIteratorTest {
 

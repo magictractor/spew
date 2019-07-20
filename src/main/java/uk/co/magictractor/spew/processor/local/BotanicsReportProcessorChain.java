@@ -7,12 +7,12 @@ import java.util.Iterator;
 
 import com.google.common.collect.Iterators;
 
-import uk.co.magictractor.spew.common.Photo;
-import uk.co.magictractor.spew.local.LocalPhoto;
-import uk.co.magictractor.spew.local.dates.DateRange;
-import uk.co.magictractor.spew.local.dates.DefaultLocalDirectoryDatesStrategy;
-import uk.co.magictractor.spew.local.dates.LocalDirectoryDatesStrategy;
-import uk.co.magictractor.spew.local.files.PathIterator;
+import uk.co.magictractor.spew.photo.Photo;
+import uk.co.magictractor.spew.photo.local.LocalPhoto;
+import uk.co.magictractor.spew.photo.local.dates.DateRange;
+import uk.co.magictractor.spew.photo.local.dates.DefaultLocalDirectoryDatesStrategy;
+import uk.co.magictractor.spew.photo.local.dates.LocalDirectoryDatesStrategy;
+import uk.co.magictractor.spew.photo.local.files.PathIterator;
 import uk.co.magictractor.spew.processor.ProcessorChain;
 import uk.co.magictractor.spew.processor.SimpleProcessorContext;
 

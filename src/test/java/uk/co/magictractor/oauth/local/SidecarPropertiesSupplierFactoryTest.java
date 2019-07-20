@@ -10,9 +10,9 @@ import java.time.ZonedDateTime;
 
 import org.junit.jupiter.api.Test;
 
-import uk.co.magictractor.spew.common.Photo;
-import uk.co.magictractor.spew.local.PropertySuppliedPhoto;
-import uk.co.magictractor.spew.local.SidecarPropertiesSupplierFactory;
+import uk.co.magictractor.spew.photo.Photo;
+import uk.co.magictractor.spew.photo.local.PropertySuppliedPhoto;
+import uk.co.magictractor.spew.photo.local.SidecarPropertiesSupplierFactory;
 import uk.co.magictractor.spew.util.ExceptionUtil;
 
 public class SidecarPropertiesSupplierFactoryTest {

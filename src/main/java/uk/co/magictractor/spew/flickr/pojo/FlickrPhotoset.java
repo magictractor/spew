@@ -19,7 +19,7 @@ import java.time.Instant;
 
 import com.google.common.base.MoreObjects;
 
-import uk.co.magictractor.spew.common.Album;
+import uk.co.magictractor.spew.photo.Album;
 
 /**
  * Album or collection

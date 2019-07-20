@@ -9,10 +9,10 @@ import uk.co.magictractor.spew.api.SpewConnection;
 import uk.co.magictractor.spew.api.SpewRequest;
 import uk.co.magictractor.spew.api.SpewResponse;
 import uk.co.magictractor.spew.api.connection.SpewConnectionFactory;
-import uk.co.magictractor.spew.common.filter.DateTakenPhotoFilter;
-import uk.co.magictractor.spew.common.filter.DateUploadedPhotoFilter;
 import uk.co.magictractor.spew.flickr.pojo.FlickrPhoto;
-import uk.co.magictractor.spew.local.dates.DateRange;
+import uk.co.magictractor.spew.photo.filter.DateTakenPhotoFilter;
+import uk.co.magictractor.spew.photo.filter.DateUploadedPhotoFilter;
+import uk.co.magictractor.spew.photo.local.dates.DateRange;
 
 /**
  * Uses flickr.photos.search rather than flickr.people.getPhotos because it

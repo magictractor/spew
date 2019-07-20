@@ -7,10 +7,10 @@ import uk.co.magictractor.spew.api.SpewConnection;
 import uk.co.magictractor.spew.api.SpewRequest;
 import uk.co.magictractor.spew.api.SpewResponse;
 import uk.co.magictractor.spew.api.connection.SpewConnectionFactory;
-import uk.co.magictractor.spew.common.filter.DateTakenPhotoFilter;
 import uk.co.magictractor.spew.google.pojo.GoogleFilters;
 import uk.co.magictractor.spew.google.pojo.GoogleMediaItem;
-import uk.co.magictractor.spew.local.dates.DateRange;
+import uk.co.magictractor.spew.photo.filter.DateTakenPhotoFilter;
+import uk.co.magictractor.spew.photo.local.dates.DateRange;
 
 // https://developers.google.com/photos/library/guides/list
 //

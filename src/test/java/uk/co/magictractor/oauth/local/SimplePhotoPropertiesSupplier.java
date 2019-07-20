@@ -1,6 +1,6 @@
 package uk.co.magictractor.oauth.local;
 
-import uk.co.magictractor.spew.local.PhotoPropertiesSupplier;
+import uk.co.magictractor.spew.photo.local.PhotoPropertiesSupplier;
 
 /**
  * Trivial PhotoPropertiesSupplier implementation for use by unit tests.

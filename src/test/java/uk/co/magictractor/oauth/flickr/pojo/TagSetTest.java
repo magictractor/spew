@@ -4,7 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.jupiter.api.Test;
 
-import uk.co.magictractor.spew.common.TagSet;
+import uk.co.magictractor.spew.photo.TagSet;
 
 public class TagSetTest {
 

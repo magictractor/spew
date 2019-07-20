@@ -13,8 +13,8 @@ import com.google.common.collect.Iterables;
 
 import uk.co.magictractor.spew.api.SpewConnection;
 import uk.co.magictractor.spew.api.connection.SpewConnectionFactory;
-import uk.co.magictractor.spew.common.Tag;
-import uk.co.magictractor.spew.common.TagType;
+import uk.co.magictractor.spew.photo.Tag;
+import uk.co.magictractor.spew.photo.TagType;
 import uk.co.magictractor.spew.processor.ProcessorChain;
 import uk.co.magictractor.spew.processor.SimpleProcessor;
 import uk.co.magictractor.spew.processor.SimpleProcessorContext;

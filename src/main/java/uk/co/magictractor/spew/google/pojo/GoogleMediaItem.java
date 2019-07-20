@@ -4,8 +4,8 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
-import uk.co.magictractor.spew.common.Photo;
-import uk.co.magictractor.spew.common.TagSet;
+import uk.co.magictractor.spew.photo.Photo;
+import uk.co.magictractor.spew.photo.TagSet;
 
 //{
 //    "id": "AO6co5uaPax0_68QU28KxDL3ZySSl-znViY5GJpRQrS3b1mE__i0xoZBYjalUiXj5GNcR_9WTquqF_L5RpQae-eWxcBIANY7mg",
