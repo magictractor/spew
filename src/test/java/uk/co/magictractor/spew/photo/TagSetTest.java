@@ -1,10 +1,8 @@
-package uk.co.magictractor.oauth.flickr.pojo;
+package uk.co.magictractor.spew.photo;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.jupiter.api.Test;
-
-import uk.co.magictractor.spew.photo.TagSet;
 
 public class TagSetTest {
 
@@ -29,7 +27,8 @@ public class TagSetTest {
         // assertThat(tags.getCompactTagNamesWithParents(), equalTo("fourspottedchaser
         // dragonfly odonata insect rbge edinburgh"));
         assertThat(tags.getQuotedTagNamesWithAliasesAndParents())
-                .isEqualTo("\"four-spotted chaser\" \"dragonfly\" \"odonata\" \"insect\" \"RBGE\" \"Edinburgh\"");
+                .isEqualTo(
+                    "\"four-spotted chaser\" \"Libellula quadrimaculata\" \"dragonfly\" \"odonata\" \"insect\" \"RBGE\" \"Botanics\" \"Royal Botanic Garden Edinburgh\" \"Edinburgh\"");
     }
 
     @Test
@@ -38,7 +37,8 @@ public class TagSetTest {
 
         // assertThat(tags.getCompactTagNamesWithParents(), equalTo("unknown rbge
         // edinburgh"));
-        assertThat(tags.getQuotedTagNamesWithAliasesAndParents()).isEqualTo("\"RBGE\" \"Edinburgh\" \"unknown\"");
+        assertThat(tags.getQuotedTagNamesWithAliasesAndParents())
+                .isEqualTo("\"RBGE\" \"Botanics\" \"Royal Botanic Garden Edinburgh\" \"Edinburgh\" \"unknown\"");
     }
 
 }

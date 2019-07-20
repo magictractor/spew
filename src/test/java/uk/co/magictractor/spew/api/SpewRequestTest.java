@@ -1,19 +1,17 @@
-package uk.co.magictractor.oauth.api;
+package uk.co.magictractor.spew.api;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
 
-import uk.co.magictractor.spew.api.SpewRequest;
-
-class OAuthRequestTest {
+public class SpewRequestTest {
 
     @Test
-    void testUrl() {
+    void testBaseUrl() {
         SpewRequest request = setUpExampleRequest();
         // TODO! hamcrest
         // assertThat(request.getUrl(), Matchers.eq)
-        assertEquals("https://api.flickr.com/services/rest/request_token", request.getUrl());
+        assertEquals("https://api.flickr.com/services/rest/request_token", request.getBaseUrl());
     }
 
     // TODO! the example does not document which secret is used to generate the

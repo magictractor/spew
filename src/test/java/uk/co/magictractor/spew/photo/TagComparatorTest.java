@@ -1,4 +1,4 @@
-package uk.co.magictractor.oauth.flickr.pojo;
+package uk.co.magictractor.spew.photo;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

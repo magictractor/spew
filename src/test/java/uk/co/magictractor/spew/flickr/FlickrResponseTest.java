@@ -1,4 +1,4 @@
-package uk.co.magictractor.oauth.flickr;
+package uk.co.magictractor.spew.flickr;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -11,7 +11,6 @@ import org.junit.jupiter.api.Test;
 
 import uk.co.magictractor.spew.api.SpewJaywayResponse;
 import uk.co.magictractor.spew.api.SpewResponse;
-import uk.co.magictractor.spew.flickr.Flickr;
 import uk.co.magictractor.spew.flickr.pojo.FlickrPhoto;
 import uk.co.magictractor.spew.photo.TagSet;
 import uk.co.magictractor.spew.util.IOUtil;
@@ -52,7 +51,7 @@ public class FlickrResponseTest {
         // 38));
         assertThat(photo.getDateTimeTaken())
                 .isEqualTo(ZonedDateTime.of(2018, 6, 23, 13, 52, 33, 0, ZoneOffset.UTC).toInstant());
-        assertThat(photo.getDateTimeUpload()).isEqualTo(Instant.ofEpochMilli(1534007093L));
+        assertThat(photo.getDateTimeUpload()).isEqualTo(Instant.ofEpochMilli(1534007093000L));
     }
 
     private SpewResponse buildResponse(String fileName) {

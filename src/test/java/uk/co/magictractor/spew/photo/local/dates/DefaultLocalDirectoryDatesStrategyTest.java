@@ -1,4 +1,4 @@
-package uk.co.magictractor.oauth.local.dates;
+package uk.co.magictractor.spew.photo.local.dates;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

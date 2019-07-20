@@ -1,15 +1,15 @@
-package uk.co.magictractor.oauth.google;
+package uk.co.magictractor.spew.google;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 
 import org.junit.jupiter.api.Test;
 
-import uk.co.magictractor.oauth.util.ResourceUtil;
 import uk.co.magictractor.spew.api.SpewJaywayResponse;
-import uk.co.magictractor.spew.google.Google;
 import uk.co.magictractor.spew.google.pojo.GoogleMediaItem;
+import uk.co.magictractor.spew.util.ResourceUtil;
 
 public class GoogleMediaItemsResponseTest {
 
@@ -29,7 +29,8 @@ public class GoogleMediaItemsResponseTest {
 
         assertThat(photo.getFileName()).isEqualTo("IMG_1966.JPG");
         // 2018-11-23T13:25:59Z
-        assertThat(photo.getDateTimeTaken()).isEqualTo(LocalDateTime.of(2018, 11, 23, 13, 25, 59));
+        assertThat(photo.getDateTimeTaken())
+                .isEqualTo(LocalDateTime.of(2018, 11, 23, 13, 25, 59).toInstant(ZoneOffset.UTC));
         assertThat(photo.getShutterSpeed()).isNull();
         assertThat(photo.getAperture()).isEqualTo("5.6");
         assertThat(photo.getIso()).isEqualTo(1000);

@@ -13,9 +13,9 @@ insect
   + bee.tags
   
   odonata
-    damselflies
+    damselfly
       + damselfly.tags
-    dragonflies
+    dragonfly
       + dragonfly.tags
       
   + other_insects.tags

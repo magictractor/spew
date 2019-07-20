@@ -1,4 +1,4 @@
-package uk.co.magictractor.oauth.util;
+package uk.co.magictractor.spew.util;
 
 import java.io.InputStream;
 

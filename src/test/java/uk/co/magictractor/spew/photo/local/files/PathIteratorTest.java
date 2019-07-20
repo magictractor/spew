@@ -1,4 +1,4 @@
-package uk.co.magictractor.oauth.local.files;
+package uk.co.magictractor.spew.photo.local.files;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

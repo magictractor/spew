@@ -1,4 +1,4 @@
-package uk.co.magictractor.oauth.local;
+package uk.co.magictractor.spew.photo.local;
 
 import uk.co.magictractor.spew.photo.local.PhotoPropertiesSupplier;
 
