@@ -45,7 +45,12 @@ public class SpringSocialOAuth1Connection implements SpewConnection {
     // hmm... specific to Jayway, want this to be pluggable too
     private Configuration jsonConfiguration;
 
-    public SpringSocialOAuth1Connection(OAuth1Application application) {
+    /**
+     * Default visibility, applications should obtain instances via
+     * {@link SpringSocialConnectionInit#createConnection}, usually indirectly
+     * via OAuthConnectionFactory.
+     */
+    /* default */ SpringSocialOAuth1Connection(OAuth1Application application) {
         SpewOAuth1ConnectionFactory connectionFactory = new SpewOAuth1ConnectionFactory(application);
 
         this.userToken = new UserPreferencesPersister(application, "user_token");

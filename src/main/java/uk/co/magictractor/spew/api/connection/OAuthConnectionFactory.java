@@ -8,13 +8,13 @@ import uk.co.magictractor.spew.api.SpewConnection;
 import uk.co.magictractor.spew.api.boa.BoaConnectionInit;
 import uk.co.magictractor.spew.util.ExceptionUtil;
 
-//
+// TODO! rename to SpewConnectionFactory
 public class OAuthConnectionFactory {
 
     private static final Map<Class<? extends SpewApplication>, SpewConnection> connections = new HashMap<>();
 
-    // TODO! SPI and final
-    private static final OAuthConnectionInit CONNECTION_INIT = new BoaConnectionInit();
+    // TODO! SPI, private and final
+    public static OAuthConnectionInit CONNECTION_INIT = new BoaConnectionInit();
 
     public static SpewConnection getConnection(Class<? extends SpewApplication> applicationClass) {
         SpewConnection connection = connections.get(applicationClass);

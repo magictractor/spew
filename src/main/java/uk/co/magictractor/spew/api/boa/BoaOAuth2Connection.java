@@ -45,7 +45,8 @@ public class BoaOAuth2Connection extends AbstractBoaOAuthConnection<OAuth2Applic
 
     /**
      * Default visibility, applications should obtain instances via
-     * {@link BoaConnectionInit#createConnection}.
+     * {@link BoaConnectionInit#createConnection}, usually indirectly via
+     * OAuthConnectionFactory.
      */
     /* default */ BoaOAuth2Connection(OAuth2Application application) {
         super(application);

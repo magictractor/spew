@@ -17,11 +17,11 @@ import org.slf4j.LoggerFactory;
 
 import uk.co.magictractor.spew.api.AbstractConnection;
 import uk.co.magictractor.spew.api.SpewApplication;
-import uk.co.magictractor.spew.api.SpewServiceProvider;
 import uk.co.magictractor.spew.api.SpewConnection;
 import uk.co.magictractor.spew.api.SpewJaywayResponse;
 import uk.co.magictractor.spew.api.SpewRequest;
 import uk.co.magictractor.spew.api.SpewResponse;
+import uk.co.magictractor.spew.api.SpewServiceProvider;
 import uk.co.magictractor.spew.connection.ConnectionRequest;
 import uk.co.magictractor.spew.connection.ConnectionRequestFactory;
 import uk.co.magictractor.spew.imagebam.ImageBam;
@@ -33,7 +33,7 @@ public abstract class AbstractBoaOAuthConnection<APP extends SpewApplication, SP
 
     private Logger logger = LoggerFactory.getLogger(getClass());
 
-    public AbstractBoaOAuthConnection(APP application) {
+    protected AbstractBoaOAuthConnection(APP application) {
         super(application);
     }
 
