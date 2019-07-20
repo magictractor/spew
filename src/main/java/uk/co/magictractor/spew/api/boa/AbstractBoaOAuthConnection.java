@@ -1,4 +1,4 @@
-package uk.co.magictractor.spew.api;
+package uk.co.magictractor.spew.api.boa;
 
 import static java.net.HttpURLConnection.HTTP_OK;
 
@@ -15,18 +15,25 @@ import com.jayway.jsonpath.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import uk.co.magictractor.spew.api.AbstractConnection;
+import uk.co.magictractor.spew.api.OAuthApplication;
+import uk.co.magictractor.spew.api.OAuthServiceProvider;
+import uk.co.magictractor.spew.api.SpewConnection;
+import uk.co.magictractor.spew.api.SpewJaywayResponse;
+import uk.co.magictractor.spew.api.SpewRequest;
+import uk.co.magictractor.spew.api.SpewResponse;
 import uk.co.magictractor.spew.connection.ConnectionRequest;
 import uk.co.magictractor.spew.connection.ConnectionRequestFactory;
 import uk.co.magictractor.spew.imagebam.ImageBam;
 import uk.co.magictractor.spew.util.IOUtil;
 
 // Common code for OAuth1 and OAuth2 implementations.
-public abstract class AbstractOAuthConnection<APP extends OAuthApplication, SP extends OAuthServiceProvider>
+public abstract class AbstractBoaOAuthConnection<APP extends OAuthApplication, SP extends OAuthServiceProvider>
         extends AbstractConnection<APP, SP> implements SpewConnection {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
 
-    public AbstractOAuthConnection(APP application) {
+    public AbstractBoaOAuthConnection(APP application) {
         super(application);
     }
 

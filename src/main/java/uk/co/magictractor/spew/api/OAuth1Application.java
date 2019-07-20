@@ -1,7 +1,5 @@
 package uk.co.magictractor.spew.api;
 
-import java.util.function.Supplier;
-
 public interface OAuth1Application extends OAuthApplication { // <OAuth1ServiceProvider> {
 
     @Override
@@ -12,11 +10,5 @@ public interface OAuth1Application extends OAuthApplication { // <OAuth1ServiceP
 
     // Spring social calls this consumerSecret
     String getAppSecret();
-
-    @Override
-    default Supplier<SpewConnection> getNewConnectionSupplier() {
-        //
-        return () -> new OAuth1Connection(this);
-    }
 
 }

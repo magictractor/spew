@@ -1,12 +1,9 @@
 package uk.co.magictractor.spew.api;
 
-import java.util.function.Supplier;
-
+// TODO! rename to Spew (could use other type of auth)
 public interface OAuthApplication { // <SP extends OAuthServiceProvider> {
 
     // SP getServiceProvider();
     OAuthServiceProvider getServiceProvider();
-
-    Supplier<SpewConnection> getNewConnectionSupplier();
 
 }

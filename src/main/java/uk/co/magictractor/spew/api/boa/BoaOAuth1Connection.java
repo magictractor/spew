@@ -1,4 +1,4 @@
-package uk.co.magictractor.spew.api;
+package uk.co.magictractor.spew.api.boa;
 
 import java.awt.Desktop;
 import java.net.URI;
@@ -14,13 +14,17 @@ import javax.crypto.spec.SecretKeySpec;
 
 import com.google.common.io.BaseEncoding;
 
+import uk.co.magictractor.spew.api.OAuth1Application;
+import uk.co.magictractor.spew.api.OAuth1ServiceProvider;
+import uk.co.magictractor.spew.api.SpewRequest;
+import uk.co.magictractor.spew.api.SpewResponse;
 import uk.co.magictractor.spew.imagebam.ImageBam;
 import uk.co.magictractor.spew.token.UserPreferencesPersister;
 import uk.co.magictractor.spew.util.ExceptionUtil;
 import uk.co.magictractor.spew.util.UrlEncoderUtil;
 
 // TODO! common interface for OAuth1 and OAuth2 connections (and no auth? / other auth?)
-public final class OAuth1Connection extends AbstractOAuthConnection<OAuth1Application, OAuth1ServiceProvider> {
+public final class BoaOAuth1Connection extends AbstractBoaOAuthConnection<OAuth1Application, OAuth1ServiceProvider> {
 
     //private final OAuth1Application application;
 
@@ -33,12 +37,11 @@ public final class OAuth1Connection extends AbstractOAuthConnection<OAuth1Applic
     private final UserPreferencesPersister userToken;
     private final UserPreferencesPersister userSecret;
 
-    // TODO! change this to default then use MyApp.getInstance().getConnection()
     /**
      * Default visibility, applications should obtain instances via
-     * OAuth1Application.getConnection().
+     * {@link BoaConnectionInit#createConnection}.
      */
-    public OAuth1Connection(OAuth1Application application) {
+    /* default */ BoaOAuth1Connection(OAuth1Application application) {
         super(application);
         //this.application = application;
 

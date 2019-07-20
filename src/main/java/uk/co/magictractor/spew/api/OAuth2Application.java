@@ -1,7 +1,5 @@
 package uk.co.magictractor.spew.api;
 
-import java.util.function.Supplier;
-
 public interface OAuth2Application extends OAuthApplication { // <OAuth2ServiceProvider> {
 
     @Override
@@ -16,10 +14,5 @@ public interface OAuth2Application extends OAuthApplication { // <OAuth2ServiceP
 
     // default?
     OAuth2AuthorizeResponseType defaultAuthorizeResponseType();
-
-    @Override
-    default Supplier<SpewConnection> getNewConnectionSupplier() {
-        return () -> new OAuth2Connection(this);
-    }
 
 }

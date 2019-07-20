@@ -1,4 +1,4 @@
-package uk.co.magictractor.spew.api;
+package uk.co.magictractor.spew.api.boa;
 
 import java.awt.Desktop;
 import java.net.HttpURLConnection;
@@ -16,12 +16,16 @@ import com.jayway.jsonpath.Configuration;
 import io.netty.buffer.ByteBuf;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.QueryStringDecoder;
+import uk.co.magictractor.spew.api.OAuth2Application;
+import uk.co.magictractor.spew.api.OAuth2ServiceProvider;
+import uk.co.magictractor.spew.api.SpewRequest;
+import uk.co.magictractor.spew.api.SpewResponse;
 import uk.co.magictractor.spew.server.CallbackServer;
 import uk.co.magictractor.spew.token.UserPreferencesPersister;
 import uk.co.magictractor.spew.util.ExceptionUtil;
 
 // https://developers.google.com/identity/protocols/OAuth2
-public class OAuth2Connection extends AbstractOAuthConnection<OAuth2Application, OAuth2ServiceProvider> {
+public class BoaOAuth2Connection extends AbstractBoaOAuthConnection<OAuth2Application, OAuth2ServiceProvider> {
 
     private static final String OOB = "urn:ietf:wg:oauth:2.0:oob";
     private static final String CALLBACK_SERVER = "http://127.0.0.1:8080";
@@ -39,12 +43,12 @@ public class OAuth2Connection extends AbstractOAuthConnection<OAuth2Application,
     private final UserPreferencesPersister accessTokenExpiry;
     private final UserPreferencesPersister refreshToken;
 
-    /// ** Default visibility, applications should obtain instances via
-    /// OAuth2Application.getConnection(). */
-    // TODO! change to default?
-    public OAuth2Connection(OAuth2Application application) {
+    /**
+     * Default visibility, applications should obtain instances via
+     * {@link BoaConnectionInit#createConnection}.
+     */
+    /* default */ BoaOAuth2Connection(OAuth2Application application) {
         super(application);
-        // this.application = application;
 
         this.accessToken = new UserPreferencesPersister(application, "access_token");
         this.accessTokenExpiry = new UserPreferencesPersister(application, "access_token_expiry");
