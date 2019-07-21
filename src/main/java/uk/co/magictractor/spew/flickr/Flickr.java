@@ -7,7 +7,7 @@ import com.google.gson.GsonBuilder;
 
 import uk.co.magictractor.spew.api.BadResponseException;
 import uk.co.magictractor.spew.api.OAuth1ServiceProvider;
-import uk.co.magictractor.spew.api.SpewResponse;
+import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
 import uk.co.magictractor.spew.flickr.json.TagSetTypeAdapter;
 import uk.co.magictractor.spew.json.BooleanTypeAdapter;
 import uk.co.magictractor.spew.json.InstantTypeAdapter;
@@ -78,7 +78,7 @@ public class Flickr implements OAuth1ServiceProvider {
 
     // {"stat":"fail","code":1,"message":"User not found"}
     @Override
-    public void verifyResponse(SpewResponse response) {
+    public void verifyResponse(SpewParsedResponse response) {
         String status = response.getString("$.stat");
         if (!"ok".equals(status)) {
             String errorCode = response.getString("$.code");

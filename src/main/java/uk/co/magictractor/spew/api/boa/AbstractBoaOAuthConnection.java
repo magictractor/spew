@@ -1,16 +1,11 @@
 package uk.co.magictractor.spew.api.boa;
 
-import static java.net.HttpURLConnection.HTTP_OK;
-
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
-
-import com.jayway.jsonpath.Configuration;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,14 +13,14 @@ import org.slf4j.LoggerFactory;
 import uk.co.magictractor.spew.api.AbstractConnection;
 import uk.co.magictractor.spew.api.SpewApplication;
 import uk.co.magictractor.spew.api.SpewConnection;
-import uk.co.magictractor.spew.api.SpewJaywayResponse;
 import uk.co.magictractor.spew.api.SpewRequest;
 import uk.co.magictractor.spew.api.SpewResponse;
 import uk.co.magictractor.spew.api.SpewServiceProvider;
 import uk.co.magictractor.spew.connection.ConnectionRequest;
 import uk.co.magictractor.spew.connection.ConnectionRequestFactory;
-import uk.co.magictractor.spew.imagebam.ImageBam;
-import uk.co.magictractor.spew.util.IOUtil;
+import uk.co.magictractor.spew.core.response.HttpUrlConnectionResponse;
+import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
+import uk.co.magictractor.spew.core.response.parser.SpewParsedResponseFactory;
 
 // Common code for OAuth1 and OAuth2 implementations.
 public abstract class AbstractBoaOAuthConnection<APP extends SpewApplication, SP extends SpewServiceProvider>
@@ -43,13 +38,13 @@ public abstract class AbstractBoaOAuthConnection<APP extends SpewApplication, SP
 
     // TODO! return Netty HttpResponse instead - Configuration shouldn't embedded
     // here? - can remove configuration param and get via service provider
-    protected SpewResponse request0(SpewRequest request, Configuration jsonConfiguration) throws IOException {
-        return request0(request, jsonConfiguration, null);
+    protected SpewParsedResponse request0(SpewRequest request) throws IOException {
+        return request0(request, null);
     }
 
     // http://www.baeldung.com/java-http-request
-    protected SpewResponse request0(SpewRequest request, Configuration jsonConfiguration,
-            Consumer<HttpURLConnection> initConnection) throws IOException {
+    protected SpewParsedResponse request0(SpewRequest request, Consumer<HttpURLConnection> initConnection)
+            throws IOException {
 
         URL url = new URL(getUrl(request));
         HttpURLConnection con = (HttpURLConnection) url.openConnection();
@@ -87,59 +82,63 @@ public abstract class AbstractBoaOAuthConnection<APP extends SpewApplication, SP
         //        }
 
         ConnectionRequest connectionRequest = ConnectionRequestFactory.createConnectionRequest(con);
-        connectionRequest.writeParams(request, jsonConfiguration);
+        // TODO! rework jsonConfiguration here
+        connectionRequest.writeParams(request, getServiceProvider().getJsonConfiguration());
 
-        boolean isOK;
-        String responseBody;
-        try {
-            isOK = con.getResponseCode() == HTTP_OK;
-            InputStream responseStream = isOK ? con.getInputStream() : con.getErrorStream();
-            // con.getHeaderField(n);
-            // 401 con.getInputStream() throws error; con.getErrorStream() returns null
-            responseBody = responseStream == null ? "" : IOUtil.readStringAndClose(responseStream);
-        }
-        finally {
-            con.disconnect();
-        }
-
-        // TODO! what to do when !isOK - now have BadResponseException
-        if (!isOK) {
-            // TODO! logger?
-            throw new IllegalStateException(url + " response was " + con.getResponseCode() + " "
-                    + con.getResponseMessage() + " " + responseBody);
-        }
+        //        boolean isOK;
+        //        String responseBody;
+        //        try {
+        //            isOK = con.getResponseCode() == HTTP_OK;
+        //            InputStream responseStream = isOK ? con.getInputStream() : con.getErrorStream();
+        //            // con.getHeaderField(n);
+        //            // 401 con.getInputStream() throws error; con.getErrorStream() returns null
+        //            responseBody = responseStream == null ? "" : IOUtil.readStringAndClose(responseStream);
+        //        }
+        //        finally {
+        //            // TODO! need to move this
+        //            // con.disconnect();
+        //        }
+        //
+        //        // TODO! what to do when !isOK - now have BadResponseException
+        //        if (!isOK) {
+        //            // TODO! logger?
+        //            throw new IllegalStateException(url + " response was " + con.getResponseCode() + " "
+        //                    + con.getResponseMessage() + " " + responseBody);
+        //        }
 
         // TODO! Very long Json does not get displayed in the console
-        logger.trace(responseBody);
+        //logger.trace(responseBody);
 
-        SpewResponse response;
+        //        // TODO! wrap/convert response json
+        //        // if ("json".equals(request.getParam("format"))) {
+        //        // TODO! check header for content type
+        //        // TODO! make case insensitive?
+        //        String contentType = getHeader(con, "content-type");
+        //        if ("application/json".equals(contentType) || contentType.startsWith("application/json;")) {
+        //            //        if (responseBody.startsWith("{") || responseBody.startsWith("[")) {
+        //            response = new SpewJaywayResponse(responseBody, jsonConfiguration);
+        //            // TODO! change to !"pass"
+        //            // TODO! pass/fail specific to Flickr?
+        //            //			if ("fail".equals(response.getString("stat"))) {
+        //            //				throw new IllegalStateException(body);
+        //            //			}
+        //        }
+        //        // TODO! Imagebam "text/html; charset=UTF-8"
+        //        else if (getServiceProvider() instanceof ImageBam) {
+        //            response = new SpewJaywayResponse(responseBody, jsonConfiguration);
+        //        }
+        //        else {
+        //            throw new IllegalStateException(
+        //                "code needs modified to handle Content-Type " + contentType + " " + responseBody);
+        //        }
+        //
+        //        getServiceProvider().verifyResponse(response);
+        //
+        //        return response;
 
-        // TODO! wrap/convert response json
-        // if ("json".equals(request.getParam("format"))) {
-        // TODO! check header for content type
-        // TODO! make case insensitive?
-        String contentType = getHeader(con, "content-type");
-        if ("application/json".equals(contentType) || contentType.startsWith("application/json;")) {
-            //        if (responseBody.startsWith("{") || responseBody.startsWith("[")) {
-            response = new SpewJaywayResponse(responseBody, jsonConfiguration);
-            // TODO! change to !"pass"
-            // TODO! pass/fail specific to Flickr?
-            //			if ("fail".equals(response.getString("stat"))) {
-            //				throw new IllegalStateException(body);
-            //			}
-        }
-        // TODO! Imagebam "text/html; charset=UTF-8"
-        else if (getServiceProvider() instanceof ImageBam) {
-            response = new SpewJaywayResponse(responseBody, jsonConfiguration);
-        }
-        else {
-            throw new IllegalStateException(
-                "code needs modified to handle Content-Type " + contentType + " " + responseBody);
-        }
+        SpewResponse spewResponse = new HttpUrlConnectionResponse(con);
 
-        getServiceProvider().verifyResponse(response);
-
-        return response;
+        return SpewParsedResponseFactory.parse(getApplication(), spewResponse);
     }
 
     private String getHeader(HttpURLConnection con, String headerKey) {

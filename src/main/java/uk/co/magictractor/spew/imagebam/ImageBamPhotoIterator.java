@@ -6,8 +6,8 @@ import java.util.List;
 import uk.co.magictractor.spew.api.SingleCallServiceIterator;
 import uk.co.magictractor.spew.api.SpewConnection;
 import uk.co.magictractor.spew.api.SpewRequest;
-import uk.co.magictractor.spew.api.SpewResponse;
 import uk.co.magictractor.spew.api.connection.SpewConnectionFactory;
+import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
 import uk.co.magictractor.spew.imagebam.pojo.ImageBamPhoto;
 
 /**
@@ -26,7 +26,7 @@ public class ImageBamPhotoIterator<E> extends SingleCallServiceIterator<E> {
 
         // TODO! set gallery id
 
-        SpewResponse response = getConnection().request(request);
+        SpewParsedResponse response = getConnection().request(request);
 
         System.err.println(response);
 

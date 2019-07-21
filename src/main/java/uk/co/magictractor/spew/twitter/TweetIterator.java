@@ -5,7 +5,7 @@ import java.util.List;
 import uk.co.magictractor.spew.api.PageTokenServiceIterator;
 import uk.co.magictractor.spew.api.SpewConnection;
 import uk.co.magictractor.spew.api.SpewRequest;
-import uk.co.magictractor.spew.api.SpewResponse;
+import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
 
 // https://developer.twitter.com/en/docs/tweets/timelines/api-reference/get-statuses-user_timeline.html
 public class TweetIterator<E> extends PageTokenServiceIterator<E> {
@@ -40,7 +40,7 @@ public class TweetIterator<E> extends PageTokenServiceIterator<E> {
         // Omit user info
         request.setQueryStringParam("trim_user", "true");
 
-        SpewResponse response = getConnection().request(request);
+        SpewParsedResponse response = getConnection().request(request);
 
         List<E> page = response.getList("$", getElementType());
 

@@ -4,7 +4,7 @@ import com.google.gson.GsonBuilder;
 
 import uk.co.magictractor.spew.api.BadResponseException;
 import uk.co.magictractor.spew.api.OAuth1ServiceProvider;
-import uk.co.magictractor.spew.api.SpewResponse;
+import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
 
 /**
  * Meh, Imagebam doesn't look promising. API is patchy - looks like we can't
@@ -64,7 +64,7 @@ public class ImageBam implements OAuth1ServiceProvider {
 
     // {"rsp":{"status":"fail","error_code":108,"error_message":"permission denied: gallery_id"}}
     @Override
-    public void verifyResponse(SpewResponse response) {
+    public void verifyResponse(SpewParsedResponse response) {
         String status = response.getString("$.rsp.status");
         if (!"ok".equals(status)) {
             String errorCode = response.getString("$.rsp.error_code");

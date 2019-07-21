@@ -17,7 +17,7 @@ import com.google.common.io.BaseEncoding;
 import uk.co.magictractor.spew.api.OAuth1Application;
 import uk.co.magictractor.spew.api.OAuth1ServiceProvider;
 import uk.co.magictractor.spew.api.SpewRequest;
-import uk.co.magictractor.spew.api.SpewResponse;
+import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
 import uk.co.magictractor.spew.imagebam.ImageBam;
 import uk.co.magictractor.spew.token.UserPreferencesPersister;
 import uk.co.magictractor.spew.util.ExceptionUtil;
@@ -51,7 +51,7 @@ public final class BoaOAuth1Connection extends AbstractBoaOAuthConnection<OAuth1
     }
 
     @Override
-    public SpewResponse request(SpewRequest apiRequest) {
+    public SpewParsedResponse request(SpewRequest apiRequest) {
         // TODO! (optionally?) verify existing tokens?
         if (userToken.getValue() == null) {
             authenticateUser();
@@ -59,12 +59,12 @@ public final class BoaOAuth1Connection extends AbstractBoaOAuthConnection<OAuth1
 
         forAll(apiRequest);
         forApi(apiRequest);
-        return ExceptionUtil.call(() -> request0(apiRequest, getServiceProvider().getJsonConfiguration()));
+        return ExceptionUtil.call(() -> request0(apiRequest));
     }
 
-    private SpewResponse authRequest(SpewRequest apiRequest) {
+    private SpewParsedResponse authRequest(SpewRequest apiRequest) {
         forAll(apiRequest);
-        return ExceptionUtil.call(() -> request0(apiRequest, getServiceProvider().getJsonConfiguration()));
+        return ExceptionUtil.call(() -> request0(apiRequest));
     }
 
     private void authenticateUser() {
@@ -85,7 +85,7 @@ public final class BoaOAuth1Connection extends AbstractBoaOAuthConnection<OAuth1
         // TODO! POST?
         SpewRequest request = SpewRequest
                 .createGetRequest(getServiceProvider().getTemporaryCredentialRequestUri());
-        SpewResponse response = authRequest(request);
+        SpewParsedResponse response = authRequest(request);
 
         String authToken = response.getString("oauth_token");
         String authSecret = response.getString("oauth_token_secret");
@@ -125,7 +125,7 @@ public final class BoaOAuth1Connection extends AbstractBoaOAuthConnection<OAuth1
         SpewRequest request = SpewRequest.createGetRequest(getServiceProvider().getTokenRequestUri());
         request.setQueryStringParam("oauth_token", userToken.getValue());
         request.setQueryStringParam("oauth_verifier", verification);
-        SpewResponse response = authRequest(request);
+        SpewParsedResponse response = authRequest(request);
 
         String authToken = response.getString("oauth_token");
         String authSecret = response.getString("oauth_token_secret");
@@ -237,6 +237,8 @@ public final class BoaOAuth1Connection extends AbstractBoaOAuthConnection<OAuth1
     private void forApi(SpewRequest request) {
         request.setQueryStringParam("api_key", getApplication().getAppToken());
         request.setQueryStringParam("oauth_token", userToken.getValue());
+        // TODO! Flickr specific - want this for every Flickr request - but could choose XML instead??
+        // SpringSocial broken with Flickr because of this
         request.setQueryStringParam("format", "json");
         request.setQueryStringParam("nojsoncallback", "1");
     }

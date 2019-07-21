@@ -7,7 +7,7 @@ import java.time.ZoneOffset;
 
 import org.junit.jupiter.api.Test;
 
-import uk.co.magictractor.spew.api.SpewJaywayResponse;
+import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
 import uk.co.magictractor.spew.google.pojo.GoogleMediaItem;
 import uk.co.magictractor.spew.util.ResourceUtil;
 
@@ -15,8 +15,7 @@ public class GoogleMediaItemsResponseTest {
 
     @Test
     void t() {
-        String json = ResourceUtil.readResource(this.getClass(), "mediaItems.json");
-        SpewJaywayResponse response = new SpewJaywayResponse(json, Google.getInstance().getJsonConfiguration());
+        SpewParsedResponse response = ResourceUtil.readResponse(new MyGooglePhotosApp(), getClass(), "mediaItems.json");
 
         System.err.println(response);
         Object photos = response.getObject("mediaItems");
@@ -42,9 +41,4 @@ public class GoogleMediaItemsResponseTest {
         //		assertThat(photo.dateUpload).isEqualTo(Instant.ofEpochMilli(1534007093L));
     }
 
-    //	private OAuthResponse buildResponse(String fileName) {
-    //		InputStream in = getClass().getResourceAsStream(fileName);
-    //		String json = IOUtil.readAndClose(in);
-    //		return new OAuthJsonResponse(json, new Google().getJsonConfiguration());
-    //	}
 }

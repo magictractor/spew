@@ -6,8 +6,8 @@ import java.util.List;
 import uk.co.magictractor.spew.api.PageCountServiceIterator;
 import uk.co.magictractor.spew.api.SpewConnection;
 import uk.co.magictractor.spew.api.SpewRequest;
-import uk.co.magictractor.spew.api.SpewResponse;
 import uk.co.magictractor.spew.api.connection.SpewConnectionFactory;
+import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
 import uk.co.magictractor.spew.flickr.pojo.FlickrPhotoset;
 
 /**
@@ -33,7 +33,7 @@ public class FlickrPhotosetIterator<E> extends PageCountServiceIterator<E> {
         // default is 100, max is 500
         // request.setParam("per_page", 500);
 
-        SpewResponse response = getConnection().request(request);
+        SpewParsedResponse response = getConnection().request(request);
 
         System.err.println(response);
 

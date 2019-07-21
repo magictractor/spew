@@ -1,15 +1,10 @@
 package uk.co.magictractor.spew.api;
 
-public interface SpewConnection { // <APP extends OAuthApplication, SP extends ServiceProvider> {
+import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
 
-    SpewResponse request(SpewRequest apiRequest);
+public interface SpewConnection {
 
-    //OAuthApplication getApplication();
-
-    //
-    //	// ?
-    //	default OAuthServiceProvider getServiceProvider() {
-    //		return getApplication().getServiceProvider();
-    //	}
+    // TODO! SpewResponse rather than SpewParsedResponse here?
+    SpewParsedResponse request(SpewRequest apiRequest);
 
 }

@@ -9,6 +9,8 @@ import com.jayway.jsonpath.spi.json.JsonProvider;
 import com.jayway.jsonpath.spi.mapper.GsonMappingProvider;
 import com.jayway.jsonpath.spi.mapper.MappingProvider;
 
+import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
+
 // Base interface for OAuth1 and OAuth2. Some methods likely to move here from OAuth1 when (and if) OAuth2 support is added.
 // https://stackoverflow.com/questions/4113934/how-is-oauth-2-different-from-oauth-1
 // imgur and google photos uses OAuth2 https://api.imgur.com/#oauthendpoints
@@ -19,10 +21,12 @@ import com.jayway.jsonpath.spi.mapper.MappingProvider;
 // https://en.wikipedia.org/wiki/List_of_OAuth_providers
 public interface SpewServiceProvider {
 
+    // TODO! move Gson away from here
     default GsonBuilder getGsonBuilder() {
         return new GsonBuilder();
     }
 
+    // TODO! generalise type mappings so they can be used for both Json and XML
     default Configuration getJsonConfiguration() {
         Gson gson = getGsonBuilder().setPrettyPrinting().create();
         JsonProvider jsonProvider = new GsonJsonProvider(gson);
@@ -45,7 +49,9 @@ public interface SpewServiceProvider {
      */
     // TODO! force all service providers to implement this
     // void verifyResponse(SpewResponse response);
-    default void verifyResponse(SpewResponse response) {
+
+    // TODO! after response parsers are added ensure verifyResponse is still called
+    default void verifyResponse(SpewParsedResponse response) {
     }
 
 }

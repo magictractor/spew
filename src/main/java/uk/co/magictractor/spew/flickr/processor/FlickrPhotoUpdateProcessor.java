@@ -9,8 +9,8 @@ import java.util.stream.Collectors;
 
 import uk.co.magictractor.spew.api.SpewConnection;
 import uk.co.magictractor.spew.api.SpewRequest;
-import uk.co.magictractor.spew.api.SpewResponse;
 import uk.co.magictractor.spew.api.connection.SpewConnectionFactory;
+import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
 import uk.co.magictractor.spew.flickr.Flickr;
 import uk.co.magictractor.spew.flickr.FlickrPhotoIterator.FlickrPhotoIteratorBuilder;
 import uk.co.magictractor.spew.flickr.FlickrPhotosetIterator;
@@ -122,7 +122,7 @@ public class FlickrPhotoUpdateProcessor extends PhotoUpdateProcessor {
         request.setQueryStringParam("title", mutableAlbum.getTitle());
         request.setQueryStringParam("primary_photo_id", mutableAlbum.getPhotos().get(0).getServiceProviderId());
 
-        SpewResponse response = connection.request(request);
+        SpewParsedResponse response = connection.request(request);
         System.err.println(response);
 
         return response.getObject("$.photoset", FlickrPhotoset.class);

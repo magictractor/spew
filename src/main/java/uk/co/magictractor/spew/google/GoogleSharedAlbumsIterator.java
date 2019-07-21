@@ -5,8 +5,8 @@ import java.util.List;
 
 import uk.co.magictractor.spew.api.SpewConnection;
 import uk.co.magictractor.spew.api.SpewRequest;
-import uk.co.magictractor.spew.api.SpewResponse;
 import uk.co.magictractor.spew.api.connection.SpewConnectionFactory;
+import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
 import uk.co.magictractor.spew.google.pojo.GoogleAlbum;
 import uk.co.magictractor.spew.photo.Album;
 
@@ -26,7 +26,7 @@ public class GoogleSharedAlbumsIterator<E> extends GoogleServiceIterator<E> {
     }
 
     @Override
-    protected List<E> parsePageResponse(SpewResponse response) {
+    protected List<E> parsePageResponse(SpewParsedResponse response) {
         return response.getList("sharedAlbums", getElementType());
     }
 
@@ -46,7 +46,8 @@ public class GoogleSharedAlbumsIterator<E> extends GoogleServiceIterator<E> {
         while (iter.hasNext()) {
             Album album = iter.next();
             System.err.println(
-                album.getTitle() + " " + album.getServiceProviderId() + " " + album.getAlbumUrl() + " " + album.getPhotoCount());
+                album.getTitle() + " " + album.getServiceProviderId() + " " + album.getAlbumUrl() + " "
+                        + album.getPhotoCount());
         }
     }
 }

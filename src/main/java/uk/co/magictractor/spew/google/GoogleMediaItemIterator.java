@@ -5,8 +5,8 @@ import java.util.List;
 
 import uk.co.magictractor.spew.api.SpewConnection;
 import uk.co.magictractor.spew.api.SpewRequest;
-import uk.co.magictractor.spew.api.SpewResponse;
 import uk.co.magictractor.spew.api.connection.SpewConnectionFactory;
+import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
 import uk.co.magictractor.spew.google.pojo.GoogleFilters;
 import uk.co.magictractor.spew.google.pojo.GoogleMediaItem;
 import uk.co.magictractor.spew.photo.filter.DateTakenPhotoFilter;
@@ -35,7 +35,7 @@ public class GoogleMediaItemIterator<E> extends GoogleServiceIterator<E> {
     }
 
     @Override
-    protected List<E> parsePageResponse(SpewResponse response) {
+    protected List<E> parsePageResponse(SpewParsedResponse response) {
         return response.getList("mediaItems", getElementType());
     }
 

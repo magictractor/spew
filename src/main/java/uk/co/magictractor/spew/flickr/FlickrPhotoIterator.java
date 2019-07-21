@@ -7,8 +7,8 @@ import java.util.List;
 import uk.co.magictractor.spew.api.PageCountServiceIterator;
 import uk.co.magictractor.spew.api.SpewConnection;
 import uk.co.magictractor.spew.api.SpewRequest;
-import uk.co.magictractor.spew.api.SpewResponse;
 import uk.co.magictractor.spew.api.connection.SpewConnectionFactory;
+import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
 import uk.co.magictractor.spew.flickr.pojo.FlickrPhoto;
 import uk.co.magictractor.spew.photo.filter.DateTakenPhotoFilter;
 import uk.co.magictractor.spew.photo.filter.DateUploadedPhotoFilter;
@@ -61,7 +61,7 @@ public class FlickrPhotoIterator<E> extends PageCountServiceIterator<E> {
         // https://www.flickr.com/groups/51035612836@N01/discuss/72157649995435595/
         request.setQueryStringParam("extras", "date_upload,date_taken,description,tags,machine_tags,url_o");
         // request.setParam("extras", ALL_EXTRAS);
-        SpewResponse response = getConnection().request(request);
+        SpewParsedResponse response = getConnection().request(request);
 
         // https://stackoverflow.com/questions/13686284/parsing-jsonobject-to-listmapstring-object-using-gson
 

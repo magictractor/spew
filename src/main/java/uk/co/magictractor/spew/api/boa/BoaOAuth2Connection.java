@@ -11,7 +11,6 @@ import java.util.function.Function;
 
 import com.google.common.base.Charsets;
 import com.google.common.collect.Iterables;
-import com.jayway.jsonpath.Configuration;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.handler.codec.http.FullHttpRequest;
@@ -19,7 +18,7 @@ import io.netty.handler.codec.http.QueryStringDecoder;
 import uk.co.magictractor.spew.api.OAuth2Application;
 import uk.co.magictractor.spew.api.OAuth2ServiceProvider;
 import uk.co.magictractor.spew.api.SpewRequest;
-import uk.co.magictractor.spew.api.SpewResponse;
+import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
 import uk.co.magictractor.spew.server.CallbackServer;
 import uk.co.magictractor.spew.token.UserPreferencesPersister;
 import uk.co.magictractor.spew.util.ExceptionUtil;
@@ -57,7 +56,7 @@ public class BoaOAuth2Connection extends AbstractBoaOAuthConnection<OAuth2Applic
     }
 
     @Override
-    public SpewResponse request(SpewRequest apiRequest) {
+    public SpewParsedResponse request(SpewRequest apiRequest) {
         // authenticate();
 
         if (accessToken.getValue() == null) {
@@ -80,11 +79,7 @@ public class BoaOAuth2Connection extends AbstractBoaOAuthConnection<OAuth2Applic
 
         // TODO! need to block while waiting for auth from Imgur
         // return null;
-        return ExceptionUtil.call(() -> request0(apiRequest, getJsonConfiguration(), this::setAuthHeader));
-    }
-
-    private Configuration getJsonConfiguration() {
-        return getServiceProvider().getJsonConfiguration();
+        return ExceptionUtil.call(() -> request0(apiRequest, this::setAuthHeader));
     }
 
     private void setAuthHeader(HttpURLConnection con) {
@@ -221,7 +216,7 @@ public class BoaOAuth2Connection extends AbstractBoaOAuthConnection<OAuth2Applic
         request.setBodyParam("redirect_uri", OOB);
         // request.setParam("scope", "");
 
-        SpewResponse response = authRequest(request);
+        SpewParsedResponse response = authRequest(request);
 
         refreshToken.setValue(response.getString("refresh_token"));
         // accessToken.setValue(response.getString("access_token"));
@@ -239,7 +234,7 @@ public class BoaOAuth2Connection extends AbstractBoaOAuthConnection<OAuth2Applic
         request.setBodyParam("client_secret", getApplication().getClientSecret());
 
         request.setBodyParam("grant_type", "refresh_token");
-        SpewResponse response = authRequest(request);
+        SpewParsedResponse response = authRequest(request);
 
         // accessToken.setValue(response.getString("access_token"));
         // System.err.println("accessToken refreshed to " + accessToken.getValue());
@@ -306,9 +301,9 @@ public class BoaOAuth2Connection extends AbstractBoaOAuthConnection<OAuth2Applic
     //		  "token_type": "Bearer"
     //		}
 
-    private SpewResponse authRequest(SpewRequest apiRequest) {
+    private SpewParsedResponse authRequest(SpewRequest apiRequest) {
         // forAll(apiRequest);
-        return ExceptionUtil.call(() -> request0(apiRequest, getJsonConfiguration()));
+        return ExceptionUtil.call(() -> request0(apiRequest));
     }
 
 }

@@ -1,27 +1,59 @@
 package uk.co.magictractor.spew.api;
 
-import java.util.List;
+import java.io.InputStream;
+import java.io.UncheckedIOException;
+import java.util.Objects;
+
+import org.slf4j.LoggerFactory;
 
 public interface SpewResponse {
 
-    <T> T getObject(String key, Class<T> type);
+    /**
+     * <p>
+     * Note that header names should be case insensitive, but with some third
+     * party libraries header names are case sensitive, in which case the
+     * SpewResponse wrapper should work around the case sensitivity.
+     * </p>
+     *
+     * @param headerName case insensitive header name
+     * @return
+     * @see https://stackoverflow.com/questions/5258977/are-http-headers-case-sensitive
+     */
+    String getHeader(String headerName);
 
-    <T> List<T> getList(String key, Class<T> type);
+    /**
+     * <p>
+     * A stream containing the body of the response.
+     * </p>
+     * TODO! establish whether this can only be read once - might be useful to
+     * check body content when determining which parser to use
+     *
+     * @return a stream containing the body of the response
+     * @throws UncheckedIOException if an underlying IOException has to be
+     *         handled
+     */
+    InputStream getBodyStream();
 
-    default Object getObject(String key) {
-        return getObject(key, Object.class);
-    }
+    default String getContentType() {
+        // TODO! simplify here and test case sensitivity in unit tests
+        String upper = getHeader("Content-Type");
+        String lower = getHeader("content-type");
+        if (!Objects.deepEquals(upper, lower)) {
+            LoggerFactory.getLogger(getClass()).error("getHeader() should be case insensitive");
+        }
 
-    default String getString(String key) {
-        return getObject(key, String.class);
-    }
+        String value = upper != null ? upper : lower;
+        if (value == null) {
+            throw new IllegalStateException("Response does not contain a Content-Type header");
+        }
 
-    default int getInt(String key) {
-        return getObject(key, Integer.class);
-    }
+        // Strip out "charset=" etc
+        int semiColonIndex = value.indexOf(";");
+        if (semiColonIndex != -1) {
+            value = value.substring(0, semiColonIndex).trim();
+        }
 
-    default long getLong(String key) {
-        return getObject(key, Long.class);
+        return value;
     }
 
 }

@@ -5,7 +5,7 @@ import java.util.Map;
 
 import uk.co.magictractor.spew.util.UrlEncoderUtil;
 
-public class SpewRequest {
+public final class SpewRequest {
 
     private final String httpMethod;
     private final String baseUrl;

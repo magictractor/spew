@@ -2,24 +2,22 @@ package uk.co.magictractor.spew.flickr;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.io.InputStream;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 
 import org.junit.jupiter.api.Test;
 
-import uk.co.magictractor.spew.api.SpewJaywayResponse;
-import uk.co.magictractor.spew.api.SpewResponse;
+import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
 import uk.co.magictractor.spew.flickr.pojo.FlickrPhoto;
 import uk.co.magictractor.spew.photo.TagSet;
-import uk.co.magictractor.spew.util.IOUtil;
+import uk.co.magictractor.spew.util.ResourceUtil;
 
 public class FlickrResponseTest {
 
     @Test
     void t() {
-        SpewResponse response = buildResponse("getPhotos.json");
+        SpewParsedResponse response = ResourceUtil.readResponse(new MyFlickrApp(), getClass(), "getPhotos.json");
 
         System.err.println(response);
         Object photos = response.getObject("photos");
@@ -54,9 +52,4 @@ public class FlickrResponseTest {
         assertThat(photo.getDateTimeUpload()).isEqualTo(Instant.ofEpochMilli(1534007093000L));
     }
 
-    private SpewResponse buildResponse(String fileName) {
-        InputStream in = getClass().getResourceAsStream(fileName);
-        String json = IOUtil.readStringAndClose(in);
-        return new SpewJaywayResponse(json, Flickr.getInstance().getJsonConfiguration());
-    }
 }
