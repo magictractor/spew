@@ -36,14 +36,12 @@ public abstract class AbstractBoaOAuthConnection<APP extends SpewApplication, SP
         return logger;
     }
 
-    // TODO! return Netty HttpResponse instead - Configuration shouldn't embedded
-    // here? - can remove configuration param and get via service provider
-    protected SpewParsedResponse request0(SpewRequest request) throws IOException {
+    protected final SpewParsedResponse request0(SpewRequest request) throws IOException {
         return request0(request, null);
     }
 
     // http://www.baeldung.com/java-http-request
-    protected SpewParsedResponse request0(SpewRequest request, Consumer<HttpURLConnection> initConnection)
+    protected final SpewParsedResponse request0(SpewRequest request, Consumer<HttpURLConnection> initConnection)
             throws IOException {
 
         URL url = new URL(getUrl(request));

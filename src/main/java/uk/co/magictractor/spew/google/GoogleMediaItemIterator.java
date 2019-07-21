@@ -3,9 +3,8 @@ package uk.co.magictractor.spew.google;
 import java.util.Iterator;
 import java.util.List;
 
-import uk.co.magictractor.spew.api.SpewConnection;
+import uk.co.magictractor.spew.api.SpewApplication;
 import uk.co.magictractor.spew.api.SpewRequest;
-import uk.co.magictractor.spew.api.connection.SpewConnectionFactory;
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
 import uk.co.magictractor.spew.google.pojo.GoogleFilters;
 import uk.co.magictractor.spew.google.pojo.GoogleMediaItem;
@@ -24,7 +23,7 @@ public class GoogleMediaItemIterator<E> extends GoogleServiceIterator<E> {
 
     @Override
     protected SpewRequest createPageRequest() {
-        SpewRequest request = SpewRequest
+        SpewRequest request = getApplication()
                 .createPostRequest("https://photoslibrary.googleapis.com/v1/mediaItems:search");
 
         if (dateTakenRange != null) {
@@ -42,8 +41,8 @@ public class GoogleMediaItemIterator<E> extends GoogleServiceIterator<E> {
     public static class GoogleMediaItemIteratorBuilder<E> extends
             GoogleServiceIteratorBuilder<E, GoogleMediaItemIterator<E>, GoogleMediaItemIteratorBuilder<E>> {
 
-        public GoogleMediaItemIteratorBuilder(SpewConnection connection, Class<E> elementType) {
-            super(connection, elementType, new GoogleMediaItemIterator<E>());
+        public GoogleMediaItemIteratorBuilder(SpewApplication application, Class<E> elementType) {
+            super(application, elementType, new GoogleMediaItemIterator<E>());
             addServerSideFilterHandler(DateTakenPhotoFilter.class, this::setDateTakenPhotoFilter);
         }
 
@@ -54,10 +53,10 @@ public class GoogleMediaItemIterator<E> extends GoogleServiceIterator<E> {
     }
 
     public static void main(String[] args) {
-        SpewConnection connection = SpewConnectionFactory.getConnection(MyGooglePhotosApp.class);
-        Iterator<GoogleMediaItem> iterator = new GoogleMediaItemIteratorBuilder<>(connection, GoogleMediaItem.class)
-                .withFilter(new DateTakenPhotoFilter(DateRange.forDay(2018, 11, 21)))
-                .build();
+        Iterator<GoogleMediaItem> iterator = new GoogleMediaItemIteratorBuilder<>(new MyGooglePhotosApp(),
+            GoogleMediaItem.class)
+                    .withFilter(new DateTakenPhotoFilter(DateRange.forDay(2018, 11, 21)))
+                    .build();
         while (iterator.hasNext()) {
             GoogleMediaItem photo = iterator.next();
             System.err.println(photo.getFileName() + "  " + photo.getDateTimeTaken());

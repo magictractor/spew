@@ -47,8 +47,9 @@ public abstract class PageTokenServiceIterator<E> extends PageServiceIterator<E>
     public static class PageTokenServiceIteratorBuilder<E, I extends PageTokenServiceIterator<E>, B>
             extends PageServiceIteratorBuilder<E, I, B> {
 
-        protected PageTokenServiceIteratorBuilder(SpewConnection connection, Class<E> elementType, I iteratorInstance) {
-            super(connection, elementType, iteratorInstance);
+        protected PageTokenServiceIteratorBuilder(SpewApplication application, Class<E> elementType,
+                I iteratorInstance) {
+            super(application, elementType, iteratorInstance);
         }
     }
 

@@ -83,7 +83,7 @@ public final class BoaOAuth1Connection extends AbstractBoaOAuthConnection<OAuth1
 
     private void authorize() {
         // TODO! POST?
-        SpewRequest request = SpewRequest
+        SpewRequest request = getApplication()
                 .createGetRequest(getServiceProvider().getTemporaryCredentialRequestUri());
         SpewParsedResponse response = authRequest(request);
 
@@ -122,7 +122,7 @@ public final class BoaOAuth1Connection extends AbstractBoaOAuthConnection<OAuth1
     private void fetchToken(String verification) {
         // FlickrRequest request = FlickrRequest.forAuth("access_token");
         // TODO! POST? - imagebam allows get or post
-        SpewRequest request = SpewRequest.createGetRequest(getServiceProvider().getTokenRequestUri());
+        SpewRequest request = getApplication().createGetRequest(getServiceProvider().getTokenRequestUri());
         request.setQueryStringParam("oauth_token", userToken.getValue());
         request.setQueryStringParam("oauth_verifier", verification);
         SpewParsedResponse response = authRequest(request);
@@ -237,10 +237,6 @@ public final class BoaOAuth1Connection extends AbstractBoaOAuthConnection<OAuth1
     private void forApi(SpewRequest request) {
         request.setQueryStringParam("api_key", getApplication().getAppToken());
         request.setQueryStringParam("oauth_token", userToken.getValue());
-        // TODO! Flickr specific - want this for every Flickr request - but could choose XML instead??
-        // SpringSocial broken with Flickr because of this
-        request.setQueryStringParam("format", "json");
-        request.setQueryStringParam("nojsoncallback", "1");
     }
 
     private void forAll(SpewRequest request) {

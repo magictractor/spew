@@ -34,7 +34,7 @@ public class SpewRequestTest {
      * Set up example from https://www.flickr.com/services/api/auth.oauth.html
      */
     private SpewRequest setUpExampleRequest() {
-        SpewRequest request = SpewRequest.createPostRequest("https://api.flickr.com/services/rest/request_token");
+        SpewRequest request = new SpewRequest(null, "GET", "https://api.flickr.com/services/rest/request_token");
 
         // request.removeParam("format");
         // request.removeParam("nojsoncallback");

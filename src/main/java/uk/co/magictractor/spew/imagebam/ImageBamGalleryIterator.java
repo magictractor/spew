@@ -4,9 +4,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import uk.co.magictractor.spew.api.SingleCallServiceIterator;
-import uk.co.magictractor.spew.api.SpewConnection;
+import uk.co.magictractor.spew.api.SpewApplication;
 import uk.co.magictractor.spew.api.SpewRequest;
-import uk.co.magictractor.spew.api.connection.SpewConnectionFactory;
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
 import uk.co.magictractor.spew.imagebam.pojo.ImageBamGallery;
 
@@ -17,9 +16,9 @@ public class ImageBamGalleryIterator<E> extends SingleCallServiceIterator<E> {
 
     @Override
     protected List<E> fetchPage() {
-        SpewRequest request = SpewRequest.createGetRequest(ImageBam.REST_ENDPOINT + "get_galleries");
+        SpewRequest request = getApplication().createGetRequest(ImageBam.REST_ENDPOINT + "get_galleries");
 
-        SpewParsedResponse response = getConnection().request(request);
+        SpewParsedResponse response = request.sendRequest();
 
         System.err.println(response);
 
@@ -29,15 +28,15 @@ public class ImageBamGalleryIterator<E> extends SingleCallServiceIterator<E> {
     public static class ImageBamGalleryIteratorBuilder<E> extends
             SingleCallServiceIteratorBuilder<E, ImageBamGalleryIterator<E>, ImageBamGalleryIteratorBuilder<E>> {
 
-        protected ImageBamGalleryIteratorBuilder(SpewConnection connection, Class<E> elementType) {
-            super(connection, elementType, new ImageBamGalleryIterator<>());
+        protected ImageBamGalleryIteratorBuilder(SpewApplication application, Class<E> elementType) {
+            super(application, elementType, new ImageBamGalleryIterator<>());
         }
     }
 
     public static void main(String[] args) {
-        SpewConnection connection = SpewConnectionFactory.getConnection(MyImageBamApp.class);
-        Iterator<ImageBamGallery> iterator = new ImageBamGalleryIteratorBuilder<>(connection, ImageBamGallery.class)
-                .build();
+        Iterator<ImageBamGallery> iterator = new ImageBamGalleryIteratorBuilder<>(new MyImageBamApp(),
+            ImageBamGallery.class)
+                    .build();
         while (iterator.hasNext()) {
             ImageBamGallery gallery = iterator.next();
             System.err.println(gallery.toString());

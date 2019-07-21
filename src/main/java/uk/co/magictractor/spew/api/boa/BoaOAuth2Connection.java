@@ -93,7 +93,7 @@ public class BoaOAuth2Connection extends AbstractBoaOAuthConnection<OAuth2Applic
 
     // https://developers.google.com/photos/library/guides/authentication-authorization
     private void authorize() {
-        SpewRequest request = SpewRequest.createGetRequest(getServiceProvider().getAuthorizationUri());
+        SpewRequest request = getApplication().createGetRequest(getServiceProvider().getAuthorizationUri());
 
         request.setQueryStringParam("client_id", getApplication().getClientId());
         String redirectUri = getAuthorizeRedirectUrl();
@@ -196,7 +196,7 @@ public class BoaOAuth2Connection extends AbstractBoaOAuthConnection<OAuth2Applic
     // TODO! needs a tweak to handle pin
     private void fetchAccessAndRefreshToken(String code) {
         // ah! needed to be POST else 404 (Google)
-        SpewRequest request = SpewRequest.createPostRequest(getServiceProvider().getTokenUri());
+        SpewRequest request = getApplication().createPostRequest(getServiceProvider().getTokenUri());
 
         request.setBodyParam("code", code);
         // request.setParam("pin", code);
@@ -227,7 +227,7 @@ public class BoaOAuth2Connection extends AbstractBoaOAuthConnection<OAuth2Applic
     // TODO! handle invalid/expired refresh tokens
     // https://developers.google.com/identity/protocols/OAuth2InstalledApp#offline
     private void fetchRefreshedAccessToken() {
-        SpewRequest request = SpewRequest.createPostRequest(getServiceProvider().getTokenUri());
+        SpewRequest request = getApplication().createPostRequest(getServiceProvider().getTokenUri());
 
         request.setBodyParam("refresh_token", refreshToken.getValue());
         request.setBodyParam("client_id", getApplication().getClientId());

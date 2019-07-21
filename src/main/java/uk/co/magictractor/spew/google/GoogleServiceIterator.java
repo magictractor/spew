@@ -3,7 +3,7 @@ package uk.co.magictractor.spew.google;
 import java.util.List;
 
 import uk.co.magictractor.spew.api.PageTokenServiceIterator;
-import uk.co.magictractor.spew.api.SpewConnection;
+import uk.co.magictractor.spew.api.SpewApplication;
 import uk.co.magictractor.spew.api.SpewRequest;
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
 
@@ -18,7 +18,7 @@ public abstract class GoogleServiceIterator<E> extends PageTokenServiceIterator<
 
         request.setQueryStringParam("pageToken", pageToken);
 
-        SpewParsedResponse response = getConnection().request(request);
+        SpewParsedResponse response = request.sendRequest();
 
         List<? extends E> page = parsePageResponse(response);
         String nextToken = response.getString("nextPageToken");
@@ -33,8 +33,8 @@ public abstract class GoogleServiceIterator<E> extends PageTokenServiceIterator<
     public static class GoogleServiceIteratorBuilder<E, I extends GoogleServiceIterator<E>, B>
             extends PageServiceIteratorBuilder<E, I, B> {
 
-        protected GoogleServiceIteratorBuilder(SpewConnection connection, Class<E> elementType, I iteratorInstance) {
-            super(connection, elementType, iteratorInstance);
+        protected GoogleServiceIteratorBuilder(SpewApplication application, Class<E> elementType, I iteratorInstance) {
+            super(application, elementType, iteratorInstance);
         }
     }
 

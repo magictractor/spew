@@ -7,6 +7,7 @@ import com.google.gson.GsonBuilder;
 
 import uk.co.magictractor.spew.api.BadResponseException;
 import uk.co.magictractor.spew.api.OAuth1ServiceProvider;
+import uk.co.magictractor.spew.api.SpewRequest;
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
 import uk.co.magictractor.spew.flickr.json.TagSetTypeAdapter;
 import uk.co.magictractor.spew.json.BooleanTypeAdapter;
@@ -26,6 +27,12 @@ public class Flickr implements OAuth1ServiceProvider {
     private static final Flickr INSTANCE = new Flickr();
 
     private Flickr() {
+    }
+
+    @Override
+    public void prepareRequest(SpewRequest request) {
+        request.setQueryStringParam("format", "json");
+        request.setQueryStringParam("nojsoncallback", "1");
     }
 
     public static Flickr getInstance() {

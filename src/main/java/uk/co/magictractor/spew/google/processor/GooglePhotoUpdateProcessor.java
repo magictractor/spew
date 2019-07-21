@@ -2,8 +2,6 @@ package uk.co.magictractor.spew.google.processor;
 
 import java.util.Iterator;
 
-import uk.co.magictractor.spew.api.SpewConnection;
-import uk.co.magictractor.spew.api.connection.SpewConnectionFactory;
 import uk.co.magictractor.spew.google.GoogleMediaItemIterator.GoogleMediaItemIteratorBuilder;
 import uk.co.magictractor.spew.google.MyGooglePhotosApp;
 import uk.co.magictractor.spew.google.pojo.GoogleMediaItem;
@@ -29,9 +27,9 @@ public class GooglePhotoUpdateProcessor extends PhotoUpdateProcessor {
 
     public static void main(String[] args) {
         PhotoTidyProcessorChain processorChain = new PhotoTidyProcessorChain(new GooglePhotoUpdateProcessor());
-        SpewConnection connection = SpewConnectionFactory.getConnection(MyGooglePhotosApp.class);
-        Iterator<GoogleMediaItem> iterator = new GoogleMediaItemIteratorBuilder<>(connection, GoogleMediaItem.class)
-                .build();
+        Iterator<GoogleMediaItem> iterator = new GoogleMediaItemIteratorBuilder<>(new MyGooglePhotosApp(),
+            GoogleMediaItem.class)
+                    .build();
         processorChain.execute(iterator, new PhotoProcessorContext());
     }
 

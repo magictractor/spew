@@ -4,9 +4,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import uk.co.magictractor.spew.api.PageCountServiceIterator;
-import uk.co.magictractor.spew.api.SpewConnection;
+import uk.co.magictractor.spew.api.SpewApplication;
 import uk.co.magictractor.spew.api.SpewRequest;
-import uk.co.magictractor.spew.api.connection.SpewConnectionFactory;
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
 import uk.co.magictractor.spew.flickr.FlickrPhotosetIterator.FlickrPhotosetIteratorBuilder;
 import uk.co.magictractor.spew.flickr.pojo.FlickrPhotoset;
@@ -25,7 +24,7 @@ public class FlickrPhotosetPhotosIterator<E> extends PageCountServiceIterator<E>
 
     @Override
     protected List<E> fetchPage(int pageNumber) {
-        SpewRequest request = SpewRequest.createPostRequest(Flickr.REST_ENDPOINT);
+        SpewRequest request = getApplication().createPostRequest(Flickr.REST_ENDPOINT);
 
         request.setQueryStringParam("method", "flickr.photosets.getPhotos");
 
@@ -36,7 +35,7 @@ public class FlickrPhotosetPhotosIterator<E> extends PageCountServiceIterator<E>
         // default is 100, max is 500
         // request.setParam("per_page", 500);
 
-        SpewParsedResponse response = getConnection().request(request);
+        SpewParsedResponse response = request.sendRequest();
 
         System.err.println(response);
 
@@ -50,15 +49,15 @@ public class FlickrPhotosetPhotosIterator<E> extends PageCountServiceIterator<E>
             extends
             PageCountServiceIteratorBuilder<E, FlickrPhotosetPhotosIterator<E>, FlickrPhotosetIteratorBuilder<E>> {
 
-        public FlickrPhotosetPhotosIteratorBuilder(SpewConnection connection, Class<E> elementType, String photosetId) {
-            super(connection, elementType, new FlickrPhotosetPhotosIterator<>());
+        public FlickrPhotosetPhotosIteratorBuilder(SpewApplication application, Class<E> elementType,
+                String photosetId) {
+            super(application, elementType, new FlickrPhotosetPhotosIterator<>());
             getIteratorInstance().photosetId = photosetId;
         }
     }
 
     public static void main(String[] args) {
-        SpewConnection connection = SpewConnectionFactory.getConnection(MyFlickrApp.class);
-        Iterator<FlickrPhotoset> iter = new FlickrPhotosetIteratorBuilder<>(connection, FlickrPhotoset.class)
+        Iterator<FlickrPhotoset> iter = new FlickrPhotosetIteratorBuilder<>(new MyFlickrApp(), FlickrPhotoset.class)
                 .build();
         while (iter.hasNext()) {
             FlickrPhotoset photoset = iter.next();

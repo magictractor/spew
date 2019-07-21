@@ -3,7 +3,7 @@ package uk.co.magictractor.spew.twitter;
 import java.util.List;
 
 import uk.co.magictractor.spew.api.PageTokenServiceIterator;
-import uk.co.magictractor.spew.api.SpewConnection;
+import uk.co.magictractor.spew.api.SpewApplication;
 import uk.co.magictractor.spew.api.SpewRequest;
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
 
@@ -18,7 +18,7 @@ public class TweetIterator<E> extends PageTokenServiceIterator<E> {
 
     @Override
     protected PageAndNextToken<E> fetchPage(String pageToken) {
-        SpewRequest request = SpewRequest
+        SpewRequest request = getApplication()
                 .createGetRequest("https://api.twitter.com/1.1/statuses/user_timeline.json");
 
         getLogger().debug("set max_id={}", pageToken);
@@ -40,7 +40,7 @@ public class TweetIterator<E> extends PageTokenServiceIterator<E> {
         // Omit user info
         request.setQueryStringParam("trim_user", "true");
 
-        SpewParsedResponse response = getConnection().request(request);
+        SpewParsedResponse response = request.sendRequest();
 
         List<E> page = response.getList("$", getElementType());
 
@@ -59,8 +59,8 @@ public class TweetIterator<E> extends PageTokenServiceIterator<E> {
     public static class TweetIteratorBuilder<E>
             extends PageTokenServiceIteratorBuilder<E, TweetIterator<E>, TweetIteratorBuilder<E>> {
 
-        public TweetIteratorBuilder(SpewConnection connection, Class<E> elementType) {
-            super(connection, elementType, new TweetIterator<>());
+        public TweetIteratorBuilder(SpewApplication application, Class<E> elementType) {
+            super(application, elementType, new TweetIterator<>());
         }
 
         public TweetIteratorBuilder<E> withScreenName(String screenName) {

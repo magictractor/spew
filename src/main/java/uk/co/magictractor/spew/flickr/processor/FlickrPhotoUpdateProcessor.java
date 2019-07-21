@@ -7,9 +7,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import uk.co.magictractor.spew.api.SpewConnection;
+import uk.co.magictractor.spew.api.SpewApplication;
 import uk.co.magictractor.spew.api.SpewRequest;
-import uk.co.magictractor.spew.api.connection.SpewConnectionFactory;
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
 import uk.co.magictractor.spew.flickr.Flickr;
 import uk.co.magictractor.spew.flickr.FlickrPhotoIterator.FlickrPhotoIteratorBuilder;
@@ -29,10 +28,10 @@ import uk.co.magictractor.spew.processor.common.PhotoUpdateProcessor;
 
 public class FlickrPhotoUpdateProcessor extends PhotoUpdateProcessor {
 
-    private final SpewConnection connection;
+    private final SpewApplication application;
 
-    public FlickrPhotoUpdateProcessor(SpewConnection connection) {
-        this.connection = connection;
+    public FlickrPhotoUpdateProcessor(SpewApplication application) {
+        this.application = application;
     }
 
     // title and description changed using flickr.photos.setMeta
@@ -62,21 +61,21 @@ public class FlickrPhotoUpdateProcessor extends PhotoUpdateProcessor {
         // TODO Auto-generated method stub
         System.err.println("set title: " + photo.getTitle());
 
-        SpewRequest request = SpewRequest.createPostRequest(Flickr.REST_ENDPOINT);
+        SpewRequest request = application.createPostRequest(Flickr.REST_ENDPOINT);
 
         request.setQueryStringParam("method", "flickr.photos.setMeta");
 
         request.setQueryStringParam("photo_id", photo.getServiceProviderId());
         request.setQueryStringParam("title", photo.getTitle());
 
-        connection.request(request);
+        request.sendRequest();
     }
 
     private void setTags(MutablePhoto photo) {
         // TODO Auto-generated method stub
         System.err.println("set tags: " + photo.getTagSet());
 
-        SpewRequest request = SpewRequest.createPostRequest(Flickr.REST_ENDPOINT);
+        SpewRequest request = application.createPostRequest(Flickr.REST_ENDPOINT);
 
         request.setQueryStringParam("method", "flickr.photos.setTags");
 
@@ -84,7 +83,7 @@ public class FlickrPhotoUpdateProcessor extends PhotoUpdateProcessor {
         // TODO! refactor this method - a processor has added the parents already
         request.setQueryStringParam("tags", photo.getTagSet().getQuotedTagNamesWithAliasesAndParents());
 
-        connection.request(request);
+        request.sendRequest();
     }
 
     @Override
@@ -93,7 +92,7 @@ public class FlickrPhotoUpdateProcessor extends PhotoUpdateProcessor {
     }
 
     private void syncAlbums(PhotoProcessorContext context) {
-        new FlickrPhotosetIterator.FlickrPhotosetIteratorBuilder<>(connection, FlickrPhotoset.class)
+        new FlickrPhotosetIterator.FlickrPhotosetIteratorBuilder<>(application, FlickrPhotoset.class)
                 .withFilter(album -> isAlbumOfInterest(album, context))
                 .build()
                 .forEachRemaining(photoset -> context.getAlbum(photoset.getTitle()).setUnderlyingAlbum(photoset));
@@ -117,12 +116,12 @@ public class FlickrPhotoUpdateProcessor extends PhotoUpdateProcessor {
      * @param context
      */
     private FlickrPhotoset createAlbum(MutableAlbum mutableAlbum, PhotoProcessorContext context) {
-        SpewRequest request = SpewRequest.createPostRequest(Flickr.REST_ENDPOINT);
+        SpewRequest request = application.createPostRequest(Flickr.REST_ENDPOINT);
         request.setQueryStringParam("method", "flickr.photosets.create");
         request.setQueryStringParam("title", mutableAlbum.getTitle());
         request.setQueryStringParam("primary_photo_id", mutableAlbum.getPhotos().get(0).getServiceProviderId());
 
-        SpewParsedResponse response = connection.request(request);
+        SpewParsedResponse response = request.sendRequest();
         System.err.println(response);
 
         return response.getObject("$.photoset", FlickrPhotoset.class);
@@ -154,7 +153,7 @@ public class FlickrPhotoUpdateProcessor extends PhotoUpdateProcessor {
     }
 
     private List<String> fetchExistingPhotoIds(MutableAlbum album) {
-        return new FlickrPhotosetPhotosIteratorBuilder<FlickrPhoto>(connection, FlickrPhoto.class,
+        return new FlickrPhotosetPhotosIteratorBuilder<FlickrPhoto>(application, FlickrPhoto.class,
             album.getServiceProviderId())
                     .buildStream()
                     .map(Photo::getServiceProviderId)
@@ -169,12 +168,12 @@ public class FlickrPhotoUpdateProcessor extends PhotoUpdateProcessor {
     }
 
     private void addPhoto(String photosetId, String photoId) {
-        SpewRequest request = SpewRequest.createPostRequest(Flickr.REST_ENDPOINT);
+        SpewRequest request = application.createPostRequest(Flickr.REST_ENDPOINT);
         request.setQueryStringParam("method", "flickr.photosets.addPhoto");
         request.setQueryStringParam("photoset_id", photosetId);
         request.setQueryStringParam("photo_id", photoId);
 
-        connection.request(request);
+        request.sendRequest();
     }
 
     private void removePhotos(MutableAlbum album, List<String> photoIdsToBeRemoved) {
@@ -189,11 +188,10 @@ public class FlickrPhotoUpdateProcessor extends PhotoUpdateProcessor {
     // https://api.flickr.com/services/rest/?method=flickr.photos.setMeta&api_key=5939e168bc6ea2e41e83b74f6f0b3e2d&photo_id=45249983521&title=API+test&format=json&nojsoncallback=1&auth_token=72157672277056577-9fa9087d61430e0a&api_sig=50453767437b384152449e7cb561ac02
 
     public static void main(String[] args) {
-        SpewConnection connection = SpewConnectionFactory.getConnection(MyFlickrApp.class);
         PhotoTidyProcessorChain processorChain = new PhotoTidyProcessorChain(
-            new FlickrPhotoUpdateProcessor(connection));
+            new FlickrPhotoUpdateProcessor(new MyFlickrApp()));
         LocalDate since = LocalDate.now().minusMonths(1).withDayOfMonth(1);
-        Iterator<FlickrPhoto> iterator = new FlickrPhotoIteratorBuilder<>(connection, FlickrPhoto.class)
+        Iterator<FlickrPhoto> iterator = new FlickrPhotoIteratorBuilder<>(new MyFlickrApp(), FlickrPhoto.class)
                 .withFilter(new DateTakenPhotoFilter(DateRange.uptoToday(since)))
                 .build();
         processorChain.execute(iterator, new PhotoProcessorContext());

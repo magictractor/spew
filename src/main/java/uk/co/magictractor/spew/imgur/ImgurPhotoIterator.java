@@ -4,9 +4,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import uk.co.magictractor.spew.api.PageCountServiceIterator;
-import uk.co.magictractor.spew.api.SpewConnection;
+import uk.co.magictractor.spew.api.SpewApplication;
 import uk.co.magictractor.spew.api.SpewRequest;
-import uk.co.magictractor.spew.api.connection.SpewConnectionFactory;
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
 import uk.co.magictractor.spew.imgur.pojo.ImgurImage;
 
@@ -212,7 +211,7 @@ public class ImgurPhotoIterator<E> extends PageCountServiceIterator<E> {
     // Get images https://apidocs.imgur.com/#2e45daca-bd44-47f8-84b0-b3f2aa861735
     @Override
     protected List<E> fetchPage(int pageNumber) {
-        SpewRequest request = SpewRequest
+        SpewRequest request = getApplication()
                 .createGetRequest(Imgur.REST_ENDPOINT + "account/me/images/" + (pageNumber - 1));
 
         // request.setParam("method", "account/me/images/page/" + (pageNumber - 1));
@@ -223,7 +222,7 @@ public class ImgurPhotoIterator<E> extends PageCountServiceIterator<E> {
         //		// default is 100, max is 500
         //		request.setParam("per_page", 500);
 
-        SpewParsedResponse response = getConnection().request(request);
+        SpewParsedResponse response = request.sendRequest();
 
         System.err.println(response);
 
@@ -233,14 +232,13 @@ public class ImgurPhotoIterator<E> extends PageCountServiceIterator<E> {
     public static class ImgurPhotoIteratorBuilder<E>
             extends PageCountServiceIteratorBuilder<E, ImgurPhotoIterator<E>, ImgurPhotoIteratorBuilder<E>> {
 
-        public ImgurPhotoIteratorBuilder(SpewConnection connection, Class<E> elementType) {
-            super(connection, elementType, new ImgurPhotoIterator<>());
+        public ImgurPhotoIteratorBuilder(SpewApplication application, Class<E> elementType) {
+            super(application, elementType, new ImgurPhotoIterator<>());
         }
     }
 
     public static void main(String[] args) {
-        SpewConnection connection = SpewConnectionFactory.getConnection(MyImgurApp.class);
-        Iterator<ImgurImage> iter = new ImgurPhotoIteratorBuilder<>(connection, ImgurImage.class)
+        Iterator<ImgurImage> iter = new ImgurPhotoIteratorBuilder<>(new MyImgurApp(), ImgurImage.class)
                 .build();
         while (iter.hasNext()) {
             ImgurImage photo = iter.next();

@@ -21,6 +21,20 @@ import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
 // https://en.wikipedia.org/wiki/List_of_OAuth_providers
 public interface SpewServiceProvider {
 
+    /**
+     * <p>
+     * May be overridden to ensure that every request has standard parameters.
+     * This can be used, for example, to set a parameter which specifies that
+     * responses should be in JSON format.
+     * </p>
+     * <p>
+     * Default implementation does nothing.
+     * </p>
+     */
+    default void prepareRequest(SpewRequest request) {
+        // Do nothing
+    }
+
     // TODO! move Gson away from here
     default GsonBuilder getGsonBuilder() {
         return new GsonBuilder();

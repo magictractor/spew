@@ -4,9 +4,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import uk.co.magictractor.spew.api.SingleCallServiceIterator;
-import uk.co.magictractor.spew.api.SpewConnection;
+import uk.co.magictractor.spew.api.SpewApplication;
 import uk.co.magictractor.spew.api.SpewRequest;
-import uk.co.magictractor.spew.api.connection.SpewConnectionFactory;
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
 import uk.co.magictractor.spew.imagebam.pojo.ImageBamPhoto;
 
@@ -22,11 +21,11 @@ public class ImageBamPhotoIterator<E> extends SingleCallServiceIterator<E> {
 
     @Override
     protected List<E> fetchPage() {
-        SpewRequest request = SpewRequest.createPostRequest(ImageBam.REST_ENDPOINT + "get_gallery_images");
+        SpewRequest request = getApplication().createPostRequest(ImageBam.REST_ENDPOINT + "get_gallery_images");
 
         // TODO! set gallery id
 
-        SpewParsedResponse response = getConnection().request(request);
+        SpewParsedResponse response = request.sendRequest();
 
         System.err.println(response);
 
@@ -36,14 +35,14 @@ public class ImageBamPhotoIterator<E> extends SingleCallServiceIterator<E> {
     public static class ImageBamPhotoIteratorBuilder<E> extends
             SingleCallServiceIteratorBuilder<E, ImageBamPhotoIterator<E>, ImageBamPhotoIteratorBuilder<E>> {
 
-        protected ImageBamPhotoIteratorBuilder(SpewConnection connection, Class<E> elementType) {
-            super(connection, elementType, new ImageBamPhotoIterator<>());
+        protected ImageBamPhotoIteratorBuilder(SpewApplication application, Class<E> elementType) {
+            super(application, elementType, new ImageBamPhotoIterator<>());
         }
     }
 
     public static void main(String[] args) {
-        SpewConnection connection = SpewConnectionFactory.getConnection(MyImageBamApp.class);
-        Iterator<ImageBamPhoto> iterator = new ImageBamPhotoIteratorBuilder<>(connection, ImageBamPhoto.class).build();
+        Iterator<ImageBamPhoto> iterator = new ImageBamPhotoIteratorBuilder<>(new MyImageBamApp(), ImageBamPhoto.class)
+                .build();
         while (iterator.hasNext()) {
             ImageBamPhoto photo = iterator.next();
             System.err.println(photo.getTitle() + "  " + photo.getDateTimeTaken());
