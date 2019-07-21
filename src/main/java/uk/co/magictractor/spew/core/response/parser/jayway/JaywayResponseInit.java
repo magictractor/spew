@@ -19,6 +19,7 @@ import uk.co.magictractor.spew.api.SpewApplication;
 import uk.co.magictractor.spew.api.SpewResponse;
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponseInit;
+import uk.co.magictractor.spew.util.ContentTypeUtil;
 
 /**
  *
@@ -27,7 +28,7 @@ public class JaywayResponseInit implements SpewParsedResponseInit {
 
     @Override
     public SpewParsedResponse instanceFor(SpewApplication application, SpewResponse response) {
-        if ("application/json".equals(response.getContentType())) {
+        if (ContentTypeUtil.isJson(application.getContentType(response))) {
             return new JaywayResponse(application, response);
         }
         return null;

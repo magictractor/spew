@@ -21,6 +21,7 @@ import java.util.List;
 import uk.co.magictractor.spew.api.SpewApplication;
 import uk.co.magictractor.spew.api.SpewResponse;
 import uk.co.magictractor.spew.core.response.parser.jayway.JaywayResponseInit;
+import uk.co.magictractor.spew.util.ContentTypeUtil;
 
 /**
  *
@@ -42,7 +43,8 @@ public final class SpewParsedResponseFactory {
             }
         }
         throw new IllegalStateException(
-            "Unable to parse response: " + response.getContentType());
+            "Unable to parse response with Content-Type header "
+                    + response.getHeader(ContentTypeUtil.CONTENT_TYPE_HEADER_NAME));
     }
 
 }

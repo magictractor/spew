@@ -15,6 +15,7 @@
  */
 package uk.co.magictractor.spew.core.response;
 
+import java.io.BufferedInputStream;
 import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -39,7 +40,7 @@ public abstract class AbstractOnCloseResponse implements SpewResponse {
     private final class OnCloseInputStream extends FilterInputStream {
 
         protected OnCloseInputStream(InputStream inputStream) {
-            super(inputStream);
+            super(inputStream.markSupported() ? inputStream : new BufferedInputStream(inputStream));
         }
 
         @Override

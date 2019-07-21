@@ -1,0 +1,87 @@
+/**
+ * Copyright 2015-2019 Ken Dobson
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package uk.co.magictractor.spew.util;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UncheckedIOException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+
+import uk.co.magictractor.spew.api.SpewResponse;
+
+/**
+ *
+ */
+public class ContentTypeUtil {
+
+    public static final String CONTENT_TYPE_HEADER_NAME = "Content-Type";
+
+    public static final List<String> JSON_MIME_TYPES = Arrays.asList("application/json");
+
+    private ContentTypeUtil() {
+    }
+
+    public static boolean isJson(String contentType) {
+        return JSON_MIME_TYPES.contains(contentType);
+    }
+
+    public static String fromHeader(SpewResponse response) {
+        // TODO! simplify here and test case sensitivity in unit tests
+        String upper = response.getHeader("Content-Type");
+        String lower = response.getHeader("content-type");
+        if (!Objects.deepEquals(upper, lower)) {
+            // hmm, why doesn't this blow up? there was a workaround for this before...
+            throw new IllegalStateException("getHeader() should be case insensitive");
+        }
+
+        String value = upper != null ? upper : lower;
+        if (value == null) {
+            throw new IllegalStateException("Response does not contain a Content-Type header");
+        }
+
+        // Strip out "charset=" etc
+        int semiColonIndex = value.indexOf(";");
+        if (semiColonIndex != -1) {
+            value = value.substring(0, semiColonIndex).trim();
+        }
+
+        return value;
+    }
+
+    public static String fromBody(SpewResponse response) {
+        byte[] bytes = new byte[4];
+
+        InputStream bodyStream = response.getBodyStream();
+        bodyStream.mark(bytes.length);
+        try {
+            bodyStream.read(bytes);
+            bodyStream.reset();
+        }
+        catch (IOException e) {
+            throw new UncheckedIOException("IOException using " + response.getClass().getSimpleName(), e);
+        }
+
+        if (bytes[0] == '{') {
+            return JSON_MIME_TYPES.get(0);
+        }
+
+        // TODO! refer to better libraries would could be used
+        throw new IllegalArgumentException("Unable to determine the content type of the library");
+    }
+
+}

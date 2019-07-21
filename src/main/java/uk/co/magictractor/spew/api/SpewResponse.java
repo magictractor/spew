@@ -2,7 +2,6 @@ package uk.co.magictractor.spew.api;
 
 import java.io.InputStream;
 import java.io.UncheckedIOException;
-import java.util.Objects;
 
 public interface SpewResponse {
 
@@ -40,27 +39,5 @@ public interface SpewResponse {
      *         handled
      */
     InputStream getBodyStream();
-
-    default String getContentType() {
-        // TODO! simplify here and test case sensitivity in unit tests
-        String upper = getHeader("Content-Type");
-        String lower = getHeader("content-type");
-        if (!Objects.deepEquals(upper, lower)) {
-            throw new IllegalStateException("getHeader() should be case insensitive");
-        }
-
-        String value = upper != null ? upper : lower;
-        if (value == null) {
-            throw new IllegalStateException("Response does not contain a Content-Type header");
-        }
-
-        // Strip out "charset=" etc
-        int semiColonIndex = value.indexOf(";");
-        if (semiColonIndex != -1) {
-            value = value.substring(0, semiColonIndex).trim();
-        }
-
-        return value;
-    }
 
 }

@@ -10,6 +10,7 @@ import com.jayway.jsonpath.spi.mapper.GsonMappingProvider;
 import com.jayway.jsonpath.spi.mapper.MappingProvider;
 
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
+import uk.co.magictractor.spew.util.ContentTypeUtil;
 
 // Base interface for OAuth1 and OAuth2. Some methods likely to move here from OAuth1 when (and if) OAuth2 support is added.
 // https://stackoverflow.com/questions/4113934/how-is-oauth-2-different-from-oauth-1
@@ -33,6 +34,16 @@ public interface SpewServiceProvider {
      */
     default void prepareRequest(SpewRequest request) {
         // Do nothing
+    }
+
+    /**
+     * <p>
+     * May be overridden for service provides which misreport content types in
+     * the HTTP header.
+     * </p>
+     */
+    default String getContentType(SpewResponse response) {
+        return ContentTypeUtil.fromHeader(response);
     }
 
     // TODO! move Gson away from here

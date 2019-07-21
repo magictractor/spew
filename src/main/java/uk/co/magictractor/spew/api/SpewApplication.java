@@ -20,6 +20,10 @@ public interface SpewApplication {
         getServiceProvider().prepareRequest(request);
     }
 
+    default String getContentType(SpewResponse response) {
+        return getServiceProvider().getContentType(response);
+    }
+
     default SpewRequest createGetRequest(String url) {
         return createRequest("GET", url);
     }
