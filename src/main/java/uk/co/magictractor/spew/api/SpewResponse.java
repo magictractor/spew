@@ -25,8 +25,17 @@ public interface SpewResponse {
      * <p>
      * A stream containing the body of the response.
      * </p>
-     * TODO! establish whether this can only be read once - might be useful to
-     * check body content when determining which parser to use
+     * <p>
+     * Multiple calls to this method should always return the same instance of
+     * InputStream.
+     * </p>
+     * <p>
+     * The InputStream returned should support marks (markSupported() returns
+     * true). Implementations can do this by wrapping an underlying stream with
+     * BufferedInputStream or similar if the underlying stream does not support
+     * marks. This is to allow content sniffing to determine the content type
+     * rather than relying only on the Content-Type header.
+     * </p>
      *
      * @return a stream containing the body of the response
      * @throws UncheckedIOException if an underlying IOException has to be
