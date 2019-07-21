@@ -39,7 +39,6 @@ public class JaywayResponse implements SpewParsedResponse {
      * Default visibility because instances should only be created via
      * JaywayResponseParserInit.
      */
-    // TODO! response now has SpewApplication field (search globally for this pair)
     /* default */ JaywayResponse(SpewApplication application, SpewResponse response) {
         ctx = JsonPath.parse(response.getBodyStream(), application.getServiceProvider().getJsonConfiguration());
     }
