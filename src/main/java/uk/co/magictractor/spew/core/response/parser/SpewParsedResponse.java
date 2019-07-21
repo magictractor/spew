@@ -22,9 +22,8 @@ import java.util.List;
  * Parser for responses from the service provider.
  * </p>
  * <p>
- * Provides a bridge to Json and XML parsers, using a common subset of JsonPath
- * and XmlPath (TODO! document tweaking of paths is performed by the
- * implementations and what the supported subset is).
+ * Paths are currently JsonPath, but it would be possible to create an
+ * implementation where paths were XPath.
  * </p>
  */
 public interface SpewParsedResponse {
