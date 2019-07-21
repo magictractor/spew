@@ -19,8 +19,6 @@ import uk.co.magictractor.spew.api.SpewServiceProvider;
 import uk.co.magictractor.spew.connection.ConnectionRequest;
 import uk.co.magictractor.spew.connection.ConnectionRequestFactory;
 import uk.co.magictractor.spew.core.response.HttpUrlConnectionResponse;
-import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
-import uk.co.magictractor.spew.core.response.parser.SpewParsedResponseFactory;
 
 // Common code for OAuth1 and OAuth2 implementations.
 public abstract class AbstractBoaOAuthConnection<APP extends SpewApplication, SP extends SpewServiceProvider>
@@ -36,12 +34,12 @@ public abstract class AbstractBoaOAuthConnection<APP extends SpewApplication, SP
         return logger;
     }
 
-    protected final SpewParsedResponse request0(SpewRequest request) throws IOException {
+    protected final SpewResponse request0(SpewRequest request) throws IOException {
         return request0(request, null);
     }
 
     // http://www.baeldung.com/java-http-request
-    protected final SpewParsedResponse request0(SpewRequest request, Consumer<HttpURLConnection> initConnection)
+    protected final SpewResponse request0(SpewRequest request, Consumer<HttpURLConnection> initConnection)
             throws IOException {
 
         URL url = new URL(getUrl(request));
@@ -134,9 +132,7 @@ public abstract class AbstractBoaOAuthConnection<APP extends SpewApplication, SP
         //
         //        return response;
 
-        SpewResponse spewResponse = new HttpUrlConnectionResponse(con);
-
-        return SpewParsedResponseFactory.parse(getApplication(), spewResponse);
+        return new HttpUrlConnectionResponse(con);
     }
 
     private String getHeader(HttpURLConnection con, String headerKey) {

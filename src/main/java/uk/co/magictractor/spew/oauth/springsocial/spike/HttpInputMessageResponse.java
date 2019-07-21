@@ -16,37 +16,26 @@
 package uk.co.magictractor.spew.oauth.springsocial.spike;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.UncheckedIOException;
 
 import org.springframework.http.HttpInputMessage;
 
-import uk.co.magictractor.spew.api.SpewResponse;
+import uk.co.magictractor.spew.core.response.AbstractByteBufferResponse;
 
 /**
  *
  */
-public class HttpInputMessageResponse implements SpewResponse {
+public class HttpInputMessageResponse extends AbstractByteBufferResponse {
 
     private final HttpInputMessage message;
 
-    public HttpInputMessageResponse(HttpInputMessage message) {
+    public HttpInputMessageResponse(HttpInputMessage message) throws IOException {
+        super(message.getBody());
         this.message = message;
     }
 
     @Override
     public String getHeader(String headerName) {
         return message.getHeaders().getFirst(headerName);
-    }
-
-    @Override
-    public InputStream getBodyStream() {
-        try {
-            return message.getBody();
-        }
-        catch (IOException e) {
-            throw new UncheckedIOException(e);
-        }
     }
 
 }

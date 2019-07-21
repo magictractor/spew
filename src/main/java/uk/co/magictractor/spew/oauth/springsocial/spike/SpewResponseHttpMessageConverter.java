@@ -27,11 +27,10 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.converter.HttpMessageNotWritableException;
 
 import uk.co.magictractor.spew.api.SpewApplication;
-import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
-import uk.co.magictractor.spew.core.response.parser.SpewParsedResponseFactory;
+import uk.co.magictractor.spew.api.SpewResponse;
 
 // TODO! make consistent with whatever Boa code does
-public class SpewResponseHttpMessageConverter implements HttpMessageConverter<SpewParsedResponse> {
+public class SpewResponseHttpMessageConverter implements HttpMessageConverter<SpewResponse> {
 
     private final SpewApplication application;
 
@@ -41,7 +40,10 @@ public class SpewResponseHttpMessageConverter implements HttpMessageConverter<Sp
 
     @Override
     public boolean canRead(Class<?> clazz, MediaType mediaType) {
-        return String.class.equals(clazz);
+        //return String.class.equals(clazz);
+
+        // Maybe not multipart?
+        return true;
     }
 
     @Override
@@ -49,6 +51,7 @@ public class SpewResponseHttpMessageConverter implements HttpMessageConverter<Sp
         return false;
     }
 
+    // Not needed because canRead() is overridden
     // TODO! all types
     @Override
     public List<MediaType> getSupportedMediaTypes() {
@@ -57,16 +60,14 @@ public class SpewResponseHttpMessageConverter implements HttpMessageConverter<Sp
     }
 
     @Override
-    public SpewParsedResponse read(Class<? extends SpewParsedResponse> clazz, HttpInputMessage inputMessage)
+    public SpewResponse read(Class<? extends SpewResponse> clazz, HttpInputMessage inputMessage)
             throws IOException, HttpMessageNotReadableException {
 
-        HttpInputMessageResponse response = new HttpInputMessageResponse(inputMessage);
-
-        return SpewParsedResponseFactory.parse(application, response);
+        return new HttpInputMessageResponse(inputMessage);
     }
 
     @Override
-    public void write(SpewParsedResponse t, MediaType contentType, HttpOutputMessage outputMessage)
+    public void write(SpewResponse t, MediaType contentType, HttpOutputMessage outputMessage)
             throws IOException, HttpMessageNotWritableException {
         throw new UnsupportedOperationException();
     }

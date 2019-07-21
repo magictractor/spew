@@ -18,7 +18,9 @@ import io.netty.handler.codec.http.QueryStringDecoder;
 import uk.co.magictractor.spew.api.OAuth2Application;
 import uk.co.magictractor.spew.api.OAuth2ServiceProvider;
 import uk.co.magictractor.spew.api.SpewRequest;
+import uk.co.magictractor.spew.api.SpewResponse;
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
+import uk.co.magictractor.spew.core.response.parser.SpewParsedResponseFactory;
 import uk.co.magictractor.spew.server.CallbackServer;
 import uk.co.magictractor.spew.token.UserPreferencesPersister;
 import uk.co.magictractor.spew.util.ExceptionUtil;
@@ -56,7 +58,7 @@ public class BoaOAuth2Connection extends AbstractBoaOAuthConnection<OAuth2Applic
     }
 
     @Override
-    public SpewParsedResponse request(SpewRequest apiRequest) {
+    public SpewResponse request(SpewRequest apiRequest) {
         // authenticate();
 
         if (accessToken.getValue() == null) {
@@ -303,7 +305,8 @@ public class BoaOAuth2Connection extends AbstractBoaOAuthConnection<OAuth2Applic
 
     private SpewParsedResponse authRequest(SpewRequest apiRequest) {
         // forAll(apiRequest);
-        return ExceptionUtil.call(() -> request0(apiRequest));
+        SpewResponse response = ExceptionUtil.call(() -> request0(apiRequest));
+        return SpewParsedResponseFactory.parse(getApplication(), response);
     }
 
 }

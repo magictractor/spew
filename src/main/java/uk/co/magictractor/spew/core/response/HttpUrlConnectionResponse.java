@@ -16,20 +16,17 @@
 package uk.co.magictractor.spew.core.response;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.UncheckedIOException;
 import java.net.HttpURLConnection;
-
-import uk.co.magictractor.spew.api.SpewResponse;
 
 /**
  *
  */
-public class HttpUrlConnectionResponse implements SpewResponse {
+public class HttpUrlConnectionResponse extends AbstractOnCloseResponse {
 
     private final HttpURLConnection connection;
 
-    public HttpUrlConnectionResponse(HttpURLConnection connection) {
+    public HttpUrlConnectionResponse(HttpURLConnection connection) throws IOException {
+        super(connection.getInputStream() != null ? connection.getInputStream() : connection.getErrorStream());
         this.connection = connection;
     }
 
@@ -39,13 +36,8 @@ public class HttpUrlConnectionResponse implements SpewResponse {
     }
 
     @Override
-    public InputStream getBodyStream() {
-        try {
-            return connection.getInputStream() != null ? connection.getInputStream() : connection.getErrorStream();
-        }
-        catch (IOException e) {
-            throw new UncheckedIOException(e);
-        }
+    public void onClose() {
+        connection.disconnect();
     }
 
 }

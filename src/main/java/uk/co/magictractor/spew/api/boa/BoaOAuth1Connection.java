@@ -17,7 +17,9 @@ import com.google.common.io.BaseEncoding;
 import uk.co.magictractor.spew.api.OAuth1Application;
 import uk.co.magictractor.spew.api.OAuth1ServiceProvider;
 import uk.co.magictractor.spew.api.SpewRequest;
+import uk.co.magictractor.spew.api.SpewResponse;
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
+import uk.co.magictractor.spew.core.response.parser.SpewParsedResponseFactory;
 import uk.co.magictractor.spew.imagebam.ImageBam;
 import uk.co.magictractor.spew.token.UserPreferencesPersister;
 import uk.co.magictractor.spew.util.ExceptionUtil;
@@ -51,7 +53,7 @@ public final class BoaOAuth1Connection extends AbstractBoaOAuthConnection<OAuth1
     }
 
     @Override
-    public SpewParsedResponse request(SpewRequest apiRequest) {
+    public SpewResponse request(SpewRequest apiRequest) {
         // TODO! (optionally?) verify existing tokens?
         if (userToken.getValue() == null) {
             authenticateUser();
@@ -64,7 +66,9 @@ public final class BoaOAuth1Connection extends AbstractBoaOAuthConnection<OAuth1
 
     private SpewParsedResponse authRequest(SpewRequest apiRequest) {
         forAll(apiRequest);
-        return ExceptionUtil.call(() -> request0(apiRequest));
+        SpewResponse response = ExceptionUtil.call(() -> request0(apiRequest));
+
+        return SpewParsedResponseFactory.parse(getApplication(), response);
     }
 
     private void authenticateUser() {

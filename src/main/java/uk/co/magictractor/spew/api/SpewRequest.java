@@ -5,6 +5,7 @@ import java.util.Map;
 
 import uk.co.magictractor.spew.api.connection.SpewConnectionFactory;
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
+import uk.co.magictractor.spew.core.response.parser.SpewParsedResponseFactory;
 import uk.co.magictractor.spew.util.UrlEncoderUtil;
 
 public final class SpewRequest {
@@ -116,8 +117,14 @@ public final class SpewRequest {
             throw new IllegalStateException("This request has already been sent");
         }
         SpewConnection connection = SpewConnectionFactory.getConnection(application.getClass());
-        boolean sent = true;
-        return connection.request(this);
+        SpewResponse response = connection.request(this);
+        sent = true;
+
+        SpewParsedResponse parsedResponse = SpewParsedResponseFactory.parse(application, response);
+
+        application.getServiceProvider().verifyResponse(parsedResponse);
+
+        return parsedResponse;
     }
 
 }

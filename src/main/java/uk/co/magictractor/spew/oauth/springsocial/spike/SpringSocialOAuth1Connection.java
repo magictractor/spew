@@ -29,8 +29,8 @@ import org.springframework.web.client.RestOperations;
 import uk.co.magictractor.spew.api.OAuth1Application;
 import uk.co.magictractor.spew.api.SpewConnection;
 import uk.co.magictractor.spew.api.SpewRequest;
+import uk.co.magictractor.spew.api.SpewResponse;
 import uk.co.magictractor.spew.connection.ConnectionRequestFactory;
-import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
 import uk.co.magictractor.spew.token.UserPreferencesPersister;
 
 public class SpringSocialOAuth1Connection implements SpewConnection {
@@ -60,7 +60,7 @@ public class SpringSocialOAuth1Connection implements SpewConnection {
     }
 
     @Override
-    public SpewParsedResponse request(SpewRequest apiRequest) {
+    public SpewResponse request(SpewRequest apiRequest) {
         //ConnectionData data = connection.createData();
 
         // TODO! full URL with query string
@@ -69,7 +69,7 @@ public class SpringSocialOAuth1Connection implements SpewConnection {
         // RequestCallback requestCallback = System.err::println;
         RequestCallback requestCallback = httpRequest -> populateHttpRequest(httpRequest, apiRequest);
         SpewResponseHttpMessageConverter converter = new SpewResponseHttpMessageConverter(application);
-        HttpMessageConverterExtractor<SpewParsedResponse> responseExtractor = new HttpMessageConverterExtractor<>(
+        HttpMessageConverterExtractor<SpewResponse> responseExtractor = new HttpMessageConverterExtractor<>(
             String.class, Arrays.asList(converter));
 
         //connection.getApi().postForEntity(url, request, responseType)
