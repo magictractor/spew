@@ -88,11 +88,6 @@ public class BoaOAuth2Connection extends AbstractBoaOAuthConnection<OAuth2Applic
         con.setRequestProperty("Authorization", "Bearer " + accessToken.getValue());
     }
 
-    @Override
-    protected String getUrl(SpewRequest request) {
-        return request.getUrl();
-    }
-
     // https://developers.google.com/photos/library/guides/authentication-authorization
     private void authorize() {
         SpewRequest request = getApplication().createGetRequest(getServiceProvider().getAuthorizationUri());

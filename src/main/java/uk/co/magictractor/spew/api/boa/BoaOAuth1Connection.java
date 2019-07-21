@@ -23,7 +23,6 @@ import uk.co.magictractor.spew.core.response.parser.SpewParsedResponseFactory;
 import uk.co.magictractor.spew.imagebam.ImageBam;
 import uk.co.magictractor.spew.token.UserPreferencesPersister;
 import uk.co.magictractor.spew.util.ExceptionUtil;
-import uk.co.magictractor.spew.util.UrlEncoderUtil;
 
 // TODO! common interface for OAuth1 and OAuth2 connections (and no auth? / other auth?)
 public final class BoaOAuth1Connection extends AbstractBoaOAuthConnection<OAuth1Application, OAuth1ServiceProvider> {
@@ -140,8 +139,8 @@ public final class BoaOAuth1Connection extends AbstractBoaOAuthConnection<OAuth1
     @Override
     protected String getUrl(SpewRequest request) {
         StringBuilder urlBuilder = new StringBuilder();
-        urlBuilder.append(request.getBaseUrl());
-        UrlEncoderUtil.appendQueryString(urlBuilder, "?", request.getQueryStringParams(), UrlEncoderUtil::paramEncode);
+        urlBuilder.append(super.getUrl(request));
+
         if (request.getQueryStringParams().isEmpty()) {
             urlBuilder.append('?');
         }
@@ -192,14 +191,14 @@ public final class BoaOAuth1Connection extends AbstractBoaOAuthConnection<OAuth1
             signature = BaseEncoding.base16().lowerCase().encode(bytes);
         }
         else {
-            // Flickr
+            // Flickr, Twitter
             // TODO! get some more examples of OAuth1 before tidying this mess up??
             // signature =
             // Base64.getEncoder().encodeToString(mac.doFinal(getSignatureBaseString(request).getBytes()));
             signature = BaseEncoding.base64().encode(mac.doFinal(getSignatureBaseString(request).getBytes()));
         }
 
-        getLogger().trace("signature: " + signature);
+        getLogger().trace("signature: {}", signature);
 
         return ExceptionUtil.call(() -> URLEncoder.encode(signature, "UTF-8"));
     }
@@ -224,18 +223,38 @@ public final class BoaOAuth1Connection extends AbstractBoaOAuthConnection<OAuth1
         StringBuilder signatureBaseStringBuilder = new StringBuilder();
         signatureBaseStringBuilder.append(request.getHttpMethod());
         signatureBaseStringBuilder.append('&');
-        signatureBaseStringBuilder.append(UrlEncoderUtil.oauthEncode(request.getBaseUrl()));
+        signatureBaseStringBuilder.append(oauthEncode(request.getBaseUrl()));
         signatureBaseStringBuilder.append('&');
-        signatureBaseStringBuilder.append(
-            UrlEncoderUtil.oauthEncode(
-                UrlEncoderUtil.queryString(null, getOrderedQueryParams(request), UrlEncoderUtil::oauthEncode)));
+        signatureBaseStringBuilder.append(oauthEncode(getSignatureQueryString(request)));
 
         return signatureBaseStringBuilder.toString();
     }
 
-    /** @return ordered params for building signature key */
-    private Map<String, Object> getOrderedQueryParams(SpewRequest request) {
-        return new TreeMap<>(request.getQueryStringParams());
+    private String getSignatureQueryString(SpewRequest request) {
+        // TODO! maybe ignore some params - see Flick upload photo
+        TreeMap<String, Object> orderedParams = new TreeMap<>(request.getQueryStringParams());
+        StringBuilder stringBuilder = new StringBuilder();
+        boolean first = true;
+        for (Map.Entry<String, Object> entry : orderedParams.entrySet()) {
+            if (first) {
+                first = false;
+            }
+            else {
+                stringBuilder.append('&');
+            }
+            stringBuilder.append(entry.getKey());
+            stringBuilder.append('=');
+            stringBuilder.append(oauthEncode(entry.getValue().toString()));
+        }
+
+        return stringBuilder.toString();
+    }
+
+    // https://stackoverflow.com/questions/5864954/java-and-rfc-3986-uri-encoding
+    private final String oauthEncode(String string) {
+        // TODO! something more efficient?
+        String urlEncoded = ExceptionUtil.call(() -> URLEncoder.encode(string, "UTF-8"));
+        return urlEncoded.replace("+", "%20").replace("*", "%2A").replace("%7E", "~");
     }
 
     private void forApi(SpewRequest request) {

@@ -18,7 +18,7 @@ import uk.co.magictractor.spew.photo.TagSet;
 // https://www.flickr.com/services/apps/create/
 public class Flickr implements OAuth1ServiceProvider {
 
-    public static final String REST_ENDPOINT = "https://api.flickr.com/services/rest/";
+    public static final String REST_ENDPOINT = "https://api.flickr.com/services/rest";
 
     //	https://api.imgur.com/oauth2/addclient
     //		https://api.imgur.com/oauth2/authorize

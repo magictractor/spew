@@ -6,7 +6,6 @@ import java.util.Map;
 import uk.co.magictractor.spew.api.connection.SpewConnectionFactory;
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponseFactory;
-import uk.co.magictractor.spew.util.UrlEncoderUtil;
 
 public final class SpewRequest {
 
@@ -18,26 +17,6 @@ public final class SpewRequest {
     private final Map<String, Object> bodyParams = new LinkedHashMap<>();
 
     private boolean sent;
-
-    //    public static final SpewRequest createGetRequest(String url) {
-    //        return new SpewRequest("GET", url);
-    //    }
-    //
-    //    public static final SpewRequest createPostRequest(String url) {
-    //        return new SpewRequest("POST", url);
-    //    }
-    //
-    //    public static final SpewRequest createDelRequest(String url) {
-    //        return new SpewRequest("DEL", url);
-    //    }
-    //
-    //    public static final SpewRequest createPutRequest(String url) {
-    //        return new SpewRequest("PUT", url);
-    //    }
-    //
-    //    public static final SpewRequest createRequest(String httpMethod, String url) {
-    //        return new SpewRequest(httpMethod, url);
-    //    }
 
     /**
      * <p>
@@ -66,7 +45,24 @@ public final class SpewRequest {
     }
 
     public String getUrl() {
-        return baseUrl + UrlEncoderUtil.queryString("?", queryStringParams);
+        StringBuilder urlBuilder = new StringBuilder();
+        urlBuilder.append(baseUrl);
+
+        boolean first = true;
+        for (Map.Entry<String, Object> entry : queryStringParams.entrySet()) {
+            if (first) {
+                first = false;
+                urlBuilder.append('?');
+            }
+            else {
+                urlBuilder.append('&');
+            }
+            urlBuilder.append(entry.getKey());
+            urlBuilder.append('=');
+            urlBuilder.append(entry.getValue());
+        }
+
+        return urlBuilder.toString();
     }
 
     public String getHttpMethod() {

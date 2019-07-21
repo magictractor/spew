@@ -160,6 +160,8 @@ public abstract class AbstractBoaOAuthConnection<APP extends SpewApplication, SP
     //        return jsonConfiguration.jsonProvider().toJson(request.getParams());
     //    }
 
-    abstract protected String getUrl(SpewRequest request);
+    protected String getUrl(SpewRequest request) {
+        return request.getUrl();
+    }
 
 }
