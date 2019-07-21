@@ -4,8 +4,6 @@ import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.util.Objects;
 
-import org.slf4j.LoggerFactory;
-
 public interface SpewResponse {
 
     /**
@@ -48,7 +46,7 @@ public interface SpewResponse {
         String upper = getHeader("Content-Type");
         String lower = getHeader("content-type");
         if (!Objects.deepEquals(upper, lower)) {
-            LoggerFactory.getLogger(getClass()).error("getHeader() should be case insensitive");
+            throw new IllegalStateException("getHeader() should be case insensitive");
         }
 
         String value = upper != null ? upper : lower;

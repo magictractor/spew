@@ -22,13 +22,13 @@ public final class ExceptionUtil {
 
     public static <T> T call(Callable<T> callable) {
         try {
-            return (T) callable.call();
+            return callable.call();
         }
         catch (RuntimeException e) {
             throw e;
         }
         catch (IOException e) {
-            throw new UncheckedIOException((IOException) e);
+            throw new UncheckedIOException(e);
         }
         catch (Exception e) {
             throw new IllegalStateException(e);

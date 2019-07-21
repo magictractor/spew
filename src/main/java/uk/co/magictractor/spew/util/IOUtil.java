@@ -1,49 +1,42 @@
 package uk.co.magictractor.spew.util;
 
-import java.io.BufferedReader;
+import java.io.Closeable;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.util.Objects;
+import java.io.UncheckedIOException;
+
+import com.google.common.io.Closeables;
 
 public final class IOUtil {
+
     private IOUtil() {
     }
 
-    // TODO! replace with Guava Closeables
-    public static void closeQuietly(InputStream in) {
-        ExceptionUtil.call(() -> in.close());
-    }
-
-    public static String readStringAndClose(InputStream in) {
-        return ExceptionUtil.call(() -> readStringAndClose0(in));
-    }
-
-    // TODO! now using Guava, which probably provides something very similar
-    // https://stackoverflow.com/questions/4185665/guava-equivalent-for-ioutils-tostringinputstream
-    // see CharStreams and StaticPage
-    private static String readStringAndClose0(InputStream in) throws IOException {
-        Objects.requireNonNull(in, "InputStream must not be null");
-
-        StringBuilder bodyBuilder = new StringBuilder();
-        Reader reader = null;
-
+    /**
+     * @param bodyStream
+     * @param object
+     */
+    public static <T extends Closeable> void consumeThenClose(T closeable, ConsumerWithIOException<T> consumer) {
+        boolean swallowCloseException = true;
         try {
-            reader = new BufferedReader(new InputStreamReader(in, "UTF-8"));
-            char[] buffer = new char[1024];
-            int len;
-            while ((len = reader.read(buffer)) != -1) {
-                bodyBuilder.append(buffer, 0, len);
-            }
+            consumer.accept(closeable);
+            swallowCloseException = false;
+        }
+        catch (IOException e) {
+            throw new UncheckedIOException(e);
         }
         finally {
-            if (reader != null) {
-                reader.close();
+            try {
+                Closeables.close(closeable, swallowCloseException);
             }
-            in.close();
+            catch (IOException e) {
+                throw new UncheckedIOException(e);
+            }
         }
-
-        return bodyBuilder.toString();
     }
+
+    @FunctionalInterface
+    public static interface ConsumerWithIOException<T> {
+        void accept(T t) throws IOException;
+    }
+
 }

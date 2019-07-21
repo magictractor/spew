@@ -1,8 +1,6 @@
 package uk.co.magictractor.spew.processor.properties;
 
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.UncheckedIOException;
 import java.util.Properties;
 
 import uk.co.magictractor.spew.util.IOUtil;
@@ -81,15 +79,7 @@ public class ResourceFileProperties {
             throw new IllegalStateException(buildMissingResourceMessage(resourceName));
         }
 
-        try {
-            properties.load(resourceStream);
-        }
-        catch (IOException e) {
-            throw new UncheckedIOException(e);
-        }
-        finally {
-            IOUtil.closeQuietly(resourceStream);
-        }
+        IOUtil.consumeThenClose(resourceStream, res -> properties.load(res));
 
         return properties;
     }
