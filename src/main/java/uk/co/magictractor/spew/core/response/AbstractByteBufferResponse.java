@@ -32,7 +32,8 @@ public abstract class AbstractByteBufferResponse implements SpewResponse {
 
     private final ByteArrayInputStream byteStream;
 
-    protected AbstractByteBufferResponse(InputStream inputStream) throws IOException {
+    protected AbstractByteBufferResponse(InputStream inputStream, long contentLength) throws IOException {
+        // Content-Length likely to be in header, scope for optimisation here.
         this(ByteStreams.toByteArray(inputStream));
     }
 
