@@ -49,7 +49,7 @@ public class IOUtilTest {
     public void testConsumeThenClose_happyPath() {
         setUpReader();
         char[] charBuf = new char[1];
-        IOUtil.consumeThenClose(reader, r -> r.read(charBuf));
+        IOUtil.applyThenClose(reader, r -> r.read(charBuf));
 
         assertThat(charBuf).isEqualTo(new char[] { 'h' });
     }
@@ -57,7 +57,7 @@ public class IOUtilTest {
     @Test
     public void testConsumeThenClose_nullCloseable() {
         assertThatCode(
-            () -> IOUtil.consumeThenClose(null, r -> {
+            () -> IOUtil.acceptThenClose(null, r -> {
             })).doesNotThrowAnyException();
     }
 
@@ -65,7 +65,7 @@ public class IOUtilTest {
     public void testConsumeThenClose_nullCloseableWithConsumerException() {
         // No additional exception from closing null Closeable.
         assertThatThrownBy(
-            () -> IOUtil.consumeThenClose(null, r -> consumerThrowsExceptionThenClose(r, false)))
+            () -> IOUtil.acceptThenClose(null, r -> consumerThrowsExceptionThenClose(r, false)))
                     .isExactlyInstanceOf(UnsupportedOperationException.class)
                     .hasMessage("consumer problem")
                     .hasNoSuppressedExceptions();
@@ -86,7 +86,7 @@ public class IOUtilTest {
     public void testConsumeThenClose_exceptionFromClose() throws IOException {
         setUpCloseOnceReader();
         assertThatThrownBy(
-            () -> IOUtil.consumeThenClose(reader, r -> reader.close()))
+            () -> IOUtil.acceptThenClose(reader, r -> reader.close()))
                     .isExactlyInstanceOf(UncheckedIOException.class)
                     .hasCauseExactlyInstanceOf(IOException.class)
                     .satisfies(e -> e.getCause().getMessage().equals("Already closed"));
@@ -103,7 +103,7 @@ public class IOUtilTest {
     }
 
     private void consumerThrowsExceptionThenClose(Closeable closeable, boolean close) throws IOException {
-        IOUtil.consumeThenClose(closeable, (c) -> consumerThrowsException0(c, close));
+        IOUtil.acceptThenClose(closeable, (c) -> consumerThrowsException0(c, close));
     }
 
     private void consumerThrowsException0(Closeable closeable, boolean close) throws IOException {

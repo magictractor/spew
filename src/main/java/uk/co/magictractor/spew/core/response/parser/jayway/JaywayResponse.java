@@ -41,7 +41,7 @@ public class JaywayResponse implements ObjectCentricSpewParsedResponse {
      * JaywayResponseParserInit.
      */
     /* default */ JaywayResponse(SpewApplication application, SpewResponse response) {
-        IOUtil.consumeThenClose(response.getBodyInputStream(), body -> {
+        IOUtil.acceptThenClose(response.getBodyInputStream(), body -> {
             ctx = JsonPath.parse(body, application.getServiceProvider().getJsonConfiguration());
         });
     }

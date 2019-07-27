@@ -17,7 +17,6 @@ package uk.co.magictractor.spew.core.response.parser.text;
 
 import java.io.IOException;
 import java.io.Reader;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -40,21 +39,15 @@ import uk.co.magictractor.spew.util.IOUtil;
  */
 public class KeyValuePairsResponse implements StringCentricSpewParsedResponse {
 
-    private final Map<String, String> values = new LinkedHashMap<>();
+    private final Map<String, String> values;
 
     public KeyValuePairsResponse(SpewApplication application, SpewResponse response) {
-        IOUtil.consumeThenClose(response.getBodyReader(), this::parse);
+        values = IOUtil.applyThenClose(response.getBodyReader(), this::parse);
     }
 
-    private void parse(Reader bodyReader) throws IOException {
+    private Map<String, String> parse(Reader bodyReader) throws IOException {
         String body = CharStreams.toString(bodyReader);
-        List<String> keyValuePairs = Splitter.on("&").splitToList(body);
-        for (String keyValuePair : keyValuePairs) {
-            int equalsIndex = keyValuePair.indexOf("=");
-            String key = keyValuePair.substring(0, equalsIndex);
-            String value = keyValuePair.substring(equalsIndex + 1);
-            values.put(key, value);
-        }
+        return Splitter.on("&").withKeyValueSeparator("=").split(body);
     }
 
     @Override

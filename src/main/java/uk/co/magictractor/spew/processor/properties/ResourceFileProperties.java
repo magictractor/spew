@@ -79,7 +79,7 @@ public class ResourceFileProperties {
             throw new IllegalStateException(buildMissingResourceMessage(resourceName));
         }
 
-        IOUtil.consumeThenClose(resourceStream, res -> properties.load(res));
+        IOUtil.acceptThenClose(resourceStream, res -> properties.load(res));
 
         return properties;
     }

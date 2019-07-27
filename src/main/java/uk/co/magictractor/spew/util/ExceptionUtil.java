@@ -41,6 +41,11 @@ public final class ExceptionUtil {
     }
 
     @FunctionalInterface
+    public static interface FunctionWithException<T, R, E extends Exception> {
+        R apply(T t) throws E;
+    }
+
+    @FunctionalInterface
     public static interface ConsumerWithException<T, E extends Exception> {
         void accept(T t) throws E;
     }
