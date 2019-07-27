@@ -36,8 +36,13 @@ public final class ExceptionUtil {
     }
 
     @FunctionalInterface
-    public interface RunnableWithException {
-        void run() throws Exception;
+    public interface RunnableWithException<E extends Exception> {
+        void run() throws E;
+    }
+
+    @FunctionalInterface
+    public static interface ConsumerWithException<T, E extends Exception> {
+        void accept(T t) throws E;
     }
 
 }

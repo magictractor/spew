@@ -2,41 +2,24 @@ package uk.co.magictractor.spew.util;
 
 import java.io.Closeable;
 import java.io.IOException;
-import java.io.UncheckedIOException;
 
-import com.google.common.io.Closeables;
+import uk.co.magictractor.spew.util.ExceptionUtil.ConsumerWithException;
 
 public final class IOUtil {
 
     private IOUtil() {
     }
 
-    /**
-     * @param bodyStream
-     * @param object
-     */
-    public static <T extends Closeable> void consumeThenClose(T closeable, ConsumerWithIOException<T> consumer) {
-        boolean swallowCloseException = true;
-        try {
-            consumer.accept(closeable);
-            swallowCloseException = false;
-        }
-        catch (IOException e) {
-            throw new UncheckedIOException(e);
-        }
-        finally {
-            try {
-                Closeables.close(closeable, swallowCloseException);
-            }
-            catch (IOException e) {
-                throw new UncheckedIOException(e);
-            }
-        }
+    public static <T extends Closeable, E extends Exception> void consumeThenClose(T closeable,
+            ConsumerWithException<T, E> consumer) {
+        ExceptionUtil.call(() -> consumeThenClose0(closeable, consumer));
     }
 
-    @FunctionalInterface
-    public static interface ConsumerWithIOException<T> {
-        void accept(T t) throws IOException;
+    public static <T extends Closeable, E extends Exception> void consumeThenClose0(T closeable,
+            ConsumerWithException<T, E> consumer) throws E, IOException {
+        try (T c = closeable) {
+            consumer.accept(closeable);
+        }
     }
 
 }
