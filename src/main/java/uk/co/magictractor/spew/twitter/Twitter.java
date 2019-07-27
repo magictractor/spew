@@ -37,4 +37,9 @@ public class Twitter implements OAuth1ServiceProvider {
         return "HMAC-SHA1";
     }
 
+    @Override
+    public String appManagementUrl() {
+        return "https://developer.twitter.com/en/apps";
+    }
+
 }

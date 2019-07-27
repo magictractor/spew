@@ -8,6 +8,7 @@ import com.google.common.io.ByteStreams;
 import com.google.common.io.Closeables;
 
 // A static page displayed by CallbackServer.
+// TODO! bin
 public class StaticPage {
 
     private byte[] bytes;

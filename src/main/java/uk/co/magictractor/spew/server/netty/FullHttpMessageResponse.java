@@ -13,27 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.co.magictractor.spew.access;
+package uk.co.magictractor.spew.server.netty;
 
-import java.util.Scanner;
+import java.io.InputStream;
 
-/**
- *
- */
-public class PasteVerificationCodeHandler implements AuthorizationHandler {
+import io.netty.buffer.ByteBufInputStream;
+import io.netty.handler.codec.http.FullHttpMessage;
+import uk.co.magictractor.spew.api.SpewResponse;
 
-    // TODO! "oob" is not correct for OAuth2 ("pin" or "code")
-    @Override
-    public String getCallbackValue() {
-        return "oob";
+public class FullHttpMessageResponse implements SpewResponse {
+
+    private final FullHttpMessage message;
+
+    public FullHttpMessageResponse(FullHttpMessage message) {
+        this.message = message;
     }
 
     @Override
-    public AuthorizationResult getResult() {
-        System.err.println("Enter verification code: ");
-        try (Scanner scanner = new Scanner(System.in)) {
-            return new AuthorizationResult(scanner.nextLine().trim());
-        }
+    public String getHeader(String headerName) {
+        return message.headers().get(headerName);
+    }
+
+    @Override
+    public InputStream getBodyInputStream() {
+        return new ByteBufInputStream(message.content());
     }
 
 }

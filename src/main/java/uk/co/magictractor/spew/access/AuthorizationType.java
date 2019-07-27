@@ -15,25 +15,17 @@
  */
 package uk.co.magictractor.spew.access;
 
-import java.util.Scanner;
+public enum AuthorizationType {
 
-/**
- *
- */
-public class PasteVerificationCodeHandler implements AuthorizationHandler {
+    /** Auth token is available if using a server to capture responsed. */
+    AUTH_TOKEN,
 
-    // TODO! "oob" is not correct for OAuth2 ("pin" or "code")
-    @Override
-    public String getCallbackValue() {
-        return "oob";
-    }
-
-    @Override
-    public AuthorizationResult getResult() {
-        System.err.println("Enter verification code: ");
-        try (Scanner scanner = new Scanner(System.in)) {
-            return new AuthorizationResult(scanner.nextLine().trim());
-        }
-    }
+    /**
+     * A verification is available if a value is displayed on a web page by the
+     * service provider and copied into the application by the user. An
+     * additional request is required to convert the verification code to an
+     * auth token.
+     */
+    VERIFICATION_CODE;
 
 }

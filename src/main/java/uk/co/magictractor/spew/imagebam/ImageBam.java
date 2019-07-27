@@ -2,6 +2,8 @@ package uk.co.magictractor.spew.imagebam;
 
 import com.google.gson.GsonBuilder;
 
+import uk.co.magictractor.spew.access.AuthorizationHandler;
+import uk.co.magictractor.spew.access.PasteVerificationCodeHandler;
 import uk.co.magictractor.spew.api.BadResponseException;
 import uk.co.magictractor.spew.api.OAuth1ServiceProvider;
 import uk.co.magictractor.spew.api.SpewResponse;
@@ -9,17 +11,23 @@ import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
 import uk.co.magictractor.spew.util.ContentTypeUtil;
 
 /**
+ * <p>
  * Meh, Imagebam doesn't look promising. API is patchy - looks like we can't
  * list all images (only list those in a given gallery), or move images to and
  * from a gallery.
+ * </p>
+ * <p>
+ * It also handles passwords badly - it will email password reminders in plain
+ * text.
+ * </p>
+ * <p>
+ * ImageBam will not be used by any of my apps, but is retained here because it
+ * presents some interested challenges to OAuth clients.
+ * </p>
  */
 public class ImageBam implements OAuth1ServiceProvider {
 
     public static final String REST_ENDPOINT = "http://www.imagebam.com/sys/API/resource/";
-
-    //	https://api.imgur.com/oauth2/addclient
-    //		https://api.imgur.com/oauth2/authorize
-    //		https://api.imgur.com/oauth2/token
 
     private static final ImageBam INSTANCE = new ImageBam();
 
@@ -84,6 +92,18 @@ public class ImageBam implements OAuth1ServiceProvider {
             String errorMessage = response.getString("$.rsp.error_message");
             throw new BadResponseException(status, errorCode, errorMessage);
         }
+    }
+
+    @Override
+    public AuthorizationHandler getDefaultAuthorizationHandler() {
+        // ImageBam does not do callbacks, it always displays a code to copy into the application.
+        return new PasteVerificationCodeHandler();
+    }
+
+    // Cannot edit application details, only add client.
+    @Override
+    public String appManagementUrl() {
+        return "http://www.imagebam.com/sys/API/clients";
     }
 
 }

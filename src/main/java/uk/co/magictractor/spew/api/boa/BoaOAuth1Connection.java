@@ -13,7 +13,8 @@ import javax.crypto.spec.SecretKeySpec;
 
 import com.google.common.io.BaseEncoding;
 
-import uk.co.magictractor.spew.access.VerificationCodeHandler;
+import uk.co.magictractor.spew.access.AuthorizationHandler;
+import uk.co.magictractor.spew.access.AuthorizationResult;
 import uk.co.magictractor.spew.api.OAuth1Application;
 import uk.co.magictractor.spew.api.OAuth1ServiceProvider;
 import uk.co.magictractor.spew.api.SpewRequest;
@@ -67,19 +68,23 @@ public final class BoaOAuth1Connection extends AbstractBoaOAuthConnection<OAuth1
         forAll(apiRequest);
         SpewResponse response = ExceptionUtil.call(() -> request0(apiRequest));
 
-        return new KeyValuePairsResponse(getApplication(), response);
+        return new KeyValuePairsResponse(response);
     }
 
     private void authenticateUser() {
-        VerificationCodeHandler verificationCodeHandler = getApplication().getVerificationCodeHandler();
-        verificationCodeHandler.preAuthorizationRequest();
+        AuthorizationHandler authorizationHandler = getApplication().getAuthorizationHandler();
+        authorizationHandler.preAuthorizationRequest();
 
-        authorize(verificationCodeHandler.getCallbackValue());
+        authorize(authorizationHandler.getCallbackValue());
 
-        String verification = verificationCodeHandler.getVerification();
+        AuthorizationResult result = authorizationHandler.getResult();
+        String authToken = result.getAuthToken();
+        if (authToken == null) {
+            authToken = userToken.getValue();
+        }
+        String verificationCode = result.getVerificationCode();
 
-        // hmm, other handlers might not want this bit
-        fetchToken(verification);
+        fetchToken(authToken, verificationCode);
     }
 
     private void authorize(String callback) {
@@ -123,17 +128,17 @@ public final class BoaOAuth1Connection extends AbstractBoaOAuthConnection<OAuth1
         }
     }
 
-    private void fetchToken(String verification) {
+    private void fetchToken(String authToken, String verificationCode) {
         // FlickrRequest request = FlickrRequest.forAuth("access_token");
         // TODO! POST? - imagebam allows get or post
         SpewRequest request = getApplication().createGetRequest(getServiceProvider().getTokenRequestUri());
-        request.setQueryStringParam("oauth_token", userToken.getValue());
-        request.setQueryStringParam("oauth_verifier", verification);
+        request.setQueryStringParam("oauth_token", authToken);
+        request.setQueryStringParam("oauth_verifier", verificationCode);
         SpewParsedResponse response = authRequest(request);
 
-        String authToken = response.getString("oauth_token");
+        String newAuthToken = response.getString("oauth_token");
         String authSecret = response.getString("oauth_token_secret");
-        userToken.setValue(authToken);
+        userToken.setValue(newAuthToken);
         userSecret.setValue(authSecret);
     }
 

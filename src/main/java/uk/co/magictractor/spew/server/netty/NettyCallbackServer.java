@@ -1,8 +1,11 @@
-package uk.co.magictractor.spew.server;
+package uk.co.magictractor.spew.server.netty;
 
 import static io.netty.handler.codec.http.HttpResponseStatus.NOT_FOUND;
 import static io.netty.handler.codec.http.HttpResponseStatus.OK;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.ByteBuf;
@@ -24,30 +27,51 @@ import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpRequestDecoder;
 import io.netty.handler.codec.http.HttpResponseEncoder;
+import uk.co.magictractor.spew.api.SpewResponse;
+import uk.co.magictractor.spew.server.ResponseHandler;
+import uk.co.magictractor.spew.server.ResponseNext;
+import uk.co.magictractor.spew.server.ServerRequest;
+import uk.co.magictractor.spew.server.StaticPage;
 import uk.co.magictractor.spew.util.ExceptionUtil;
 
 /**
  * Server for receiving OAuth authorization callbacks. Based on example in
  * https://netty.io/wiki/user-guide-for-4.x.html.
  */
-public class CallbackServer {
+public class NettyCallbackServer {
 
-    @FunctionalInterface
-    public interface Callback {
-        void callback(FullHttpRequest httpRequest);
-    }
-
-    private final Callback callback;
+    // TODO! bin this once ResponseHandlers are working
+    private final ServerCallback callback;
     private final int port;
+    private final List<ResponseHandler> responseHandlers = new ArrayList<>();
 
     private NioEventLoopGroup bossGroup;
     private NioEventLoopGroup workerGroup;
 
     private ChannelFuture f;
 
-    public CallbackServer(Callback callback, int port) {
+    public NettyCallbackServer(ServerCallback callback) {
+        this(callback, 8080);
+    }
+
+    public NettyCallbackServer(ServerCallback callback, int port) {
         this.callback = callback;
         this.port = port;
+    }
+
+    public void addResponseHandler(ResponseHandler responseHandler) {
+        if (responseHandler == null) {
+            throw new IllegalArgumentException("responseHandler must not be null");
+        }
+        responseHandlers.add(responseHandler);
+    }
+
+    public String getUrl() {
+        // Note that localhost is not used because Twitter does not support it.
+        // See https://developer.twitter.com/en/docs/basics/apps/guides/callback-urls.html
+
+        // TODO! implement https?
+        return "http://127.0.0.1:" + port;
     }
 
     public void run() {
@@ -72,8 +96,12 @@ public class CallbackServer {
                             p.addLast(new HttpRequestDecoder());
                             // Don't want to handle HttpChunks (see HttpSnoopServerInitializer)
                             p.addLast(new HttpObjectAggregator(1048576));
+
+                            p.addLast(new OutboundExceptionHandler());
+
                             p.addLast(new CallbackServerHandler());
 
+                            p.addLast(new InboundExceptionHandler());
                         }
                     })
                     .option(ChannelOption.SO_BACKLOG, 128)
@@ -136,6 +164,9 @@ public class CallbackServer {
             System.err.println("uri: " + uri);
             // httpRequest.
 
+            // Aaah, OAuth1 jumps straight to the token
+            // OAuth2 has the fragment requiring the use of /catchtoken
+
             switch (uri) {
                 case "/":
                     handleRoot(ctx);
@@ -144,8 +175,32 @@ public class CallbackServer {
                     handleCatchtoken(httpRequest, ctx);
                     break;
                 default:
-                    handleUnknown(ctx);
+                    //handleUnknown(ctx);
+                    handle(ctx, new FullHttpMessageRequest(httpRequest));
             }
+        }
+
+        private void handle(ChannelHandlerContext ctx, ServerRequest request) {
+            for (ResponseHandler handler : responseHandlers) {
+                ResponseNext next = handler.handleResponse(request);
+                if (next != null) {
+                    handle(next);
+                }
+            }
+            handleUnknown(ctx);
+        }
+
+        private void handle(ResponseNext next) {
+            if (next.redirect() != null) {
+                redirect(next.redirect());
+            }
+            if (next.terminate()) {
+                shutdown();
+            }
+        }
+
+        private void redirect(SpewResponse redirect) {
+            throw new UnsupportedOperationException("not yet implemented");
         }
 
         // See
@@ -218,23 +273,22 @@ public class CallbackServer {
 
         ctx.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
 
+        // TODO! handler should trigger the shutdown?
         shutdown();
     }
 
     private void handleUnknown(ChannelHandlerContext ctx) {
         DefaultHttpResponse response = new DefaultHttpResponse(HTTP_1_1, NOT_FOUND);
+        System.err.println("not found");
 
-        ctx.writeAndFlush(response);
+        ctx.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
     }
 
     // TODO! favicon?
 
-    //	public static void main(String[] args) throws Exception {
-    //		int port = 8080;
-    //		if (args.length > 0) {
-    //			port = Integer.parseInt(args[0]);
-    //		}
-    //
-    //		new CallbackServer(port).run();
-    //	}
+    @FunctionalInterface
+    public static interface ServerCallback {
+        void callback(FullHttpRequest httpRequest);
+    }
+
 }

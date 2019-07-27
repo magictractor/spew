@@ -13,27 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.co.magictractor.spew.access;
+package uk.co.magictractor.spew.server;
 
-import java.util.Scanner;
+import java.util.Map;
 
-/**
- *
- */
-public class PasteVerificationCodeHandler implements AuthorizationHandler {
+// TODO! reconcile this with SpewRequest
+public interface ServerRequest {
 
-    // TODO! "oob" is not correct for OAuth2 ("pin" or "code")
-    @Override
-    public String getCallbackValue() {
-        return "oob";
-    }
+    public Map<String, String> getQueryStringParams();
 
-    @Override
-    public AuthorizationResult getResult() {
-        System.err.println("Enter verification code: ");
-        try (Scanner scanner = new Scanner(System.in)) {
-            return new AuthorizationResult(scanner.nextLine().trim());
-        }
-    }
+    public String getQueryStringParam(String paramName);
 
 }

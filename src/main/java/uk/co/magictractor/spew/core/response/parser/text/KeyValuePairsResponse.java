@@ -17,13 +17,13 @@ package uk.co.magictractor.spew.core.response.parser.text;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 import com.google.common.base.Splitter;
 import com.google.common.io.CharStreams;
 
-import uk.co.magictractor.spew.api.SpewApplication;
 import uk.co.magictractor.spew.api.SpewResponse;
 import uk.co.magictractor.spew.core.response.parser.StringCentricSpewParsedResponse;
 import uk.co.magictractor.spew.util.IOUtil;
@@ -41,12 +41,16 @@ public class KeyValuePairsResponse implements StringCentricSpewParsedResponse {
 
     private final Map<String, String> values;
 
-    public KeyValuePairsResponse(SpewApplication application, SpewResponse response) {
+    public KeyValuePairsResponse(SpewResponse response) {
         values = IOUtil.applyThenClose(response.getBodyReader(), this::parse);
     }
 
     private Map<String, String> parse(Reader bodyReader) throws IOException {
         String body = CharStreams.toString(bodyReader);
+        if (body.isEmpty()) {
+            // Spitter chokes getting a Map from an empty String.
+            return Collections.emptyMap();
+        }
         return Splitter.on("&").withKeyValueSeparator("=").split(body);
     }
 

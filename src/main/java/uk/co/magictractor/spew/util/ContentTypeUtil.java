@@ -88,12 +88,15 @@ public class ContentTypeUtil {
     public static Charset charsetFromHeader(SpewResponse response) {
         String header = response.getHeader(CONTENT_TYPE_HEADER_NAME);
         Charset charset = null;
-        int index = header.indexOf(";charset=");
-        if (index != -1) {
-            int startIndex = index + 9;
-            int endIndex = header.indexOf(";", startIndex);
-            String charsetName = endIndex == -1 ? header.substring(startIndex) : header.substring(startIndex, endIndex);
-            charset = Charset.forName(charsetName);
+        if (header != null) {
+            int index = header.indexOf(";charset=");
+            if (index != -1) {
+                int startIndex = index + 9;
+                int endIndex = header.indexOf(";", startIndex);
+                String charsetName = endIndex == -1 ? header.substring(startIndex)
+                        : header.substring(startIndex, endIndex);
+                charset = Charset.forName(charsetName);
+            }
         }
 
         return charset;

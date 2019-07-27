@@ -1,6 +1,6 @@
 package uk.co.magictractor.spew.api;
 
-import uk.co.magictractor.spew.access.VerificationCodeHandler;
+import uk.co.magictractor.spew.access.AuthorizationHandler;
 import uk.co.magictractor.spew.api.connection.SpewConnectionFactory;
 
 public interface SpewApplication {
@@ -37,8 +37,8 @@ public interface SpewApplication {
         return createRequest("DEL", url);
     }
 
-    default VerificationCodeHandler getVerificationCodeHandler() {
-        return getServiceProvider().getDefaultVerificationCodeHandler();
+    default AuthorizationHandler getAuthorizationHandler() {
+        return getServiceProvider().getDefaultAuthorizationHandler();
     }
 
 }

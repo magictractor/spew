@@ -9,9 +9,9 @@ import com.jayway.jsonpath.spi.json.JsonProvider;
 import com.jayway.jsonpath.spi.mapper.GsonMappingProvider;
 import com.jayway.jsonpath.spi.mapper.MappingProvider;
 
-import uk.co.magictractor.spew.access.PasteVerificationCodeHandler;
-import uk.co.magictractor.spew.access.VerificationCodeHandler;
+import uk.co.magictractor.spew.access.AuthorizationHandler;
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
+import uk.co.magictractor.spew.server.LocalServerAuthorizationHandler;
 import uk.co.magictractor.spew.util.ContentTypeUtil;
 
 // Base interface for OAuth1 and OAuth2. Some methods likely to move here from OAuth1 when (and if) OAuth2 support is added.
@@ -81,8 +81,12 @@ public interface SpewServiceProvider {
     default void verifyResponse(SpewParsedResponse response) {
     }
 
-    default VerificationCodeHandler getDefaultVerificationCodeHandler() {
-        return new PasteVerificationCodeHandler();
+    default AuthorizationHandler getDefaultAuthorizationHandler() {
+        return new LocalServerAuthorizationHandler();
+    }
+
+    default String appManagementUrl() {
+        throw new UnsupportedOperationException("Not recorded for this site");
     }
 
 }

@@ -13,7 +13,7 @@ import com.google.common.base.Charsets;
 import com.google.common.collect.Iterables;
 
 import io.netty.buffer.ByteBuf;
-import io.netty.handler.codec.http.FullHttpRequest;
+import io.netty.handler.codec.http.FullHttpMessage;
 import io.netty.handler.codec.http.QueryStringDecoder;
 import uk.co.magictractor.spew.api.OAuth2Application;
 import uk.co.magictractor.spew.api.OAuth2ServiceProvider;
@@ -21,7 +21,7 @@ import uk.co.magictractor.spew.api.SpewRequest;
 import uk.co.magictractor.spew.api.SpewResponse;
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponseFactory;
-import uk.co.magictractor.spew.server.CallbackServer;
+import uk.co.magictractor.spew.server.netty.NettyCallbackServer;
 import uk.co.magictractor.spew.token.UserPreferencesPersister;
 import uk.co.magictractor.spew.util.ExceptionUtil;
 
@@ -140,9 +140,9 @@ public class BoaOAuth2Connection extends AbstractBoaOAuthConnection<OAuth2Applic
 
         // Launch local server to receive callback containing authentication
         // information.
-        CallbackServer callbackServer = null;
+        NettyCallbackServer callbackServer = null;
         if (CALLBACK_SERVER.equals(redirectUri)) {
-            callbackServer = new CallbackServer(this::setAccessToken, 8080);
+            callbackServer = new NettyCallbackServer(this::setAccessToken);
             callbackServer.run();
         }
         //		else if (OOB.equals(redirectUri)) {
@@ -243,8 +243,8 @@ public class BoaOAuth2Connection extends AbstractBoaOAuthConnection<OAuth2Applic
     //		setAccessToken(response.getString("access_token"), response.getString("expires_in"));
     //	}
 
-    private void setAccessToken(FullHttpRequest httpRequest) {
-        ByteBuf content = httpRequest.content();
+    private void setAccessToken(FullHttpMessage httpMessage) {
+        ByteBuf content = httpMessage.content();
         // new QueryStringDecoder()
 
         String s = content.toString(Charsets.UTF_8);

@@ -13,25 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.co.magictractor.spew.access;
+package uk.co.magictractor.spew.server;
 
 /**
- * <p>
- * Interface for capturing
- * </p>
- * <p>
- * Two implementations are provided, but others may be added. The
- * implementations provided can capture values pasted into the console or fire
- * up a lightweight web server to capture verfication codes.
- * </p>
+ *
  */
-public interface VerificationCodeHandler {
+@FunctionalInterface
+public interface ResponseHandler {
 
-    String getCallbackValue();
-
-    default void preAuthorizationRequest() {
-    }
-
-    String getVerification();
+    ResponseNext handleResponse(ServerRequest request);
 
 }

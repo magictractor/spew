@@ -8,14 +8,15 @@ import java.util.Map;
 import uk.co.magictractor.spew.api.connection.SpewConnectionFactory;
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponseFactory;
+import uk.co.magictractor.spew.server.ServerRequest;
 
-public final class SpewRequest {
+public final class SpewRequest implements ServerRequest {
 
     private final SpewApplication application;
 
     private final String httpMethod;
     private final String baseUrl;
-    private final Map<String, Object> queryStringParams = new LinkedHashMap<>();
+    private final Map<String, String> queryStringParams = new LinkedHashMap<>();
     private final Map<String, Object> bodyParams = new LinkedHashMap<>();
 
     private boolean sent;
@@ -52,7 +53,7 @@ public final class SpewRequest {
         urlBuilder.append(baseUrl);
 
         boolean first = true;
-        for (Map.Entry<String, Object> entry : queryStringParams.entrySet()) {
+        for (Map.Entry<String, String> entry : queryStringParams.entrySet()) {
             if (first) {
                 first = false;
                 urlBuilder.append('?');
@@ -79,7 +80,7 @@ public final class SpewRequest {
 
     public void setQueryStringParam(String key, Object value) {
         if (value != null) {
-            queryStringParams.put(key, value);
+            queryStringParams.put(key, value.toString());
         }
         else {
             queryStringParams.remove(key);
@@ -103,7 +104,7 @@ public final class SpewRequest {
         bodyParams.remove(key);
     }
 
-    public Object getQueryStringParam(String key) {
+    public String getQueryStringParam(String key) {
         // TODO! do not convert to empty string - do null handling where it's needed
         return queryStringParams.containsKey(key) ? queryStringParams.get(key) : "";
     }
@@ -112,7 +113,7 @@ public final class SpewRequest {
         return bodyParams;
     }
 
-    public Map<String, Object> getQueryStringParams() {
+    public Map<String, String> getQueryStringParams() {
         return queryStringParams;
     }
 
