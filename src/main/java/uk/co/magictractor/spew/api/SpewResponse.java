@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UncheckedIOException;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 import uk.co.magictractor.spew.util.ContentTypeUtil;
 
@@ -47,6 +48,9 @@ public interface SpewResponse {
 
     default BufferedReader getBodyReader() {
         Charset charset = ContentTypeUtil.charsetFromHeader(this);
+        if (charset == null) {
+            charset = StandardCharsets.UTF_8;
+        }
         return new BufferedReader(new InputStreamReader(getBodyInputStream(), charset));
     }
 

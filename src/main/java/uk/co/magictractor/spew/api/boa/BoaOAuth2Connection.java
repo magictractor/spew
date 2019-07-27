@@ -160,7 +160,7 @@ public class BoaOAuth2Connection extends AbstractBoaOAuthConnection<OAuth2Applic
         } // else boom
     }
 
-    // TODO! some of this is common with OAuth1
+    // TODO! use VerificationCodeHandler
     private void captureManuallyPastedGrant() {
         Scanner scanner = new Scanner(System.in);
         // System.err.println("Enter verification code for oauth_token=" + requestToken

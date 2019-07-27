@@ -9,6 +9,8 @@ import com.jayway.jsonpath.spi.json.JsonProvider;
 import com.jayway.jsonpath.spi.mapper.GsonMappingProvider;
 import com.jayway.jsonpath.spi.mapper.MappingProvider;
 
+import uk.co.magictractor.spew.access.PasteVerificationCodeHandler;
+import uk.co.magictractor.spew.access.VerificationCodeHandler;
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
 import uk.co.magictractor.spew.util.ContentTypeUtil;
 
@@ -77,6 +79,10 @@ public interface SpewServiceProvider {
 
     // TODO! after response parsers are added ensure verifyResponse is still called
     default void verifyResponse(SpewParsedResponse response) {
+    }
+
+    default VerificationCodeHandler getDefaultVerificationCodeHandler() {
+        return new PasteVerificationCodeHandler();
     }
 
 }

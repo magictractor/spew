@@ -6,7 +6,6 @@ import java.net.URLEncoder;
 import java.security.MessageDigest;
 import java.util.Map;
 import java.util.Random;
-import java.util.Scanner;
 import java.util.TreeMap;
 
 import javax.crypto.Mac;
@@ -14,6 +13,7 @@ import javax.crypto.spec.SecretKeySpec;
 
 import com.google.common.io.BaseEncoding;
 
+import uk.co.magictractor.spew.access.VerificationCodeHandler;
 import uk.co.magictractor.spew.api.OAuth1Application;
 import uk.co.magictractor.spew.api.OAuth1ServiceProvider;
 import uk.co.magictractor.spew.api.SpewRequest;
@@ -53,7 +53,7 @@ public final class BoaOAuth1Connection extends AbstractBoaOAuthConnection<OAuth1
 
     @Override
     public SpewResponse request(SpewRequest apiRequest) {
-        // TODO! (optionally?) verify existing tokens?
+        // TODO! (optionally?) verify existing tokens? - and need similar for spring social
         if (userToken.getValue() == null) {
             authenticateUser();
         }
@@ -71,23 +71,24 @@ public final class BoaOAuth1Connection extends AbstractBoaOAuthConnection<OAuth1
     }
 
     private void authenticateUser() {
-        authorize();
+        VerificationCodeHandler verificationCodeHandler = getApplication().getVerificationCodeHandler();
+        verificationCodeHandler.preAuthorizationRequest();
 
-        Scanner scanner = new Scanner(System.in);
-        // System.err.println("Enter verification code for oauth_token=" + requestToken
-        // + ": ");
-        System.err.println("Enter verification code: ");
-        String verification = scanner.nextLine().trim();
-        // FlickrConfig.setUserAuthVerifier(verification);
-        scanner.close();
+        authorize(verificationCodeHandler.getCallbackValue());
 
+        String verification = verificationCodeHandler.getVerification();
+
+        // hmm, other handlers might not want this bit
         fetchToken(verification);
     }
 
-    private void authorize() {
+    private void authorize(String callback) {
         // TODO! POST?
         SpewRequest request = getApplication()
                 .createGetRequest(getServiceProvider().getTemporaryCredentialRequestUri());
+
+        request.setQueryStringParam("oauth_callback", callback);
+
         SpewParsedResponse response = authRequest(request);
 
         String authToken = response.getString("oauth_token");
@@ -272,14 +273,9 @@ public final class BoaOAuth1Connection extends AbstractBoaOAuthConnection<OAuth1
         // https://oauth.net/core/1.0a/#nonce
         request.setQueryStringParam("oauth_nonce", nonceGenerator.nextInt());
         request.setQueryStringParam("oauth_timestamp", System.currentTimeMillis() / 1000);
-        // setParam("oauth_callback", "www.google.com");
-        // "oob" so that web shows the verifier which can then be copied
-        // eh? should only need "oob" during authorization
-        request.setQueryStringParam("oauth_callback", "oob");
+
         request.setQueryStringParam("oauth_version", "1.0");
         request.setQueryStringParam("oauth_signature_method", getServiceProvider().getRequestSignatureMethod());
     }
 
 }
-
-//  https://api.flickr.com/services/rest/?method=flickr.photos.setMeta&api_key=5939e168bc6ea2e41e83b74f6f0b3e2d&photo_id=45249983521&title=Small+white&format=json&nojsoncallback=1&auth_token=72157672277056577-9fa9087d61430e0a&api_sig=2e45756e2c8c451dc08468ab15b7c9ac
