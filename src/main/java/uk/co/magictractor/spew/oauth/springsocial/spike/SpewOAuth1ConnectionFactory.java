@@ -32,8 +32,8 @@ public class SpewOAuth1ConnectionFactory extends GenericOAuth1ConnectionFactory 
         // TODO Auto-generated constructor stub
 
         super(application.getClass().getSimpleName().toLowerCase(),
-            application.getAppToken(),
-            application.getAppSecret(),
+            application.getConsumerKey(),
+            application.getConsumerSecret(),
             application.getServiceProvider().getTemporaryCredentialRequestUri(),
             application.getServiceProvider().getResourceOwnerAuthorizationUri(),
             //"http://localhost/spring-social-callback",

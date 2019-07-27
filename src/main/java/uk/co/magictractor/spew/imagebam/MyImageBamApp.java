@@ -14,12 +14,12 @@ public class MyImageBamApp implements OAuth1Application {
     }
 
     @Override
-    public String getAppToken() {
-        return properties.getProperty("app_token");
+    public String getConsumerKey() {
+        return properties.getProperty("consumer_key");
     }
 
     @Override
-    public String getAppSecret() {
-        return properties.getProperty("app_secret");
+    public String getConsumerSecret() {
+        return properties.getProperty("consumer_secret");
     }
 }

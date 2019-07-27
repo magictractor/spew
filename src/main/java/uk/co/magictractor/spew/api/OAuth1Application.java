@@ -5,10 +5,8 @@ public interface OAuth1Application extends SpewApplication { // <OAuth1ServicePr
     @Override
     OAuth1ServiceProvider getServiceProvider();
 
-    // Spring social calls this consumerKey
-    String getAppToken();
+    String getConsumerKey();
 
-    // Spring social calls this consumerSecret
-    String getAppSecret();
+    String getConsumerSecret();
 
 }

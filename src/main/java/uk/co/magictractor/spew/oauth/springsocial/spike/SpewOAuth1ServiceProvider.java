@@ -25,8 +25,8 @@ public class SpewOAuth1ServiceProvider extends GenericOAuth1ServiceProvider {
 
     /* default */ SpewOAuth1ServiceProvider(OAuth1Application application) {
 
-        super(application.getAppToken(),
-            application.getAppSecret(),
+        super(application.getConsumerKey(),
+            application.getConsumerSecret(),
             application.getServiceProvider().getTokenRequestUri(),
             application.getServiceProvider().getResourceOwnerAuthorizationUri(),
             "http://localhost/spring-social-callback",

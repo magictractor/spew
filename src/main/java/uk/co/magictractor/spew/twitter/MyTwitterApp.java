@@ -27,14 +27,14 @@ public class MyTwitterApp implements OAuth1Application {
     //    }
 
     @Override
-    public String getAppToken() {
+    public String getConsumerKey() {
         // TODO! avoid duplicating these
-        return properties.getProperty("app_token");
+        return properties.getProperty("consumer_key");
     }
 
     @Override
-    public String getAppSecret() {
-        return properties.getProperty("app_secret");
+    public String getConsumerSecret() {
+        return properties.getProperty("consumer_secret");
     }
 
 }

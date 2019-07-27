@@ -161,7 +161,7 @@ public final class BoaOAuth1Connection extends AbstractBoaOAuthConnection<OAuth1
         // TODO! consumer key only absent for auth
         // TODO! different service providers have different strategies for the key?!
         // Flickr:
-        String key = getApplication().getAppSecret() + "&" + userSecret.getValue("");
+        String key = getApplication().getConsumerSecret() + "&" + userSecret.getValue("");
         // ImageBam
         // oauth_signature = MD5(API-key + API-secret + oauth_timestamp + oauth_nonce +
         // oauth_token + oauth_token_secret)
@@ -206,8 +206,8 @@ public final class BoaOAuth1Connection extends AbstractBoaOAuthConnection<OAuth1
     private String getImageBamSignatureBaseString(SpewRequest request) {
         StringBuilder signatureBaseStringBuilder = new StringBuilder();
 
-        signatureBaseStringBuilder.append(getApplication().getAppToken());
-        signatureBaseStringBuilder.append(getApplication().getAppSecret());
+        signatureBaseStringBuilder.append(getApplication().getConsumerKey());
+        signatureBaseStringBuilder.append(getApplication().getConsumerSecret());
         signatureBaseStringBuilder.append(request.getQueryStringParam("oauth_timestamp"));
         signatureBaseStringBuilder.append(request.getQueryStringParam("oauth_nonce"));
         if (userToken.getValue() != null) {
@@ -258,13 +258,13 @@ public final class BoaOAuth1Connection extends AbstractBoaOAuthConnection<OAuth1
     }
 
     private void forApi(SpewRequest request) {
-        request.setQueryStringParam("api_key", getApplication().getAppToken());
+        request.setQueryStringParam("api_key", getApplication().getConsumerKey());
         request.setQueryStringParam("oauth_token", userToken.getValue());
     }
 
     private void forAll(SpewRequest request) {
         // hmm... same as api_key? (in forApi())
-        request.setQueryStringParam("oauth_consumer_key", getApplication().getAppToken());
+        request.setQueryStringParam("oauth_consumer_key", getApplication().getConsumerKey());
 
         // TODO! nonce should guarantee that it is never the same if the
         // timestamp has not move on since the last API call. Not quite guaranteed here
