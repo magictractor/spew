@@ -42,7 +42,7 @@ public abstract class AbstractByteBufferResponse implements SpewResponse {
     }
 
     @Override
-    public final InputStream getBodyStream() {
+    public final InputStream getBodyInputStream() {
         return byteStream;
     }
 

@@ -1,7 +1,12 @@
 package uk.co.magictractor.spew.api;
 
+import java.io.BufferedReader;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.UncheckedIOException;
+import java.nio.charset.Charset;
+
+import uk.co.magictractor.spew.util.ContentTypeUtil;
 
 public interface SpewResponse {
 
@@ -38,6 +43,11 @@ public interface SpewResponse {
      * @throws UncheckedIOException if an underlying IOException has to be
      *         handled
      */
-    InputStream getBodyStream();
+    InputStream getBodyInputStream();
+
+    default BufferedReader getBodyReader() {
+        Charset charset = ContentTypeUtil.charsetFromHeader(this);
+        return new BufferedReader(new InputStreamReader(getBodyInputStream(), charset));
+    }
 
 }

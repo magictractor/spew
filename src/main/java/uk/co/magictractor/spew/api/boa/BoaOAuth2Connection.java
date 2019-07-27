@@ -149,7 +149,7 @@ public class BoaOAuth2Connection extends AbstractBoaOAuthConnection<OAuth2Applic
         //			captureManuallyPastedGrant();
         //		}
 
-        String authUrl = request.getUrl();
+        String authUrl = request.getUrl(true);
         ExceptionUtil.call(() -> Desktop.getDesktop().browse(new URI(authUrl)));
 
         if (callbackServer != null) {

@@ -1,5 +1,7 @@
 package uk.co.magictractor.spew.api;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -44,7 +46,8 @@ public final class SpewRequest {
         return baseUrl;
     }
 
-    public String getUrl() {
+    // TODO! do something better than the escapeValue param
+    public String getUrl(boolean escapeValue) {
         StringBuilder urlBuilder = new StringBuilder();
         urlBuilder.append(baseUrl);
 
@@ -59,7 +62,12 @@ public final class SpewRequest {
             }
             urlBuilder.append(entry.getKey());
             urlBuilder.append('=');
-            urlBuilder.append(entry.getValue());
+            if (escapeValue) {
+                urlBuilder.append(URLEncoder.encode(entry.getValue().toString(), StandardCharsets.UTF_8));
+            }
+            else {
+                urlBuilder.append(entry.getValue());
+            }
         }
 
         return urlBuilder.toString();

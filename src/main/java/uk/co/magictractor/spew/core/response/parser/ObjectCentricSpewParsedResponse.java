@@ -1,5 +1,5 @@
 /**
- * Copyright 2015-2019 Ken Dobson
+ * Copyright 2019 Ken Dobson
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,29 +15,26 @@
  */
 package uk.co.magictractor.spew.core.response.parser;
 
-import java.util.List;
+public interface ObjectCentricSpewParsedResponse extends SpewParsedResponse {
 
-/**
- * <p>
- * Parsed response from the service provider.
- * </p>
- * <p>
- * Most implementations will implement this indirectly via
- * ObjectCentricSpewParsedResponse or StringCentricSpewParsedResponse.
- * </p>
- */
-public interface SpewParsedResponse {
+    @Override
+    public default String getString(String key) {
+        return getObject(key, String.class);
+    }
 
-    String getString(String key);
+    @Override
+    public default int getInt(String key) {
+        return getObject(key, Integer.class);
+    }
 
-    int getInt(String key);
+    @Override
+    public default long getLong(String key) {
+        return getObject(key, Long.class);
+    }
 
-    long getLong(String key);
-
-    Object getObject(String key);
-
-    <T> T getObject(String path, Class<T> type);
-
-    <T> List<T> getList(String path, Class<T> type);
+    @Override
+    public default Object getObject(String key) {
+        return getObject(key, Object.class);
+    }
 
 }

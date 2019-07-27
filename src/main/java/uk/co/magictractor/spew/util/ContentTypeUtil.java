@@ -18,6 +18,7 @@ package uk.co.magictractor.spew.util;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
+import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -66,7 +67,7 @@ public class ContentTypeUtil {
     public static String fromBody(SpewResponse response) {
         byte[] bytes = new byte[4];
 
-        InputStream bodyStream = response.getBodyStream();
+        InputStream bodyStream = response.getBodyInputStream();
         bodyStream.mark(bytes.length);
         try {
             bodyStream.read(bytes);
@@ -82,6 +83,20 @@ public class ContentTypeUtil {
 
         // TODO! refer to better libraries would could be used
         throw new IllegalArgumentException("Unable to determine the content type of the library");
+    }
+
+    public static Charset charsetFromHeader(SpewResponse response) {
+        String header = response.getHeader(CONTENT_TYPE_HEADER_NAME);
+        Charset charset = null;
+        int index = header.indexOf(";charset=");
+        if (index != -1) {
+            int startIndex = index + 9;
+            int endIndex = header.indexOf(";", startIndex);
+            String charsetName = endIndex == -1 ? header.substring(startIndex) : header.substring(startIndex, endIndex);
+            charset = Charset.forName(charsetName);
+        }
+
+        return charset;
     }
 
 }

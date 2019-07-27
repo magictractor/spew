@@ -1,0 +1,75 @@
+/**
+ * Copyright 2019 Ken Dobson
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package uk.co.magictractor.spew.core.response.parser.text;
+
+import java.io.IOException;
+import java.io.Reader;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
+import com.google.common.base.Splitter;
+import com.google.common.io.CharStreams;
+
+import uk.co.magictractor.spew.api.SpewApplication;
+import uk.co.magictractor.spew.api.SpewResponse;
+import uk.co.magictractor.spew.core.response.parser.StringCentricSpewParsedResponse;
+import uk.co.magictractor.spew.util.IOUtil;
+
+/**
+ * <p>
+ * Response containing key and value pairs separated by ampersands.
+ * </p>
+ * <p>
+ * OAuth1 uses a response like this to return oauth_token and oauth_token_secret
+ * values.
+ * </p>
+ */
+public class KeyValuePairsResponse implements StringCentricSpewParsedResponse {
+
+    private final Map<String, String> values = new LinkedHashMap<>();
+
+    public KeyValuePairsResponse(SpewApplication application, SpewResponse response) {
+        IOUtil.consumeThenClose(response.getBodyReader(), this::parse);
+    }
+
+    private void parse(Reader bodyReader) throws IOException {
+        String body = CharStreams.toString(bodyReader);
+        List<String> keyValuePairs = Splitter.on("&").splitToList(body);
+        for (String keyValuePair : keyValuePairs) {
+            int equalsIndex = keyValuePair.indexOf("=");
+            String key = keyValuePair.substring(0, equalsIndex);
+            String value = keyValuePair.substring(equalsIndex + 1);
+            values.put(key, value);
+        }
+    }
+
+    @Override
+    public String getString(String key) {
+        return values.get(key);
+    }
+
+    @Override
+    public <T> List<T> getList(String path, Class<T> type) {
+        throw new UnsupportedOperationException("This response type does not support conversion to POJOs");
+    }
+
+    @Override
+    public <T> T getObject(String path, Class<T> type) {
+        throw new UnsupportedOperationException("This response type does not support conversion to POJOs");
+    }
+
+}

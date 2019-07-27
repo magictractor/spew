@@ -19,7 +19,7 @@ import uk.co.magictractor.spew.api.OAuth1ServiceProvider;
 import uk.co.magictractor.spew.api.SpewRequest;
 import uk.co.magictractor.spew.api.SpewResponse;
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
-import uk.co.magictractor.spew.core.response.parser.SpewParsedResponseFactory;
+import uk.co.magictractor.spew.core.response.parser.text.KeyValuePairsResponse;
 import uk.co.magictractor.spew.imagebam.ImageBam;
 import uk.co.magictractor.spew.token.UserPreferencesPersister;
 import uk.co.magictractor.spew.util.ExceptionUtil;
@@ -67,7 +67,7 @@ public final class BoaOAuth1Connection extends AbstractBoaOAuthConnection<OAuth1
         forAll(apiRequest);
         SpewResponse response = ExceptionUtil.call(() -> request0(apiRequest));
 
-        return SpewParsedResponseFactory.parse(getApplication(), response);
+        return new KeyValuePairsResponse(getApplication(), response);
     }
 
     private void authenticateUser() {

@@ -26,13 +26,13 @@ import com.jayway.jsonpath.TypeRef;
 
 import uk.co.magictractor.spew.api.SpewApplication;
 import uk.co.magictractor.spew.api.SpewResponse;
-import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
+import uk.co.magictractor.spew.core.response.parser.ObjectCentricSpewParsedResponse;
 import uk.co.magictractor.spew.util.IOUtil;
 
 /**
  *
  */
-public class JaywayResponse implements SpewParsedResponse {
+public class JaywayResponse implements ObjectCentricSpewParsedResponse {
 
     private ReadContext ctx;
 
@@ -41,7 +41,7 @@ public class JaywayResponse implements SpewParsedResponse {
      * JaywayResponseParserInit.
      */
     /* default */ JaywayResponse(SpewApplication application, SpewResponse response) {
-        IOUtil.consumeThenClose(response.getBodyStream(), body -> {
+        IOUtil.consumeThenClose(response.getBodyInputStream(), body -> {
             ctx = JsonPath.parse(body, application.getServiceProvider().getJsonConfiguration());
         });
     }

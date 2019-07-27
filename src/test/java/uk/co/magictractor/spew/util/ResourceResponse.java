@@ -56,7 +56,7 @@ public class ResourceResponse implements SpewResponse {
     }
 
     @Override
-    public InputStream getBodyStream() {
+    public InputStream getBodyInputStream() {
         InputStream inputStream = testClass.getResourceAsStream(resourceName);
         return inputStream;
     }

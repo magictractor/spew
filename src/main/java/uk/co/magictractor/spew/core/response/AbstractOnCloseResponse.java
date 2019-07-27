@@ -31,7 +31,7 @@ public abstract class AbstractOnCloseResponse implements SpewResponse {
     }
 
     @Override
-    public final InputStream getBodyStream() {
+    public final InputStream getBodyInputStream() {
         return bodyStream;
     }
 

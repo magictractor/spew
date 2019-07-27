@@ -161,7 +161,7 @@ public abstract class AbstractBoaOAuthConnection<APP extends SpewApplication, SP
     //    }
 
     protected String getUrl(SpewRequest request) {
-        return request.getUrl();
+        return request.getUrl(true);
     }
 
 }

@@ -15,6 +15,9 @@
  */
 package uk.co.magictractor.spew.core.response.parser;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 
@@ -36,15 +39,26 @@ public final class SpewParsedResponseFactory {
     }
 
     public static SpewParsedResponse parse(SpewApplication application, SpewResponse response) {
+
         for (SpewParsedResponseInit init : INITS) {
             SpewParsedResponse instance = (init.instanceFor(application, response));
             if (instance != null) {
                 return instance;
             }
         }
-        throw new IllegalStateException(
-            "Unable to parse response with Content-Type header "
-                    + response.getHeader(ContentTypeUtil.CONTENT_TYPE_HEADER_NAME));
+
+        String headerContentType = response.getHeader(ContentTypeUtil.CONTENT_TYPE_HEADER_NAME);
+        // TODO! perhaps get encoding from header
+        InputStreamReader bodyReader = new InputStreamReader(response.getBodyInputStream(), StandardCharsets.UTF_8);
+        BufferedReader bufferedBodyReader = new BufferedReader(bodyReader);
+        StringBuilder messageBuilder = new StringBuilder()
+                .append("Unable to parse response\nContent-Type: ")
+                .append(headerContentType);
+        bufferedBodyReader.lines().forEach(line -> {
+            messageBuilder.append('\n').append(line);
+        });
+
+        throw new IllegalStateException(messageBuilder.toString());
     }
 
 }
