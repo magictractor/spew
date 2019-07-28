@@ -15,18 +15,16 @@
  */
 package uk.co.magictractor.spew.server;
 
-import uk.co.magictractor.spew.api.SpewResponse;
-
 public class ResponseNext {
 
-    private SpewResponse redirect;
+    private String redirect;
     private boolean terminate;
 
-    public static ResponseNext redirect(SpewResponse redirect) {
+    public static ResponseNext redirect(String redirect) {
         return new ResponseNext(redirect, false);
     }
 
-    public static ResponseNext redirectAndShutdown(SpewResponse redirect) {
+    public static ResponseNext redirectAndShutdown(String redirect) {
         return new ResponseNext(redirect, true);
     }
 
@@ -35,13 +33,13 @@ public class ResponseNext {
     }
 
     /** Use static methods to get an instance. */
-    private ResponseNext(SpewResponse redirect, boolean shutdown) {
+    private ResponseNext(String redirect, boolean shutdown) {
         this.redirect = redirect;
         this.terminate = shutdown;
 
     }
 
-    public SpewResponse redirect() {
+    public String redirect() {
         return redirect;
     }
 

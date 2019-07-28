@@ -41,6 +41,8 @@ public class LocalServerAuthorizationHandler implements AuthorizationHandler {
         return server.getUrl();
     }
 
+    // TODO! no - should fetch the token immediately so we know whether there's a problem before redirecting
+    // hmm, that's on the connection...
     @Override
     public AuthorizationResult getResult() {
         server.join();
@@ -57,8 +59,7 @@ public class LocalServerAuthorizationHandler implements AuthorizationHandler {
             throw new IllegalArgumentException("Expected values were missing from authorization response");
         }
 
-        // TODO! redirect to a success page
-        return ResponseNext.shutdown();
+        return ResponseNext.redirect("/hiya");
     }
 
 }

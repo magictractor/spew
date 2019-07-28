@@ -2,6 +2,7 @@ package uk.co.magictractor.spew.server.netty;
 
 import static io.netty.handler.codec.http.HttpResponseStatus.NOT_FOUND;
 import static io.netty.handler.codec.http.HttpResponseStatus.OK;
+import static io.netty.handler.codec.http.HttpResponseStatus.SEE_OTHER;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 
 import java.util.ArrayList;
@@ -27,7 +28,6 @@ import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpRequestDecoder;
 import io.netty.handler.codec.http.HttpResponseEncoder;
-import uk.co.magictractor.spew.api.SpewResponse;
 import uk.co.magictractor.spew.server.ResponseHandler;
 import uk.co.magictractor.spew.server.ResponseNext;
 import uk.co.magictractor.spew.server.ServerRequest;
@@ -184,23 +184,27 @@ public class NettyCallbackServer {
             for (ResponseHandler handler : responseHandlers) {
                 ResponseNext next = handler.handleResponse(request);
                 if (next != null) {
-                    handle(next);
+                    handle(ctx, next);
                 }
             }
             handleUnknown(ctx);
         }
 
-        private void handle(ResponseNext next) {
+        private void handle(ChannelHandlerContext ctx, ResponseNext next) {
             if (next.redirect() != null) {
-                redirect(next.redirect());
+                redirect(ctx, next.redirect());
             }
             if (next.terminate()) {
                 shutdown();
             }
         }
 
-        private void redirect(SpewResponse redirect) {
-            throw new UnsupportedOperationException("not yet implemented");
+        private void redirect(ChannelHandlerContext ctx, String redirect) {
+
+            DefaultHttpResponse response = new DefaultHttpResponse(HTTP_1_1, SEE_OTHER);
+            response.headers().add("Location", redirect);
+
+            ctx.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
         }
 
         // See

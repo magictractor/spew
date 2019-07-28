@@ -28,8 +28,6 @@ import uk.co.magictractor.spew.util.ExceptionUtil;
 // TODO! common interface for OAuth1 and OAuth2 connections (and no auth? / other auth?)
 public final class BoaOAuth1Connection extends AbstractBoaOAuthConnection<OAuth1Application, OAuth1ServiceProvider> {
 
-    //private final OAuth1Application application;
-
     // unit tests can call setSeed() on this
     private final Random nonceGenerator = new Random();
 
@@ -46,7 +44,6 @@ public final class BoaOAuth1Connection extends AbstractBoaOAuthConnection<OAuth1
      */
     /* default */ BoaOAuth1Connection(OAuth1Application application) {
         super(application);
-        //this.application = application;
 
         this.userToken = new UserPreferencesPersister(application, "user_token");
         this.userSecret = new UserPreferencesPersister(application, "user_secret");
@@ -75,11 +72,12 @@ public final class BoaOAuth1Connection extends AbstractBoaOAuthConnection<OAuth1
         AuthorizationHandler authorizationHandler = getApplication().getAuthorizationHandler();
         authorizationHandler.preAuthorizationRequest();
 
-        authorize(authorizationHandler.getCallbackValue());
+        openAuthorizationUriInBrowser(authorizationHandler.getCallbackValue());
 
         AuthorizationResult result = authorizationHandler.getResult();
         String authToken = result.getAuthToken();
         if (authToken == null) {
+            // could assert here that callbackValue is "oob"
             authToken = userToken.getValue();
         }
         String verificationCode = result.getVerificationCode();
@@ -87,7 +85,7 @@ public final class BoaOAuth1Connection extends AbstractBoaOAuthConnection<OAuth1
         fetchToken(authToken, verificationCode);
     }
 
-    private void authorize(String callback) {
+    private void openAuthorizationUriInBrowser(String callback) {
         // TODO! POST?
         SpewRequest request = getApplication()
                 .createGetRequest(getServiceProvider().getTemporaryCredentialRequestUri());
@@ -129,7 +127,6 @@ public final class BoaOAuth1Connection extends AbstractBoaOAuthConnection<OAuth1
     }
 
     private void fetchToken(String authToken, String verificationCode) {
-        // FlickrRequest request = FlickrRequest.forAuth("access_token");
         // TODO! POST? - imagebam allows get or post
         SpewRequest request = getApplication().createGetRequest(getServiceProvider().getTokenRequestUri());
         request.setQueryStringParam("oauth_token", authToken);
