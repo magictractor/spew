@@ -15,36 +15,86 @@
  */
 package uk.co.magictractor.spew.server;
 
+import uk.co.magictractor.spew.api.SpewResponse;
+import uk.co.magictractor.spew.core.response.ResourceResponse;
+
 public class ResponseNext {
 
+    private Type type;
     private String redirect;
+    private SpewResponse response;
+    private boolean continueHandling;
     private boolean terminate;
 
-    public static ResponseNext redirect(String redirect) {
-        return new ResponseNext(redirect, false);
-    }
-
-    public static ResponseNext redirectAndShutdown(String redirect) {
-        return new ResponseNext(redirect, true);
-    }
-
-    public static ResponseNext shutdown() {
-        return new ResponseNext(null, true);
-    }
-
     /** Use static methods to get an instance. */
-    private ResponseNext(String redirect, boolean shutdown) {
-        this.redirect = redirect;
-        this.terminate = shutdown;
-
+    private ResponseNext() {
     }
 
-    public String redirect() {
+    public static ResponseNext redirect(String redirect) {
+        ResponseNext next = new ResponseNext();
+        next.setType(Type.REDIRECT);
+        next.redirect = redirect;
+        return next;
+    }
+
+    public static ResponseNext response(SpewResponse response) {
+        ResponseNext next = new ResponseNext();
+        next.setType(Type.RESPONSE);
+        next.response = response;
+        return next;
+    }
+
+    public static ResponseNext response(String resourceName) {
+        return response(new ResourceResponse(resourceName));
+    }
+
+    private void setType(Type type) {
+        if (this.type != null) {
+            throw new IllegalStateException("Already has type " + this.type);
+        }
+        this.type = type;
+    }
+
+    /**
+     * Not static. Typically used directly after one of the static instance
+     * creation methods. For example
+     *
+     * <pre>
+     * ResponseNext.respond("happy.html").andTerminate()
+     * </pre>
+     */
+    public ResponseNext andTerminate() {
+        terminate = true;
+        return this;
+    }
+
+    public ResponseNext andContinueHandling() {
+        continueHandling = true;
+        return this;
+    }
+
+    public Type getType() {
+        return type;
+    }
+
+    public String getRedirect() {
         return redirect;
     }
 
-    public boolean terminate() {
+    public SpewResponse getResponse() {
+        return response;
+    }
+
+    public boolean isTerminate() {
         return terminate;
+    }
+
+    public boolean isContinueHandling() {
+        return continueHandling;
+    }
+
+    public static enum Type {
+        NONE, REDIRECT, RESPONSE;
     }
 
 }

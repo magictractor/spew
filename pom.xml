@@ -63,7 +63,9 @@
 		<dependency>
 			<groupId>io.netty</groupId>
 			<artifactId>netty-all</artifactId>
-			<version>4.1.33.Final</version>
+			<version>4.1.38.Final</version>
+			<!-- Provided because authorization handling could be done by pasting verification codes rather than using a callback -->
+			<scope>provided</scope>
 		</dependency>
 		
 		<!-- Different OAuth client implementations for spikes.

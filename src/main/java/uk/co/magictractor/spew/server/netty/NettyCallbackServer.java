@@ -8,6 +8,8 @@ import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.common.io.ByteStreams;
+
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -28,6 +30,7 @@ import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpRequestDecoder;
 import io.netty.handler.codec.http.HttpResponseEncoder;
+import uk.co.magictractor.spew.api.SpewResponse;
 import uk.co.magictractor.spew.server.ResponseHandler;
 import uk.co.magictractor.spew.server.ResponseNext;
 import uk.co.magictractor.spew.server.ServerRequest;
@@ -38,6 +41,9 @@ import uk.co.magictractor.spew.util.ExceptionUtil;
  * Server for receiving OAuth authorization callbacks. Based on example in
  * https://netty.io/wiki/user-guide-for-4.x.html.
  */
+
+// TODO! look at using Undertow instead/
+// see https://javachannel.org/posts/netty-is-not-a-web-framework/
 public class NettyCallbackServer {
 
     // TODO! bin this once ResponseHandlers are working
@@ -67,7 +73,7 @@ public class NettyCallbackServer {
     }
 
     public String getUrl() {
-        // Note that localhost is not used because Twitter does not support it.
+        // Note that 127.0.0.1 is used rather than localhost is not used because Twitter does not support localhost.
         // See https://developer.twitter.com/en/docs/basics/apps/guides/callback-urls.html
 
         // TODO! implement https?
@@ -86,21 +92,22 @@ public class NettyCallbackServer {
             b.group(bossGroup, workerGroup)
                     .channel(NioServerSocketChannel.class)
                     .childHandler(new ChannelInitializer<SocketChannel>() {
+                        // https://netty.io/4.0/api/io/netty/channel/ChannelPipeline.html
+                        // http://tutorials.jenkov.com/netty/netty-channelpipeline.html
                         @Override
                         public void initChannel(SocketChannel ch) throws Exception {
                             ChannelPipeline p = ch.pipeline();
 
-                            // TODO! remind myself (and doc) why this has to be early in pipeline
+                            // This is first because it's an outbound handler,
+                            // and outbound handlers are processed in reverse order.
                             p.addLast(new HttpResponseEncoder());
 
                             p.addLast(new HttpRequestDecoder());
                             // Don't want to handle HttpChunks (see HttpSnoopServerInitializer)
                             p.addLast(new HttpObjectAggregator(1048576));
 
-                            p.addLast(new OutboundExceptionHandler());
-
+                            // TODO! merge these and maybe move to a distinct class
                             p.addLast(new CallbackServerHandler());
-
                             p.addLast(new InboundExceptionHandler());
                         }
                     })
@@ -159,10 +166,9 @@ public class NettyCallbackServer {
 
             FullHttpRequest httpRequest = (FullHttpRequest) msg;
 
-            System.err.println("msg: " + msg);
+            //System.err.println("msg: " + msg);
             String uri = httpRequest.uri();
-            System.err.println("uri: " + uri);
-            // httpRequest.
+            // System.err.println("uri: " + uri);
 
             // Aaah, OAuth1 jumps straight to the token
             // OAuth2 has the fragment requiring the use of /catchtoken
@@ -185,26 +191,56 @@ public class NettyCallbackServer {
                 ResponseNext next = handler.handleResponse(request);
                 if (next != null) {
                     handle(ctx, next);
+                    if (!next.isContinueHandling()) {
+                        return;
+                    }
                 }
             }
             handleUnknown(ctx);
         }
 
         private void handle(ChannelHandlerContext ctx, ResponseNext next) {
-            if (next.redirect() != null) {
-                redirect(ctx, next.redirect());
+            DefaultHttpResponse response = null;
+
+            switch (next.getType()) {
+                case RESPONSE:
+                    response = response(ctx, next.getResponse());
+                    break;
+                case REDIRECT:
+                    response = redirect(ctx, next.getRedirect());
+                    break;
+                case NONE:
+                    // Do nothing
+                    break;
+                default:
+                    throw new IllegalStateException("Code needs modified to handle " + next.getType());
             }
-            if (next.terminate()) {
+
+            if (next.isTerminate()) {
                 shutdown();
             }
+
+            ctx.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
         }
 
-        private void redirect(ChannelHandlerContext ctx, String redirect) {
+        private DefaultHttpResponse response(ChannelHandlerContext ctx, SpewResponse spewResponse) {
+
+            byte[] contentBytes = ExceptionUtil.call(() -> ByteStreams.toByteArray(spewResponse.getBodyInputStream()));
+            ByteBuf content = Unpooled.wrappedBuffer(contentBytes);
+            DefaultFullHttpResponse response = new DefaultFullHttpResponse(HTTP_1_1, OK, content);
+
+            response.headers().add("Content-Type", spewResponse.getHeader("Content-Type"));
+            response.headers().add("Content-Length", contentBytes.length);
+
+            return response;
+        }
+
+        private DefaultHttpResponse redirect(ChannelHandlerContext ctx, String redirect) {
 
             DefaultHttpResponse response = new DefaultHttpResponse(HTTP_1_1, SEE_OTHER);
             response.headers().add("Location", redirect);
 
-            ctx.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
+            return response;
         }
 
         // See
@@ -228,14 +264,18 @@ public class NettyCallbackServer {
         //	        ((ByteBuf) msg).release(); // (3)
         //	    }
 
-        @Override
-        public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) { // (4)
-            // Close the connection when an exception is raised.
-            cause.printStackTrace();
-            ctx.close();
-
-            shutdown();
-        }
+        //        @Override
+        //        public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) { // (4)
+        //            // DOH!! I didn't realise this exception handler was here!!
+        //
+        //            // Close the connection when an exception is raised.
+        //            cause.printStackTrace();
+        //            ctx.close();
+        //
+        //            shutdown();
+        //
+        //
+        //        }
     }
 
     private void handleRoot(ChannelHandlerContext ctx) {
@@ -287,8 +327,6 @@ public class NettyCallbackServer {
 
         ctx.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
     }
-
-    // TODO! favicon?
 
     @FunctionalInterface
     public static interface ServerCallback {

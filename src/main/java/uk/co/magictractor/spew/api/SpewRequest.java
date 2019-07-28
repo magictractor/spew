@@ -43,12 +43,22 @@ public final class SpewRequest implements ServerRequest {
         this.baseUrl = url;
     }
 
+    @Override
     public String getBaseUrl() {
         return baseUrl;
     }
 
+    @Override
+    public String getUrl() {
+        return getUrl(false);
+    }
+
+    public String getEscapedUrl() {
+        return getUrl(true);
+    }
+
     // TODO! do something better than the escapeValue param
-    public String getUrl(boolean escapeValue) {
+    private String getUrl(boolean escapeValue) {
         StringBuilder urlBuilder = new StringBuilder();
         urlBuilder.append(baseUrl);
 
@@ -104,6 +114,7 @@ public final class SpewRequest implements ServerRequest {
         bodyParams.remove(key);
     }
 
+    @Override
     public String getQueryStringParam(String key) {
         // TODO! do not convert to empty string - do null handling where it's needed
         return queryStringParams.containsKey(key) ? queryStringParams.get(key) : "";
@@ -113,6 +124,7 @@ public final class SpewRequest implements ServerRequest {
         return bodyParams;
     }
 
+    @Override
     public Map<String, String> getQueryStringParams() {
         return queryStringParams;
     }

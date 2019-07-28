@@ -32,6 +32,7 @@ public class LocalServerAuthorizationHandler implements AuthorizationHandler {
     public void preAuthorizationRequest() {
         // TODO! could allow other implementations of callback server
         server = new NettyCallbackServer(null);
+        server.addResponseHandler(new ResourceResponseHandler(this.getClass()));
         server.addResponseHandler(this::callback);
         server.run();
     }
@@ -50,8 +51,11 @@ public class LocalServerAuthorizationHandler implements AuthorizationHandler {
     }
 
     private ResponseNext callback(ServerRequest request) {
-        // /?oauth_token=72157709917193752-d6882db0292b43fa&oauth_verifier=1fb13c265dc4d505
-        //KeyValuePairsResponse parsedResponse = new KeyValuePairsResponse(response);
+        String baseUrl = request.getBaseUrl();
+        if (!baseUrl.contentEquals("/")) {
+            return null;
+        }
+
         authToken = request.getQueryStringParam("oauth_token");
         authVerifier = request.getQueryStringParam("oauth_verifier");
 
@@ -59,7 +63,14 @@ public class LocalServerAuthorizationHandler implements AuthorizationHandler {
             throw new IllegalArgumentException("Expected values were missing from authorization response");
         }
 
-        return ResponseNext.redirect("/hiya");
+        return ResponseNext.redirect("/verificationSuccessful.html");
+    }
+
+    // DO NOT COMMIT
+    // temp for testing static pages
+    public static void main(String[] args) {
+        LocalServerAuthorizationHandler handler = new LocalServerAuthorizationHandler();
+        handler.preAuthorizationRequest();
     }
 
 }

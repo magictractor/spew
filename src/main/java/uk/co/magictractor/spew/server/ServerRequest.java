@@ -20,6 +20,11 @@ import java.util.Map;
 // TODO! reconcile this with SpewRequest
 public interface ServerRequest {
 
+    // TODO! uri or url?
+    public String getUrl();
+
+    public String getBaseUrl();
+
     public Map<String, String> getQueryStringParams();
 
     public String getQueryStringParam(String paramName);

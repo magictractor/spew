@@ -15,6 +15,7 @@
  */
 package uk.co.magictractor.spew.server.netty;
 
+import java.util.Collections;
 import java.util.Map;
 
 import com.google.common.base.Splitter;
@@ -25,10 +26,31 @@ import uk.co.magictractor.spew.server.ServerRequest;
 public class FullHttpMessageRequest implements ServerRequest {
 
     private final FullHttpRequest request;
+    private String baseUri;
     private Map<String, String> queryStringParams;
 
     public FullHttpMessageRequest(FullHttpRequest request) {
         this.request = request;
+    }
+
+    @Override
+    public String getUrl() {
+        return request.uri();
+    }
+
+    @Override
+    public String getBaseUrl() {
+        if (baseUri == null) {
+            String uri = request.uri();
+            int qIndex = uri.indexOf("?");
+            if (qIndex != -1) {
+                baseUri = uri.substring(0, qIndex);
+            }
+            else {
+                baseUri = uri;
+            }
+        }
+        return baseUri;
     }
 
     @Override
@@ -39,6 +61,9 @@ public class FullHttpMessageRequest implements ServerRequest {
             if (qIndex != -1) {
                 String queryString = uri.substring(qIndex + 1);
                 queryStringParams = Splitter.on('&').withKeyValueSeparator('=').split(queryString);
+            }
+            else {
+                queryStringParams = Collections.emptyMap();
             }
         }
         return queryStringParams;

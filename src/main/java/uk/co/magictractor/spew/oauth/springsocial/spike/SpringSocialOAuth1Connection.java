@@ -63,7 +63,7 @@ public class SpringSocialOAuth1Connection implements SpewConnection {
     public SpewResponse request(SpewRequest apiRequest) {
         //ConnectionData data = connection.createData();
 
-        String url = apiRequest.getUrl(false);
+        String url = apiRequest.getUrl();
         HttpMethod method = HttpMethod.valueOf(apiRequest.getHttpMethod());
         // RequestCallback requestCallback = System.err::println;
         RequestCallback requestCallback = httpRequest -> populateHttpRequest(httpRequest, apiRequest);

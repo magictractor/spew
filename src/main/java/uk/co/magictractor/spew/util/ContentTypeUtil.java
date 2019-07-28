@@ -82,7 +82,19 @@ public class ContentTypeUtil {
         }
 
         // TODO! refer to better libraries would could be used
-        throw new IllegalArgumentException("Unable to determine the content type of the library");
+        throw new IllegalArgumentException(
+            "Unable to determine the content type of the response by inspecting the body");
+    }
+
+    public static String fromResourceName(String resourceName) {
+        if (resourceName.endsWith(".html")) {
+            return "text/html";
+        }
+        if (resourceName.endsWith(".json")) {
+            return "application/json";
+        }
+
+        throw new IllegalArgumentException("Unable to determine the content type of the resource from its name");
     }
 
     public static Charset charsetFromHeader(SpewResponse response) {
