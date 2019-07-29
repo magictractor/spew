@@ -14,7 +14,6 @@ import javax.crypto.spec.SecretKeySpec;
 import com.google.common.io.BaseEncoding;
 
 import uk.co.magictractor.spew.access.AuthorizationHandler;
-import uk.co.magictractor.spew.access.AuthorizationResult;
 import uk.co.magictractor.spew.api.OAuth1Application;
 import uk.co.magictractor.spew.api.OAuth1ServiceProvider;
 import uk.co.magictractor.spew.api.SpewRequest;
@@ -53,7 +52,7 @@ public final class BoaOAuth1Connection extends AbstractBoaOAuthConnection<OAuth1
     public SpewResponse request(SpewRequest apiRequest) {
         // TODO! (optionally?) verify existing tokens? - and need similar for spring social
         if (userToken.getValue() == null) {
-            authenticateUser();
+            authorizeUser();
         }
 
         forAll(apiRequest);
@@ -68,21 +67,14 @@ public final class BoaOAuth1Connection extends AbstractBoaOAuthConnection<OAuth1
         return new KeyValuePairsResponse(response);
     }
 
-    private void authenticateUser() {
-        AuthorizationHandler authorizationHandler = getApplication().getAuthorizationHandler();
-        authorizationHandler.preAuthorizationRequest();
+    private void authorizeUser() {
+        AuthorizationHandler authorizationHandler = getApplication()
+                .getAuthorizationHandler(this::verifyAuthentication);
+        authorizationHandler.preOpenAuthorizationInBrowser(getApplication());
 
         openAuthorizationUriInBrowser(authorizationHandler.getCallbackValue());
 
-        AuthorizationResult result = authorizationHandler.getResult();
-        String authToken = result.getAuthToken();
-        if (authToken == null) {
-            // could assert here that callbackValue is "oob"
-            authToken = userToken.getValue();
-        }
-        String verificationCode = result.getVerificationCode();
-
-        fetchToken(authToken, verificationCode);
+        authorizationHandler.postOpenAuthorizationInBrowser(getApplication());
     }
 
     private void openAuthorizationUriInBrowser(String callback) {
@@ -117,12 +109,30 @@ public final class BoaOAuth1Connection extends AbstractBoaOAuthConnection<OAuth1
         String authUri = authUriBuilder.toString();
 
         // https://stackoverflow.com/questions/5226212/how-to-open-the-default-webbrowser-using-java
+        // TODO! move this to a util class
         if (Desktop.isDesktopSupported()) {
             // uri = new
             ExceptionUtil.call(() -> Desktop.getDesktop().browse(new URI(authUri)));
         }
         else {
             throw new UnsupportedOperationException("TODO");
+        }
+    }
+
+    private boolean verifyAuthentication(String authToken, String verificationCode) {
+        String verificationAuthToken = authToken;
+        if (verificationAuthToken == null) {
+            // Could assert for oob here? Should only happen when pasting values.
+            verificationAuthToken = userToken.getValue();
+        }
+
+        try {
+            fetchToken(verificationAuthToken, verificationCode);
+            return true;
+        }
+        catch (Exception e) {
+            System.err.println(e);
+            return false;
         }
     }
 

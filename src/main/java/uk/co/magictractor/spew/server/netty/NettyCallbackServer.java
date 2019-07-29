@@ -3,7 +3,6 @@ package uk.co.magictractor.spew.server.netty;
 import static io.netty.handler.codec.http.HttpResponseStatus.OK;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import io.netty.bootstrap.ServerBootstrap;
@@ -44,27 +43,17 @@ public class NettyCallbackServer {
 
     private final ServerCallback callback;
     private final int port;
-    private final List<RequestHandler> requestHandlers = new ArrayList<>();
+    private final List<RequestHandler> requestHandlers;
 
     private NioEventLoopGroup bossGroup;
     private NioEventLoopGroup workerGroup;
 
     private ChannelFuture f;
 
-    public NettyCallbackServer(ServerCallback callback) {
-        this(callback, 8080);
-    }
-
-    public NettyCallbackServer(ServerCallback callback, int port) {
+    public NettyCallbackServer(List<RequestHandler> requestHandlers, ServerCallback callback, int port) {
+        this.requestHandlers = requestHandlers;
         this.callback = callback;
         this.port = port;
-    }
-
-    public void addRequestHandler(RequestHandler requestHandler) {
-        if (requestHandler == null) {
-            throw new IllegalArgumentException("requestHandler must not be null");
-        }
-        requestHandlers.add(requestHandler);
     }
 
     public String getUrl() {

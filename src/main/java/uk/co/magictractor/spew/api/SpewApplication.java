@@ -1,5 +1,7 @@
 package uk.co.magictractor.spew.api;
 
+import java.util.function.BiFunction;
+
 import uk.co.magictractor.spew.access.AuthorizationHandler;
 import uk.co.magictractor.spew.api.connection.SpewConnectionFactory;
 
@@ -37,8 +39,8 @@ public interface SpewApplication {
         return createRequest("DEL", url);
     }
 
-    default AuthorizationHandler getAuthorizationHandler() {
-        return getServiceProvider().getDefaultAuthorizationHandler();
+    default AuthorizationHandler getAuthorizationHandler(BiFunction<String, String, Boolean> verificationFunction) {
+        return getServiceProvider().getDefaultAuthorizationHandler(verificationFunction);
     }
 
 }

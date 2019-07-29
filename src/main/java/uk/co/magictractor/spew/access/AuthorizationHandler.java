@@ -15,36 +15,42 @@
  */
 package uk.co.magictractor.spew.access;
 
+import java.util.function.BiFunction;
+
+import uk.co.magictractor.spew.api.SpewApplication;
+
 /**
  * <p>
- * Interface for capturing
+ * Interface for capturing verification codes when a user permits the
+ * application to call the service provider's API.
  * </p>
  * <p>
  * Two implementations are provided, but others may be added. The
  * implementations provided can capture values pasted into the console or fire
- * up a lightweight web server to capture verfication codes.
+ * up a lightweight web server to capture verification codes.
  * </p>
  */
 public interface AuthorizationHandler {
 
-    default void preAuthorizationRequest() {
-    }
+    BiFunction<String, String, Boolean> verificationFunction();
+
+    void preOpenAuthorizationInBrowser(SpewApplication application);
+
+    void postOpenAuthorizationInBrowser(SpewApplication application);
 
     /**
      * <p>
-     * The oauth_callback value to be used in the requested. Maybe be a URL for
-     * a callback or a special value indicating that a code is to be displayed
-     * and passed back to the application in another manner such as pasting it
-     * into the console.
+     * The oauth_callback value to be used in the request. May be a URL for a
+     * callback or a special value indicating that a code is to be displayed and
+     * passed back to the application in another manner such as pasting it into
+     * the console.
      * </p>
      * <p>
-     * This method is called after preAuthorizationRequest() which might fire up
-     * a local server allowing the URL for the callback value to be requested
-     * from the server.
+     * This method is called after preOpenAuthorizationInBrowser() which might
+     * fire up a local server allowing the URL for the callback value to be
+     * requested from the server.
      * </p>
      */
     String getCallbackValue();
-
-    AuthorizationResult getResult();
 
 }

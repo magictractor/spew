@@ -15,25 +15,36 @@
  */
 package uk.co.magictractor.spew.server;
 
-import uk.co.magictractor.spew.access.AuthorizationHandler;
-import uk.co.magictractor.spew.access.AuthorizationResult;
+import java.util.function.BiFunction;
+
+import uk.co.magictractor.spew.access.AbstractAuthorizationHandler;
+import uk.co.magictractor.spew.api.HasCallbackServer;
+import uk.co.magictractor.spew.api.SpewApplication;
+import uk.co.magictractor.spew.flickr.MyFlickrApp;
 import uk.co.magictractor.spew.server.netty.NettyCallbackServer;
 
 /**
  *
  */
-public class LocalServerAuthorizationHandler implements AuthorizationHandler {
+public class LocalServerAuthorizationHandler extends AbstractAuthorizationHandler {
 
     private NettyCallbackServer server;
-    private String authToken;
-    private String authVerifier;
+
+    public LocalServerAuthorizationHandler(BiFunction<String, String, Boolean> verificationFunction) {
+        super(verificationFunction);
+    }
 
     @Override
-    public void preAuthorizationRequest() {
+    public void preOpenAuthorizationInBrowser(SpewApplication application) {
+        if (!HasCallbackServer.class.isInstance(application)) {
+            throw new IllegalArgumentException(
+                "Application should implement HasCallbackServer if it can have authorization callbacks");
+        }
+        HasCallbackServer hasCallbackServer = (HasCallbackServer) application;
+
         // TODO! could allow other implementations of callback server
-        server = new NettyCallbackServer(null);
-        server.addRequestHandler(new ResourceRequestHandler(this.getClass()));
-        server.addRequestHandler(this::callback);
+        server = new NettyCallbackServer(hasCallbackServer.getServerRequestHandlers(verificationFunction()), null,
+            8080);
         server.run();
     }
 
@@ -42,35 +53,17 @@ public class LocalServerAuthorizationHandler implements AuthorizationHandler {
         return server.getUrl();
     }
 
-    // TODO! no - should fetch the token immediately so we know whether there's a problem before redirecting
-    // hmm, that's on the connection...
     @Override
-    public AuthorizationResult getResult() {
+    public void postOpenAuthorizationInBrowser(SpewApplication application) {
+        // Wait until the server shuts down, hopefully after it has served a successful verification page.
         server.join();
-        return new AuthorizationResult(authToken, authVerifier);
-    }
-
-    private SimpleResponse callback(ServerRequest request) {
-        String baseUrl = request.getBaseUrl();
-        if (!baseUrl.contentEquals("/")) {
-            return null;
-        }
-
-        authToken = request.getQueryStringParam("oauth_token");
-        authVerifier = request.getQueryStringParam("oauth_verifier");
-
-        if (authToken == null || authVerifier == null) {
-            throw new IllegalArgumentException("Expected values were missing from authorization response");
-        }
-
-        return new SimpleRedirectResponse("/verificationSuccessful.html");
     }
 
     // DO NOT COMMIT
     // temp for testing static pages
     public static void main(String[] args) {
-        LocalServerAuthorizationHandler handler = new LocalServerAuthorizationHandler();
-        handler.preAuthorizationRequest();
+        LocalServerAuthorizationHandler handler = new LocalServerAuthorizationHandler((a, v) -> true);
+        handler.preOpenAuthorizationInBrowser(new MyFlickrApp());
     }
 
 }

@@ -1,5 +1,7 @@
 package uk.co.magictractor.spew.imagebam;
 
+import java.util.function.BiFunction;
+
 import com.google.gson.GsonBuilder;
 
 import uk.co.magictractor.spew.access.AuthorizationHandler;
@@ -95,9 +97,10 @@ public class ImageBam implements OAuth1ServiceProvider {
     }
 
     @Override
-    public AuthorizationHandler getDefaultAuthorizationHandler() {
+    public AuthorizationHandler getDefaultAuthorizationHandler(
+            BiFunction<String, String, Boolean> verificationFunction) {
         // ImageBam does not do callbacks, it always displays a code to copy into the application.
-        return new PasteVerificationCodeHandler();
+        return new PasteVerificationCodeHandler(verificationFunction);
     }
 
     // Cannot edit application details, only add client.

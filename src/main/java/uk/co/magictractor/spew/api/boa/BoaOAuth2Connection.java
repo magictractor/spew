@@ -3,6 +3,7 @@ package uk.co.magictractor.spew.api.boa;
 import java.awt.Desktop;
 import java.net.HttpURLConnection;
 import java.net.URI;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -142,7 +143,7 @@ public class BoaOAuth2Connection extends AbstractBoaOAuthConnection<OAuth2Applic
         // information.
         NettyCallbackServer callbackServer = null;
         if (CALLBACK_SERVER.equals(redirectUri)) {
-            callbackServer = new NettyCallbackServer(this::setAccessToken);
+            callbackServer = new NettyCallbackServer(Collections.emptyList(), this::setAccessToken, 8080);
             callbackServer.run();
         }
         //		else if (OOB.equals(redirectUri)) {

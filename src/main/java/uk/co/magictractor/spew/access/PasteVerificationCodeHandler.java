@@ -16,24 +16,49 @@
 package uk.co.magictractor.spew.access;
 
 import java.util.Scanner;
+import java.util.function.BiFunction;
+
+import uk.co.magictractor.spew.api.SpewApplication;
+import uk.co.magictractor.spew.util.IOUtil;
 
 /**
  *
  */
-public class PasteVerificationCodeHandler implements AuthorizationHandler {
+public class PasteVerificationCodeHandler extends AbstractAuthorizationHandler {
 
-    // TODO! "oob" is not correct for OAuth2 ("pin" or "code")
-    @Override
-    public String getCallbackValue() {
-        return "oob";
+    public PasteVerificationCodeHandler(BiFunction<String, String, Boolean> verificationFunction) {
+        super(verificationFunction);
     }
 
     @Override
-    public AuthorizationResult getResult() {
-        System.err.println("Enter verification code: ");
-        try (Scanner scanner = new Scanner(System.in)) {
-            return new AuthorizationResult(scanner.nextLine().trim());
+    public void preOpenAuthorizationInBrowser(SpewApplication application) {
+        // Do nothing.
+    }
+
+    @Override
+    public void postOpenAuthorizationInBrowser(SpewApplication application) {
+        IOUtil.acceptThenClose(new Scanner(System.in), this::verify);
+    }
+
+    private void verify(Scanner scanner) {
+        System.out.println("Enter verification code:");
+
+        while (true) {
+            String verificationCode = scanner.nextLine().trim();
+            boolean verified = verificationFunction().apply(null, verificationCode);
+            if (verified) {
+                System.out.println("Verified successfully");
+                return;
+            }
+
+            System.out.println("Verification failed, check the value which was copied and try again:");
         }
+    }
+
+    // TODO! "oob" is not correct for OAuth2 (long variant of "oob")
+    @Override
+    public String getCallbackValue() {
+        return "oob";
     }
 
 }
