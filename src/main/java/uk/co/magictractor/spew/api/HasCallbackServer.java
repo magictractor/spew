@@ -16,7 +16,6 @@
 package uk.co.magictractor.spew.api;
 
 import java.util.List;
-import java.util.function.BiFunction;
 
 import uk.co.magictractor.spew.server.CallbackServer;
 import uk.co.magictractor.spew.server.RequestHandler;
@@ -32,7 +31,7 @@ public interface HasCallbackServer {
      * are handled, plus perhaps static pages for redirecting to success or
      * failure messages after authorization plus supporting CSS files etc.
      */
-    List<RequestHandler> getServerRequestHandlers(BiFunction<String, String, Boolean> verificationFunction);
+    List<RequestHandler> getServerRequestHandlers(VerificationFunction verificationFunction);
 
     /**
      * <p>

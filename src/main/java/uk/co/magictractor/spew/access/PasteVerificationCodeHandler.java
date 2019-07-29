@@ -16,9 +16,9 @@
 package uk.co.magictractor.spew.access;
 
 import java.util.Scanner;
-import java.util.function.BiFunction;
 
 import uk.co.magictractor.spew.api.SpewApplication;
+import uk.co.magictractor.spew.api.VerificationFunction;
 import uk.co.magictractor.spew.util.IOUtil;
 
 /**
@@ -26,7 +26,7 @@ import uk.co.magictractor.spew.util.IOUtil;
  */
 public class PasteVerificationCodeHandler extends AbstractAuthorizationHandler {
 
-    public PasteVerificationCodeHandler(BiFunction<String, String, Boolean> verificationFunction) {
+    public PasteVerificationCodeHandler(VerificationFunction verificationFunction) {
         super(verificationFunction);
     }
 

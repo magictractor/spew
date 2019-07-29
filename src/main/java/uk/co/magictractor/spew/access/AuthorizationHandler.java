@@ -15,9 +15,8 @@
  */
 package uk.co.magictractor.spew.access;
 
-import java.util.function.BiFunction;
-
 import uk.co.magictractor.spew.api.SpewApplication;
+import uk.co.magictractor.spew.api.VerificationFunction;
 
 /**
  * <p>
@@ -32,7 +31,7 @@ import uk.co.magictractor.spew.api.SpewApplication;
  */
 public interface AuthorizationHandler {
 
-    BiFunction<String, String, Boolean> verificationFunction();
+    VerificationFunction verificationFunction();
 
     void preOpenAuthorizationInBrowser(SpewApplication application);
 

@@ -1,7 +1,5 @@
 package uk.co.magictractor.spew.api;
 
-import java.util.function.BiFunction;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.jayway.jsonpath.Configuration;
@@ -84,7 +82,7 @@ public interface SpewServiceProvider {
     }
 
     default AuthorizationHandler getDefaultAuthorizationHandler(
-            BiFunction<String, String, Boolean> verificationFunction) {
+            VerificationFunction verificationFunction) {
         return new LocalServerAuthorizationHandler(verificationFunction);
     }
 

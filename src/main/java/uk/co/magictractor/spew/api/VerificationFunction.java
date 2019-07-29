@@ -13,24 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.co.magictractor.spew.access;
+package uk.co.magictractor.spew.api;
 
-import uk.co.magictractor.spew.api.VerificationFunction;
+import java.util.function.BiFunction;
 
 /**
- *
+ * Function used to complete authorization using the verification code from the
+ * service provider's website.
  */
-public abstract class AbstractAuthorizationHandler implements AuthorizationHandler {
-
-    private final VerificationFunction verificationFunction;
-
-    protected AbstractAuthorizationHandler(VerificationFunction verificationFunction) {
-        this.verificationFunction = verificationFunction;
-    }
-
-    @Override
-    public VerificationFunction verificationFunction() {
-        return verificationFunction;
-    }
+@FunctionalInterface
+public interface VerificationFunction extends BiFunction<String, String, Boolean> {
 
 }

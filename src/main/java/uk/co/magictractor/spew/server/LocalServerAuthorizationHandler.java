@@ -15,11 +15,10 @@
  */
 package uk.co.magictractor.spew.server;
 
-import java.util.function.BiFunction;
-
 import uk.co.magictractor.spew.access.AbstractAuthorizationHandler;
 import uk.co.magictractor.spew.api.HasCallbackServer;
 import uk.co.magictractor.spew.api.SpewApplication;
+import uk.co.magictractor.spew.api.VerificationFunction;
 import uk.co.magictractor.spew.flickr.MyFlickrApp;
 import uk.co.magictractor.spew.server.netty.NettyCallbackServer;
 
@@ -30,7 +29,7 @@ public class LocalServerAuthorizationHandler extends AbstractAuthorizationHandle
 
     private NettyCallbackServer server;
 
-    public LocalServerAuthorizationHandler(BiFunction<String, String, Boolean> verificationFunction) {
+    public LocalServerAuthorizationHandler(VerificationFunction verificationFunction) {
         super(verificationFunction);
     }
 

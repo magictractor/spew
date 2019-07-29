@@ -1,7 +1,5 @@
 package uk.co.magictractor.spew.imagebam;
 
-import java.util.function.BiFunction;
-
 import com.google.gson.GsonBuilder;
 
 import uk.co.magictractor.spew.access.AuthorizationHandler;
@@ -9,6 +7,7 @@ import uk.co.magictractor.spew.access.PasteVerificationCodeHandler;
 import uk.co.magictractor.spew.api.BadResponseException;
 import uk.co.magictractor.spew.api.OAuth1ServiceProvider;
 import uk.co.magictractor.spew.api.SpewResponse;
+import uk.co.magictractor.spew.api.VerificationFunction;
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
 import uk.co.magictractor.spew.util.ContentTypeUtil;
 
@@ -97,8 +96,7 @@ public class ImageBam implements OAuth1ServiceProvider {
     }
 
     @Override
-    public AuthorizationHandler getDefaultAuthorizationHandler(
-            BiFunction<String, String, Boolean> verificationFunction) {
+    public AuthorizationHandler getDefaultAuthorizationHandler(VerificationFunction verificationFunction) {
         // ImageBam does not do callbacks, it always displays a code to copy into the application.
         return new PasteVerificationCodeHandler(verificationFunction);
     }

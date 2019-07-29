@@ -15,16 +15,16 @@
  */
 package uk.co.magictractor.spew.server;
 
-import java.util.function.BiFunction;
+import uk.co.magictractor.spew.api.VerificationFunction;
 
 /**
  *
  */
 public class OAuth1VerificationRequestHandler implements RequestHandler {
 
-    private final BiFunction<String, String, Boolean> verificationFunction;
+    private final VerificationFunction verificationFunction;
 
-    public OAuth1VerificationRequestHandler(BiFunction<String, String, Boolean> verificationFunction) {
+    public OAuth1VerificationRequestHandler(VerificationFunction verificationFunction) {
         this.verificationFunction = verificationFunction;
     }
 
