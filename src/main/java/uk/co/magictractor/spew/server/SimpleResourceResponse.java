@@ -15,21 +15,21 @@
  */
 package uk.co.magictractor.spew.server;
 
+import java.io.InputStream;
+
 /**
- * Simple representation of an error page which can be used across multiple
- * CallbackServer implementations.
+ * <p>
+ * Interface for SimpleResponses which are backed by a SpewResponse containing
+ * content and a small number of headers.
+ * </p>
+ * <p>
+ * Used with static and template responses.
+ * </p>
  */
-public class SimpleErrorResponse extends SimpleResponse {
+public interface SimpleResourceResponse {
 
-    private final String message;
+    InputStream getBodyInputStream();
 
-    public SimpleErrorResponse(int httpStatus, String message) {
-        setHttpStatus(httpStatus);
-        this.message = message;
-    }
-
-    public String getMessage() {
-        return message;
-    }
+    String getHeader(String headerName);
 
 }

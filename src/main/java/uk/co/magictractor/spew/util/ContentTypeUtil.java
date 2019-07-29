@@ -20,8 +20,11 @@ import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.nio.charset.Charset;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+
+import com.google.common.base.Splitter;
 
 import uk.co.magictractor.spew.api.SpewResponse;
 
@@ -33,12 +36,21 @@ public class ContentTypeUtil {
     public static final String CONTENT_TYPE_HEADER_NAME = "Content-Type";
 
     public static final List<String> JSON_MIME_TYPES = Arrays.asList("application/json");
+    public static final List<String> HTML_MIME_TYPES = Arrays.asList("text/html");
+
+    private static final List<String> JSON_EXTENSIONS = Arrays.asList("json");
+    private static final List<String> HTML_EXTENSIONS = Arrays.asList("html", "htm");
 
     private ContentTypeUtil() {
     }
 
     public static boolean isJson(String contentType) {
         return JSON_MIME_TYPES.contains(contentType);
+    }
+
+    public static boolean isHtml(String contentType) {
+        // TODO! beware appended ";charset=..."
+        return HTML_MIME_TYPES.contains(contentType);
     }
 
     public static String fromHeader(SpewResponse response) {
@@ -86,15 +98,44 @@ public class ContentTypeUtil {
             "Unable to determine the content type of the response by inspecting the body");
     }
 
+    /**
+     * <p>
+     * Determine a content type based on the extension of the resource name.
+     * </p>
+     * <p>
+     * When the resource name has multiple dots, each part of the extension,
+     * split by dots is examined to determine the content type. This is to
+     * handle name such as "mainPage.html.template".
+     * </p>
+     */
     public static String fromResourceName(String resourceName) {
-        if (resourceName.endsWith(".html")) {
-            return "text/html";
-        }
-        if (resourceName.endsWith(".json")) {
-            return "application/json";
+
+        Iterable<String> parts = Splitter.on('.').split(resourceName.toLowerCase());
+        Iterator<String> partIterator = parts.iterator();
+        // Discard the first part which is the filename with extension stripped.
+        partIterator.next();
+        while (partIterator.hasNext()) {
+            String contentType = fromExtensionPart(partIterator.next());
+            if (contentType != null) {
+                return contentType;
+            }
         }
 
-        throw new IllegalArgumentException("Unable to determine the content type of the resource from its name");
+        throw new IllegalArgumentException(
+            "Unable to determine the content type of the resource from name " + resourceName);
+
+    }
+
+    private static String fromExtensionPart(String extensionPart) {
+        String contentType = null;
+        if (HTML_EXTENSIONS.contains(extensionPart)) {
+            contentType = HTML_MIME_TYPES.get(0);
+        }
+        else if (JSON_EXTENSIONS.contains(extensionPart)) {
+            contentType = JSON_MIME_TYPES.get(0);
+        }
+
+        return contentType;
     }
 
     public static Charset charsetFromHeader(SpewResponse response) {

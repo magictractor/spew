@@ -15,8 +15,6 @@
  */
 package uk.co.magictractor.spew.server;
 
-import uk.co.magictractor.spew.core.response.ResourceResponse;
-
 public class ResourceResponseHandler implements ResponseHandler {
 
     private final Class<?> relativeToClass;
@@ -42,14 +40,7 @@ public class ResourceResponseHandler implements ResponseHandler {
         }
         String resourceName = baseUrl.substring(1);
 
-        System.err.println("base url: " + baseUrl);
-        ResourceResponse response = new ResourceResponse(relativeToClass, resourceName);
-        if (!response.exists()) {
-            System.err.println("Resource not found for " + baseUrl);
-            return null;
-        }
-
-        return new SimpleStaticResponse(response);
+        return SimpleStaticResponse.ifExists(relativeToClass, resourceName);
     }
 
 }

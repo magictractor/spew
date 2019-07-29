@@ -1,6 +1,5 @@
 package uk.co.magictractor.spew.server.netty;
 
-import static io.netty.handler.codec.http.HttpResponseStatus.NOT_FOUND;
 import static io.netty.handler.codec.http.HttpResponseStatus.OK;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 
@@ -29,6 +28,7 @@ import io.netty.handler.codec.http.HttpRequestDecoder;
 import io.netty.handler.codec.http.HttpResponseEncoder;
 import uk.co.magictractor.spew.server.ResponseHandler;
 import uk.co.magictractor.spew.server.ServerRequest;
+import uk.co.magictractor.spew.server.SimpleErrorResponse;
 import uk.co.magictractor.spew.server.SimpleResponse;
 import uk.co.magictractor.spew.server.StaticPage;
 import uk.co.magictractor.spew.util.ExceptionUtil;
@@ -278,9 +278,7 @@ public class NettyCallbackServer {
     }
 
     private void handleUnknown(ChannelHandlerContext ctx) {
-        DefaultHttpResponse response = new DefaultHttpResponse(HTTP_1_1, NOT_FOUND);
-        System.err.println("not found");
-
+        SimpleErrorResponse response = new SimpleErrorResponse(404, "Not found");
         ctx.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
     }
 

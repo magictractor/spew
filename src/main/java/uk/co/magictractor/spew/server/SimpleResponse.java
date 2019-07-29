@@ -26,39 +26,10 @@ package uk.co.magictractor.spew.server;
  */
 public abstract class SimpleResponse {
 
-    //private Type type;
-    //private String redirect;
-    //private SpewResponse response;
+    private int httpStatus = 200;
+
     private boolean continueHandling;
     private boolean terminate;
-
-    protected SimpleResponse() {
-    }
-
-    //    public static SimpleResponse redirect(String redirect) {
-    //        SimpleResponse next = new SimpleResponse();
-    //        next.setType(Type.REDIRECT);
-    //        next.redirect = redirect;
-    //        return next;
-    //    }
-    //
-    //    public static SimpleResponse staticContent(SpewResponse response) {
-    //        SimpleResponse next = new SimpleResponse();
-    //        next.setType(Type.STATIC);
-    //        next.response = response;
-    //        return next;
-    //    }
-    //
-    //    public static SimpleResponse response(String resourceName) {
-    //        return staticContent(new ResourceResponse(resourceName));
-    //    }
-
-    //    private void setType(Type type) {
-    //        if (this.type != null) {
-    //            throw new IllegalStateException("Already has type " + this.type);
-    //        }
-    //        this.type = type;
-    //    }
 
     public SimpleResponse andTerminate() {
         terminate = true;
@@ -70,17 +41,13 @@ public abstract class SimpleResponse {
         return this;
     }
 
-    //    public Type getType() {
-    //        return type;
-    //    }
-    //
-    //    public String getRedirect() {
-    //        return redirect;
-    //    }
-    //
-    //    public SpewResponse getResponse() {
-    //        return response;
-    //    }
+    public void setHttpStatus(int httpStatus) {
+        this.httpStatus = httpStatus;
+    }
+
+    public int getHttpStatus() {
+        return httpStatus;
+    }
 
     public boolean isTerminate() {
         return terminate;
@@ -88,10 +55,6 @@ public abstract class SimpleResponse {
 
     public boolean isContinueHandling() {
         return continueHandling;
-    }
-
-    public static enum Type {
-        NONE, REDIRECT, STATIC, TEMPLATE, ERROR;
     }
 
 }

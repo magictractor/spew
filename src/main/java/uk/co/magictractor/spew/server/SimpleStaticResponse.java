@@ -22,9 +22,15 @@ import uk.co.magictractor.spew.core.response.ResourceResponse;
 /**
  * Simple representation of a static page.
  */
-public class SimpleStaticResponse extends SimpleResponse {
+// TODO! last modified time - available via Files
+public class SimpleStaticResponse extends SimpleResponse implements SimpleResourceResponse {
 
-    private ResourceResponse spewResponse;
+    private final ResourceResponse spewResponse;
+
+    public static SimpleStaticResponse ifExists(Class<?> relativeToClass, String resourceName) {
+        ResourceResponse resourceResponse = new ResourceResponse(relativeToClass, resourceName);
+        return resourceResponse.exists() ? new SimpleStaticResponse(resourceResponse) : null;
+    }
 
     public SimpleStaticResponse(ResourceResponse spewResponse) {
         if (!spewResponse.exists()) {
@@ -33,15 +39,12 @@ public class SimpleStaticResponse extends SimpleResponse {
         this.spewResponse = spewResponse;
     }
 
-    // hmm, maybe static isExists() construction?
-    public SimpleStaticResponse(Class<?> relativeToClass, String resourceName) {
-        this(new ResourceResponse(relativeToClass, resourceName));
-    }
-
+    @Override
     public String getHeader(String headerName) {
         return spewResponse.getHeader(headerName);
     }
 
+    @Override
     public InputStream getBodyInputStream() {
         return spewResponse.getBodyInputStream();
     }

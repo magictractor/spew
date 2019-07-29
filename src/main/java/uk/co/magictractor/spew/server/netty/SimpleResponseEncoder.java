@@ -26,16 +26,17 @@ import com.google.common.io.ByteStreams;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
-import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.handler.codec.MessageToMessageEncoder;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
 import io.netty.handler.codec.http.DefaultHttpResponse;
-import io.netty.handler.codec.http.HttpResponseStatus;
 import uk.co.magictractor.spew.server.SimpleErrorResponse;
 import uk.co.magictractor.spew.server.SimpleRedirectResponse;
+import uk.co.magictractor.spew.server.SimpleResourceResponse;
 import uk.co.magictractor.spew.server.SimpleResponse;
 import uk.co.magictractor.spew.server.SimpleStaticResponse;
+import uk.co.magictractor.spew.server.SimpleTemplateResponse;
 import uk.co.magictractor.spew.util.ExceptionUtil;
 
 @Sharable
@@ -54,6 +55,9 @@ public class SimpleResponseEncoder extends MessageToMessageEncoder<SimpleRespons
 
         if (simpleResponse instanceof SimpleStaticResponse) {
             encoded = response((SimpleStaticResponse) simpleResponse);
+        }
+        else if (simpleResponse instanceof SimpleTemplateResponse) {
+            encoded = template((SimpleTemplateResponse) simpleResponse);
         }
         else if (simpleResponse instanceof SimpleRedirectResponse) {
             encoded = redirect((SimpleRedirectResponse) simpleResponse);
@@ -74,8 +78,17 @@ public class SimpleResponseEncoder extends MessageToMessageEncoder<SimpleRespons
         return encoded;
     }
 
-    private DefaultHttpResponse response(SimpleStaticResponse simpleResponse) {
+    private DefaultHttpResponse response(SimpleStaticResponse staticResponse) {
+        // TODO! add if modified since
+        return resource(staticResponse);
+    }
 
+    private DefaultHttpResponse template(SimpleTemplateResponse templateResponse) {
+        return resource(templateResponse);
+    }
+
+    private DefaultHttpResponse resource(SimpleResourceResponse simpleResponse) {
+        // TODO! Not the only code where the whole stream gets read into a byte array - change to getBody() -> byte[]?
         byte[] contentBytes = ExceptionUtil.call(() -> ByteStreams.toByteArray(simpleResponse.getBodyInputStream()));
         ByteBuf content = Unpooled.wrappedBuffer(contentBytes);
         DefaultFullHttpResponse response = new DefaultFullHttpResponse(HTTP_1_1, OK, content);
@@ -96,11 +109,11 @@ public class SimpleResponseEncoder extends MessageToMessageEncoder<SimpleRespons
 
     private DefaultHttpResponse error(SimpleErrorResponse errorResponse) {
 
-        HttpResponseStatus status = HttpResponseStatus.valueOf(errorResponse.getHttpErrorCode());
-        ByteBuf content = Unpooled.copiedBuffer(errorResponse.getMessage(), StandardCharsets.UTF_8);
-        DefaultFullHttpResponse response = new DefaultFullHttpResponse(HTTP_1_1, status, content);
+        SimpleTemplateResponse errorTemplate = new SimpleTemplateResponse(errorResponse.getClass(),
+            "error.html.template");
+        errorTemplate.addSubstitution("message", errorResponse.getMessage());
 
-        return response;
+        return template(errorTemplate);
     }
 
 }
