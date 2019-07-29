@@ -1,5 +1,13 @@
 <html>
+<head>
+<link rel="stylesheet" href="css/common.css">
+<link rel="stylesheet" href="css/error.css">
+<link rel="stylesheet" href="https://unpkg.com/purecss@1.0.1/build/base-min.css">
+</head>
 <body>
-<p>{httpStatus} {message}</p>
+<div class="error">
+<span class="httpStatus">{httpStatus}</span>
+<span class="message">{message}</span>
+</div>
 </body>
 </html>

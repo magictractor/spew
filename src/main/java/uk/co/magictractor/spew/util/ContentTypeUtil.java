@@ -35,11 +35,14 @@ public class ContentTypeUtil {
 
     public static final String CONTENT_TYPE_HEADER_NAME = "Content-Type";
 
+    // TODO! private
     public static final List<String> JSON_MIME_TYPES = Arrays.asList("application/json");
     public static final List<String> HTML_MIME_TYPES = Arrays.asList("text/html");
+    private static final List<String> CSS_MIME_TYPES = Arrays.asList("text/css");
 
     private static final List<String> JSON_EXTENSIONS = Arrays.asList("json");
     private static final List<String> HTML_EXTENSIONS = Arrays.asList("html", "htm");
+    private static final List<String> CSS_EXTENSIONS = Arrays.asList("css");
 
     private ContentTypeUtil() {
     }
@@ -133,6 +136,9 @@ public class ContentTypeUtil {
         }
         else if (JSON_EXTENSIONS.contains(extensionPart)) {
             contentType = JSON_MIME_TYPES.get(0);
+        }
+        else if (CSS_EXTENSIONS.contains(extensionPart)) {
+            contentType = CSS_MIME_TYPES.get(0);
         }
 
         return contentType;
