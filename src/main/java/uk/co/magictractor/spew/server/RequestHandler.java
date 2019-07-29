@@ -19,8 +19,8 @@ package uk.co.magictractor.spew.server;
  *
  */
 @FunctionalInterface
-public interface ResponseHandler {
+public interface RequestHandler {
 
-    SimpleResponse handleResponse(ServerRequest request);
+    SimpleResponse handleRequest(ServerRequest request);
 
 }

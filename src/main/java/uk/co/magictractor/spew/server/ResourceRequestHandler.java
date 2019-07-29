@@ -15,20 +15,20 @@
  */
 package uk.co.magictractor.spew.server;
 
-public class ResourceResponseHandler implements ResponseHandler {
+public class ResourceRequestHandler implements RequestHandler {
 
     private final Class<?> relativeToClass;
 
-    public ResourceResponseHandler() {
+    public ResourceRequestHandler() {
         relativeToClass = null;
     }
 
-    public ResourceResponseHandler(Class<?> relativeToClass) {
+    public ResourceRequestHandler(Class<?> relativeToClass) {
         this.relativeToClass = relativeToClass;
     }
 
     @Override
-    public SimpleResponse handleResponse(ServerRequest request) {
+    public SimpleResponse handleRequest(ServerRequest request) {
         // DO NOT COMMIT  - testing exception handling
         if (1 < 2) {
             // throw new IllegalStateException("big badda boom");

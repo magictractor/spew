@@ -32,8 +32,8 @@ public class LocalServerAuthorizationHandler implements AuthorizationHandler {
     public void preAuthorizationRequest() {
         // TODO! could allow other implementations of callback server
         server = new NettyCallbackServer(null);
-        server.addResponseHandler(new ResourceResponseHandler(this.getClass()));
-        server.addResponseHandler(this::callback);
+        server.addRequestHandler(new ResourceRequestHandler(this.getClass()));
+        server.addRequestHandler(this::callback);
         server.run();
     }
 

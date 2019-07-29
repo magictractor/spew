@@ -26,7 +26,7 @@ import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpRequestDecoder;
 import io.netty.handler.codec.http.HttpResponseEncoder;
-import uk.co.magictractor.spew.server.ResponseHandler;
+import uk.co.magictractor.spew.server.RequestHandler;
 import uk.co.magictractor.spew.server.ServerRequest;
 import uk.co.magictractor.spew.server.SimpleErrorResponse;
 import uk.co.magictractor.spew.server.SimpleResponse;
@@ -42,10 +42,9 @@ import uk.co.magictractor.spew.util.ExceptionUtil;
 // see https://javachannel.org/posts/netty-is-not-a-web-framework/
 public class NettyCallbackServer {
 
-    // TODO! bin this once ResponseHandlers are working
     private final ServerCallback callback;
     private final int port;
-    private final List<ResponseHandler> responseHandlers = new ArrayList<>();
+    private final List<RequestHandler> requestHandlers = new ArrayList<>();
 
     private NioEventLoopGroup bossGroup;
     private NioEventLoopGroup workerGroup;
@@ -61,11 +60,11 @@ public class NettyCallbackServer {
         this.port = port;
     }
 
-    public void addResponseHandler(ResponseHandler responseHandler) {
-        if (responseHandler == null) {
-            throw new IllegalArgumentException("responseHandler must not be null");
+    public void addRequestHandler(RequestHandler requestHandler) {
+        if (requestHandler == null) {
+            throw new IllegalArgumentException("requestHandler must not be null");
         }
-        responseHandlers.add(responseHandler);
+        requestHandlers.add(requestHandler);
     }
 
     public String getUrl() {
@@ -186,8 +185,8 @@ public class NettyCallbackServer {
         }
 
         private void handle(ChannelHandlerContext ctx, ServerRequest request) {
-            for (ResponseHandler handler : responseHandlers) {
-                SimpleResponse simpleResponse = handler.handleResponse(request);
+            for (RequestHandler handler : requestHandlers) {
+                SimpleResponse simpleResponse = handler.handleRequest(request);
                 if (simpleResponse != null) {
                     ctx.writeAndFlush(simpleResponse).addListener(ChannelFutureListener.CLOSE);
                     // TODO! writing immediately is iffy if we can continue handling?
@@ -282,6 +281,7 @@ public class NettyCallbackServer {
         ctx.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
     }
 
+    // TODO! bin this
     @FunctionalInterface
     public static interface ServerCallback {
         void callback(FullHttpRequest httpRequest);
