@@ -13,7 +13,7 @@ public final class ExceptionUtil {
         return new UnsupportedOperationException("Not yet implemented");
     }
 
-    public static void call(RunnableWithException runnable) {
+    public static <E extends Exception> void call(RunnableWithException<E> runnable) {
         call(() -> {
             runnable.run();
             return null;
