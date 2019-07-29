@@ -1,7 +1,5 @@
 package uk.co.magictractor.spew.api.boa;
 
-import java.awt.Desktop;
-import java.net.URI;
 import java.net.URLEncoder;
 import java.security.MessageDigest;
 import java.util.Map;
@@ -22,6 +20,7 @@ import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
 import uk.co.magictractor.spew.core.response.parser.text.KeyValuePairsResponse;
 import uk.co.magictractor.spew.imagebam.ImageBam;
 import uk.co.magictractor.spew.token.UserPreferencesPersister;
+import uk.co.magictractor.spew.util.BrowserUtil;
 import uk.co.magictractor.spew.util.ExceptionUtil;
 
 // TODO! common interface for OAuth1 and OAuth2 connections (and no auth? / other auth?)
@@ -108,15 +107,7 @@ public final class BoaOAuth1Connection extends AbstractBoaOAuthConnection<OAuth1
         authUriBuilder.append(authToken);
         String authUri = authUriBuilder.toString();
 
-        // https://stackoverflow.com/questions/5226212/how-to-open-the-default-webbrowser-using-java
-        // TODO! move this to a util class
-        if (Desktop.isDesktopSupported()) {
-            // uri = new
-            ExceptionUtil.call(() -> Desktop.getDesktop().browse(new URI(authUri)));
-        }
-        else {
-            throw new UnsupportedOperationException("TODO");
-        }
+        BrowserUtil.openBrowserTab(authUri);
     }
 
     private boolean verifyAuthentication(String authToken, String verificationCode) {

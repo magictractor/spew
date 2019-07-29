@@ -1,8 +1,6 @@
 package uk.co.magictractor.spew.api.boa;
 
-import java.awt.Desktop;
 import java.net.HttpURLConnection;
-import java.net.URI;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -24,6 +22,7 @@ import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponseFactory;
 import uk.co.magictractor.spew.server.netty.NettyCallbackServer;
 import uk.co.magictractor.spew.token.UserPreferencesPersister;
+import uk.co.magictractor.spew.util.BrowserUtil;
 import uk.co.magictractor.spew.util.ExceptionUtil;
 
 // https://developers.google.com/identity/protocols/OAuth2
@@ -134,11 +133,6 @@ public class BoaOAuth2Connection extends AbstractBoaOAuthConnection<OAuth2Applic
         // String authUrl = authServer.getResourceOwnerAuthorizationUri() + "&" +
         // "oauth_token=" + authToken;
 
-        // https://stackoverflow.com/questions/5226212/how-to-open-the-default-webbrowser-using-java
-        if (!Desktop.isDesktopSupported()) {
-            throw new UnsupportedOperationException("TODO");
-        }
-
         // Launch local server to receive callback containing authentication
         // information.
         NettyCallbackServer callbackServer = null;
@@ -150,8 +144,8 @@ public class BoaOAuth2Connection extends AbstractBoaOAuthConnection<OAuth2Applic
         //			captureManuallyPastedGrant();
         //		}
 
-        String authUrl = request.getEscapedUrl();
-        ExceptionUtil.call(() -> Desktop.getDesktop().browse(new URI(authUrl)));
+        String authUri = request.getEscapedUrl();
+        BrowserUtil.openBrowserTab(authUri);
 
         if (callbackServer != null) {
             callbackServer.join();
