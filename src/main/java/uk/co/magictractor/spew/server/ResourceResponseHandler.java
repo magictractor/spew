@@ -30,10 +30,10 @@ public class ResourceResponseHandler implements ResponseHandler {
     }
 
     @Override
-    public ResponseNext handleResponse(ServerRequest request) {
+    public SimpleResponse handleResponse(ServerRequest request) {
         // DO NOT COMMIT  - testing exception handling
         if (1 < 2) {
-            throw new IllegalStateException("big badda boom");
+            // throw new IllegalStateException("big badda boom");
         }
 
         String baseUrl = request.getBaseUrl();
@@ -48,7 +48,8 @@ public class ResourceResponseHandler implements ResponseHandler {
             System.err.println("Resource not found for " + baseUrl);
             return null;
         }
-        return ResponseNext.response(response);
+
+        return new SimpleStaticResponse(response);
     }
 
 }

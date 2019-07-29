@@ -42,8 +42,8 @@ public class ResourceResponse implements SpewResponse {
         this.resourceName = resourceName;
     }
 
-    public ResourceResponse(Class<?> testClass, String resourceName) {
-        this.relativeToClass = testClass;
+    public ResourceResponse(Class<?> relativeToClass, String resourceName) {
+        this.relativeToClass = relativeToClass;
         this.resourceName = resourceName;
     }
 

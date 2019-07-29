@@ -2,13 +2,10 @@ package uk.co.magictractor.spew.server.netty;
 
 import static io.netty.handler.codec.http.HttpResponseStatus.NOT_FOUND;
 import static io.netty.handler.codec.http.HttpResponseStatus.OK;
-import static io.netty.handler.codec.http.HttpResponseStatus.SEE_OTHER;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import com.google.common.io.ByteStreams;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.ByteBuf;
@@ -30,10 +27,9 @@ import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpRequestDecoder;
 import io.netty.handler.codec.http.HttpResponseEncoder;
-import uk.co.magictractor.spew.api.SpewResponse;
 import uk.co.magictractor.spew.server.ResponseHandler;
-import uk.co.magictractor.spew.server.ResponseNext;
 import uk.co.magictractor.spew.server.ServerRequest;
+import uk.co.magictractor.spew.server.SimpleResponse;
 import uk.co.magictractor.spew.server.StaticPage;
 import uk.co.magictractor.spew.util.ExceptionUtil;
 
@@ -106,6 +102,12 @@ public class NettyCallbackServer {
                             // Don't want to handle HttpChunks (see HttpSnoopServerInitializer)
                             p.addLast(new HttpObjectAggregator(1048576));
 
+                            p.addLast(new SimpleResponseEncoder());
+
+                            // This adds listeners which will handle exceptions if SimpleResponseEncoder is buggy.
+                            // Outbound handlers are processed in reverse order.
+                            p.addLast(new OutboundWriteExceptionHandler());
+
                             // TODO! merge these and maybe move to a distinct class
                             p.addLast(new CallbackServerHandler());
                             p.addLast(new InboundExceptionHandler());
@@ -146,10 +148,7 @@ public class NettyCallbackServer {
     //    	retunr
     //    }
 
-    /**
-     * Handles a server-side channel.
-     */
-    public class CallbackServerHandler extends ChannelInboundHandlerAdapter { // (1)
+    public class CallbackServerHandler extends ChannelInboundHandlerAdapter {
 
         @Override
         public void channelRead(ChannelHandlerContext ctx, Object msg) {
@@ -188,59 +187,16 @@ public class NettyCallbackServer {
 
         private void handle(ChannelHandlerContext ctx, ServerRequest request) {
             for (ResponseHandler handler : responseHandlers) {
-                ResponseNext next = handler.handleResponse(request);
-                if (next != null) {
-                    handle(ctx, next);
-                    if (!next.isContinueHandling()) {
+                SimpleResponse simpleResponse = handler.handleResponse(request);
+                if (simpleResponse != null) {
+                    ctx.writeAndFlush(simpleResponse).addListener(ChannelFutureListener.CLOSE);
+                    // TODO! writing immediately is iffy if we can continue handling?
+                    if (!simpleResponse.isContinueHandling()) {
                         return;
                     }
                 }
             }
             handleUnknown(ctx);
-        }
-
-        private void handle(ChannelHandlerContext ctx, ResponseNext next) {
-            DefaultHttpResponse response = null;
-
-            switch (next.getType()) {
-                case RESPONSE:
-                    response = response(ctx, next.getResponse());
-                    break;
-                case REDIRECT:
-                    response = redirect(ctx, next.getRedirect());
-                    break;
-                case NONE:
-                    // Do nothing
-                    break;
-                default:
-                    throw new IllegalStateException("Code needs modified to handle " + next.getType());
-            }
-
-            if (next.isTerminate()) {
-                shutdown();
-            }
-
-            ctx.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
-        }
-
-        private DefaultHttpResponse response(ChannelHandlerContext ctx, SpewResponse spewResponse) {
-
-            byte[] contentBytes = ExceptionUtil.call(() -> ByteStreams.toByteArray(spewResponse.getBodyInputStream()));
-            ByteBuf content = Unpooled.wrappedBuffer(contentBytes);
-            DefaultFullHttpResponse response = new DefaultFullHttpResponse(HTTP_1_1, OK, content);
-
-            response.headers().add("Content-Type", spewResponse.getHeader("Content-Type"));
-            response.headers().add("Content-Length", contentBytes.length);
-
-            return response;
-        }
-
-        private DefaultHttpResponse redirect(ChannelHandlerContext ctx, String redirect) {
-
-            DefaultHttpResponse response = new DefaultHttpResponse(HTTP_1_1, SEE_OTHER);
-            response.headers().add("Location", redirect);
-
-            return response;
         }
 
         // See

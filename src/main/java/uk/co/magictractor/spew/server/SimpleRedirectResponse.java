@@ -16,11 +16,19 @@
 package uk.co.magictractor.spew.server;
 
 /**
- *
+ * Simple representation of a redirect which can be used across multiple
+ * CallbackServer implementations.
  */
-@FunctionalInterface
-public interface ResponseHandler {
+public class SimpleRedirectResponse extends SimpleResponse {
 
-    SimpleResponse handleResponse(ServerRequest request);
+    private final String location;
+
+    public SimpleRedirectResponse(String location) {
+        this.location = location;
+    }
+
+    public String getLocation() {
+        return location;
+    }
 
 }

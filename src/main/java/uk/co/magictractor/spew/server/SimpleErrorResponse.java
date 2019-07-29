@@ -16,11 +16,25 @@
 package uk.co.magictractor.spew.server;
 
 /**
- *
+ * Simple representation of an error page which can be used across multiple
+ * CallbackServer implementations.
  */
-@FunctionalInterface
-public interface ResponseHandler {
+public class SimpleErrorResponse extends SimpleResponse {
 
-    SimpleResponse handleResponse(ServerRequest request);
+    private final int httpErrorCode;
+    private final String message;
+
+    public SimpleErrorResponse(int httpErrorCode, String message) {
+        this.httpErrorCode = httpErrorCode;
+        this.message = message;
+    }
+
+    public int getHttpErrorCode() {
+        return httpErrorCode;
+    }
+
+    public String getMessage() {
+        return message;
+    }
 
 }

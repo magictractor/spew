@@ -50,7 +50,7 @@ public class LocalServerAuthorizationHandler implements AuthorizationHandler {
         return new AuthorizationResult(authToken, authVerifier);
     }
 
-    private ResponseNext callback(ServerRequest request) {
+    private SimpleResponse callback(ServerRequest request) {
         String baseUrl = request.getBaseUrl();
         if (!baseUrl.contentEquals("/")) {
             return null;
@@ -63,7 +63,7 @@ public class LocalServerAuthorizationHandler implements AuthorizationHandler {
             throw new IllegalArgumentException("Expected values were missing from authorization response");
         }
 
-        return ResponseNext.redirect("/verificationSuccessful.html");
+        return new SimpleRedirectResponse("/verificationSuccessful.html");
     }
 
     // DO NOT COMMIT
