@@ -15,22 +15,21 @@
  */
 package uk.co.magictractor.spew.server.netty;
 
-import static io.netty.handler.codec.http.HttpResponseStatus.OK;
 import static io.netty.handler.codec.http.HttpResponseStatus.SEE_OTHER;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import com.google.common.io.ByteStreams;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
-import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelHandler.Sharable;
+import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToMessageEncoder;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
 import io.netty.handler.codec.http.DefaultHttpResponse;
+import io.netty.handler.codec.http.HttpResponseStatus;
 import uk.co.magictractor.spew.server.SimpleErrorResponse;
 import uk.co.magictractor.spew.server.SimpleRedirectResponse;
 import uk.co.magictractor.spew.server.SimpleResourceResponse;
@@ -91,7 +90,8 @@ public class SimpleResponseEncoder extends MessageToMessageEncoder<SimpleRespons
         // TODO! Not the only code where the whole stream gets read into a byte array - change to getBody() -> byte[]?
         byte[] contentBytes = ExceptionUtil.call(() -> ByteStreams.toByteArray(simpleResponse.getBodyInputStream()));
         ByteBuf content = Unpooled.wrappedBuffer(contentBytes);
-        DefaultFullHttpResponse response = new DefaultFullHttpResponse(HTTP_1_1, OK, content);
+        DefaultFullHttpResponse response = new DefaultFullHttpResponse(HTTP_1_1,
+            HttpResponseStatus.valueOf(simpleResponse.getHttpStatus()), content);
 
         response.headers().add("Content-Type", simpleResponse.getHeader("Content-Type"));
         response.headers().add("Content-Length", contentBytes.length);
@@ -111,7 +111,9 @@ public class SimpleResponseEncoder extends MessageToMessageEncoder<SimpleRespons
 
         SimpleTemplateResponse errorTemplate = new SimpleTemplateResponse(errorResponse.getClass(),
             "error.html.template");
+        errorTemplate.setHttpStatus(errorResponse.getHttpStatus());
         errorTemplate.addSubstitution("message", errorResponse.getMessage());
+        errorTemplate.addSubstitution("httpStatus", errorResponse.getHttpStatus());
 
         return template(errorTemplate);
     }

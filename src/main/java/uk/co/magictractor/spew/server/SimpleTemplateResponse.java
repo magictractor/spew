@@ -58,8 +58,8 @@ public class SimpleTemplateResponse extends SimpleResponse implements SimpleReso
         this(new ResourceResponse(relativeToClass, resourceName));
     }
 
-    public void addSubstitution(String key, String value) {
-        substitutionMap.put(keyStart + key + keyEnd, value);
+    public void addSubstitution(String key, Object value) {
+        substitutionMap.put(keyStart + key + keyEnd, value.toString());
     }
 
     @Override

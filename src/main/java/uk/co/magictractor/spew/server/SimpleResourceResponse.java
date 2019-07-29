@@ -28,6 +28,8 @@ import java.io.InputStream;
  */
 public interface SimpleResourceResponse {
 
+    public int getHttpStatus();
+
     InputStream getBodyInputStream();
 
     String getHeader(String headerName);
