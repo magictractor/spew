@@ -37,7 +37,7 @@ public final class BoaOAuth1Connection extends AbstractBoaOAuthConnection<OAuth1
 
     /**
      * Default visibility, applications should obtain instances via
-     * {@link BoaConnectionInit#createConnection}, usually indirectly via
+     * {@link BoaConnectionFactory#createConnection}, usually indirectly via
      * OAuthConnectionFactory.
      */
     /* default */ BoaOAuth1Connection(OAuth1Application application) {

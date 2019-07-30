@@ -23,9 +23,9 @@ import java.util.ServiceLoader;
 import java.util.ServiceLoader.Provider;
 import java.util.stream.Collectors;
 
-import uk.co.magictractor.spew.api.boa.BoaConnectionInit;
-import uk.co.magictractor.spew.api.connection.SpewConnectionInit;
-import uk.co.magictractor.spew.oauth.springsocial.spike.SpringSocialConnectionInit;
+import uk.co.magictractor.spew.api.boa.BoaConnectionFactory;
+import uk.co.magictractor.spew.api.connection.SpewConnectionFactory;
+import uk.co.magictractor.spew.oauth.springsocial.spike.SpringSocialConnectionFactory;
 import uk.co.magictractor.spew.util.ExceptionUtil;
 
 /**
@@ -37,8 +37,8 @@ public final class SPIUtil {
     private static final Map<Class, List> DEFAULT_IMPLEMENTATIONS = new HashMap<>();
 
     static {
-        addDefault(SpewConnectionInit.class, new BoaConnectionInit());
-        addDefault(SpewConnectionInit.class, new SpringSocialConnectionInit());
+        addDefault(SpewConnectionFactory.class, new BoaConnectionFactory());
+        addDefault(SpewConnectionFactory.class, new SpringSocialConnectionFactory());
     }
 
     private static <T> void addDefault(Class<T> apiClass, T implementation) {

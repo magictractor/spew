@@ -21,7 +21,7 @@ import uk.co.magictractor.spew.api.SpewConnection;
 /**
  *
  */
-public interface SpewConnectionInit {
+public interface SpewConnectionFactory {
 
     /**
      * @param application the application for which a connection is to be

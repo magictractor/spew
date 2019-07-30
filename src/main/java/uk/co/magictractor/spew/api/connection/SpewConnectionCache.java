@@ -12,7 +12,7 @@ public class SpewConnectionCache {
 
     private static final Map<Class<? extends SpewApplication>, SpewConnection> connections = new HashMap<>();
 
-    public static final SpewConnectionInit CONNECTION_INIT = SPIUtil.loadFirstAvailable(SpewConnectionInit.class);
+    public static final SpewConnectionFactory CONNECTION_FACTORY = SPIUtil.loadFirstAvailable(SpewConnectionFactory.class);
 
     public static SpewConnection getConnection(Class<? extends SpewApplication> applicationClass) {
         SpewConnection connection = connections.get(applicationClass);
@@ -31,7 +31,7 @@ public class SpewConnectionCache {
 
     private static SpewConnection initConnection(Class<? extends SpewApplication> applicationClass) {
         SpewApplication application = ExceptionUtil.call(() -> applicationClass.newInstance());
-        return CONNECTION_INIT.createConnection(application);
+        return CONNECTION_FACTORY.createConnection(application);
     }
 
 }

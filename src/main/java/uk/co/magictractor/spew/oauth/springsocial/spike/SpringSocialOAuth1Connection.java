@@ -44,7 +44,7 @@ public class SpringSocialOAuth1Connection implements SpewConnection {
 
     /**
      * Default visibility, applications should obtain instances via
-     * {@link SpringSocialConnectionInit#createConnection}, usually indirectly
+     * {@link SpringSocialConnectionFactory#createConnection}, usually indirectly
      * via OAuthConnectionFactory.
      */
     /* default */ SpringSocialOAuth1Connection(OAuth1Application application) {
