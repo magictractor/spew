@@ -1,14 +1,14 @@
 package uk.co.magictractor.spew.api;
 
 import uk.co.magictractor.spew.access.AuthorizationHandler;
-import uk.co.magictractor.spew.api.connection.SpewConnectionFactory;
+import uk.co.magictractor.spew.api.connection.SpewConnectionCache;
 
 public interface SpewApplication {
 
     SpewServiceProvider getServiceProvider();
 
     default SpewConnection getConnection() {
-        return SpewConnectionFactory.getConnection(getClass());
+        return SpewConnectionCache.getConnection(getClass());
     }
 
     default SpewRequest createRequest(String httpMethod, String url) {

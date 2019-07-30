@@ -15,6 +15,7 @@
  */
 package uk.co.magictractor.spew.util.spi;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,25 +23,43 @@ import java.util.ServiceLoader;
 import java.util.ServiceLoader.Provider;
 import java.util.stream.Collectors;
 
+import uk.co.magictractor.spew.api.boa.BoaConnectionInit;
+import uk.co.magictractor.spew.api.connection.SpewConnectionInit;
+import uk.co.magictractor.spew.oauth.springsocial.spike.SpringSocialConnectionInit;
+import uk.co.magictractor.spew.util.ExceptionUtil;
+
 /**
  *
  */
 public final class SPIUtil {
 
+    @SuppressWarnings("rawtypes")
     private static final Map<Class, List> DEFAULT_IMPLEMENTATIONS = new HashMap<>();
 
     static {
-
+        addDefault(SpewConnectionInit.class, new BoaConnectionInit());
+        addDefault(SpewConnectionInit.class, new SpringSocialConnectionInit());
     }
 
     private static <T> void addDefault(Class<T> apiClass, T implementation) {
-
+        @SuppressWarnings("unchecked")
+        List<T> implementations = DEFAULT_IMPLEMENTATIONS.get(apiClass);
+        if (implementations == null) {
+            implementations = new ArrayList<>();
+            DEFAULT_IMPLEMENTATIONS.put(apiClass, implementations);
+        }
+        implementations.add(implementation);
     }
 
     private SPIUtil() {
     }
 
     public static <T> T loadFirstAvailable(Class<T> apiClass) {
+        String sysImpl = System.getProperty(apiClass.getName());
+        if (sysImpl != null) {
+            return loadAvailableSystemPropertyImplementation(sysImpl);
+        }
+
         ServiceLoader<T> serviceLoader = ServiceLoader.load(apiClass);
         List<T> candidates = serviceLoader.stream()
                 .map(Provider::get)
@@ -51,17 +70,43 @@ public final class SPIUtil {
         }
 
         for (T candidate : candidates) {
-            if (candidate instanceof Availability) {
-                if (!((Availability) candidate).isAvailable()) {
-                    // Not available, perhaps due to a dependency on a third party library.
-                    continue;
-                }
+            if (!isImplementationAvailable(candidate)) {
+                // Not available, perhaps due to a dependency on a third party library.
+                continue;
             }
 
             return candidate;
         }
 
         throw new IllegalArgumentException("There are no available implementations of " + apiClass.getName());
+    }
+
+    private static boolean isImplementationAvailable(Object implementation) {
+        if (implementation instanceof Availability) {
+            if (!((Availability) implementation).isAvailable()) {
+                // Not available, perhaps due to a dependency on a third party library.
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static <T> T loadAvailableSystemPropertyImplementation(String implementationClassName) {
+        T implementation = loadSystemPropertyImplementation(implementationClassName);
+        if (!isImplementationAvailable(implementation)) {
+            throw new IllegalArgumentException(implementationClassName + ".isAvailable() returns false");
+        }
+
+        return implementation;
+    }
+
+    private static <T> T loadSystemPropertyImplementation(String implementationClassName) {
+        return ExceptionUtil.call(() -> loadSystemPropertyImplementation0(implementationClassName));
+    }
+
+    private static <T> T loadSystemPropertyImplementation0(String implementationClassName)
+            throws ReflectiveOperationException {
+        return (T) Class.forName(implementationClassName).newInstance();
     }
 
     @SuppressWarnings("unchecked")

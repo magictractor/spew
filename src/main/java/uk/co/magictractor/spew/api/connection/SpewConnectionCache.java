@@ -5,22 +5,23 @@ import java.util.Map;
 
 import uk.co.magictractor.spew.api.SpewApplication;
 import uk.co.magictractor.spew.api.SpewConnection;
-import uk.co.magictractor.spew.api.boa.BoaConnectionInit;
 import uk.co.magictractor.spew.util.ExceptionUtil;
+import uk.co.magictractor.spew.util.spi.SPIUtil;
 
-public class SpewConnectionFactory {
+public class SpewConnectionCache {
 
     private static final Map<Class<? extends SpewApplication>, SpewConnection> connections = new HashMap<>();
 
-    // TODO! SPI, private and final
-    public static SpewConnectionInit CONNECTION_INIT = new BoaConnectionInit();
+    public static final SpewConnectionInit CONNECTION_INIT = SPIUtil.loadFirstAvailable(SpewConnectionInit.class);
 
     public static SpewConnection getConnection(Class<? extends SpewApplication> applicationClass) {
         SpewConnection connection = connections.get(applicationClass);
         if (connection == null) {
-            synchronized (connections) {
+            synchronized (applicationClass) {
+                connection = connections.get(applicationClass);
                 if (connection == null) {
                     connection = initConnection(applicationClass);
+                    connections.put(applicationClass, connection);
                 }
             }
         }

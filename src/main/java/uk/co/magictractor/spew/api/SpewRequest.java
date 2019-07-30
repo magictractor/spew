@@ -5,7 +5,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import uk.co.magictractor.spew.api.connection.SpewConnectionFactory;
+import uk.co.magictractor.spew.api.connection.SpewConnectionCache;
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponseFactory;
 import uk.co.magictractor.spew.server.ServerRequest;
@@ -133,7 +133,7 @@ public final class SpewRequest implements ServerRequest {
         if (sent) {
             throw new IllegalStateException("This request has already been sent");
         }
-        SpewConnection connection = SpewConnectionFactory.getConnection(application.getClass());
+        SpewConnection connection = SpewConnectionCache.getConnection(application.getClass());
         SpewResponse response = connection.request(this);
         sent = true;
 
