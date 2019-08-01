@@ -29,10 +29,10 @@ public class OAuth2VerificationRequestHandler implements RequestHandler {
     }
 
     @Override
-    public SimpleResponse handleRequest(ServerRequest request) {
+    public void handleRequest(ServerRequest request, SimpleResponseBuilder responseBuilder) {
         String baseUrl = request.getBaseUrl();
         if (!baseUrl.contentEquals("/")) {
-            return null;
+            return;
         }
 
         System.err.println("request: " + request);
@@ -49,10 +49,10 @@ public class OAuth2VerificationRequestHandler implements RequestHandler {
         // TODO! change these to templates and add some info about the application / service provider
         // TODO! common code with OAuth1VerificationRequestHandler
         if (verified) {
-            return new SimpleRedirectResponse("/verificationSuccessful.html");
+            responseBuilder.withRedirect("/verificationSuccessful.html");
         }
         else {
-            return new SimpleRedirectResponse("/verificationFailed.html");
+            responseBuilder.withRedirect("/verificationFailed.html");
         }
     }
 

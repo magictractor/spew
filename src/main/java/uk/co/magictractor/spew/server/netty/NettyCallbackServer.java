@@ -21,6 +21,7 @@ import uk.co.magictractor.spew.server.RequestHandler;
 import uk.co.magictractor.spew.server.ServerRequest;
 import uk.co.magictractor.spew.server.SimpleErrorResponse;
 import uk.co.magictractor.spew.server.SimpleResponse;
+import uk.co.magictractor.spew.server.SimpleResponseBuilder;
 import uk.co.magictractor.spew.util.ExceptionUtil;
 
 /**
@@ -113,77 +114,38 @@ public class NettyCallbackServer {
         bossGroup.shutdownGracefully();
     }
 
-    //    public boolean isRunning() {
-    //    	retunr
-    //    }
-
     public class CallbackServerHandler extends ChannelInboundHandlerAdapter {
 
         @Override
         public void channelRead(ChannelHandlerContext ctx, Object msg) {
-            //		    ByteBuf in = (ByteBuf) msg;
-            //		    try {
-            //		        while (in.isReadable()) { // (1)
-            //		            System.out.print((char) in.readByte());
-            //		            System.out.flush();
-            //		        }
-            //		    } finally {
-            //		       // ReferenceCountUtil.release(msg); // (2)
-            //		    	in.release();
-            //		    }
-
             FullHttpRequest httpRequest = (FullHttpRequest) msg;
-
             handle(ctx, new FullHttpMessageRequest(httpRequest));
         }
 
         private void handle(ChannelHandlerContext ctx, ServerRequest request) {
+
+            SimpleResponseBuilder responseBuilder = new SimpleResponseBuilder();
+
             for (RequestHandler handler : requestHandlers) {
-                SimpleResponse simpleResponse = handler.handleRequest(request);
-                if (simpleResponse != null) {
-                    ctx.writeAndFlush(simpleResponse).addListener(ChannelFutureListener.CLOSE);
-                    // TODO! writing immediately is iffy if we can continue handling?
-                    if (!simpleResponse.isContinueHandling()) {
-                        return;
-                    }
+                handler.handleRequest(request, responseBuilder);
+                if (responseBuilder.isDone()) {
+                    break;
                 }
             }
-            handleUnknown(ctx);
+
+            if (responseBuilder.isShutdown()) {
+                shutdown();
+            }
+
+            SimpleResponse response = responseBuilder.build();
+            if (response != null) {
+                ctx.writeAndFlush(responseBuilder.build()).addListener(ChannelFutureListener.CLOSE);
+            }
+            else {
+                // TODO! append this to the list of handlers?
+                handleUnknown(ctx);
+            }
         }
-
-        // See
-        // https://github.com/kamatama41/netty-sample-http/blob/master/src/main/java/com/kamatama41/netty/sample/http/HelloServerHandler.java
-
-        // TODO! maybe don't want/need this it gets hit even without a channel read
-        // (keep alive maybe)
-        //		@Override
-        //		public void channelReadComplete(ChannelHandlerContext ctx) {
-        //			System.err.println("flush");
-        //			ctx.flush();
-        //
-        //			// without close() browser sticks on "waiting";
-        //			// with close() says empty response??
-        //			// ctx.close();
-        //		}
-
-        //	    @Override
-        //	    public void channelRead(ChannelHandlerContext ctx, Object msg) { // (2)
-        //	        // Discard the received data silently.
-        //	        ((ByteBuf) msg).release(); // (3)
-        //	    }
-
-        //        @Override
-        //        public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) { // (4)
-        //            // DOH!! I didn't realise this exception handler was here!!
-        //
-        //            // Close the connection when an exception is raised.
-        //            cause.printStackTrace();
-        //            ctx.close();
-        //
-        //            shutdown();
-        //
-        //
-        //        }
     }
 
     private void handleUnknown(ChannelHandlerContext ctx) {

@@ -29,10 +29,10 @@ public class OAuth1VerificationRequestHandler implements RequestHandler {
     }
 
     @Override
-    public SimpleResponse handleRequest(ServerRequest request) {
+    public void handleRequest(ServerRequest request, SimpleResponseBuilder responseBuilder) {
         String baseUrl = request.getBaseUrl();
         if (!baseUrl.contentEquals("/")) {
-            return null;
+            return;
         }
 
         String authToken = request.getQueryStringParam("oauth_token");
@@ -46,10 +46,10 @@ public class OAuth1VerificationRequestHandler implements RequestHandler {
 
         // TODO! change these to templates and add some info about the application / service provider
         if (verified) {
-            return new SimpleRedirectResponse("/verificationSuccessful.html");
+            responseBuilder.withRedirect("/verificationSuccessful.html");
         }
         else {
-            return new SimpleRedirectResponse("/verificationFailed.html");
+            responseBuilder.withRedirect("/verificationFailed.html");
         }
     }
 

@@ -28,7 +28,7 @@ public class ResourceRequestHandler implements RequestHandler {
     }
 
     @Override
-    public SimpleResponse handleRequest(ServerRequest request) {
+    public void handleRequest(ServerRequest request, SimpleResponseBuilder responseBuilder) {
         // DO NOT COMMIT  - testing exception handling
         if (1 < 2) {
             // throw new IllegalStateException("big badda boom");
@@ -40,7 +40,8 @@ public class ResourceRequestHandler implements RequestHandler {
         }
         String resourceName = baseUrl.substring(1);
 
-        return SimpleStaticResponse.ifExists(relativeToClass, resourceName);
+        //return SimpleStaticResponse.ifExists(relativeToClass, resourceName);
+        responseBuilder.withStaticIfExists(relativeToClass, resourceName);
     }
 
 }

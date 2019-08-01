@@ -26,20 +26,8 @@ package uk.co.magictractor.spew.server;
  */
 public abstract class SimpleResponse {
 
+    // TODO! move this to error,
     private int httpStatus = 200;
-
-    private boolean continueHandling;
-    private boolean terminate;
-
-    public SimpleResponse andTerminate() {
-        terminate = true;
-        return this;
-    }
-
-    public SimpleResponse andContinueHandling() {
-        continueHandling = true;
-        return this;
-    }
 
     public void setHttpStatus(int httpStatus) {
         this.httpStatus = httpStatus;
@@ -47,14 +35,6 @@ public abstract class SimpleResponse {
 
     public int getHttpStatus() {
         return httpStatus;
-    }
-
-    public boolean isTerminate() {
-        return terminate;
-    }
-
-    public boolean isContinueHandling() {
-        return continueHandling;
     }
 
 }
