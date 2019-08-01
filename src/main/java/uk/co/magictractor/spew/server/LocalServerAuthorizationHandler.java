@@ -28,6 +28,7 @@ import uk.co.magictractor.spew.server.netty.NettyCallbackServer;
 public class LocalServerAuthorizationHandler extends AbstractAuthorizationHandler {
 
     private NettyCallbackServer server;
+    private String callback;
 
     public LocalServerAuthorizationHandler(VerificationFunction verificationFunction) {
         super(verificationFunction);
@@ -40,21 +41,27 @@ public class LocalServerAuthorizationHandler extends AbstractAuthorizationHandle
                 "Application should implement HasCallbackServer if it can have authorization callbacks");
         }
         HasCallbackServer hasCallbackServer = (HasCallbackServer) application;
+        callback = hasCallbackServer.protocol() + "://" + hasCallbackServer.host() + ":" + hasCallbackServer.port();
 
-        // TODO! could allow other implementations of callback server
-        server = new NettyCallbackServer(hasCallbackServer.getServerRequestHandlers(verificationFunction()), null,
-            8080);
+        // TODO! allow other implementations of callback server via SPI
+        server = new NettyCallbackServer(hasCallbackServer.getServerRequestHandlers(verificationFunction()),
+            hasCallbackServer.port());
         server.run();
     }
 
     @Override
     public String getCallbackValue() {
-        return server.getUrl();
+        if (callback == null) {
+            throw new IllegalStateException(
+                "preOpenAuthorizationInBrowser() should be called before getCallbackValue()");
+        }
+        return callback;
     }
 
     @Override
     public void postOpenAuthorizationInBrowser(SpewApplication application) {
         // Wait until the server shuts down, hopefully after it has served a successful verification page.
+        // TODO! how to ensure the server gets shutdown... maybe add postValidation() too
         server.join();
     }
 

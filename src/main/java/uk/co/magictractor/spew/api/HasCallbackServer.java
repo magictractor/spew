@@ -49,4 +49,17 @@ public interface HasCallbackServer {
         return CallbackServer.class;
     }
 
+    default String protocol() {
+        return "http";
+    }
+
+    default String host() {
+        // TODO! default to this or localhost??
+        return "127.0.0.1";
+    }
+
+    default int port() {
+        return 8080;
+    }
+
 }

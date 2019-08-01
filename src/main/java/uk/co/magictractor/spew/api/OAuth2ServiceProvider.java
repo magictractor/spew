@@ -6,14 +6,4 @@ public interface OAuth2ServiceProvider extends SpewServiceProvider {
 
     String getTokenUri();
 
-    //	String getTemporaryCredentialRequestUri();
-    //
-    //	String getResourceOwnerAuthorizationUri();
-    //
-    //	String getTokenRequestUri();
-
-    //	default String getSignatureMethod() {
-    //		return "HMAC-SHA1";
-    //	}
-
 }

@@ -34,6 +34,8 @@ public interface SpewParsedResponse {
 
     long getLong(String key);
 
+    boolean getBoolean(String key);
+
     Object getObject(String key);
 
     <T> T getObject(String path, Class<T> type);

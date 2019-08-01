@@ -18,6 +18,7 @@ package uk.co.magictractor.spew.server.netty;
 import java.util.Collections;
 import java.util.Map;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Splitter;
 
 import io.netty.handler.codec.http.FullHttpRequest;
@@ -72,6 +73,13 @@ public class FullHttpMessageRequest implements ServerRequest {
     @Override
     public String getQueryStringParam(String paramName) {
         return getQueryStringParams().get(paramName);
+    }
+
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(getClass())
+                .add("url", getUrl())
+                .toString();
     }
 
 }

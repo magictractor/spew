@@ -1,11 +1,9 @@
 package uk.co.magictractor.spew.api.boa;
 
 import java.net.HttpURLConnection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.Scanner;
 import java.util.function.Function;
 
 import com.google.common.base.Charsets;
@@ -14,22 +12,27 @@ import com.google.common.collect.Iterables;
 import io.netty.buffer.ByteBuf;
 import io.netty.handler.codec.http.FullHttpMessage;
 import io.netty.handler.codec.http.QueryStringDecoder;
+import uk.co.magictractor.spew.access.AuthorizationHandler;
 import uk.co.magictractor.spew.api.OAuth2Application;
 import uk.co.magictractor.spew.api.OAuth2ServiceProvider;
 import uk.co.magictractor.spew.api.SpewRequest;
 import uk.co.magictractor.spew.api.SpewResponse;
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponseFactory;
-import uk.co.magictractor.spew.server.netty.NettyCallbackServer;
 import uk.co.magictractor.spew.token.UserPreferencesPersister;
 import uk.co.magictractor.spew.util.BrowserUtil;
+import uk.co.magictractor.spew.util.ContentTypeUtil;
 import uk.co.magictractor.spew.util.ExceptionUtil;
 
+// https://tools.ietf.org/html/rfc6749
 // https://developers.google.com/identity/protocols/OAuth2
 public class BoaOAuth2Connection extends AbstractBoaOAuthConnection<OAuth2Application, OAuth2ServiceProvider> {
 
+    // Hmm. out-of-band isn't in the spec, but is supported by Google and other
+    // https://mailarchive.ietf.org/arch/msg/oauth/OCeJLZCEtNb170Xy-C3uTVDIYjM
     private static final String OOB = "urn:ietf:wg:oauth:2.0:oob";
-    private static final String CALLBACK_SERVER = "http://127.0.0.1:8080";
+    // private static final String CALLBACK_SERVER = "http://localhost:8080";
+    //private static final String CALLBACK_SERVER = "http://127.0.0.1:8080";
 
     /*
      * milliseconds to remove from expiry to ensure that we refresh if getting
@@ -59,28 +62,16 @@ public class BoaOAuth2Connection extends AbstractBoaOAuthConnection<OAuth2Applic
 
     @Override
     public SpewResponse request(SpewRequest apiRequest) {
-        // authenticate();
 
         if (accessToken.getValue() == null) {
             // authenticateUser();
             authorize();
         }
-        else if (isAccessTokenExpired()) {
-            fetchRefreshedAccessToken();
-        }
+        // TODO! restore this - see comments about refresh tokens, perhaps related
+        //        else if (isAccessTokenExpired()) {
+        //            fetchRefreshedAccessToken();
+        //        }
 
-        // TODO! (optionally?) verify existing tokens?
-        //		if (userTokenAndSecret.isBlank()) {
-        //			authenticateUser();
-        //		}
-        //
-        //		forAll(apiRequest);
-        //		forApi(apiRequest);
-
-        // apiRequest.s
-
-        // TODO! need to block while waiting for auth from Imgur
-        // return null;
         return ExceptionUtil.call(() -> request0(apiRequest, this::setAuthHeader));
     }
 
@@ -90,127 +81,83 @@ public class BoaOAuth2Connection extends AbstractBoaOAuthConnection<OAuth2Applic
 
     // https://developers.google.com/photos/library/guides/authentication-authorization
     private void authorize() {
-        SpewRequest request = getApplication().createGetRequest(getServiceProvider().getAuthorizationUri());
+        OAuth2Application application = getApplication();
 
-        request.setQueryStringParam("client_id", getApplication().getClientId());
-        String redirectUri = getAuthorizeRedirectUrl();
-        request.setQueryStringParam("redirect_uri", redirectUri);
+        SpewRequest request = application.createGetRequest(getServiceProvider().getAuthorizationUri());
 
-        // Ah! was using code, but should be token? see
-        // https://apidocs.imgur.com/#authorization-and-oauth
-        // ah! despite being deprecated, pin works for Imgur - first step only - cannot
-        // convert pin to access token
-        // Google does not like "pin": Invalid response_type: pin
-        // request.setParam("response_type", "pin");
-        request.setQueryStringParam("response_type", getAuthorizeResponseType());
-        // BUT! Google bombs with token plus redirect_uri
-        // redirect_uri not supported for response_type=token: urn:ietf:wg:oauth:2.0:oob
+        AuthorizationHandler authHandler = application.getAuthorizationHandler(this::verify);
 
-        request.setQueryStringParam("scope", getApplication().getScope());
+        authHandler.preOpenAuthorizationInBrowser(application);
 
-        // Igmur:
-        // http://127.0.0.1:8080/#access_token=76fc8472073f9ae9da616bae08fc686a6395a41d
-        // &expires_in=315360000
-        // &token_type=bearer
-        // &refresh_token=70975f674b1218fa535167bdc01ba943123ec935
-        // &account_username=GazingAtTrees
-        // &account_id=96937645
+        request.setQueryStringParam("client_id", application.getClientId());
+        //String redirectUri = getAuthorizeRedirectUrl();
+        //request.setQueryStringParam("redirect_uri", redirectUri);
+        String callback = authHandler.getCallbackValue();
+        request.setQueryStringParam("redirect_uri", callback);
 
-        //		OAuthResponse response = authRequest(request);
-        //
-        //		// oauth_callback_confirmed=true&oauth_token=72157697914997341-aa5c16e42e726714&oauth_token_secret=b9f69c0cb17972f6
-        //		String authToken = response.getString("oauth_token");
-        //		String authSecret = response.getString("oauth_token_secret");
-        // FlickrConfig.setUserRequestToken(authToken, authSecret);
-        // userTokenAndSecret = new TokenAndSecret(authToken, authSecret);
+        // Always "code".
+        // "token" type is more appropriate for client-side OAuth.
+        request.setQueryStringParam("response_type", "code");
 
-        // https://www.flickr.com/services/oauth/authorize?oauth_token=72157697915783691-9402de420a27bdea&perms=write
-        // String authUrl =
-        // "https://www.flickr.com/services/oauth/authorize?oauth_token=" + authToken +
-        // "&perms=write";
-
-        // TODO! check whether this already contains question mark
-        // String authUrl = authServer.getResourceOwnerAuthorizationUri() + "&" +
-        // "oauth_token=" + authToken;
-
-        // Launch local server to receive callback containing authentication
-        // information.
-        NettyCallbackServer callbackServer = null;
-        if (CALLBACK_SERVER.equals(redirectUri)) {
-            callbackServer = new NettyCallbackServer(Collections.emptyList(), this::setAccessToken, 8080);
-            callbackServer.run();
-        }
-        //		else if (OOB.equals(redirectUri)) {
-        //			captureManuallyPastedGrant();
-        //		}
+        request.setQueryStringParam("scope", application.getScope());
 
         String authUri = request.getEscapedUrl();
         BrowserUtil.openBrowserTab(authUri);
 
-        if (callbackServer != null) {
-            callbackServer.join();
+        authHandler.postOpenAuthorizationInBrowser(application);
+    }
+
+    // TODO! set and check randomised "state" value : https://developers.google.com/identity/protocols/OpenIDConnect#server-flow
+    private boolean verify(String authToken, String verificationCode) {
+        boolean verified = false;
+        try {
+            fetchAccessAndRefreshToken(verificationCode);
+            verified = true;
         }
-        else if (OOB.equals(redirectUri)) {
-            captureManuallyPastedGrant();
-        } // else boom
-    }
-
-    // TODO! use VerificationCodeHandler
-    private void captureManuallyPastedGrant() {
-        Scanner scanner = new Scanner(System.in);
-        // System.err.println("Enter verification code for oauth_token=" + requestToken
-        // + ": ");
-        System.err.println("Enter verification code: ");
-        String verification = scanner.nextLine().trim();
-        // FlickrConfig.setUserAuthVerifier(verification);
-        scanner.close();
-
-        // verify(verification);
-
-        fetchAccessAndRefreshToken(verification);
-    }
-
-    // future - perhaps allow connection to use value other than the default
-    private String getAuthorizeResponseType() {
-        return getApplication().defaultAuthorizeResponseType().name().toLowerCase();
-    }
-
-    // future - perhaps allow connection to use value other than the default
-    private String getAuthorizeRedirectUrl() {
-        switch (getApplication().defaultAuthorizeResponseType()) {
-            case TOKEN:
-                return CALLBACK_SERVER;
-            default:
-                return OOB;
+        catch (Exception e) {
+            // Do nothing. verified is false.
+            System.err.println("verification failed");
+            e.printStackTrace(System.err);
         }
+
+        return verified;
     }
 
-    // TODO! needs a tweak to handle pin
     private void fetchAccessAndRefreshToken(String code) {
+        OAuth2Application application = getApplication();
+
         // ah! needed to be POST else 404 (Google)
-        SpewRequest request = getApplication().createPostRequest(getServiceProvider().getTokenUri());
+        SpewRequest request = application.createPostRequest(getServiceProvider().getTokenUri());
+        request.setContentType(ContentTypeUtil.FORM_MIME_TYPE);
 
         request.setBodyParam("code", code);
-        // request.setParam("pin", code);
-        request.setBodyParam("client_id", getApplication().getClientId());
-        request.setBodyParam("client_secret", getApplication().getClientSecret());
+        request.setBodyParam("client_id", application.getClientId());
+        request.setBodyParam("client_secret", application.getClientSecret());
 
         request.setBodyParam("grant_type", "authorization_code");
-        // request.setParam("grant_type", "pin");
 
         // request.setParam("redirect_uri",
         // "https://www.googleapis.com/auth/photoslibrary");
         // request.setParam("redirect_uri", "https://magictractor.co.uk");
 
-        // request.setParam("redirect_uri", "urn:ietf:wg:oauth:2.0:oob:auto");
-        // Hmm. This looks unnecessary... but Google needs it
-        // request.setParam("redirect_uri", "urn:ietf:wg:oauth:2.0:oob");
-        request.setBodyParam("redirect_uri", OOB);
+        // A 400 results if this does not match the original redirect URI.
+        //request.setBodyParam("redirect_uri", "http://127.0.0.1:8080");
+        // application.host() -> no could be OOB
+        request.setBodyParam("redirect_uri", "http://127.0.0.1:8080");
         // request.setParam("scope", "");
 
-        SpewParsedResponse response = authRequest(request);
+        System.err.println("request: " + request);
 
-        refreshToken.setValue(response.getString("refresh_token"));
+        SpewParsedResponse response = authRequest(request);
+        System.err.println("response: " + response);
+
+        // TODO! only get a refresh_token if auth request included access_type=offline
+        // add that or not? perhaps make it configurable in application
+        String refreshTokenValue = response.getString("refresh_token");
+        if (refreshTokenValue != null) {
+            refreshToken.setValue(refreshTokenValue);
+        }
+
         // accessToken.setValue(response.getString("access_token"));
         // System.err.println("access_token set to " + accessToken.getValue());
         setAccessToken((key) -> response.getString(key));
@@ -238,6 +185,7 @@ public class BoaOAuth2Connection extends AbstractBoaOAuthConnection<OAuth2Applic
     //		setAccessToken(response.getString("access_token"), response.getString("expires_in"));
     //	}
 
+    //
     private void setAccessToken(FullHttpMessage httpMessage) {
         ByteBuf content = httpMessage.content();
         // new QueryStringDecoder()
@@ -256,20 +204,22 @@ public class BoaOAuth2Connection extends AbstractBoaOAuthConnection<OAuth2Applic
         accessToken.setValue(valueMap.apply("access_token"));
 
         // typically 3600 for one hour
-        int expiresInSeconds = Integer.parseInt(valueMap.apply("expires_in"));
-        long expiresInMilliseconds = expiresInSeconds * 1000;
-        long expiry = System.currentTimeMillis() + expiresInMilliseconds - EXPIRY_BUFFER;
-        accessTokenExpiry.setValue(Long.toString(expiry));
+        String expiresInSecondsString = valueMap.apply("expires_in");
+        if (expiresInSecondsString != null) {
+            int expiresInSeconds = Integer.parseInt(valueMap.apply("expires_in"));
+            long expiresInMilliseconds = expiresInSeconds * 1000;
+            long expiry = System.currentTimeMillis() + expiresInMilliseconds - EXPIRY_BUFFER;
+            accessTokenExpiry.setValue(Long.toString(expiry));
+
+            long diff = expiry - new Date().getTime();
+            System.err.println("diff: " + diff);
+        }
 
         // some service providers update the refresh token, others do not
         String newRefreshToken = valueMap.apply("refresh_token");
         if (newRefreshToken != null) {
             refreshToken.setValue(newRefreshToken);
         }
-
-        // temp!
-        long diff = expiry - new Date().getTime();
-        System.err.println("diff: " + diff);
 
         System.err.println("accessToken set: " + accessToken.getValue() + " expires " + accessTokenExpiry.getValue());
     }

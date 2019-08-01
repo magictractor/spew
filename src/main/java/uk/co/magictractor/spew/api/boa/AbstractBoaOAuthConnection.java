@@ -36,6 +36,7 @@ public abstract class AbstractBoaOAuthConnection<APP extends SpewApplication, SP
         return request0(request, null);
     }
 
+    // TODO! HttpUrlConnection is a bad choice because it blows up on a 400 without displaying the body
     // http://www.baeldung.com/java-http-request
     protected final SpewResponse request0(SpewRequest request, Consumer<HttpURLConnection> initConnection)
             throws IOException {
@@ -53,7 +54,15 @@ public abstract class AbstractBoaOAuthConnection<APP extends SpewApplication, SP
         // TODO! rework jsonConfiguration here
         connectionRequest.writeParams(request, getServiceProvider().getJsonConfiguration());
 
-        return new HttpUrlConnectionResponse(con);
+        //return new HttpUrlConnectionResponse(con);
+        try {
+            return new HttpUrlConnectionResponse(con);
+        }
+        catch (Exception e) {
+            System.err.println("broken request: " + request);
+            throw e;
+        }
+
     }
 
     protected String getUrl(SpewRequest request) {

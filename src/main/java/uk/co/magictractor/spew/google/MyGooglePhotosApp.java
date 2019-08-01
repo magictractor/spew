@@ -1,7 +1,6 @@
 package uk.co.magictractor.spew.google;
 
 import uk.co.magictractor.spew.api.OAuth2Application;
-import uk.co.magictractor.spew.api.OAuth2AuthorizeResponseType;
 import uk.co.magictractor.spew.api.OAuth2ServiceProvider;
 import uk.co.magictractor.spew.processor.properties.ResourceFileProperties;
 
@@ -25,11 +24,6 @@ public class MyGooglePhotosApp implements OAuth2Application {
 
         // just sharing results in permission denied when listing albums
         // return "https://www.googleapis.com/auth/photoslibrary.sharing";
-    }
-
-    @Override
-    public OAuth2AuthorizeResponseType defaultAuthorizeResponseType() {
-        return OAuth2AuthorizeResponseType.CODE;
     }
 
     @Override

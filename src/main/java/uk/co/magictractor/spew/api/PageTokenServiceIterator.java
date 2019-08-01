@@ -4,11 +4,16 @@ import java.util.Collections;
 import java.util.List;
 
 /**
+ * <p>
  * Base class for iterators which fetch items using third party service methods
  * which return a page of items, and service requests are passed a page token
  * for pages after the first page. The first page is fetched on the first use of
  * {@link #hasNext()} or {@link #next()}, and the next page is fetched only
- * after iterating over all items in the first page.
+ * after iterating over all items in the first page.>
+ * </p>
+ * <p>
+ * Dropbox uses the term "cursor" for page tokens.
+ * </p>
  */
 public abstract class PageTokenServiceIterator<E> extends PageServiceIterator<E> {
 

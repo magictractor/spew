@@ -13,29 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.co.magictractor.spew.core.response.parser;
+package uk.co.magictractor.spew.dropbox;
 
-public interface StringCentricSpewParsedResponse extends SpewParsedResponse {
+import uk.co.magictractor.spew.api.OAuth2ServiceProvider;
 
-    @Override
-    public default int getInt(String key) {
-        return Integer.parseInt(getString(key));
+// https://www.dropbox.com/developers/apps
+public class Dropbox implements OAuth2ServiceProvider {
+
+    private static final Dropbox INSTANCE = new Dropbox();
+
+    public static Dropbox getInstance() {
+        return INSTANCE;
+    }
+
+    private Dropbox() {
     }
 
     @Override
-    public default long getLong(String key) {
-        return Long.parseLong(getString(key));
-    }
-
-    // TODO! make more strict, and throw and error rather than false for dodgy values.
-    @Override
-    public default boolean getBoolean(String key) {
-        return Boolean.parseBoolean(getString(key));
+    public String getAuthorizationUri() {
+        return "https://www.dropbox.com/oauth2/authorize";
     }
 
     @Override
-    public default Object getObject(String key) {
-        return getString(key);
+    public String getTokenUri() {
+        return "https://api.dropboxapi.com/oauth2/token";
     }
 
 }

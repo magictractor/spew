@@ -18,14 +18,19 @@ package uk.co.magictractor.spew.util;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
+import java.net.URLEncoder;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import com.google.common.base.Splitter;
+import com.jayway.jsonpath.Configuration;
 
+import uk.co.magictractor.spew.api.SpewRequest;
 import uk.co.magictractor.spew.api.SpewResponse;
 
 /**
@@ -36,9 +41,12 @@ public class ContentTypeUtil {
     public static final String CONTENT_TYPE_HEADER_NAME = "Content-Type";
 
     // TODO! private
-    public static final List<String> JSON_MIME_TYPES = Arrays.asList("application/json");
+    // TODO! Dropbox auth uses text/javascript in the token response. Tolerate here for now, but perhaps move to an override in the app?
+    public static final List<String> JSON_MIME_TYPES = Arrays.asList("application/json", "text/javascript");
     public static final List<String> HTML_MIME_TYPES = Arrays.asList("text/html");
     private static final List<String> CSS_MIME_TYPES = Arrays.asList("text/css");
+    // Auth requests should use this rather than JSON. Some service providers tolerate JSON for auth.
+    public static final String FORM_MIME_TYPE = "application/x-www-form-urlencoded";
 
     private static final List<String> JSON_EXTENSIONS = Arrays.asList("json");
     private static final List<String> HTML_EXTENSIONS = Arrays.asList("html", "htm");
@@ -159,6 +167,48 @@ public class ContentTypeUtil {
         }
 
         return charset;
+    }
+
+    public static byte[] bodyBytes(SpewRequest request, Configuration jsonConfiguration) {
+        String contentType = request.getContentType();
+        if (isJson(contentType)) {
+            return bodyJsonBytes(request, jsonConfiguration);
+        }
+        else if (FORM_MIME_TYPE.equals(contentType)) {
+            return bodyFormBytes(request);
+        }
+        else if (null == contentType) {
+            throw new IllegalArgumentException(
+                "Requests with body params must have a content type so that params are encoded appropriately");
+        }
+        throw new IllegalArgumentException("Code need modified to write request body for content type " + contentType);
+    }
+
+    private static byte[] bodyJsonBytes(SpewRequest request, Configuration jsonConfiguration) {
+        String requestBody = jsonConfiguration.jsonProvider().toJson(request.getBodyParams());
+        //logger.trace("request body: " + requestBody);
+        // TODO! encoding
+        return requestBody.getBytes();
+    }
+
+    private static byte[] bodyFormBytes(SpewRequest request) {
+        StringBuilder bodyBuilder = new StringBuilder();
+        boolean first = true;
+        for (Map.Entry<String, Object> entry : request.getBodyParams().entrySet()) {
+            if (first) {
+                first = false;
+            }
+            else {
+                // Some examples online look there could be a newline, but there must not.
+                bodyBuilder.append('&');
+            }
+            bodyBuilder.append(entry.getKey());
+            bodyBuilder.append('=');
+            bodyBuilder.append(URLEncoder.encode(entry.getValue().toString(), StandardCharsets.UTF_8));
+        }
+
+        // TODO! is UTF-8 correct?
+        return bodyBuilder.toString().getBytes(StandardCharsets.UTF_8);
     }
 
 }

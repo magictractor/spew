@@ -5,10 +5,13 @@ import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import com.google.common.base.MoreObjects;
+
 import uk.co.magictractor.spew.api.connection.SpewConnectionCache;
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponseFactory;
 import uk.co.magictractor.spew.server.ServerRequest;
+import uk.co.magictractor.spew.util.ContentTypeUtil;
 
 public final class SpewRequest implements ServerRequest {
 
@@ -18,6 +21,9 @@ public final class SpewRequest implements ServerRequest {
     private final String baseUrl;
     private final Map<String, String> queryStringParams = new LinkedHashMap<>();
     private final Map<String, Object> bodyParams = new LinkedHashMap<>();
+    // POST (and PUT) requests should have a content type
+    // TODO! better to have this set explicitly and only once
+    private String contentType = ContentTypeUtil.JSON_MIME_TYPES.get(0);
 
     private boolean sent;
 
@@ -88,6 +94,18 @@ public final class SpewRequest implements ServerRequest {
         return httpMethod;
     }
 
+    public String getContentType() {
+        return contentType;
+    }
+
+    public void setContentType(String contentType) {
+        // TODO! restore check
+        //        if (this.contentType != null) {
+        //            throw new IllegalArgumentException("Request has already had a Content-Type set");
+        //        }
+        this.contentType = contentType;
+    }
+
     public void setQueryStringParam(String key, Object value) {
         if (value != null) {
             queryStringParams.put(key, value.toString());
@@ -142,6 +160,14 @@ public final class SpewRequest implements ServerRequest {
         application.getServiceProvider().verifyResponse(parsedResponse);
 
         return parsedResponse;
+    }
+
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(getClass())
+                .add("url", getUrl())
+                .add("bodyParams", getBodyParams())
+                .toString();
     }
 
 }

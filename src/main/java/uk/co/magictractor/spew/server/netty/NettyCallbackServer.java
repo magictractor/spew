@@ -1,13 +1,8 @@
 package uk.co.magictractor.spew.server.netty;
 
-import static io.netty.handler.codec.http.HttpResponseStatus.OK;
-import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
-
 import java.util.List;
 
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
@@ -18,10 +13,7 @@ import io.netty.channel.ChannelPipeline;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import io.netty.handler.codec.http.DefaultFullHttpResponse;
-import io.netty.handler.codec.http.DefaultHttpResponse;
 import io.netty.handler.codec.http.FullHttpRequest;
-import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpRequestDecoder;
 import io.netty.handler.codec.http.HttpResponseEncoder;
@@ -29,7 +21,6 @@ import uk.co.magictractor.spew.server.RequestHandler;
 import uk.co.magictractor.spew.server.ServerRequest;
 import uk.co.magictractor.spew.server.SimpleErrorResponse;
 import uk.co.magictractor.spew.server.SimpleResponse;
-import uk.co.magictractor.spew.server.StaticPage;
 import uk.co.magictractor.spew.util.ExceptionUtil;
 
 /**
@@ -41,7 +32,6 @@ import uk.co.magictractor.spew.util.ExceptionUtil;
 // see https://javachannel.org/posts/netty-is-not-a-web-framework/
 public class NettyCallbackServer {
 
-    private final ServerCallback callback;
     private final int port;
     private final List<RequestHandler> requestHandlers;
 
@@ -50,18 +40,9 @@ public class NettyCallbackServer {
 
     private ChannelFuture f;
 
-    public NettyCallbackServer(List<RequestHandler> requestHandlers, ServerCallback callback, int port) {
+    public NettyCallbackServer(List<RequestHandler> requestHandlers, int port) {
         this.requestHandlers = requestHandlers;
-        this.callback = callback;
         this.port = port;
-    }
-
-    public String getUrl() {
-        // Note that 127.0.0.1 is used rather than localhost is not used because Twitter does not support localhost.
-        // See https://developer.twitter.com/en/docs/basics/apps/guides/callback-urls.html
-
-        // TODO! implement https?
-        return "http://127.0.0.1:" + port;
     }
 
     public void run() {
@@ -153,24 +134,7 @@ public class NettyCallbackServer {
 
             FullHttpRequest httpRequest = (FullHttpRequest) msg;
 
-            //System.err.println("msg: " + msg);
-            String uri = httpRequest.uri();
-            // System.err.println("uri: " + uri);
-
-            // Aaah, OAuth1 jumps straight to the token
-            // OAuth2 has the fragment requiring the use of /catchtoken
-
-            switch (uri) {
-                case "/":
-                    handleRoot(ctx);
-                    break;
-                case "/catchtoken":
-                    handleCatchtoken(httpRequest, ctx);
-                    break;
-                default:
-                    //handleUnknown(ctx);
-                    handle(ctx, new FullHttpMessageRequest(httpRequest));
-            }
+            handle(ctx, new FullHttpMessageRequest(httpRequest));
         }
 
         private void handle(ChannelHandlerContext ctx, ServerRequest request) {
@@ -222,58 +186,9 @@ public class NettyCallbackServer {
         //        }
     }
 
-    private void handleRoot(ChannelHandlerContext ctx) {
-        StaticPage page = new StaticPage("fragmentCallback.html");
-        ByteBuf content = Unpooled.wrappedBuffer(page.getBytes());
-        // ctx.write(content);
-
-        DefaultFullHttpResponse response = new DefaultFullHttpResponse(HTTP_1_1, OK, content, false);
-        response.headers().add(HttpHeaderNames.CONTENT_LENGTH, page.getLength());
-        // response.headers().add(HttpHeaderNames.CONTENT_TYPE, "text/html");
-        // See
-        // https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types
-        // response.headers().add(HttpHeaderNames.CONTENT_TYPE, "text/javascript");
-        // System.err.println("write js");
-        response.headers().add(HttpHeaderNames.CONTENT_TYPE, "text/html");
-        System.err.println("write html");
-
-        ctx.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
-    }
-
-    // {access_token=[beb2e0b48e52e936363f8f41c7018ff7fcf3800c],
-    // expires_in=[315360000], token_type=[bearer],
-    // refresh_token=[536af783ea1e1a44db80b603b173fe9e710d0d04],
-    // account_username=[GazingAtTrees], account_id=[96937645]}
-    private void handleCatchtoken(FullHttpRequest httpRequest, ChannelHandlerContext ctx) {
-        //		ByteBuf content = httpRequest.content();
-        //		// new QueryStringDecoder()
-        //
-        //		String s = content.toString(Charsets.UTF_8);
-        //		System.err.println("content: " + s);
-        //
-        //		QueryStringDecoder d = new QueryStringDecoder(s, Charsets.UTF_8, false);
-        //		System.err.println(d.parameters());
-
-        callback.callback(httpRequest);
-
-        DefaultHttpResponse response = new DefaultHttpResponse(HTTP_1_1, OK);
-        System.err.println("write xhr response and close");
-
-        ctx.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
-
-        // TODO! handler should trigger the shutdown?
-        shutdown();
-    }
-
     private void handleUnknown(ChannelHandlerContext ctx) {
         SimpleErrorResponse response = new SimpleErrorResponse(404, "Not found");
         ctx.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
-    }
-
-    // TODO! bin this
-    @FunctionalInterface
-    public static interface ServerCallback {
-        void callback(FullHttpRequest httpRequest);
     }
 
 }

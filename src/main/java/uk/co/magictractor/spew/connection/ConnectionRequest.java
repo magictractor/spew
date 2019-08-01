@@ -21,6 +21,7 @@ import java.io.OutputStream;
 import com.jayway.jsonpath.Configuration;
 
 import uk.co.magictractor.spew.api.SpewRequest;
+import uk.co.magictractor.spew.util.ContentTypeUtil;
 
 /**
  * Wrapper for various for Http request implements used when building Http
@@ -28,16 +29,14 @@ import uk.co.magictractor.spew.api.SpewRequest;
  */
 public interface ConnectionRequest {
 
+    // TODO! move this (would not change per impl)
     public default void writeParams(SpewRequest request, Configuration jsonConfiguration) throws IOException {
-        // TODO! not just POST?
+        // TODO! not just POST? PUT too
         if ("POST".equals(request.getHttpMethod())) {
             setDoOutput(true);
             if (!request.getBodyParams().isEmpty()) {
-                setHeader("content-type", "application/json");
-                String requestBody = jsonConfiguration.jsonProvider().toJson(request.getBodyParams());
-                //logger.trace("request body: " + requestBody);
-                // TODO! encoding
-                byte[] requestBodyBytes = requestBody.getBytes();
+                byte[] requestBodyBytes = ContentTypeUtil.bodyBytes(request, jsonConfiguration);
+                setHeader(ContentTypeUtil.CONTENT_TYPE_HEADER_NAME, request.getContentType());
                 setFixedLengthStreamingMode(requestBodyBytes.length);
                 getOutputStream().write(requestBodyBytes);
             }

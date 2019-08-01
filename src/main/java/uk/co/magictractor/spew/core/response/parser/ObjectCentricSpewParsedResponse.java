@@ -33,6 +33,11 @@ public interface ObjectCentricSpewParsedResponse extends SpewParsedResponse {
     }
 
     @Override
+    public default boolean getBoolean(String key) {
+        return getObject(key, Boolean.class);
+    }
+
+    @Override
     public default Object getObject(String key) {
         return getObject(key, Object.class);
     }

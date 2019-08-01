@@ -33,6 +33,7 @@ public class PasteVerificationCodeHandler extends AbstractAuthorizationHandler {
     @Override
     public void preOpenAuthorizationInBrowser(SpewApplication application) {
         // Do nothing.
+        // TODO! Get OOB value from the application. Maybe check a supports out-of-band flag?
     }
 
     @Override
@@ -55,6 +56,7 @@ public class PasteVerificationCodeHandler extends AbstractAuthorizationHandler {
         }
     }
 
+    // "oob" is an abbreviation for out-of-band
     // TODO! "oob" is not correct for OAuth2 (long variant of "oob")
     @Override
     public String getCallbackValue() {
