@@ -16,6 +16,7 @@ import uk.co.magictractor.spew.api.OAuth1Application;
 import uk.co.magictractor.spew.api.OAuth1ServiceProvider;
 import uk.co.magictractor.spew.api.SpewRequest;
 import uk.co.magictractor.spew.api.SpewResponse;
+import uk.co.magictractor.spew.api.VerificationInfo;
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
 import uk.co.magictractor.spew.core.response.parser.text.KeyValuePairsResponse;
 import uk.co.magictractor.spew.imagebam.ImageBam;
@@ -68,7 +69,7 @@ public final class BoaOAuth1Connection extends AbstractBoaOAuthConnection<OAuth1
 
     private void authorizeUser() {
         AuthorizationHandler authorizationHandler = getApplication()
-                .getAuthorizationHandler(this::verifyAuthentication);
+                .getAuthorizationHandler(() -> this::verifyAuthentication);
         authorizationHandler.preOpenAuthorizationInBrowser(getApplication());
 
         openAuthorizationUriInBrowser(authorizationHandler.getCallbackValue());
@@ -110,15 +111,15 @@ public final class BoaOAuth1Connection extends AbstractBoaOAuthConnection<OAuth1
         BrowserUtil.openBrowserTab(authUri);
     }
 
-    private boolean verifyAuthentication(String authToken, String verificationCode) {
-        String verificationAuthToken = authToken;
+    private boolean verifyAuthentication(VerificationInfo verificationInfo) {
+        String verificationAuthToken = verificationInfo.getAuthToken();
         if (verificationAuthToken == null) {
             // Could assert for oob here? Should only happen when pasting values.
             verificationAuthToken = userToken.getValue();
         }
 
         try {
-            fetchToken(verificationAuthToken, verificationCode);
+            fetchToken(verificationAuthToken, verificationInfo.getVerificationCode());
             return true;
         }
         catch (Exception e) {

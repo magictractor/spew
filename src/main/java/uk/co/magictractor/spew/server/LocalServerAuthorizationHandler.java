@@ -15,6 +15,8 @@
  */
 package uk.co.magictractor.spew.server;
 
+import java.util.function.Supplier;
+
 import uk.co.magictractor.spew.access.AbstractAuthorizationHandler;
 import uk.co.magictractor.spew.api.HasCallbackServer;
 import uk.co.magictractor.spew.api.SpewApplication;
@@ -30,8 +32,8 @@ public class LocalServerAuthorizationHandler extends AbstractAuthorizationHandle
     private NettyCallbackServer server;
     private String callback;
 
-    public LocalServerAuthorizationHandler(VerificationFunction verificationFunction) {
-        super(verificationFunction);
+    public LocalServerAuthorizationHandler(Supplier<VerificationFunction> verificationFunctionSupplier) {
+        super(verificationFunctionSupplier);
     }
 
     @Override
@@ -44,7 +46,7 @@ public class LocalServerAuthorizationHandler extends AbstractAuthorizationHandle
         callback = hasCallbackServer.protocol() + "://" + hasCallbackServer.host() + ":" + hasCallbackServer.port();
 
         // TODO! allow other implementations of callback server via SPI
-        server = new NettyCallbackServer(hasCallbackServer.getServerRequestHandlers(verificationFunction()),
+        server = new NettyCallbackServer(hasCallbackServer.getServerRequestHandlers(verificationFunctionSupplier()),
             hasCallbackServer.port());
         server.run();
     }
@@ -68,7 +70,7 @@ public class LocalServerAuthorizationHandler extends AbstractAuthorizationHandle
     // DO NOT COMMIT
     // temp for testing static pages
     public static void main(String[] args) {
-        LocalServerAuthorizationHandler handler = new LocalServerAuthorizationHandler((a, v) -> true);
+        LocalServerAuthorizationHandler handler = new LocalServerAuthorizationHandler(() -> (info -> true));
         handler.preOpenAuthorizationInBrowser(new MyFlickrApp());
     }
 

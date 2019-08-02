@@ -16,9 +16,11 @@
 package uk.co.magictractor.spew.access;
 
 import java.util.Scanner;
+import java.util.function.Supplier;
 
 import uk.co.magictractor.spew.api.SpewApplication;
 import uk.co.magictractor.spew.api.VerificationFunction;
+import uk.co.magictractor.spew.api.VerificationInfo;
 import uk.co.magictractor.spew.util.IOUtil;
 
 /**
@@ -26,14 +28,15 @@ import uk.co.magictractor.spew.util.IOUtil;
  */
 public class PasteVerificationCodeHandler extends AbstractAuthorizationHandler {
 
-    public PasteVerificationCodeHandler(VerificationFunction verificationFunction) {
-        super(verificationFunction);
+    private String callback;
+
+    public PasteVerificationCodeHandler(Supplier<VerificationFunction> verificationFunctionSupplier) {
+        super(verificationFunctionSupplier);
     }
 
     @Override
     public void preOpenAuthorizationInBrowser(SpewApplication application) {
-        // Do nothing.
-        // TODO! Get OOB value from the application. Maybe check a supports out-of-band flag?
+        callback = application.getOutOfBandUri();
     }
 
     @Override
@@ -46,7 +49,8 @@ public class PasteVerificationCodeHandler extends AbstractAuthorizationHandler {
 
         while (true) {
             String verificationCode = scanner.nextLine().trim();
-            boolean verified = verificationFunction().apply(null, verificationCode);
+            VerificationInfo verificationInfo = new VerificationInfo(verificationCode);
+            boolean verified = verificationFunctionSupplier().get().apply(verificationInfo);
             if (verified) {
                 System.out.println("Verified successfully");
                 return;
@@ -56,11 +60,9 @@ public class PasteVerificationCodeHandler extends AbstractAuthorizationHandler {
         }
     }
 
-    // "oob" is an abbreviation for out-of-band
-    // TODO! "oob" is not correct for OAuth2 (long variant of "oob")
     @Override
     public String getCallbackValue() {
-        return "oob";
+        return callback;
     }
 
 }

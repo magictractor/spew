@@ -15,17 +15,20 @@
  */
 package uk.co.magictractor.spew.server;
 
+import java.util.function.Supplier;
+
 import uk.co.magictractor.spew.api.VerificationFunction;
+import uk.co.magictractor.spew.api.VerificationInfo;
 
 /**
  *
  */
 public class OAuth1VerificationRequestHandler implements RequestHandler {
 
-    private final VerificationFunction verificationFunction;
+    private final Supplier<VerificationFunction> verificationFunctionSupplier;
 
-    public OAuth1VerificationRequestHandler(VerificationFunction verificationFunction) {
-        this.verificationFunction = verificationFunction;
+    public OAuth1VerificationRequestHandler(Supplier<VerificationFunction> verificationFunctionSupplier) {
+        this.verificationFunctionSupplier = verificationFunctionSupplier;
     }
 
     @Override
@@ -42,7 +45,9 @@ public class OAuth1VerificationRequestHandler implements RequestHandler {
             throw new IllegalArgumentException("Expected values were missing from authorization response");
         }
 
-        boolean verified = verificationFunction.apply(authToken, authVerifier);
+        // TODO! check whether the authToken changes or is repeated
+        VerificationInfo verificationInfo = new VerificationInfo(authVerifier).withAuthToken(authToken);
+        boolean verified = verificationFunctionSupplier.get().apply(verificationInfo);
 
         // TODO! change these to templates and add some info about the application / service provider
         if (verified) {

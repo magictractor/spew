@@ -15,17 +15,20 @@
  */
 package uk.co.magictractor.spew.server;
 
+import java.util.function.Supplier;
+
 import uk.co.magictractor.spew.api.VerificationFunction;
+import uk.co.magictractor.spew.api.VerificationInfo;
 
 /**
  *
  */
 public class OAuth2VerificationRequestHandler implements RequestHandler {
 
-    private final VerificationFunction verificationFunction;
+    private final Supplier<VerificationFunction> verificationFunctionSupplier;
 
-    public OAuth2VerificationRequestHandler(VerificationFunction verificationFunction) {
-        this.verificationFunction = verificationFunction;
+    public OAuth2VerificationRequestHandler(Supplier<VerificationFunction> verificationFunctionSupplier) {
+        this.verificationFunctionSupplier = verificationFunctionSupplier;
     }
 
     @Override
@@ -44,7 +47,8 @@ public class OAuth2VerificationRequestHandler implements RequestHandler {
         }
         System.err.println("code: " + code);
 
-        boolean verified = verificationFunction.apply(null, code);
+        VerificationInfo verificationInfo = new VerificationInfo(code);
+        boolean verified = verificationFunctionSupplier.get().apply(verificationInfo);
 
         // TODO! change these to templates and add some info about the application / service provider
         // TODO! common code with OAuth1VerificationRequestHandler

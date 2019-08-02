@@ -2,6 +2,7 @@ package uk.co.magictractor.spew.api;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Supplier;
 
 import uk.co.magictractor.spew.server.OAuth2VerificationRequestHandler;
 import uk.co.magictractor.spew.server.RequestHandler;
@@ -17,6 +18,27 @@ public interface OAuth2Application extends SpewApplication, HasCallbackServer {
 
     String getClientSecret();
 
+    @Override
+    default String getOutOfBandUri() {
+        // out-of-band isn't in the spec, but is supported by Google and other
+        // https://mailarchive.ietf.org/arch/msg/oauth/OCeJLZCEtNb170Xy-C3uTVDIYjM
+        return "urn:ietf:wg:oauth:2.0:oob";
+    }
+
+    /**
+     * <p>
+     * Scope may be specified for an application to restrict which API calls may
+     * be used, for example restricting the application to read only calls and
+     * not being able to read any profile information.
+     * </p>
+     * <p>
+     * Values used to restrict the scope are specified and documented by the
+     * service provider.
+     * </p>
+     * <p>
+     * Scope is only used by some service providers.
+     * </p>
+     */
     // https://brandur.org/oauth-scope
     // https://tools.ietf.org/html/rfc6749#section-3.3
     default String getScope() {
@@ -24,9 +46,9 @@ public interface OAuth2Application extends SpewApplication, HasCallbackServer {
     }
 
     @Override
-    default List<RequestHandler> getServerRequestHandlers(VerificationFunction verificationFunction) {
+    default List<RequestHandler> getServerRequestHandlers(Supplier<VerificationFunction> verificationFunctionSupplier) {
         return Arrays.asList(
-            new OAuth2VerificationRequestHandler(verificationFunction),
+            new OAuth2VerificationRequestHandler(verificationFunctionSupplier),
             new ShutdownOnceVerifiedRequestHandler(),
             new ResourceRequestHandler(serverResourcesRelativeToClass()));
     }

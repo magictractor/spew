@@ -2,6 +2,7 @@ package uk.co.magictractor.spew.api;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Supplier;
 
 import uk.co.magictractor.spew.server.OAuth1VerificationRequestHandler;
 import uk.co.magictractor.spew.server.RequestHandler;
@@ -18,9 +19,14 @@ public interface OAuth1Application extends SpewApplication, HasCallbackServer {
     String getConsumerSecret();
 
     @Override
-    default List<RequestHandler> getServerRequestHandlers(VerificationFunction verificationFunction) {
+    default String getOutOfBandUri() {
+        return "oob";
+    }
+
+    @Override
+    default List<RequestHandler> getServerRequestHandlers(Supplier<VerificationFunction> verificationFunctionSupplier) {
         return Arrays.asList(
-            new OAuth1VerificationRequestHandler(verificationFunction),
+            new OAuth1VerificationRequestHandler(verificationFunctionSupplier),
             new ShutdownOnceVerifiedRequestHandler(),
             new ResourceRequestHandler(serverResourcesRelativeToClass()));
     }

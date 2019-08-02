@@ -15,22 +15,30 @@
  */
 package uk.co.magictractor.spew.access;
 
+import java.util.function.Supplier;
+
 import uk.co.magictractor.spew.api.VerificationFunction;
 
-/**
- *
- */
 public abstract class AbstractAuthorizationHandler implements AuthorizationHandler {
 
-    private final VerificationFunction verificationFunction;
+    private final Supplier<VerificationFunction> verificationFunctionSupplier;
 
-    protected AbstractAuthorizationHandler(VerificationFunction verificationFunction) {
-        this.verificationFunction = verificationFunction;
+    protected AbstractAuthorizationHandler(Supplier<VerificationFunction> verificationFunctionSupplier) {
+        this.verificationFunctionSupplier = verificationFunctionSupplier;
     }
 
+    //    protected AbstractAuthorizationHandler(VerificationFunction verificationFunction) {
+    //        this(() -> verificationFunction);
+    //    }
+
+    //    @Override
+    //    public VerificationFunction verificationFunction() {
+    //        return verificationFunctionSupplier.get();
+    //    }
+
     @Override
-    public VerificationFunction verificationFunction() {
-        return verificationFunction;
+    public Supplier<VerificationFunction> verificationFunctionSupplier() {
+        return verificationFunctionSupplier;
     }
 
 }

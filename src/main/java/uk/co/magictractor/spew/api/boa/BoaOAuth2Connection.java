@@ -17,6 +17,7 @@ import uk.co.magictractor.spew.api.OAuth2Application;
 import uk.co.magictractor.spew.api.OAuth2ServiceProvider;
 import uk.co.magictractor.spew.api.SpewRequest;
 import uk.co.magictractor.spew.api.SpewResponse;
+import uk.co.magictractor.spew.api.VerificationInfo;
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponseFactory;
 import uk.co.magictractor.spew.token.UserPreferencesPersister;
@@ -28,19 +29,11 @@ import uk.co.magictractor.spew.util.ExceptionUtil;
 // https://developers.google.com/identity/protocols/OAuth2
 public class BoaOAuth2Connection extends AbstractBoaOAuthConnection<OAuth2Application, OAuth2ServiceProvider> {
 
-    // Hmm. out-of-band isn't in the spec, but is supported by Google and other
-    // https://mailarchive.ietf.org/arch/msg/oauth/OCeJLZCEtNb170Xy-C3uTVDIYjM
-    private static final String OOB = "urn:ietf:wg:oauth:2.0:oob";
-    // private static final String CALLBACK_SERVER = "http://localhost:8080";
-    //private static final String CALLBACK_SERVER = "http://127.0.0.1:8080";
-
     /*
      * milliseconds to remove from expiry to ensure that we refresh if getting
      * close to the server's expiry time
      */
     private static final int EXPIRY_BUFFER = 60 * 1000;
-
-    // private final OAuth2Application application;
 
     private final UserPreferencesPersister accessToken;
     // milliseconds since start of epoch
@@ -85,15 +78,16 @@ public class BoaOAuth2Connection extends AbstractBoaOAuthConnection<OAuth2Applic
 
         SpewRequest request = application.createGetRequest(getServiceProvider().getAuthorizationUri());
 
-        AuthorizationHandler authHandler = application.getAuthorizationHandler(this::verify);
+        // A bit mucky. The callback value comes from the handler but is also used in the verification function.
+        AuthorizationHandler[] authHandlerHolder = new AuthorizationHandler[1];
+        AuthorizationHandler authHandler = application
+                .getAuthorizationHandler(() -> (info -> verify(info, authHandlerHolder[0].getCallbackValue())));
+        authHandlerHolder[0] = authHandler;
 
         authHandler.preOpenAuthorizationInBrowser(application);
 
         request.setQueryStringParam("client_id", application.getClientId());
-        //String redirectUri = getAuthorizeRedirectUrl();
-        //request.setQueryStringParam("redirect_uri", redirectUri);
-        String callback = authHandler.getCallbackValue();
-        request.setQueryStringParam("redirect_uri", callback);
+        request.setQueryStringParam("redirect_uri", authHandler.getCallbackValue());
 
         // Always "code".
         // "token" type is more appropriate for client-side OAuth.
@@ -108,10 +102,10 @@ public class BoaOAuth2Connection extends AbstractBoaOAuthConnection<OAuth2Applic
     }
 
     // TODO! set and check randomised "state" value : https://developers.google.com/identity/protocols/OpenIDConnect#server-flow
-    private boolean verify(String authToken, String verificationCode) {
+    private boolean verify(VerificationInfo verificationInfo, String callback) {
         boolean verified = false;
         try {
-            fetchAccessAndRefreshToken(verificationCode);
+            fetchAccessAndRefreshToken(verificationInfo.getVerificationCode(), callback);
             verified = true;
         }
         catch (Exception e) {
@@ -123,7 +117,7 @@ public class BoaOAuth2Connection extends AbstractBoaOAuthConnection<OAuth2Applic
         return verified;
     }
 
-    private void fetchAccessAndRefreshToken(String code) {
+    private void fetchAccessAndRefreshToken(String code, String callback) {
         OAuth2Application application = getApplication();
 
         // ah! needed to be POST else 404 (Google)
@@ -143,7 +137,7 @@ public class BoaOAuth2Connection extends AbstractBoaOAuthConnection<OAuth2Applic
         // A 400 results if this does not match the original redirect URI.
         //request.setBodyParam("redirect_uri", "http://127.0.0.1:8080");
         // application.host() -> no could be OOB
-        request.setBodyParam("redirect_uri", "http://127.0.0.1:8080");
+        request.setBodyParam("redirect_uri", callback);
         // request.setParam("scope", "");
 
         System.err.println("request: " + request);

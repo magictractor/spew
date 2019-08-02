@@ -15,6 +15,8 @@
  */
 package uk.co.magictractor.spew.dropbox;
 
+import java.util.function.Supplier;
+
 import uk.co.magictractor.spew.access.AuthorizationHandler;
 import uk.co.magictractor.spew.api.OAuth2Application;
 import uk.co.magictractor.spew.api.OAuth2ServiceProvider;
@@ -42,9 +44,9 @@ public class MyDropboxApp implements OAuth2Application {
     }
 
     @Override
-    public AuthorizationHandler getAuthorizationHandler(VerificationFunction verificationFunction) {
+    public AuthorizationHandler getAuthorizationHandler(Supplier<VerificationFunction> verificationFunctionSupplier) {
         //return new PasteVerificationCodeHandler(verificationFunction);
-        return new LocalServerAuthorizationHandler(verificationFunction);
+        return new LocalServerAuthorizationHandler(verificationFunctionSupplier);
     }
 
 }

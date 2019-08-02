@@ -1,5 +1,7 @@
 package uk.co.magictractor.spew.api;
 
+import java.util.function.Supplier;
+
 import uk.co.magictractor.spew.access.AuthorizationHandler;
 import uk.co.magictractor.spew.api.connection.SpewConnectionCache;
 
@@ -37,8 +39,15 @@ public interface SpewApplication {
         return createRequest("DEL", url);
     }
 
-    default AuthorizationHandler getAuthorizationHandler(VerificationFunction verificationFunction) {
-        return getServiceProvider().getDefaultAuthorizationHandler(verificationFunction);
+    default AuthorizationHandler getAuthorizationHandler(Supplier<VerificationFunction> verificationFunctionSupplier) {
+        return getServiceProvider().getDefaultAuthorizationHandler(verificationFunctionSupplier);
     }
+
+    /**
+     * The out-of-band URI (sometimes referred to as "oob") is a special value
+     * used in the redirect_url to tell the server to display a verification
+     * code rather than perform a callback.
+     */
+    String getOutOfBandUri();
 
 }

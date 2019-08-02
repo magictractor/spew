@@ -15,6 +15,8 @@
  */
 package uk.co.magictractor.spew.access;
 
+import java.util.function.Supplier;
+
 import uk.co.magictractor.spew.api.SpewApplication;
 import uk.co.magictractor.spew.api.VerificationFunction;
 
@@ -31,7 +33,8 @@ import uk.co.magictractor.spew.api.VerificationFunction;
  */
 public interface AuthorizationHandler {
 
-    VerificationFunction verificationFunction();
+    // VerificationFunction verificationFunction();
+    Supplier<VerificationFunction> verificationFunctionSupplier();
 
     void preOpenAuthorizationInBrowser(SpewApplication application);
 

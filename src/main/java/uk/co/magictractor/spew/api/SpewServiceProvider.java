@@ -1,5 +1,7 @@
 package uk.co.magictractor.spew.api;
 
+import java.util.function.Supplier;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.jayway.jsonpath.Configuration;
@@ -10,8 +12,8 @@ import com.jayway.jsonpath.spi.mapper.GsonMappingProvider;
 import com.jayway.jsonpath.spi.mapper.MappingProvider;
 
 import uk.co.magictractor.spew.access.AuthorizationHandler;
+import uk.co.magictractor.spew.access.PasteVerificationCodeHandler;
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
-import uk.co.magictractor.spew.server.LocalServerAuthorizationHandler;
 import uk.co.magictractor.spew.util.ContentTypeUtil;
 
 // Base interface for OAuth1 and OAuth2. Some methods likely to move here from OAuth1 when (and if) OAuth2 support is added.
@@ -82,8 +84,9 @@ public interface SpewServiceProvider {
     }
 
     default AuthorizationHandler getDefaultAuthorizationHandler(
-            VerificationFunction verificationFunction) {
-        return new LocalServerAuthorizationHandler(verificationFunction);
+            Supplier<VerificationFunction> verificationFunctionSupplier) {
+        //return new LocalServerAuthorizationHandler();
+        return new PasteVerificationCodeHandler(verificationFunctionSupplier);
     }
 
     default String appManagementUrl() {

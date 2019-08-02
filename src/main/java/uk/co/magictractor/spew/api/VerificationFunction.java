@@ -15,13 +15,13 @@
  */
 package uk.co.magictractor.spew.api;
 
-import java.util.function.BiFunction;
+import java.util.function.Function;
 
 /**
  * Function used to complete authorization using the verification code from the
  * service provider's website.
  */
 @FunctionalInterface
-public interface VerificationFunction extends BiFunction<String, String, Boolean> {
+public interface VerificationFunction extends Function<VerificationInfo, Boolean> {
 
 }
