@@ -6,6 +6,7 @@ import java.util.List;
 import uk.co.magictractor.spew.server.OAuth2VerificationRequestHandler;
 import uk.co.magictractor.spew.server.RequestHandler;
 import uk.co.magictractor.spew.server.ResourceRequestHandler;
+import uk.co.magictractor.spew.server.ShutdownOnceVerifiedRequestHandler;
 
 public interface OAuth2Application extends SpewApplication, HasCallbackServer {
 
@@ -26,6 +27,7 @@ public interface OAuth2Application extends SpewApplication, HasCallbackServer {
     default List<RequestHandler> getServerRequestHandlers(VerificationFunction verificationFunction) {
         return Arrays.asList(
             new OAuth2VerificationRequestHandler(verificationFunction),
+            new ShutdownOnceVerifiedRequestHandler(),
             new ResourceRequestHandler(serverResourcesRelativeToClass()));
     }
 
