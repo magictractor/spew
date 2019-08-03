@@ -26,7 +26,9 @@ public class HttpUrlConnectionResponse extends AbstractOnCloseResponse {
     private final HttpURLConnection connection;
 
     public HttpUrlConnectionResponse(HttpURLConnection connection) throws IOException {
-        super(connection.getInputStream() != null ? connection.getInputStream() : connection.getErrorStream());
+        // Check for the error stream first, since getInputStream() throws an exception for some status codes.
+        // meh... both streams are null...
+        super(connection.getErrorStream() != null ? connection.getErrorStream() : connection.getInputStream());
         this.connection = connection;
     }
 

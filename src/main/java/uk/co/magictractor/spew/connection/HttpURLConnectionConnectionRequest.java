@@ -24,6 +24,9 @@ public class HttpURLConnectionConnectionRequest implements ConnectionRequest {
     private final HttpURLConnection httpUrlConnection;
 
     public HttpURLConnectionConnectionRequest(HttpURLConnection httpUrlConnection) {
+        // Can change method
+        // httpUrlConnection.setRequestMethod(method);
+        // Cannot change URL
         this.httpUrlConnection = httpUrlConnection;
     }
 

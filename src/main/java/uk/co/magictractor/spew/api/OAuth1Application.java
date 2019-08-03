@@ -9,6 +9,7 @@ import uk.co.magictractor.spew.server.RequestHandler;
 import uk.co.magictractor.spew.server.ResourceRequestHandler;
 import uk.co.magictractor.spew.server.ShutdownOnceVerifiedRequestHandler;
 
+@SpewAuthType
 public interface OAuth1Application extends SpewApplication, HasCallbackServer {
 
     @Override
