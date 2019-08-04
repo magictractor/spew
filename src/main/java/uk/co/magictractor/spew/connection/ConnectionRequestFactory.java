@@ -18,6 +18,7 @@ package uk.co.magictractor.spew.connection;
 import java.util.Arrays;
 import java.util.List;
 
+// yuck
 public final class ConnectionRequestFactory {
 
     // TODO! SPI

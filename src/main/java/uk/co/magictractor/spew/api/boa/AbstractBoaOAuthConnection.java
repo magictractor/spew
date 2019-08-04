@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
 
 import uk.co.magictractor.spew.api.AbstractConnection;
 import uk.co.magictractor.spew.api.SpewApplication;
-import uk.co.magictractor.spew.api.SpewConnection;
 import uk.co.magictractor.spew.api.SpewRequest;
 import uk.co.magictractor.spew.api.SpewResponse;
 import uk.co.magictractor.spew.api.SpewServiceProvider;
@@ -20,7 +19,7 @@ import uk.co.magictractor.spew.core.response.HttpUrlConnectionResponse;
 
 // Common code for OAuth1 and OAuth2 implementations.
 public abstract class AbstractBoaOAuthConnection<APP extends SpewApplication, SP extends SpewServiceProvider>
-        extends AbstractConnection<APP, SP> implements SpewConnection {
+        extends AbstractConnection<APP, SP> {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
 

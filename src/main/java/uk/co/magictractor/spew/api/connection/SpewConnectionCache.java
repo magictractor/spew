@@ -15,9 +15,6 @@ public class SpewConnectionCache {
 
     private static final Map<Class<? extends SpewApplication>, SpewConnection> connections = new HashMap<>();
 
-    public static final SpewConnectionFactory CONNECTION_FACTORY = SPIUtil
-            .loadFirstAvailable(SpewConnectionFactory.class);
-
     public static SpewConnection getConnection(Class<? extends SpewApplication> applicationClass) {
         SpewConnection connection = connections.get(applicationClass);
         if (connection == null) {
@@ -36,8 +33,11 @@ public class SpewConnectionCache {
     private static SpewConnection initConnection(Class<? extends SpewApplication> applicationClass) {
         checkAuthType(applicationClass);
         SpewApplication application = ExceptionUtil.call(() -> applicationClass.newInstance());
-        return CONNECTION_FACTORY.createConnection(application);
+        return SPIUtil.firstNotNull(SpewConnectionFactory.class, factory -> factory.createConnection(application));
+        // TODO! wire in transport here??
     }
+
+    // hmm... another method for the transport...?
 
     /*
      * @param applicationClass

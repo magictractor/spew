@@ -21,7 +21,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.ServiceLoader.Provider;
+import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import uk.co.magictractor.spew.api.boa.BoaConnectionFactory;
 import uk.co.magictractor.spew.api.connection.SpewConnectionFactory;
@@ -55,6 +57,21 @@ public final class SPIUtil {
     }
 
     public static <T> T loadFirstAvailable(Class<T> apiClass) {
+        return available(apiClass)
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException(
+                    "There are no available implementations of " + apiClass.getName()));
+    }
+
+    public static <V, T> V firstNotNull(Class<T> apiClass, Function<T, V> function) {
+        return available(apiClass)
+                .map(function)
+                .filter(v -> v != null)
+                .findFirst()
+                .get();
+    }
+
+    private static <T> Stream<T> available(Class<T> apiClass) {
         String sysImpl = System.getProperty(apiClass.getName());
         if (sysImpl != null) {
             return loadAvailableSystemPropertyImplementation(sysImpl);
@@ -69,16 +86,7 @@ public final class SPIUtil {
             candidates = defaultImplementations(apiClass);
         }
 
-        for (T candidate : candidates) {
-            if (!isImplementationAvailable(candidate)) {
-                // Not available, perhaps due to a dependency on a third party library.
-                continue;
-            }
-
-            return candidate;
-        }
-
-        throw new IllegalArgumentException("There are no available implementations of " + apiClass.getName());
+        return candidates.stream().filter(SPIUtil::isImplementationAvailable);
     }
 
     private static boolean isImplementationAvailable(Object implementation) {

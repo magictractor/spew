@@ -32,4 +32,8 @@ public interface SpewConnectionFactory {
      */
     public SpewConnection createConnection(SpewApplication application);
 
+    default SpewConnection createConnectionWithoutAuth() {
+        return null;
+    }
+
 }
