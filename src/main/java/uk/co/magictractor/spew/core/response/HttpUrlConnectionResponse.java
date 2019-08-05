@@ -38,15 +38,14 @@ public class HttpUrlConnectionResponse extends AbstractOnCloseResponse {
     }
 
     private static InputStream getStream0(HttpURLConnection connection) throws IOException {
-        // Check for the error stream first, since getInputStream() throws an exception for some status codes.
-        // meh... both streams are null...
-        //return connection.getErrorStream() != null ? connection.getErrorStream() : connection.getInputStream();
-        return connection.getResponseCode() < 300 ? connection.getInputStream() : connection.getErrorStream();
-        //        InputStream stream = connection.getErrorStream();
-        //        if (stream == null) {
-        //            stream = connection.getInputStream();
-        //        }
-        //        return stream;
+        /*
+         * getInputStream() throws an exception for some status codes and
+         * getErrorStream() is null until getInputStream() has been called.
+         * Workaround by calling getResponseCode() which calls getInputStream()
+         * with exception handling.
+         */
+        connection.getResponseCode();
+        return connection.getErrorStream() != null ? connection.getErrorStream() : connection.getInputStream();
     }
 
     @Override
