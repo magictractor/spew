@@ -1,6 +1,5 @@
 package uk.co.magictractor.spew.api.boa;
 
-import java.net.HttpURLConnection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -68,8 +67,8 @@ public class BoaOAuth2Connection extends AbstractBoaOAuthConnection<OAuth2Applic
         return ExceptionUtil.call(() -> request0(apiRequest, this::setAuthHeader));
     }
 
-    private void setAuthHeader(HttpURLConnection con) {
-        con.setRequestProperty("Authorization", "Bearer " + accessToken.getValue());
+    private void setAuthHeader(SpewRequest request) {
+        request.addHeader("Authorization", "Bearer " + accessToken.getValue());
     }
 
     // https://developers.google.com/photos/library/guides/authentication-authorization
@@ -239,8 +238,18 @@ public class BoaOAuth2Connection extends AbstractBoaOAuthConnection<OAuth2Applic
 
     private SpewParsedResponse authRequest(SpewRequest apiRequest) {
         // forAll(apiRequest);
+
+        // TODO! more elegant way to prep the request rather than repeating this here?
+        apiRequest.prepareToSend();
+
         SpewResponse response = ExceptionUtil.call(() -> request0(apiRequest));
         return SpewParsedResponseFactory.parse(getApplication(), response);
     }
+
+    //    @Override
+    //    public SpewResponse request(ConnectionRequest request) {
+    //        // TODO Auto-generated method stub
+    //        return null;
+    //    }
 
 }

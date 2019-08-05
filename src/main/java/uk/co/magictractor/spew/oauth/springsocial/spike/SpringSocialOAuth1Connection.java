@@ -17,7 +17,9 @@ package uk.co.magictractor.spew.oauth.springsocial.spike;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Map;
 
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.client.ClientHttpRequest;
 import org.springframework.social.connect.Connection;
@@ -30,7 +32,6 @@ import uk.co.magictractor.spew.api.OAuth1Application;
 import uk.co.magictractor.spew.api.SpewConnection;
 import uk.co.magictractor.spew.api.SpewRequest;
 import uk.co.magictractor.spew.api.SpewResponse;
-import uk.co.magictractor.spew.connection.ConnectionRequestFactory;
 import uk.co.magictractor.spew.token.UserPreferencesPersister;
 
 public class SpringSocialOAuth1Connection implements SpewConnection {
@@ -44,8 +45,8 @@ public class SpringSocialOAuth1Connection implements SpewConnection {
 
     /**
      * Default visibility, applications should obtain instances via
-     * {@link SpringSocialConnectionFactory#createConnection}, usually indirectly
-     * via OAuthConnectionFactory.
+     * {@link SpringSocialConnectionFactory#createConnection}, usually
+     * indirectly via OAuthConnectionFactory.
      */
     /* default */ SpringSocialOAuth1Connection(OAuth1Application application) {
         this.application = application;
@@ -61,8 +62,6 @@ public class SpringSocialOAuth1Connection implements SpewConnection {
 
     @Override
     public SpewResponse request(SpewRequest apiRequest) {
-        //ConnectionData data = connection.createData();
-
         String url = apiRequest.getUrl();
         HttpMethod method = HttpMethod.valueOf(apiRequest.getHttpMethod());
         // RequestCallback requestCallback = System.err::println;
@@ -71,15 +70,19 @@ public class SpringSocialOAuth1Connection implements SpewConnection {
         HttpMessageConverterExtractor<SpewResponse> responseExtractor = new HttpMessageConverterExtractor<>(
             String.class, Arrays.asList(converter));
 
-        //connection.getApi().postForEntity(url, request, responseType)
-
         return connection.getApi().execute(url, method, requestCallback, responseExtractor);
     }
 
     private void populateHttpRequest(ClientHttpRequest httpRequest, SpewRequest apiRequest) throws IOException {
-        // TODO! rework jsonConfiguration here
-        ConnectionRequestFactory.createConnectionRequest(httpRequest)
-                .writeParams(apiRequest, application.getServiceProvider().getJsonConfiguration());
+
+        HttpHeaders headers = httpRequest.getHeaders();
+        for (Map.Entry<String, String> headerEntry : apiRequest.getHeaders().entrySet()) {
+            headers.add(headerEntry.getKey(), headerEntry.getValue());
+        }
+
+        if (apiRequest.getBody() != null) {
+            httpRequest.getBody().write(apiRequest.getBody());
+        }
     }
 
 }

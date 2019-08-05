@@ -29,6 +29,7 @@ public class Flickr implements OAuth1ServiceProvider {
     private Flickr() {
     }
 
+    // TODO! stop these being added to auth calls
     @Override
     public void prepareRequest(SpewRequest request) {
         request.setQueryStringParam("format", "json");

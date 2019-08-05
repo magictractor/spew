@@ -57,12 +57,16 @@ public final class BoaOAuth1Connection extends AbstractBoaOAuthConnection<OAuth1
 
         forAll(apiRequest);
         forApi(apiRequest);
-        return ExceptionUtil.call(() -> request0(apiRequest));
+        return ExceptionUtil.call(() -> request0(apiRequest, this::addOAuthSignature));
+    }
+
+    private void addOAuthSignature(SpewRequest request) {
+        request.setQueryStringParam("oauth_signature", getSignature(request));
     }
 
     private SpewParsedResponse authRequest(SpewRequest apiRequest) {
         forAll(apiRequest);
-        SpewResponse response = ExceptionUtil.call(() -> request0(apiRequest));
+        SpewResponse response = ExceptionUtil.call(() -> request0(apiRequest, this::addOAuthSignature));
 
         return new KeyValuePairsResponse(response);
     }
@@ -141,23 +145,6 @@ public final class BoaOAuth1Connection extends AbstractBoaOAuthConnection<OAuth1
         userSecret.setValue(authSecret);
     }
 
-    @Override
-    protected String getUrl(SpewRequest request) {
-        StringBuilder urlBuilder = new StringBuilder();
-        urlBuilder.append(super.getUrl(request));
-
-        if (request.getQueryStringParams().isEmpty()) {
-            urlBuilder.append('?');
-        }
-        else {
-            urlBuilder.append('&');
-        }
-        urlBuilder.append("oauth_signature=");
-        urlBuilder.append(getSignature(request));
-
-        return urlBuilder.toString();
-    }
-
     // See https://www.flickr.com/services/api/auth.oauth.html
     // https://gist.github.com/ishikawa/88599/3195bdeecabeb38aa62872ab61877aefa6aef89e
     private String getSignature(SpewRequest request) {
@@ -205,7 +192,10 @@ public final class BoaOAuth1Connection extends AbstractBoaOAuthConnection<OAuth1
 
         getLogger().trace("signature: {}", signature);
 
-        return ExceptionUtil.call(() -> URLEncoder.encode(signature, "UTF-8"));
+        // The value in the query string params map should not be encoded.
+        // It will be encoded when the query is built.
+        // return ExceptionUtil.call(() -> URLEncoder.encode(signature, "UTF-8"));
+        return signature;
     }
 
     private String getImageBamSignatureBaseString(SpewRequest request) {
@@ -236,7 +226,7 @@ public final class BoaOAuth1Connection extends AbstractBoaOAuthConnection<OAuth1
     }
 
     private String getSignatureQueryString(SpewRequest request) {
-        // TODO! maybe ignore some params - see Flick upload photo
+        // TODO! maybe ignore some params - see Flickr upload photo
         TreeMap<String, Object> orderedParams = new TreeMap<>(request.getQueryStringParams());
         StringBuilder stringBuilder = new StringBuilder();
         boolean first = true;

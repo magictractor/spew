@@ -74,7 +74,8 @@ public final class SPIUtil {
     private static <T> Stream<T> available(Class<T> apiClass) {
         String sysImpl = System.getProperty(apiClass.getName());
         if (sysImpl != null) {
-            return loadAvailableSystemPropertyImplementation(sysImpl);
+            T impl = loadAvailableSystemPropertyImplementation(sysImpl);
+            return Stream.of(impl);
         }
 
         ServiceLoader<T> serviceLoader = ServiceLoader.load(apiClass);

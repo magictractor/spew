@@ -15,6 +15,7 @@ public interface SpewApplication {
 
     default SpewRequest createRequest(String httpMethod, String url) {
         SpewRequest request = new SpewRequest(this, httpMethod, url);
+        // TODO! skip prep during auth
         prepareRequest(request);
         return request;
     }

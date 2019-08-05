@@ -21,9 +21,11 @@ public final class SpewRequest implements ServerRequest {
     private final String baseUrl;
     private final Map<String, String> queryStringParams = new LinkedHashMap<>();
     private final Map<String, Object> bodyParams = new LinkedHashMap<>();
+    private byte[] body;
     // POST (and PUT) requests should have a content type
     // TODO! better to have this set explicitly and only once
     private String contentType = ContentTypeUtil.JSON_MIME_TYPES.get(0);
+    private Map<String, String> headers = new LinkedHashMap<>();
 
     private boolean sent;
 
@@ -106,6 +108,10 @@ public final class SpewRequest implements ServerRequest {
         this.contentType = contentType;
     }
 
+    public Map<String, String> getHeaders() {
+        return headers;
+    }
+
     public void setQueryStringParam(String key, Object value) {
         if (value != null) {
             queryStringParams.put(key, value.toString());
@@ -138,6 +144,11 @@ public final class SpewRequest implements ServerRequest {
         return queryStringParams.containsKey(key) ? queryStringParams.get(key) : "";
     }
 
+    public byte[] getBody() {
+        // TODO! maybe check if there are params but no body yet
+        return body;
+    }
+
     public Map<String, Object> getBodyParams() {
         return bodyParams;
     }
@@ -147,10 +158,25 @@ public final class SpewRequest implements ServerRequest {
         return queryStringParams;
     }
 
+    public void addHeader(String headerName, String headerValue) {
+        if (headers.containsKey(headerName)) {
+            throw new IllegalArgumentException(
+                "Header already has a value assigned " + headerName + ": " + headers.get(headerName));
+        }
+        headers.put(headerName, headerValue);
+    }
+
+    public void addHeader(String headerName, long headerValue) {
+        addHeader(headerName, Long.toString(headerValue));
+    }
+
     public SpewParsedResponse sendRequest() {
         if (sent) {
             throw new IllegalStateException("This request has already been sent");
         }
+
+        prepareToSend();
+
         SpewConnection connection = SpewConnectionCache.getConnection(application.getClass());
         SpewResponse response = connection.request(this);
         sent = true;
@@ -160,6 +186,31 @@ public final class SpewRequest implements ServerRequest {
         application.getServiceProvider().verifyResponse(parsedResponse);
 
         return parsedResponse;
+    }
+
+    /**
+     * Create body from body params and tidy up headers before request is sent.
+     */
+    // TODO! not public - auth requests needing prepped too - maybe infer it?
+    public void prepareToSend() {
+        // TODO! not just POST? PUT too
+        if ("POST".equals(getHttpMethod())) {
+            // setDoOutput(true);
+            if (!getBodyParams().isEmpty()) {
+                // TODO! allow body to have been set explicitly
+                body = ContentTypeUtil.bodyBytes(this, application.getServiceProvider().getJsonConfiguration());
+                addHeader(ContentTypeUtil.CONTENT_TYPE_HEADER_NAME, getContentType());
+                addHeader(ContentTypeUtil.CONTENT_LENGTH_HEADER_NAME, body.length);
+            }
+            else {
+                // Prevent 411 Content Length Required
+                addHeader(ContentTypeUtil.CONTENT_LENGTH_HEADER_NAME, 0);
+            }
+        }
+        else if (!getBodyParams().isEmpty()) {
+            // Move this check into setBodyParam()?
+            throw new IllegalStateException("Body params not supported for HTTP method " + getHttpMethod());
+        }
     }
 
     @Override

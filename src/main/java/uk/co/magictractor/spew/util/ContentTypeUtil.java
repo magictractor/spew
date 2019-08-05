@@ -39,6 +39,7 @@ import uk.co.magictractor.spew.api.SpewResponse;
 public class ContentTypeUtil {
 
     public static final String CONTENT_TYPE_HEADER_NAME = "Content-Type";
+    public static final String CONTENT_LENGTH_HEADER_NAME = "Content-Length";
 
     // TODO! private
     // TODO! Dropbox auth uses text/javascript in the token response. Tolerate here for now, but perhaps move to an override in the app?

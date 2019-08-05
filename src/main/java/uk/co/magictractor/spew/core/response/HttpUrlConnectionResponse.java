@@ -16,7 +16,10 @@
 package uk.co.magictractor.spew.core.response;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.HttpURLConnection;
+
+import uk.co.magictractor.spew.util.ExceptionUtil;
 
 /**
  *
@@ -25,11 +28,25 @@ public class HttpUrlConnectionResponse extends AbstractOnCloseResponse {
 
     private final HttpURLConnection connection;
 
-    public HttpUrlConnectionResponse(HttpURLConnection connection) throws IOException {
+    public HttpUrlConnectionResponse(HttpURLConnection connection) {
+        super(getStream(connection));
+        this.connection = connection;
+    }
+
+    private static InputStream getStream(HttpURLConnection connection) {
+        return ExceptionUtil.call(() -> getStream0(connection));
+    }
+
+    private static InputStream getStream0(HttpURLConnection connection) throws IOException {
         // Check for the error stream first, since getInputStream() throws an exception for some status codes.
         // meh... both streams are null...
-        super(connection.getErrorStream() != null ? connection.getErrorStream() : connection.getInputStream());
-        this.connection = connection;
+        //return connection.getErrorStream() != null ? connection.getErrorStream() : connection.getInputStream();
+        return connection.getResponseCode() < 300 ? connection.getInputStream() : connection.getErrorStream();
+        //        InputStream stream = connection.getErrorStream();
+        //        if (stream == null) {
+        //            stream = connection.getInputStream();
+        //        }
+        //        return stream;
     }
 
     @Override
