@@ -22,7 +22,7 @@ import uk.co.magictractor.spew.api.PageTokenServiceIterator;
 import uk.co.magictractor.spew.api.SpewApplication;
 import uk.co.magictractor.spew.api.SpewRequest;
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
-import uk.co.magictractor.spew.dropbox.pojo.DropboxFolder;
+import uk.co.magictractor.spew.dropbox.pojo.DropboxFileOrFolder;
 
 /**
  *
@@ -46,20 +46,26 @@ public class DropboxIterator<E> extends PageTokenServiceIterator<E> {
         if (pageToken != null) {
             request.setBodyParam("cursor", pageToken);
         }
+        else {
 
-        // TODO! move into a subclass
-        // These params should only be set if pageToken is null.
-        request.setBodyParam("path", "/");
+            // TODO! move into a subclass
+            // These params should only be set if pageToken is null.
+            // The root folder must be specified as an empty string rather than slash.
+            request.setBodyParam("path", "");
+
+            // page sizes may be restricted. More values than this may be returned.
+            //request.setBodyParam("limit", 2);
+        }
 
         SpewParsedResponse response = request.sendRequest();
 
         List<E> page = response.getList("$.entries", getElementType());
 
-        String nextToken = response.getString("$.cursor.value");
+        String nextToken = null;
         boolean hasMore = response.getBoolean("$.has_more");
-        // TODO! assertion relating hasMore and nextToken==null
         if (hasMore) {
-
+            // The response contains a cursor even if has_more is false.
+            nextToken = response.getString("$.cursor");
         }
 
         return new PageAndNextToken<>(page, nextToken);
@@ -75,11 +81,12 @@ public class DropboxIterator<E> extends PageTokenServiceIterator<E> {
     }
 
     public static void main(String[] args) {
-        Iterator<DropboxFolder> iterator = new DropboxIteratorBuilder<>(new MyDropboxApp(), DropboxFolder.class)
-                .build();
+        Iterator<DropboxFileOrFolder> iterator = new DropboxIteratorBuilder<>(new MyDropboxApp(),
+            DropboxFileOrFolder.class)
+                    .build();
         while (iterator.hasNext()) {
-            DropboxFolder folder = iterator.next();
-            System.err.println(folder);
+            DropboxFileOrFolder folder = iterator.next();
+            System.err.println(folder.getName());
         }
     }
 

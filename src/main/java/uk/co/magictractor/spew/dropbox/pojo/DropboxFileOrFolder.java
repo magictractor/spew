@@ -18,13 +18,17 @@ package uk.co.magictractor.spew.dropbox.pojo;
 /**
  *
  */
-public class DropboxFolder {
-    //    ".tag": "file",
+public class DropboxFileOrFolder {
+    //    ".tag": "file", // (or "folder")
     //    "name": "Prime_Numbers.txt",
     //    "id": "id:a4ayc_80_OEAAAAAAAAAXw",
 
     private String tag;
     private String name;
     private String id;
+
+    public String getName() {
+        return name;
+    }
 
 }
