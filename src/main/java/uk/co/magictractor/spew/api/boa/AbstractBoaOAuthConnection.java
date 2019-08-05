@@ -8,10 +8,12 @@ import org.slf4j.LoggerFactory;
 
 import uk.co.magictractor.spew.api.AbstractConnection;
 import uk.co.magictractor.spew.api.SpewApplication;
-import uk.co.magictractor.spew.api.SpewHttpUrlConnection;
+import uk.co.magictractor.spew.api.SpewConnection;
 import uk.co.magictractor.spew.api.SpewRequest;
 import uk.co.magictractor.spew.api.SpewResponse;
 import uk.co.magictractor.spew.api.SpewServiceProvider;
+import uk.co.magictractor.spew.api.connection.SpewConnectionFactory;
+import uk.co.magictractor.spew.util.spi.SPIUtil;
 
 // Common code for OAuth1 and OAuth2 implementations.
 public abstract class AbstractBoaOAuthConnection<APP extends SpewApplication, SP extends SpewServiceProvider>
@@ -19,12 +21,15 @@ public abstract class AbstractBoaOAuthConnection<APP extends SpewApplication, SP
 
     private Logger logger = LoggerFactory.getLogger(getClass());
 
-    // TODO! from factory and abstract class
-    private final SpewHttpUrlConnection<APP, SP> transport;
+    private final SpewConnection transport;
 
     protected AbstractBoaOAuthConnection(APP application) {
         super(application);
-        transport = new SpewHttpUrlConnection<>(application);
+        transport = SPIUtil
+                .firstNotNull(SpewConnectionFactory.class, SpewConnectionFactory::createConnectionWithoutAuth)
+                .orElseThrow(() -> new IllegalStateException(
+                    "There is no available " + SpewConnectionFactory.class.getSimpleName()
+                            + " instance which will create a connection with no authorisation"));
     }
 
     protected final Logger getLogger() {

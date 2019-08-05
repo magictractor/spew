@@ -26,12 +26,7 @@ import uk.co.magictractor.spew.util.ExceptionUtil;
 /**
  *
  */
-public class SpewHttpUrlConnection<APP extends SpewApplication, SP extends SpewServiceProvider>
-        extends AbstractConnection<APP, SP> {
-
-    public SpewHttpUrlConnection(APP application) {
-        super(application);
-    }
+public class SpewHttpUrlConnection implements SpewConnection {
 
     @Override
     public SpewResponse request(SpewRequest request) {
