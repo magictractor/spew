@@ -34,6 +34,7 @@ import uk.co.magictractor.spew.api.SpewRequest;
 import uk.co.magictractor.spew.api.SpewResponse;
 import uk.co.magictractor.spew.token.UserPreferencesPersister;
 
+// https://docs.spring.io/spring-social/docs/current-SNAPSHOT/reference/htmlsingle/
 public class SpringSocialOAuth1Connection implements SpewConnection {
 
     private final OAuth1Application application;
