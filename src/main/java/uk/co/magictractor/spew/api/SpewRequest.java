@@ -9,7 +9,6 @@ import com.google.common.base.MoreObjects;
 
 import uk.co.magictractor.spew.api.connection.SpewConnectionCache;
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
-import uk.co.magictractor.spew.core.response.parser.SpewParsedResponseFactory;
 import uk.co.magictractor.spew.server.ServerRequest;
 import uk.co.magictractor.spew.util.ContentTypeUtil;
 
@@ -181,7 +180,7 @@ public final class SpewRequest implements ServerRequest {
         SpewResponse response = connection.request(this);
         sent = true;
 
-        SpewParsedResponse parsedResponse = SpewParsedResponseFactory.parse(application, response);
+        SpewParsedResponse parsedResponse = SpewParsedResponse.parse(application, response);
 
         application.getServiceProvider().verifyResponse(parsedResponse);
 

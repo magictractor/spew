@@ -18,7 +18,6 @@ import uk.co.magictractor.spew.api.SpewRequest;
 import uk.co.magictractor.spew.api.SpewResponse;
 import uk.co.magictractor.spew.api.VerificationInfo;
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
-import uk.co.magictractor.spew.core.response.parser.SpewParsedResponseFactory;
 import uk.co.magictractor.spew.token.UserPreferencesPersister;
 import uk.co.magictractor.spew.util.BrowserUtil;
 import uk.co.magictractor.spew.util.ContentTypeUtil;
@@ -243,7 +242,7 @@ public class BoaOAuth2Connection extends AbstractBoaOAuthConnection<OAuth2Applic
         apiRequest.prepareToSend();
 
         SpewResponse response = ExceptionUtil.call(() -> request0(apiRequest));
-        return SpewParsedResponseFactory.parse(getApplication(), response);
+        return SpewParsedResponse.parse(getApplication(), response);
     }
 
     //    @Override

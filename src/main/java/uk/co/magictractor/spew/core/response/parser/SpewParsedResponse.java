@@ -15,7 +15,16 @@
  */
 package uk.co.magictractor.spew.core.response.parser;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Optional;
+
+import uk.co.magictractor.spew.api.SpewApplication;
+import uk.co.magictractor.spew.api.SpewResponse;
+import uk.co.magictractor.spew.util.ContentTypeUtil;
+import uk.co.magictractor.spew.util.spi.SPIUtil;
 
 /**
  * <p>
@@ -41,5 +50,27 @@ public interface SpewParsedResponse {
     <T> T getObject(String path, Class<T> type);
 
     <T> List<T> getList(String path, Class<T> type);
+
+    static SpewParsedResponse parse(SpewApplication application, SpewResponse response) {
+
+        Optional<SpewParsedResponse> instance = SPIUtil.firstNotNull(SpewParsedResponseInit.class,
+            factory -> factory.instanceFor(application, response));
+        if (instance.isPresent()) {
+            return instance.get();
+        }
+
+        String headerContentType = response.getHeader(ContentTypeUtil.CONTENT_TYPE_HEADER_NAME);
+        // TODO! perhaps get encoding from header
+        InputStreamReader bodyReader = new InputStreamReader(response.getBodyInputStream(), StandardCharsets.UTF_8);
+        BufferedReader bufferedBodyReader = new BufferedReader(bodyReader);
+        StringBuilder messageBuilder = new StringBuilder()
+                .append("Unable to parse response\nContent-Type: ")
+                .append(headerContentType);
+        bufferedBodyReader.lines().forEach(line -> {
+            messageBuilder.append('\n').append(line);
+        });
+
+        throw new IllegalStateException(messageBuilder.toString());
+    }
 
 }

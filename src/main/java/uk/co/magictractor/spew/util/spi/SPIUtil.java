@@ -19,14 +19,18 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.ServiceLoader;
 import java.util.ServiceLoader.Provider;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import uk.co.magictractor.spew.api.boa.BoaConnectionFactory;
 import uk.co.magictractor.spew.api.connection.SpewConnectionFactory;
+import uk.co.magictractor.spew.core.response.parser.SpewParsedResponseInit;
+import uk.co.magictractor.spew.core.response.parser.jayway.JaywayResponseInit;
 import uk.co.magictractor.spew.oauth.springsocial.spike.SpringSocialConnectionFactory;
 import uk.co.magictractor.spew.util.ExceptionUtil;
 
@@ -41,6 +45,8 @@ public final class SPIUtil {
     static {
         addDefault(SpewConnectionFactory.class, new BoaConnectionFactory());
         addDefault(SpewConnectionFactory.class, new SpringSocialConnectionFactory());
+
+        addDefault(SpewParsedResponseInit.class, new JaywayResponseInit());
     }
 
     private static <T> void addDefault(Class<T> apiClass, T implementation) {
@@ -63,12 +69,15 @@ public final class SPIUtil {
                     "There are no available implementations of " + apiClass.getName()));
     }
 
-    public static <V, T> V firstNotNull(Class<T> apiClass, Function<T, V> function) {
+    public static <V, T> Optional<V> firstNotNull(Class<T> apiClass, Function<T, V> function) {
+        return firstMatching(apiClass, function, v -> v != null);
+    }
+
+    public static <V, T> Optional<V> firstMatching(Class<T> apiClass, Function<T, V> function, Predicate<V> matcher) {
         return available(apiClass)
                 .map(function)
-                .filter(v -> v != null)
-                .findFirst()
-                .get();
+                .filter(v -> matcher.test(v))
+                .findFirst();
     }
 
     private static <T> Stream<T> available(Class<T> apiClass) {
