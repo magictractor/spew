@@ -21,7 +21,7 @@ import uk.co.magictractor.spew.api.SpewResponse;
 /**
  *
  */
-public interface SpewParsedResponseInit {
+public interface SpewParsedResponseFactory {
 
     /**
      * Generally, the first parser from SPI or (if no SPI) the default list

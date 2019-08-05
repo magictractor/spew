@@ -29,8 +29,8 @@ import java.util.stream.Stream;
 
 import uk.co.magictractor.spew.api.boa.BoaConnectionFactory;
 import uk.co.magictractor.spew.api.connection.SpewConnectionFactory;
-import uk.co.magictractor.spew.core.response.parser.SpewParsedResponseInit;
-import uk.co.magictractor.spew.core.response.parser.jayway.JaywayResponseInit;
+import uk.co.magictractor.spew.core.response.parser.SpewParsedResponseFactory;
+import uk.co.magictractor.spew.core.response.parser.jayway.JaywayResponseFactory;
 import uk.co.magictractor.spew.oauth.springsocial.spike.SpringSocialConnectionFactory;
 import uk.co.magictractor.spew.util.ExceptionUtil;
 
@@ -46,7 +46,7 @@ public final class SPIUtil {
         addDefault(SpewConnectionFactory.class, new BoaConnectionFactory());
         addDefault(SpewConnectionFactory.class, new SpringSocialConnectionFactory());
 
-        addDefault(SpewParsedResponseInit.class, new JaywayResponseInit());
+        addDefault(SpewParsedResponseFactory.class, new JaywayResponseFactory());
     }
 
     private static <T> void addDefault(Class<T> apiClass, T implementation) {

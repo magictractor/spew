@@ -51,7 +51,7 @@ public class DropboxIterator<E> extends PageTokenServiceIterator<E> {
             // TODO! move into a subclass
             // These params should only be set if pageToken is null.
             // The root folder must be specified as an empty string rather than slash.
-            request.setBodyParam("path", "");
+            request.setBodyParam("path", "/");
 
             // page sizes may be restricted. More values than this may be returned.
             //request.setBodyParam("limit", 2);

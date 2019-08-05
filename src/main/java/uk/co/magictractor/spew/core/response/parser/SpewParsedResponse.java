@@ -53,7 +53,7 @@ public interface SpewParsedResponse {
 
     static SpewParsedResponse parse(SpewApplication application, SpewResponse response) {
 
-        Optional<SpewParsedResponse> instance = SPIUtil.firstNotNull(SpewParsedResponseInit.class,
+        Optional<SpewParsedResponse> instance = SPIUtil.firstNotNull(SpewParsedResponseFactory.class,
             factory -> factory.instanceFor(application, response));
         if (instance.isPresent()) {
             return instance.get();

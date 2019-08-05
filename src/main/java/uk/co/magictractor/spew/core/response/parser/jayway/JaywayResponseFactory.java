@@ -18,13 +18,13 @@ package uk.co.magictractor.spew.core.response.parser.jayway;
 import uk.co.magictractor.spew.api.SpewApplication;
 import uk.co.magictractor.spew.api.SpewResponse;
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
-import uk.co.magictractor.spew.core.response.parser.SpewParsedResponseInit;
+import uk.co.magictractor.spew.core.response.parser.SpewParsedResponseFactory;
 import uk.co.magictractor.spew.util.ContentTypeUtil;
 
 /**
  *
  */
-public class JaywayResponseInit implements SpewParsedResponseInit {
+public class JaywayResponseFactory implements SpewParsedResponseFactory {
 
     @Override
     public SpewParsedResponse instanceFor(SpewApplication application, SpewResponse response) {
