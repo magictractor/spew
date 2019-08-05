@@ -33,6 +33,20 @@ import uk.co.magictractor.spew.api.VerificationFunction;
  */
 public interface AuthorizationHandler {
 
+    /**
+     * Verification codes are passed back via an HTTP redirect to a local server
+     * fired up to receive the callback using Netty or another lightweight web
+     * server.
+     */
+    // Strings rather than enum to allow users to devise alternate mechanisms.
+    public static final String VERIFICATION_TYPE_LOCAL_CALLBACK_SERVER = "LocalCallbackServer";
+
+    /**
+     * Verification codes are displayed on a web paste and manually copied to
+     * the console by the user.
+     */
+    public static final String VERIFICATION_TYPE_PASTE_CONSOLE = "PasteConsole";
+
     // VerificationFunction verificationFunction();
     Supplier<VerificationFunction> verificationFunctionSupplier();
 
