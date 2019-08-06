@@ -8,6 +8,8 @@ import uk.co.magictractor.spew.server.OAuth2VerificationRequestHandler;
 import uk.co.magictractor.spew.server.RequestHandler;
 import uk.co.magictractor.spew.server.ResourceRequestHandler;
 import uk.co.magictractor.spew.server.ShutdownOnceVerifiedRequestHandler;
+import uk.co.magictractor.spew.store.ApplicationPropertyStore;
+import uk.co.magictractor.spew.util.spi.SPIUtil;
 
 @SpewAuthType
 public interface OAuth2Application extends SpewApplication, HasCallbackServer {
@@ -15,9 +17,13 @@ public interface OAuth2Application extends SpewApplication, HasCallbackServer {
     @Override
     OAuth2ServiceProvider getServiceProvider();
 
-    String getClientId();
+    default String getClientId() {
+        return SPIUtil.firstAvailable(ApplicationPropertyStore.class).getProperty(this, "client_id");
+    }
 
-    String getClientSecret();
+    default String getClientSecret() {
+        return SPIUtil.firstAvailable(ApplicationPropertyStore.class).getProperty(this, "client_secret");
+    }
 
     @Override
     default String getOutOfBandUri() {

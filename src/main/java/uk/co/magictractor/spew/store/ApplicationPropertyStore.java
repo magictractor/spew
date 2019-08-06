@@ -13,20 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.co.magictractor.spew.example.facebook;
+package uk.co.magictractor.spew.store;
 
-import uk.co.magictractor.spew.api.OAuth2Application;
-import uk.co.magictractor.spew.api.OAuth2ServiceProvider;
-import uk.co.magictractor.spew.provider.facebook.Facebook;
+import uk.co.magictractor.spew.api.SpewApplication;
 
-/**
- *
- */
-public class MyFacebookApp implements OAuth2Application {
+public interface ApplicationPropertyStore {
 
-    @Override
-    public OAuth2ServiceProvider getServiceProvider() {
-        return Facebook.getInstance();
-    }
+    String getProperty(SpewApplication application, String propertyName);
 
 }

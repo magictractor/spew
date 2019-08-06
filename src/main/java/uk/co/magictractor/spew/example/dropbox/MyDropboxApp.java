@@ -21,27 +21,14 @@ import uk.co.magictractor.spew.access.AuthorizationHandler;
 import uk.co.magictractor.spew.api.OAuth2Application;
 import uk.co.magictractor.spew.api.OAuth2ServiceProvider;
 import uk.co.magictractor.spew.api.VerificationFunction;
-import uk.co.magictractor.spew.processor.properties.ResourceFileProperties;
 import uk.co.magictractor.spew.provider.dropbox.Dropbox;
 import uk.co.magictractor.spew.server.LocalServerAuthorizationHandler;
 
 public class MyDropboxApp implements OAuth2Application {
 
-    private final ResourceFileProperties properties = new ResourceFileProperties(getClass());
-
     @Override
     public OAuth2ServiceProvider getServiceProvider() {
         return Dropbox.getInstance();
-    }
-
-    @Override
-    public String getClientId() {
-        return properties.getProperty("client_id");
-    }
-
-    @Override
-    public String getClientSecret() {
-        return properties.getProperty("client_secret");
     }
 
     @Override

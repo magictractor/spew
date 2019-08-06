@@ -34,6 +34,8 @@ import uk.co.magictractor.spew.http.apache.SpewApacheHttpClientConnectionFactory
 import uk.co.magictractor.spew.http.javaurl.SpewHttpUrlConnectionFactory;
 import uk.co.magictractor.spew.oauth.boa.BoaConnectionFactory;
 import uk.co.magictractor.spew.oauth.springsocial.spike.SpringSocialConnectionFactory;
+import uk.co.magictractor.spew.store.ApplicationPropertyStore;
+import uk.co.magictractor.spew.store.ResourceFileApplicationPropertyStore;
 import uk.co.magictractor.spew.util.ExceptionUtil;
 
 /**
@@ -45,6 +47,8 @@ public final class SPIUtil {
     private static final Map<Class, List> DEFAULT_IMPLEMENTATIONS = new HashMap<>();
 
     static {
+        addDefault(ApplicationPropertyStore.class, new ResourceFileApplicationPropertyStore());
+
         addDefault(SpewConnectionFactory.class, new BoaConnectionFactory());
         addDefault(SpewConnectionFactory.class, new SpringSocialConnectionFactory());
         // No auth connections. Boa connections wrap the first available one of these.
@@ -67,7 +71,7 @@ public final class SPIUtil {
     private SPIUtil() {
     }
 
-    public static <T> T loadFirstAvailable(Class<T> apiClass) {
+    public static <T> T firstAvailable(Class<T> apiClass) {
         return available(apiClass)
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException(

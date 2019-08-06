@@ -2,12 +2,9 @@ package uk.co.magictractor.spew.example.google;
 
 import uk.co.magictractor.spew.api.OAuth2Application;
 import uk.co.magictractor.spew.api.OAuth2ServiceProvider;
-import uk.co.magictractor.spew.processor.properties.ResourceFileProperties;
 import uk.co.magictractor.spew.provider.google.Google;
 
 public class MyGooglePhotosApp implements OAuth2Application {
-
-    private final ResourceFileProperties properties = new ResourceFileProperties(MyGooglePhotosApp.class);
 
     @Override
     public OAuth2ServiceProvider getServiceProvider() {
@@ -27,13 +24,4 @@ public class MyGooglePhotosApp implements OAuth2Application {
         // return "https://www.googleapis.com/auth/photoslibrary.sharing";
     }
 
-    @Override
-    public String getClientId() {
-        return properties.getProperty("client_id");
-    }
-
-    @Override
-    public String getClientSecret() {
-        return properties.getProperty("client_secret");
-    }
 }

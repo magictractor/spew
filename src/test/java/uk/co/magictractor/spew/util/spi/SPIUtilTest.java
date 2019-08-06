@@ -13,20 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.co.magictractor.spew.example.facebook;
+package uk.co.magictractor.spew.util.spi;
 
-import uk.co.magictractor.spew.api.OAuth2Application;
-import uk.co.magictractor.spew.api.OAuth2ServiceProvider;
-import uk.co.magictractor.spew.provider.facebook.Facebook;
+import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.Test;
 
-/**
- *
- */
-public class MyFacebookApp implements OAuth2Application {
+import uk.co.magictractor.spew.store.ApplicationPropertyStore;
 
-    @Override
-    public OAuth2ServiceProvider getServiceProvider() {
-        return Facebook.getInstance();
+public class SPIUtilTest {
+
+    @Test
+    public void testFirstAvailable_sameInstance() {
+        ApplicationPropertyStore a = SPIUtil.firstAvailable(ApplicationPropertyStore.class);
+        ApplicationPropertyStore b = SPIUtil.firstAvailable(ApplicationPropertyStore.class);
+        Assertions.assertThat(a).isSameAs(b);
     }
 
 }
