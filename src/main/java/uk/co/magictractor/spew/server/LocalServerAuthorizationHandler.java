@@ -21,7 +21,7 @@ import uk.co.magictractor.spew.access.AbstractAuthorizationHandler;
 import uk.co.magictractor.spew.api.HasCallbackServer;
 import uk.co.magictractor.spew.api.SpewApplication;
 import uk.co.magictractor.spew.api.VerificationFunction;
-import uk.co.magictractor.spew.flickr.MyFlickrApp;
+import uk.co.magictractor.spew.example.flickr.MyFlickrApp;
 import uk.co.magictractor.spew.server.netty.NettyCallbackServer;
 
 /**

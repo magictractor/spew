@@ -27,12 +27,12 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import uk.co.magictractor.spew.api.boa.BoaConnectionFactory;
 import uk.co.magictractor.spew.api.connection.SpewConnectionFactory;
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponseFactory;
 import uk.co.magictractor.spew.core.response.parser.jayway.JaywayResponseFactory;
 import uk.co.magictractor.spew.http.apache.SpewApacheHttpClientConnectionFactory;
 import uk.co.magictractor.spew.http.javaurl.SpewHttpUrlConnectionFactory;
+import uk.co.magictractor.spew.oauth.boa.BoaConnectionFactory;
 import uk.co.magictractor.spew.oauth.springsocial.spike.SpringSocialConnectionFactory;
 import uk.co.magictractor.spew.util.ExceptionUtil;
 

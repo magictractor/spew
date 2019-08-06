@@ -16,7 +16,7 @@
 package uk.co.magictractor.spew.oauth.springsocial.spike;
 
 import uk.co.magictractor.spew.api.connection.SpewConnectionFactory;
-import uk.co.magictractor.spew.flickr.processor.FlickrPhotoUpdateProcessor;
+import uk.co.magictractor.spew.example.flickr.processor.FlickrPhotoUpdateProcessor;
 
 /**
  * <p>

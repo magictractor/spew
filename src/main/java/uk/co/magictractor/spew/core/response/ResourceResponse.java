@@ -108,7 +108,7 @@ public class ResourceResponse implements SpewResponse {
     @Override
     public InputStream getBodyInputStream() {
         ensureBodyInputStream();
-        return bodyStream.orElseThrow(() -> new IllegalStateException("resource not found"));
+        return bodyStream.orElseThrow(() -> new IllegalStateException("resource not found: " + resourceName));
     }
 
     public boolean exists() {
