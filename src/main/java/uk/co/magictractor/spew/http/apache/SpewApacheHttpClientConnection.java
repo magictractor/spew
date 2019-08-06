@@ -38,8 +38,11 @@ public class SpewApacheHttpClientConnection implements SpewConnection {
 
         RequestBuilder requestBuilder = RequestBuilder
                 .create(apiRequest.getHttpMethod())
-                .setUri(apiRequest.getUrl())
-                .setEntity(new ByteArrayEntity(apiRequest.getBody()));
+                .setUri(apiRequest.getUrl());
+
+        if (apiRequest.getBody() != null) {
+            requestBuilder.setEntity(new ByteArrayEntity(apiRequest.getBody()));
+        }
 
         for (Map.Entry<String, String> headerEntry : apiRequest.getHeaders().entrySet()) {
             System.err.println("header: " + headerEntry.getKey() + "=" + headerEntry.getValue());
