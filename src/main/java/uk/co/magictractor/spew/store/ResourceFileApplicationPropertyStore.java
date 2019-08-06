@@ -15,28 +15,18 @@
  */
 package uk.co.magictractor.spew.store;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import uk.co.magictractor.spew.api.SpewApplication;
 import uk.co.magictractor.spew.processor.properties.ResourceFileProperties;
 
-public class ResourceFileApplicationPropertyStore implements ApplicationPropertyStore {
+public class ResourceFileApplicationPropertyStore extends AbstractApplicationPropertyStore<ResourceFileProperties> {
 
-    private Map<Class<? extends SpewApplication>, ResourceFileProperties> propertiesMap = new HashMap<>();
+    public ResourceFileApplicationPropertyStore() {
+        super(app -> new ResourceFileProperties(app));
+    }
 
     @Override
     public String getProperty(SpewApplication application, String propertyName) {
         return getProperties(application).getProperty(propertyName);
     }
 
-    private ResourceFileProperties getProperties(SpewApplication application) {
-        ResourceFileProperties properties = propertiesMap.get(application.getClass());
-        if (properties == null) {
-            properties = new ResourceFileProperties(application);
-            propertiesMap.put(application.getClass(), properties);
-        }
-
-        return properties;
-    }
 }
