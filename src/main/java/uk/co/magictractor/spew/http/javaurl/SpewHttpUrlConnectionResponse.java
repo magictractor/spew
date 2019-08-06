@@ -13,22 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.co.magictractor.spew.core.response;
+package uk.co.magictractor.spew.http.javaurl;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 
+import uk.co.magictractor.spew.core.response.AbstractOnCloseResponse;
 import uk.co.magictractor.spew.util.ExceptionUtil;
 
 /**
  *
  */
-public class HttpUrlConnectionResponse extends AbstractOnCloseResponse {
+public class SpewHttpUrlConnectionResponse extends AbstractOnCloseResponse {
 
     private final HttpURLConnection connection;
 
-    public HttpUrlConnectionResponse(HttpURLConnection connection) {
+    public SpewHttpUrlConnectionResponse(HttpURLConnection connection) {
         super(getStream(connection));
         this.connection = connection;
     }

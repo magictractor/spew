@@ -13,8 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.co.magictractor.spew.api;
+package uk.co.magictractor.spew.http.javaurl;
 
+import uk.co.magictractor.spew.api.SpewApplication;
+import uk.co.magictractor.spew.api.SpewConnection;
 import uk.co.magictractor.spew.api.connection.SpewConnectionFactory;
 
 public class SpewHttpUrlConnectionFactory implements SpewConnectionFactory {

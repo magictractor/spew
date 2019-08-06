@@ -13,14 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.co.magictractor.spew.api;
+package uk.co.magictractor.spew.http.javaurl;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Map;
 
-import uk.co.magictractor.spew.core.response.HttpUrlConnectionResponse;
+import uk.co.magictractor.spew.api.SpewConnection;
+import uk.co.magictractor.spew.api.SpewRequest;
+import uk.co.magictractor.spew.api.SpewResponse;
 import uk.co.magictractor.spew.util.ExceptionUtil;
 
 /**
@@ -48,7 +50,7 @@ public class SpewHttpUrlConnection implements SpewConnection {
             connection.getOutputStream().write(request.getBody());
         }
 
-        return new HttpUrlConnectionResponse(connection);
+        return new SpewHttpUrlConnectionResponse(connection);
     }
 
 }
