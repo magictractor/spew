@@ -58,6 +58,15 @@
 			<artifactId>metadata-extractor</artifactId>
 			<version>2.11.0</version>
 		</dependency>
+		
+		<!-- For making requests without auth, or wrapping with auth, as done by Boa connections.
+		Optional (provided scope), code based on Java's HttpUrlConnection is used if this is not present. -->
+		<dependency>
+    		<groupId>org.apache.httpcomponents</groupId>
+    		<artifactId>httpclient</artifactId>
+    		<version>4.5.9</version>
+    		<scope>provided</scope>
+		</dependency>
 
 		<!-- For callback server -->
 		<dependency>
