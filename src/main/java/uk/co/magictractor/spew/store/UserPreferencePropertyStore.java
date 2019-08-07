@@ -19,18 +19,18 @@ import java.util.HashMap;
 import java.util.Map;
 
 import uk.co.magictractor.spew.api.SpewApplication;
-import uk.co.magictractor.spew.processor.properties.ResourceFileProperties;
 
-public class ResourceFileApplicationPropertyStore
-        implements ApplicationPropertyStore {
+/**
+ *
+ */
+public class UserPreferencePropertyStore implements UserPropertyStore {
 
-    private Map<SpewApplication, ResourceFileProperties> propertiesMap = new HashMap<>();
+    private final Map<String, PreferencesProperty> propertyMap = new HashMap<>();
 
     @Override
-    public String getProperty(SpewApplication application, String propertyName) {
-        ResourceFileProperties properties = propertiesMap.computeIfAbsent(application,
-            app -> new ResourceFileProperties(application));
-        return properties.getProperty(propertyName);
+    public EditableProperty getProperty(SpewApplication application, String propertyName) {
+        String key = application.getClass().getName() + ":" + propertyName;
+        return propertyMap.computeIfAbsent(key, k -> new PreferencesProperty(application, propertyName));
     }
 
 }

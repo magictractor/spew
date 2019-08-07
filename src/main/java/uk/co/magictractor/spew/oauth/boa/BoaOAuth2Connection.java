@@ -18,10 +18,12 @@ import uk.co.magictractor.spew.api.SpewRequest;
 import uk.co.magictractor.spew.api.SpewResponse;
 import uk.co.magictractor.spew.api.VerificationInfo;
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
-import uk.co.magictractor.spew.token.UserPreferencesPersister;
+import uk.co.magictractor.spew.store.EditableProperty;
+import uk.co.magictractor.spew.store.UserPropertyStore;
 import uk.co.magictractor.spew.util.BrowserUtil;
 import uk.co.magictractor.spew.util.ContentTypeUtil;
 import uk.co.magictractor.spew.util.ExceptionUtil;
+import uk.co.magictractor.spew.util.spi.SPIUtil;
 
 // https://tools.ietf.org/html/rfc6749
 // https://developers.google.com/identity/protocols/OAuth2
@@ -33,10 +35,10 @@ public class BoaOAuth2Connection extends AbstractBoaOAuthConnection<OAuth2Applic
      */
     private static final int EXPIRY_BUFFER = 60 * 1000;
 
-    private final UserPreferencesPersister accessToken;
+    private final EditableProperty accessToken;
     // milliseconds since start of epoch
-    private final UserPreferencesPersister accessTokenExpiry;
-    private final UserPreferencesPersister refreshToken;
+    private final EditableProperty accessTokenExpiry;
+    private final EditableProperty refreshToken;
 
     /**
      * Default visibility, applications should obtain instances via
@@ -46,9 +48,10 @@ public class BoaOAuth2Connection extends AbstractBoaOAuthConnection<OAuth2Applic
     /* default */ BoaOAuth2Connection(OAuth2Application application) {
         super(application);
 
-        this.accessToken = new UserPreferencesPersister(application, "access_token");
-        this.accessTokenExpiry = new UserPreferencesPersister(application, "access_token_expiry");
-        this.refreshToken = new UserPreferencesPersister(application, "refresh_token");
+        UserPropertyStore userPropertyStore = SPIUtil.firstAvailable(UserPropertyStore.class);
+        this.accessToken = userPropertyStore.getProperty(application, "access_token");
+        this.accessTokenExpiry = userPropertyStore.getProperty(application, "access_token_expiry");
+        this.refreshToken = userPropertyStore.getProperty(application, "refresh_token");
     }
 
     @Override
@@ -173,9 +176,9 @@ public class BoaOAuth2Connection extends AbstractBoaOAuthConnection<OAuth2Applic
         setAccessToken((key) -> response.getString(key));
     }
 
-    //	private void setAccessToken(OAuthResponse response) {
-    //		setAccessToken(response.getString("access_token"), response.getString("expires_in"));
-    //	}
+    //  private void setAccessToken(OAuthResponse response) {
+    //      setAccessToken(response.getString("access_token"), response.getString("expires_in"));
+    //  }
 
     //
     private void setAccessToken(FullHttpMessage httpMessage) {
@@ -227,13 +230,13 @@ public class BoaOAuth2Connection extends AbstractBoaOAuthConnection<OAuth2Applic
         return isExpired;
     }
 
-    //	{
-    //		  "access_token": "ya29.GltcBrSQ1GX2N6sN57ktc1smgmocYpP1MKgn_wPkJRpu0KcTxgDNW7r4UBg3w3rK0J6B3tQI-OjIgFuHDXBmY3a4--7Jj3qy6saDIYbrdYobv3jVxrMA4B3hEdGn",
-    //		  "expires_in": 3600,
-    //		  "refresh_token": "1/gLkG1sNlUr3U3T-TVWtX37jOe40f6eQvgoFLG_26mfs",
-    //		  "scope": "https://www.googleapis.com/auth/photoslibrary https://www.googleapis.com/auth/photoslibrary.sharing",
-    //		  "token_type": "Bearer"
-    //		}
+    //  {
+    //        "access_token": "ya29.GltcBrSQ1GX2N6sN57ktc1smgmocYpP1MKgn_wPkJRpu0KcTxgDNW7r4UBg3w3rK0J6B3tQI-OjIgFuHDXBmY3a4--7Jj3qy6saDIYbrdYobv3jVxrMA4B3hEdGn",
+    //        "expires_in": 3600,
+    //        "refresh_token": "1/gLkG1sNlUr3U3T-TVWtX37jOe40f6eQvgoFLG_26mfs",
+    //        "scope": "https://www.googleapis.com/auth/photoslibrary https://www.googleapis.com/auth/photoslibrary.sharing",
+    //        "token_type": "Bearer"
+    //      }
 
     private SpewParsedResponse authRequest(SpewRequest apiRequest) {
         // forAll(apiRequest);

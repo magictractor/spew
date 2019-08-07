@@ -20,9 +20,11 @@ import uk.co.magictractor.spew.api.VerificationInfo;
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
 import uk.co.magictractor.spew.core.response.parser.text.KeyValuePairsResponse;
 import uk.co.magictractor.spew.provider.imagebam.ImageBam;
-import uk.co.magictractor.spew.token.UserPreferencesPersister;
+import uk.co.magictractor.spew.store.EditableProperty;
+import uk.co.magictractor.spew.store.UserPropertyStore;
 import uk.co.magictractor.spew.util.BrowserUtil;
 import uk.co.magictractor.spew.util.ExceptionUtil;
+import uk.co.magictractor.spew.util.spi.SPIUtil;
 
 // TODO! common interface for OAuth1 and OAuth2 connections (and no auth? / other auth?)
 public final class BoaOAuth1Connection extends AbstractBoaOAuthConnection<OAuth1Application, OAuth1ServiceProvider> {
@@ -33,8 +35,8 @@ public final class BoaOAuth1Connection extends AbstractBoaOAuthConnection<OAuth1
     /**
      * Temporary tokens and secrets are held in memory and not persisted.
      */
-    private final UserPreferencesPersister userToken;
-    private final UserPreferencesPersister userSecret;
+    private final EditableProperty userToken;
+    private final EditableProperty userSecret;
 
     /**
      * Default visibility, applications should obtain instances via
@@ -44,8 +46,8 @@ public final class BoaOAuth1Connection extends AbstractBoaOAuthConnection<OAuth1
     /* default */ BoaOAuth1Connection(OAuth1Application application) {
         super(application);
 
-        this.userToken = new UserPreferencesPersister(application, "user_token");
-        this.userSecret = new UserPreferencesPersister(application, "user_secret");
+        this.userToken = SPIUtil.firstAvailable(UserPropertyStore.class).getProperty(application, "user_token");
+        this.userSecret = SPIUtil.firstAvailable(UserPropertyStore.class).getProperty(application, "user_secret");
     }
 
     @Override

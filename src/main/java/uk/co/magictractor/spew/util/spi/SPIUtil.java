@@ -36,6 +36,8 @@ import uk.co.magictractor.spew.oauth.boa.BoaConnectionFactory;
 import uk.co.magictractor.spew.oauth.springsocial.spike.SpringSocialConnectionFactory;
 import uk.co.magictractor.spew.store.ApplicationPropertyStore;
 import uk.co.magictractor.spew.store.ResourceFileApplicationPropertyStore;
+import uk.co.magictractor.spew.store.UserPreferencePropertyStore;
+import uk.co.magictractor.spew.store.UserPropertyStore;
 import uk.co.magictractor.spew.util.ExceptionUtil;
 
 /**
@@ -48,6 +50,8 @@ public final class SPIUtil {
 
     static {
         addDefault(ApplicationPropertyStore.class, new ResourceFileApplicationPropertyStore());
+
+        addDefault(UserPropertyStore.class, new UserPreferencePropertyStore());
 
         addDefault(SpewConnectionFactory.class, new BoaConnectionFactory());
         addDefault(SpewConnectionFactory.class, new SpringSocialConnectionFactory());

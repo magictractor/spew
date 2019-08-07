@@ -15,22 +15,22 @@
  */
 package uk.co.magictractor.spew.store;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import uk.co.magictractor.spew.api.SpewApplication;
-import uk.co.magictractor.spew.processor.properties.ResourceFileProperties;
 
-public class ResourceFileApplicationPropertyStore
-        implements ApplicationPropertyStore {
+public interface UserPropertyStore {
 
-    private Map<SpewApplication, ResourceFileProperties> propertiesMap = new HashMap<>();
-
-    @Override
-    public String getProperty(SpewApplication application, String propertyName) {
-        ResourceFileProperties properties = propertiesMap.computeIfAbsent(application,
-            app -> new ResourceFileProperties(application));
-        return properties.getProperty(propertyName);
-    }
+    /**
+     * <p>
+     * User properties are editable because user access tokens are stored once
+     * access to the application has been verified.
+     * </p>
+     * <p>
+     * An implementation could have a no-op for
+     * {@link EditableProperty#setValue}, which would prevent the access token
+     * being persisted and require the user to authorise access to the
+     * application every time.
+     * </p>
+     */
+    EditableProperty getProperty(SpewApplication application, String propertyName);
 
 }

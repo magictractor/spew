@@ -32,15 +32,17 @@ import uk.co.magictractor.spew.api.OAuth1Application;
 import uk.co.magictractor.spew.api.SpewConnection;
 import uk.co.magictractor.spew.api.SpewRequest;
 import uk.co.magictractor.spew.api.SpewResponse;
-import uk.co.magictractor.spew.token.UserPreferencesPersister;
+import uk.co.magictractor.spew.store.EditableProperty;
+import uk.co.magictractor.spew.store.UserPropertyStore;
+import uk.co.magictractor.spew.util.spi.SPIUtil;
 
 // https://docs.spring.io/spring-social/docs/current-SNAPSHOT/reference/htmlsingle/
 public class SpringSocialOAuth1Connection implements SpewConnection {
 
     private final OAuth1Application application;
 
-    private UserPreferencesPersister userToken;
-    private UserPreferencesPersister userSecret;
+    private EditableProperty userToken;
+    private EditableProperty userSecret;
 
     private Connection<RestOperations> connection;
 
@@ -54,8 +56,8 @@ public class SpringSocialOAuth1Connection implements SpewConnection {
 
         SpewOAuth1ConnectionFactory connectionFactory = new SpewOAuth1ConnectionFactory(application);
 
-        this.userToken = new UserPreferencesPersister(application, "user_token");
-        this.userSecret = new UserPreferencesPersister(application, "user_secret");
+        this.userToken = SPIUtil.firstAvailable(UserPropertyStore.class).getProperty(application, "user_token");
+        this.userSecret = SPIUtil.firstAvailable(UserPropertyStore.class).getProperty(application, "user_secret");
 
         OAuthToken token = new OAuthToken(userToken.getValue(), userSecret.getValue());
         connection = connectionFactory.createConnection(token);
