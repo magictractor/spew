@@ -2,7 +2,7 @@ package uk.co.magictractor.spew.photo;
 
 import java.util.Comparator;
 
-public class TagComparator {
+public final class TagComparator {
 
     private static final Comparator<Tag> TAG_TYPE = Comparator.comparing(Tag::getTagType,
         Comparator.nullsLast(Comparator.naturalOrder()));
@@ -11,5 +11,8 @@ public class TagComparator {
     private static final Comparator<Tag> NAME_ASC = Comparator.comparing(Tag::getTagName);
 
     public static final Comparator<Tag> ASCENDING = TAG_TYPE.thenComparing(DEPTH_DESC).thenComparing(NAME_ASC);
+
+    private TagComparator() {
+    }
 
 }

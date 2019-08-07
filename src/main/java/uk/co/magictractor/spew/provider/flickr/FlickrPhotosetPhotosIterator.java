@@ -32,6 +32,8 @@ public class FlickrPhotosetPhotosIterator<E> extends PageCountServiceIterator<E>
         request.setQueryStringParam("photoset_id", photosetId);
         request.setQueryStringParam("user_id", userId);
 
+        request.setQueryStringParam("extras", FlickrPhotoIterator.EXTRAS);
+
         request.setQueryStringParam("page", pageNumber);
         // default is 100, max is 500
         // request.setParam("per_page", 500);

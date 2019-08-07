@@ -2,10 +2,11 @@ package uk.co.magictractor.spew.example.flickr.processor;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import com.google.common.base.Joiner;
 
 import uk.co.magictractor.spew.api.SpewApplication;
 import uk.co.magictractor.spew.api.SpewRequest;
@@ -14,6 +15,7 @@ import uk.co.magictractor.spew.example.flickr.MyFlickrApp;
 import uk.co.magictractor.spew.example.flickr.pojo.FlickrPhoto;
 import uk.co.magictractor.spew.example.flickr.pojo.FlickrPhotoset;
 import uk.co.magictractor.spew.photo.Photo;
+import uk.co.magictractor.spew.photo.PhotoComparator;
 import uk.co.magictractor.spew.photo.filter.DateTakenPhotoFilter;
 import uk.co.magictractor.spew.photo.local.dates.DateRange;
 import uk.co.magictractor.spew.processor.common.MutableAlbum;
@@ -22,8 +24,8 @@ import uk.co.magictractor.spew.processor.common.PhotoProcessorContext;
 import uk.co.magictractor.spew.processor.common.PhotoTidyProcessorChain;
 import uk.co.magictractor.spew.processor.common.PhotoUpdateProcessor;
 import uk.co.magictractor.spew.provider.flickr.Flickr;
-import uk.co.magictractor.spew.provider.flickr.FlickrPhotosetIterator;
 import uk.co.magictractor.spew.provider.flickr.FlickrPhotoIterator.FlickrPhotoIteratorBuilder;
+import uk.co.magictractor.spew.provider.flickr.FlickrPhotosetIterator;
 import uk.co.magictractor.spew.provider.flickr.FlickrPhotosetPhotosIterator.FlickrPhotosetPhotosIteratorBuilder;
 
 public class FlickrPhotoUpdateProcessor extends PhotoUpdateProcessor {
@@ -128,28 +130,36 @@ public class FlickrPhotoUpdateProcessor extends PhotoUpdateProcessor {
     }
 
     private void syncAlbum(MutableAlbum album) {
-        Collection<String> existingPhotoIds = fetchExistingPhotoIds(album);
+        List<String> existingPhotoIds = fetchExistingPhotoIds(album);
         System.err.println("existing photo ids: " + existingPhotoIds);
 
         List<String> targetPhotoIds = album.getPhotos()
                 .stream()
+                .sorted(PhotoComparator.DATE_TIME_ASC)
                 .map(Photo::getServiceProviderId)
                 .collect(Collectors.toList());
 
         List<String> photoIdsToBeAdded = new ArrayList<>(targetPhotoIds);
         photoIdsToBeAdded.removeAll(existingPhotoIds);
+        System.err.println("to be added: " + photoIdsToBeAdded);
         if (!photoIdsToBeAdded.isEmpty()) {
             addPhotos(album, photoIdsToBeAdded);
         }
 
         List<String> photoIdsToBeRemoved = new ArrayList<>(existingPhotoIds);
         photoIdsToBeRemoved.removeAll(targetPhotoIds);
+        System.err.println("to be removed: " + photoIdsToBeRemoved);
         if (!photoIdsToBeRemoved.isEmpty()) {
             removePhotos(album, photoIdsToBeRemoved);
         }
 
-        System.err.println("to be added: " + photoIdsToBeAdded);
-        System.err.println("to be removed: " + photoIdsToBeRemoved);
+        if (!existingPhotoIds.equals(targetPhotoIds)) {
+            System.err.println("reorder required");
+            reorderPhotos(album, targetPhotoIds);
+        }
+        else {
+            System.err.println("order correct");
+        }
     }
 
     private List<String> fetchExistingPhotoIds(MutableAlbum album) {
@@ -178,6 +188,16 @@ public class FlickrPhotoUpdateProcessor extends PhotoUpdateProcessor {
 
     private void removePhotos(MutableAlbum album, List<String> photoIdsToBeRemoved) {
         throw new UnsupportedOperationException("removePhotos() has not yet been implemented");
+    }
+
+    private void reorderPhotos(MutableAlbum album, List<String> photoIds) {
+        SpewRequest request = application.createPostRequest(Flickr.REST_ENDPOINT);
+        request.setQueryStringParam("method", "flickr.photosets.reorderPhotos");
+        request.setQueryStringParam("photoset_id", album.getServiceProviderId());
+        String photoIdsString = Joiner.on(',').join(photoIds);
+        request.setQueryStringParam("photo_ids", photoIdsString);
+
+        request.sendRequest();
     }
 
     // App Garden

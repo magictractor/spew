@@ -21,6 +21,9 @@ import uk.co.magictractor.spew.photo.local.dates.DateRange;
  */
 public class FlickrPhotoIterator<E> extends PageCountServiceIterator<E> {
 
+    // Default so other iterators can use the same constant
+    /* default */ static final String EXTRAS = "date_upload,date_taken,description,tags,machine_tags,url_o";
+
     // From API doc: "The date can be in the form of a unix timestamp or mysql
     // datetime."
     private String minTakenDate;
@@ -59,7 +62,7 @@ public class FlickrPhotoIterator<E> extends PageCountServiceIterator<E> {
         //
         // url_o is a workaround for o_dims not working
         // https://www.flickr.com/groups/51035612836@N01/discuss/72157649995435595/
-        request.setQueryStringParam("extras", "date_upload,date_taken,description,tags,machine_tags,url_o");
+        request.setQueryStringParam("extras", EXTRAS);
         // request.setParam("extras", ALL_EXTRAS);
         SpewParsedResponse response = request.sendRequest();
 
