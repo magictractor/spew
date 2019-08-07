@@ -36,7 +36,7 @@ public class PasteVerificationCodeHandler extends AbstractAuthorizationHandler {
 
     @Override
     public void preOpenAuthorizationInBrowser(SpewApplication application) {
-        callback = application.getOutOfBandUri();
+        callback = application.getServiceProvider().getOutOfBandUri();
     }
 
     @Override

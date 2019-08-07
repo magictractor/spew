@@ -88,14 +88,18 @@ public class BoaOAuth2Connection extends AbstractBoaOAuthConnection<OAuth2Applic
         authHandler.preOpenAuthorizationInBrowser(application);
 
         request.setQueryStringParam("client_id", application.getClientId());
+        // Omit for Imgur with "pin"
         request.setQueryStringParam("redirect_uri", authHandler.getCallbackValue());
 
         // Always "code".
         // "token" type is more appropriate for client-side OAuth.
+        // "pin" for Imgur
         request.setQueryStringParam("response_type", "code");
 
         request.setQueryStringParam("scope", application.getScope());
 
+        application.modifyAuthorizationRequest(request);
+        
         String authUri = request.getUrl();
         BrowserUtil.openBrowserTab(authUri);
 
@@ -126,10 +130,12 @@ public class BoaOAuth2Connection extends AbstractBoaOAuthConnection<OAuth2Applic
         request.setContentType(ContentTypeUtil.FORM_MIME_TYPE);
 
         request.setBodyParam("code", code);
+        //request.setBodyParam("pin", code); // Imgur with "pin"
         request.setBodyParam("client_id", application.getClientId());
         request.setBodyParam("client_secret", application.getClientSecret());
 
         request.setBodyParam("grant_type", "authorization_code");
+        //request.setBodyParam("grant_type", "pin"); // Imgur with "pin"
 
         // request.setParam("redirect_uri",
         // "https://www.googleapis.com/auth/photoslibrary");
@@ -141,6 +147,8 @@ public class BoaOAuth2Connection extends AbstractBoaOAuthConnection<OAuth2Applic
         request.setBodyParam("redirect_uri", callback);
         // request.setParam("scope", "");
 
+        application.modifyTokenRequest(request);
+        
         System.err.println("request: " + request);
 
         SpewParsedResponse response = authRequest(request);

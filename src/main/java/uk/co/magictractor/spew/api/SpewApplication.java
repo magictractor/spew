@@ -44,11 +44,4 @@ public interface SpewApplication {
         return getServiceProvider().getDefaultAuthorizationHandler(verificationFunctionSupplier);
     }
 
-    /**
-     * The out-of-band URI (sometimes referred to as "oob") is a special value
-     * used in the redirect_url to tell the server to display a verification
-     * code rather than perform a callback.
-     */
-    String getOutOfBandUri();
-
 }

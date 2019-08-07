@@ -26,11 +26,6 @@ public interface OAuth1Application extends SpewApplication, HasCallbackServer {
     }
 
     @Override
-    default String getOutOfBandUri() {
-        return "oob";
-    }
-
-    @Override
     default List<RequestHandler> getServerRequestHandlers(Supplier<VerificationFunction> verificationFunctionSupplier) {
         return Arrays.asList(
             new OAuth1VerificationRequestHandler(verificationFunctionSupplier),

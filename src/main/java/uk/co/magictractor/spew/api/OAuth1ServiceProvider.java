@@ -26,5 +26,10 @@ public interface OAuth1ServiceProvider extends SpewServiceProvider {
         }
     }
 
+    @Override
+    default String getOutOfBandUri() {
+        return "oob";
+    }
+
     // and consumer key
 }

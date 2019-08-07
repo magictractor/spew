@@ -2,10 +2,12 @@ package uk.co.magictractor.spew.provider.imgur;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.util.Map;
 
 import com.google.gson.GsonBuilder;
 
 import uk.co.magictractor.spew.api.OAuth2ServiceProvider;
+import uk.co.magictractor.spew.api.SpewRequest;
 import uk.co.magictractor.spew.json.BooleanTypeAdapter;
 import uk.co.magictractor.spew.json.InstantTypeAdapter;
 import uk.co.magictractor.spew.json.LocalDateTimeTypeAdapter;
@@ -17,6 +19,9 @@ import uk.co.magictractor.spew.provider.flickr.json.TagSetTypeAdapter;
  * to from elsewhere, content for your website, advertising, avatars, or
  * anything else that turns us into your content delivery network"
  */
+// Imgur requires redirect values to be specified in the app
+// https://imgur.com/account/settings/apps
+// to display a code for copy&paste, Imgur requires a "pin" request type - currently only "code" is supported
 public class Imgur implements OAuth2ServiceProvider {
 
     public static final String REST_ENDPOINT = "https://api.imgur.com/3/";
@@ -40,6 +45,30 @@ public class Imgur implements OAuth2ServiceProvider {
         return "https://api.imgur.com/oauth2/token";
     }
 
+    @Override
+    public void modifyAuthorizationRequest(SpewRequest request) {
+        System.err.println("modifyAuthorizationRequest: " + request);
+        Map<String, String> queryParams = request.getQueryStringParams();
+        if (queryParams.get("redirect_uri").equals(getOutOfBandUri())) {
+            // Imgur uses "pin" response_type rather than "urn:ietf:wg:oauth:2.0:oob"
+            queryParams.put("response_type", "pin");
+            queryParams.remove("redirect_uri");
+        }
+    }
+
+    @Override
+    public void modifyTokenRequest(SpewRequest request) {
+        System.err.println("modifyTokenRequest: " + request);
+        Map<String, Object> bodyParams = request.getBodyParams();
+        if (bodyParams.get("redirect_uri").equals(getOutOfBandUri())) {
+            // Imgur uses "pin" response_type rather than "urn:ietf:wg:oauth:2.0:oob"
+            bodyParams.put("grant_type", "pin");
+            Object code = bodyParams.remove("code");
+            bodyParams.put("pin", code);
+        }
+    }
+
+    @Override
     public GsonBuilder getGsonBuilder() {
         GsonBuilder gsonBuilder = new GsonBuilder();
 
