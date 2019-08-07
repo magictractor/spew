@@ -40,13 +40,14 @@ public class SpewApacheHttpClientConnection implements SpewConnection {
                 .create(apiRequest.getHttpMethod())
                 .setUri(apiRequest.getUrl());
 
-        if (apiRequest.getBody() != null) {
+        boolean hasBody = apiRequest.getBody() != null;
+        if (hasBody) {
             requestBuilder.setEntity(new ByteArrayEntity(apiRequest.getBody()));
         }
 
         for (Map.Entry<String, String> headerEntry : apiRequest.getHeaders().entrySet()) {
             System.err.println("header: " + headerEntry.getKey() + "=" + headerEntry.getValue());
-            if (ContentTypeUtil.CONTENT_LENGTH_HEADER_NAME.contentEquals(headerEntry.getKey())) {
+            if (hasBody && ContentTypeUtil.CONTENT_LENGTH_HEADER_NAME.equalsIgnoreCase(headerEntry.getKey())) {
                 // Content length is derived from the HttpEntity (body), don't repeat it.
                 continue;
             }
