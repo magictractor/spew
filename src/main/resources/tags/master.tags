@@ -10,8 +10,12 @@ insect
     moth
       + moth.tags
 
-  + bee.tags
+  bee
+    + bee.tags
   
+  beetle
+    + beetle.tags
+
   odonata
     damselfly
       + damselfly.tags

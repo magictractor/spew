@@ -15,14 +15,16 @@ public class TagFixProcessor implements Processor<Photo, MutablePhoto, PhotoProc
 
     public TagFixProcessor(String wrongTag, String rightTag) {
         this.wrongTag = Tag.fetchOrCreateTag(wrongTag);
-        this.rightTag = Tag.fetchTag(rightTag);
+        this.rightTag = rightTag == null ? null : Tag.fetchTag(rightTag);
     }
 
     @Override
     public void process(MutablePhoto photoChanges, PhotoProcessorContext context) {
         if (photoChanges.getTagSet().getTags().contains(wrongTag)) {
             photoChanges.getTagSet().removeTag(wrongTag);
-            photoChanges.getTagSet().addTag(rightTag);
+            if (rightTag != null) {
+                photoChanges.getTagSet().addTag(rightTag);
+            }
         }
     }
 

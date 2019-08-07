@@ -7,6 +7,8 @@ import uk.co.magictractor.spew.processor.ProcessorChain;
 public class PhotoTidyProcessorChain extends ProcessorChain<Photo, MutablePhoto, PhotoProcessorContext> {
 
     public PhotoTidyProcessorChain(PhotoUpdateProcessor persistProcessor) {
+        //addProcessor(new TagFixProcessor("location", null));
+        //addProcessor(new TagFixProcessor("subject", null));
         //addProcessor(new TagFixProcessor("rgbe", "rbge"));
         //addProcessor(new TagFixProcessor("funghi", "fungi"));
 
