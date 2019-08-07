@@ -37,7 +37,7 @@ public class SpewHttpUrlConnection implements SpewConnection {
 
     public SpewResponse request0(SpewRequest request) throws IOException {
         // URL has no knowledge of escaping, the application must do that. See URL Javadoc.
-        URL url = new URL(request.getEscapedUrl());
+        URL url = new URL(request.getUrl());
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod(request.getHttpMethod());
 

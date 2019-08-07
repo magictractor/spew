@@ -38,7 +38,7 @@ public class SpewApacheHttpClientConnection implements SpewConnection {
 
         RequestBuilder requestBuilder = RequestBuilder
                 .create(apiRequest.getHttpMethod())
-                .setUri(apiRequest.getEscapedUrl());
+                .setUri(apiRequest.getUrl());
 
         boolean hasBody = apiRequest.getBody() != null;
         if (hasBody) {

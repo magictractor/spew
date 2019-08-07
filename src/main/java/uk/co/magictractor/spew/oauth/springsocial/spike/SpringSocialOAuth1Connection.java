@@ -16,6 +16,7 @@
 package uk.co.magictractor.spew.oauth.springsocial.spike;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.Arrays;
 import java.util.Map;
 
@@ -34,6 +35,7 @@ import uk.co.magictractor.spew.api.SpewRequest;
 import uk.co.magictractor.spew.api.SpewResponse;
 import uk.co.magictractor.spew.store.EditableProperty;
 import uk.co.magictractor.spew.store.UserPropertyStore;
+import uk.co.magictractor.spew.util.ExceptionUtil;
 import uk.co.magictractor.spew.util.spi.SPIUtil;
 
 // https://docs.spring.io/spring-social/docs/current-SNAPSHOT/reference/htmlsingle/
@@ -65,7 +67,8 @@ public class SpringSocialOAuth1Connection implements SpewConnection {
 
     @Override
     public SpewResponse request(SpewRequest apiRequest) {
-        String url = apiRequest.getUrl();
+        // Convert to URI because execute(String, ...) escapes the String.
+        URI uri = ExceptionUtil.call(() -> new URI(apiRequest.getUrl()));
         HttpMethod method = HttpMethod.valueOf(apiRequest.getHttpMethod());
         // RequestCallback requestCallback = System.err::println;
         RequestCallback requestCallback = httpRequest -> populateHttpRequest(httpRequest, apiRequest);
@@ -73,7 +76,7 @@ public class SpringSocialOAuth1Connection implements SpewConnection {
         HttpMessageConverterExtractor<SpewResponse> responseExtractor = new HttpMessageConverterExtractor<>(
             String.class, Arrays.asList(converter));
 
-        return connection.getApi().execute(url, method, requestCallback, responseExtractor);
+        return connection.getApi().execute(uri, method, requestCallback, responseExtractor);
     }
 
     private void populateHttpRequest(ClientHttpRequest httpRequest, SpewRequest apiRequest) throws IOException {

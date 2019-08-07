@@ -55,12 +55,16 @@ public final class SpewRequest implements ServerRequest {
         return baseUrl;
     }
 
-    @Override
-    public String getUrl() {
+    /**
+     * @deprecated avoid using this - it's likely to get binned
+     */
+    @Deprecated
+    public String getUnescapedUrl() {
         return getUrl(false);
     }
 
-    public String getEscapedUrl() {
+    @Override
+    public String getUrl() {
         return getUrl(true);
     }
 

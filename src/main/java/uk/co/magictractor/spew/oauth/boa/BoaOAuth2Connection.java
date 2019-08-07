@@ -96,7 +96,7 @@ public class BoaOAuth2Connection extends AbstractBoaOAuthConnection<OAuth2Applic
 
         request.setQueryStringParam("scope", application.getScope());
 
-        String authUri = request.getEscapedUrl();
+        String authUri = request.getUrl();
         BrowserUtil.openBrowserTab(authUri);
 
         authHandler.postOpenAuthorizationInBrowser(application);

@@ -42,9 +42,7 @@ public class SpringSocialSpike {
 
     public static void main(String[] args) {
         System.setProperty(SpewConnectionFactory.class.getName(), SpringSocialConnectionFactory.class.getName());
-        // TweetProcessor works
         //TweetProcessor.main(args);
-        // Flickr blows up because response is XML rather than JSON
         FlickrPhotoUpdateProcessor.main(args);
     }
 
