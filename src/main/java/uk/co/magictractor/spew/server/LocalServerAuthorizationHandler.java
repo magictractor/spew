@@ -22,14 +22,14 @@ import uk.co.magictractor.spew.api.HasCallbackServer;
 import uk.co.magictractor.spew.api.SpewApplication;
 import uk.co.magictractor.spew.api.VerificationFunction;
 import uk.co.magictractor.spew.example.flickr.MyFlickrApp;
-import uk.co.magictractor.spew.server.netty.NettyCallbackServer;
+import uk.co.magictractor.spew.util.spi.SPIUtil;
 
 /**
  *
  */
 public class LocalServerAuthorizationHandler extends AbstractAuthorizationHandler {
 
-    private NettyCallbackServer server;
+    private CallbackServer server;
     private String callback;
 
     public LocalServerAuthorizationHandler(Supplier<VerificationFunction> verificationFunctionSupplier) {
@@ -45,10 +45,9 @@ public class LocalServerAuthorizationHandler extends AbstractAuthorizationHandle
         HasCallbackServer hasCallbackServer = (HasCallbackServer) application;
         callback = hasCallbackServer.protocol() + "://" + hasCallbackServer.host() + ":" + hasCallbackServer.port();
 
-        // TODO! allow other implementations of callback server via SPI
-        server = new NettyCallbackServer(hasCallbackServer.getServerRequestHandlers(verificationFunctionSupplier()),
+        server = SPIUtil.firstAvailable(CallbackServer.class);
+        server.run(hasCallbackServer.getServerRequestHandlers(verificationFunctionSupplier()),
             hasCallbackServer.port());
-        server.run();
     }
 
     @Override

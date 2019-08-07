@@ -34,6 +34,8 @@ import uk.co.magictractor.spew.http.apache.SpewApacheHttpClientConnectionFactory
 import uk.co.magictractor.spew.http.javaurl.SpewHttpUrlConnectionFactory;
 import uk.co.magictractor.spew.oauth.boa.BoaConnectionFactory;
 import uk.co.magictractor.spew.oauth.springsocial.spike.SpringSocialConnectionFactory;
+import uk.co.magictractor.spew.server.CallbackServer;
+import uk.co.magictractor.spew.server.netty.NettyCallbackServer;
 import uk.co.magictractor.spew.store.ApplicationPropertyStore;
 import uk.co.magictractor.spew.store.ResourceFileApplicationPropertyStore;
 import uk.co.magictractor.spew.store.UserPreferencePropertyStore;
@@ -60,6 +62,8 @@ public final class SPIUtil {
         addDefault(SpewConnectionFactory.class, new SpewHttpUrlConnectionFactory());
 
         addDefault(SpewParsedResponseFactory.class, new JaywayResponseFactory());
+
+        addDefault(CallbackServer.class, new NettyCallbackServer());
     }
 
     private static <T> void addDefault(Class<T> apiClass, T implementation) {

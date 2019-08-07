@@ -17,12 +17,14 @@ import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpRequestDecoder;
 import io.netty.handler.codec.http.HttpResponseEncoder;
+import uk.co.magictractor.spew.server.CallbackServer;
 import uk.co.magictractor.spew.server.RequestHandler;
 import uk.co.magictractor.spew.server.ServerRequest;
 import uk.co.magictractor.spew.server.SimpleErrorResponse;
 import uk.co.magictractor.spew.server.SimpleResponse;
 import uk.co.magictractor.spew.server.SimpleResponseBuilder;
 import uk.co.magictractor.spew.util.ExceptionUtil;
+import uk.co.magictractor.spew.util.spi.ClassDependantAvailability;
 
 /**
  * Server for receiving OAuth authorization callbacks. Based on example in
@@ -31,26 +33,24 @@ import uk.co.magictractor.spew.util.ExceptionUtil;
 
 // TODO! look at using Undertow instead/
 // see https://javachannel.org/posts/netty-is-not-a-web-framework/
-public class NettyCallbackServer {
-
-    private final int port;
-    private final List<RequestHandler> requestHandlers;
+public class NettyCallbackServer implements CallbackServer, ClassDependantAvailability {
 
     private NioEventLoopGroup bossGroup;
     private NioEventLoopGroup workerGroup;
 
     private ChannelFuture f;
 
-    public NettyCallbackServer(List<RequestHandler> requestHandlers, int port) {
-        this.requestHandlers = requestHandlers;
-        this.port = port;
+    @Override
+    public String requiresClassName() {
+        return "io.netty.bootstrap.ServerBootstrap";
     }
 
-    public void run() {
-        ExceptionUtil.call(this::run0);
+    @Override
+    public void run(List<RequestHandler> requestHandlers, int port) {
+        ExceptionUtil.call(() -> run0(requestHandlers, port));
     }
 
-    private void run0() throws InterruptedException {
+    private void run0(List<RequestHandler> requestHandlers, int port) throws InterruptedException {
         bossGroup = new NioEventLoopGroup();
         workerGroup = new NioEventLoopGroup();
         try {
@@ -79,7 +79,7 @@ public class NettyCallbackServer {
                             p.addLast(new OutboundWriteExceptionHandler());
 
                             // TODO! merge these and maybe move to a distinct class
-                            p.addLast(new CallbackServerHandler());
+                            p.addLast(new CallbackServerHandler(requestHandlers));
                             p.addLast(new InboundExceptionHandler());
                         }
                     })
@@ -100,7 +100,7 @@ public class NettyCallbackServer {
         }
     }
 
-    // Block until the server is stopped.
+    @Override
     public void join() {
         ExceptionUtil.call(this::join0);
     }
@@ -115,6 +115,12 @@ public class NettyCallbackServer {
     }
 
     public class CallbackServerHandler extends ChannelInboundHandlerAdapter {
+
+        private final List<RequestHandler> requestHandlers;
+
+        public CallbackServerHandler(List<RequestHandler> requestHandlers) {
+            this.requestHandlers = requestHandlers;
+        }
 
         @Override
         public void channelRead(ChannelHandlerContext ctx, Object msg) {

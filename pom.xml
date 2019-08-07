@@ -73,7 +73,8 @@
 			<groupId>io.netty</groupId>
 			<artifactId>netty-all</artifactId>
 			<version>4.1.38.Final</version>
-			<!-- Provided because authorization handling could be done by pasting verification codes rather than using a callback -->
+			<!-- Provided because authorization handling could be done by pasting verification codes rather than using a callback,
+				or another CallbackServer implementation could be used. -->
 			<scope>provided</scope>
 		</dependency>
 		

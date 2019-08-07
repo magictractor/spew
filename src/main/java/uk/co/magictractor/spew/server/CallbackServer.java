@@ -15,10 +15,23 @@
  */
 package uk.co.magictractor.spew.server;
 
+import java.util.List;
+
 /**
- * TODO! common interface for NettyCallbackServer and any alternative
- * implementations.
+ * Common interface for NettyCallbackServer and any alternative implementations.
  */
 public interface CallbackServer {
+
+    void run(List<RequestHandler> requestHandlers, int port);
+
+    /**
+     * <p>
+     * Block until the server is stopped.
+     * </p>
+     * <p>
+     * Usually a verification callback to the server will result in a success or
+     * failure response, and the server then being stopped.
+     */
+    void join();
 
 }
