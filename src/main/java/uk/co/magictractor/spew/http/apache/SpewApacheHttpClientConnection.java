@@ -17,6 +17,8 @@ package uk.co.magictractor.spew.http.apache;
 
 import java.util.Map;
 
+import org.apache.http.client.config.CookieSpecs;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.methods.RequestBuilder;
@@ -34,7 +36,22 @@ public class SpewApacheHttpClientConnection implements SpewConnection {
 
     @Override
     public SpewResponse request(SpewRequest apiRequest) {
-        CloseableHttpClient httpClient = HttpClients.createDefault();
+        /**
+         * Some providers (including Twitter) log a warning related to the
+         * format of the expiry date in cookies when the request config is not
+         * modified.
+         * <ul>
+         * <li>https://stackoverflow.com/questions/36473478/fixing-httpclient-
+         * warning-invalid-expires-attribute-using-fluent-api/40697322</li>
+         * <li>https://issues.apache.org/jira/browse/HTTPCLIENT-1763</li>
+         * </ul>
+         */
+        RequestConfig requestConfig = RequestConfig.custom()
+                .setCookieSpec(CookieSpecs.IGNORE_COOKIES)
+                .build();
+        CloseableHttpClient httpClient = HttpClients.custom()
+                .setDefaultRequestConfig(requestConfig)
+                .build();
 
         RequestBuilder requestBuilder = RequestBuilder
                 .create(apiRequest.getHttpMethod())
