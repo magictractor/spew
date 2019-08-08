@@ -33,11 +33,11 @@ public class HardcodedTagLoader implements TagLoader {
         initRodents();
         initInsects();
 
-        Tag frog = init(SUBJECT, "Frog");
-        init(frog, "Common frog");
+        //Tag frog = init(SUBJECT, "Frog");
+        //init(frog, "Common frog");
 
-        Tag newt = init(SUBJECT, "Newt");
-        init(newt, "Smooth newt", "Palmate newt");
+        //Tag newt = init(SUBJECT, "Newt");
+        //init(newt, "Smooth newt", "Palmate newt");
 
         // TODO! fungus?
         init(SUBJECT, "Fungi");
@@ -57,8 +57,8 @@ public class HardcodedTagLoader implements TagLoader {
         Tag grebe = init(bird, "Grebe");
         init(grebe, "Little grebe", "Great crested grebe");
 
-        Tag gull = init(bird, "Gull");
-        init(gull, "Black-headed gull", "Lesser black-backed gull");
+        //Tag gull = init(bird, "Gull");
+        //init(gull, "Black-headed gull", "Lesser black-backed gull");
 
         //Tag heron = init(bird, "Heron");
         //init(heron, "Grey heron");
@@ -123,17 +123,16 @@ public class HardcodedTagLoader implements TagLoader {
         Tag wasp = init(insect, "Wasp");
         init(wasp, "Common wasp");
 
-        Tag hoverfly = init(insect, "Hoverfly");
-        init(hoverfly, "Footballer");
-        Tag dronefly = init(hoverfly, "Drone fly");
-        init(dronefly, "Common drone fly", "Tapered drone fly");
+        //        Tag hoverfly = init(insect, "Hoverfly");
+        //        init(hoverfly, "Footballer");
+        //        Tag dronefly = init(hoverfly, "Drone fly");
+        //        init(dronefly, "Common drone fly", "Tapered drone fly");
+        //
+        //        Tag diptera = init(insect, "Diptera");
+        //        init(diptera, "Tachina fera", "Tachina ursina");
 
-        Tag diptera = init(insect, "Diptera");
-        init(diptera, "Tachina fera", "Tachina ursina");
-
-        // TODO! alias "crane fly"
-        Tag tipula = init(diptera, "Tipula");
-        init(tipula, "Tipula vittata");
+        //Tag tipula = init(diptera, "Tipula");
+        //init(tipula, "Tipula vittata");
         // more
 
         Tag shieldbug = init(insect, "Shield bug");

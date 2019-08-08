@@ -16,6 +16,9 @@ insect
   beetle
     + beetle.tags
 
+  diptera
+    + diptera.tags
+
   odonata
     damselfly
       + damselfly.tags
@@ -24,7 +27,11 @@ insect
       
   + other_insects.tags
 
+amphibian
+  + amphibian.tags
+
 + mammal.tags
+
 
 
 !LOCATION
