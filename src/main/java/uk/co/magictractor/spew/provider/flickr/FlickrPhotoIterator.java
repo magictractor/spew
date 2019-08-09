@@ -87,12 +87,13 @@ public class FlickrPhotoIterator<E> extends PageCountServiceIterator<E> {
 
         public void setDateTakenPhotoFilter(DateTakenPhotoFilter filter) {
             getIteratorInstance().minTakenDate = convert(filter.getFrom());
-            getIteratorInstance().maxTakenDate = convert(filter.getTo());
+            // TODO one second out - below too
+            getIteratorInstance().maxTakenDate = convert(filter.getTo().plusDays(1));
         }
 
         public void setDateUploadedPhotoFilter(DateUploadedPhotoFilter filter) {
             getIteratorInstance().minUploadedDate = convert(filter.getFrom());
-            getIteratorInstance().maxUploadedDate = convert(filter.getTo());
+            getIteratorInstance().maxUploadedDate = convert(filter.getTo().plusDays(1));
 
             // super.build();
         }
