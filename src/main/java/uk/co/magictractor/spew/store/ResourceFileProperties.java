@@ -1,4 +1,4 @@
-package uk.co.magictractor.spew.processor.properties;
+package uk.co.magictractor.spew.store;
 
 import java.io.InputStream;
 import java.util.Properties;

@@ -1,4 +1,4 @@
-package uk.co.magictractor.spew.provider.imgur.processor;
+package uk.co.magictractor.spew.example.imgur.processor;
 
 import java.util.Iterator;
 

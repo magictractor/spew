@@ -19,7 +19,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import uk.co.magictractor.spew.api.SpewApplication;
-import uk.co.magictractor.spew.processor.properties.ResourceFileProperties;
 
 public class ResourceFileApplicationPropertyStore
         implements ApplicationPropertyStore {
