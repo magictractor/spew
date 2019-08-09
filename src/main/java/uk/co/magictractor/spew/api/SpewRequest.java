@@ -2,7 +2,9 @@ package uk.co.magictractor.spew.api;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.google.common.base.MoreObjects;
@@ -24,7 +26,7 @@ public final class SpewRequest implements ServerRequest {
     // POST (and PUT) requests should have a content type
     // TODO! better to have this set explicitly and only once
     private String contentType = ContentTypeUtil.JSON_MIME_TYPES.get(0);
-    private Map<String, String> headers = new LinkedHashMap<>();
+    private List<SpewHeader> headers = new ArrayList<>();
 
     private boolean sent;
 
@@ -111,7 +113,7 @@ public final class SpewRequest implements ServerRequest {
         this.contentType = contentType;
     }
 
-    public Map<String, String> getHeaders() {
+    public List<SpewHeader> getHeaders() {
         return headers;
     }
 
@@ -162,11 +164,12 @@ public final class SpewRequest implements ServerRequest {
     }
 
     public void addHeader(String headerName, String headerValue) {
-        if (headers.containsKey(headerName)) {
-            throw new IllegalArgumentException(
-                "Header already has a value assigned " + headerName + ": " + headers.get(headerName));
-        }
-        headers.put(headerName, headerValue);
+        // TODO! reinstate check and provide method for adding another header with the same name
+        //        if (headers.containsKey(headerName)) {
+        //            throw new IllegalArgumentException(
+        //                "Header already has a value assigned " + headerName + ": " + headers.get(headerName));
+        //        }
+        headers.add(new SpewHeader(headerName, headerValue));
     }
 
     public void addHeader(String headerName, long headerValue) {

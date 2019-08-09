@@ -18,7 +18,6 @@ package uk.co.magictractor.spew.oauth.springsocial.spike;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Arrays;
-import java.util.Map;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -31,6 +30,7 @@ import org.springframework.web.client.RestOperations;
 
 import uk.co.magictractor.spew.api.OAuth1Application;
 import uk.co.magictractor.spew.api.SpewConnection;
+import uk.co.magictractor.spew.api.SpewHeader;
 import uk.co.magictractor.spew.api.SpewRequest;
 import uk.co.magictractor.spew.api.SpewResponse;
 import uk.co.magictractor.spew.store.EditableProperty;
@@ -82,8 +82,8 @@ public class SpringSocialOAuth1Connection implements SpewConnection {
     private void populateHttpRequest(ClientHttpRequest httpRequest, SpewRequest apiRequest) throws IOException {
 
         HttpHeaders headers = httpRequest.getHeaders();
-        for (Map.Entry<String, String> headerEntry : apiRequest.getHeaders().entrySet()) {
-            headers.add(headerEntry.getKey(), headerEntry.getValue());
+        for (SpewHeader header : apiRequest.getHeaders()) {
+            headers.add(header.getName(), header.getValue());
         }
 
         if (apiRequest.getBody() != null) {

@@ -15,8 +15,6 @@
  */
 package uk.co.magictractor.spew.http.apache;
 
-import java.util.Map;
-
 import org.apache.http.client.config.CookieSpecs;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -27,6 +25,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 
 import uk.co.magictractor.spew.api.SpewConnection;
+import uk.co.magictractor.spew.api.SpewHeader;
 import uk.co.magictractor.spew.api.SpewRequest;
 import uk.co.magictractor.spew.api.SpewResponse;
 import uk.co.magictractor.spew.util.ContentTypeUtil;
@@ -62,13 +61,13 @@ public class SpewApacheHttpClientConnection implements SpewConnection {
             requestBuilder.setEntity(new ByteArrayEntity(apiRequest.getBody()));
         }
 
-        for (Map.Entry<String, String> headerEntry : apiRequest.getHeaders().entrySet()) {
-            System.err.println("header: " + headerEntry.getKey() + "=" + headerEntry.getValue());
-            if (hasBody && ContentTypeUtil.CONTENT_LENGTH_HEADER_NAME.equalsIgnoreCase(headerEntry.getKey())) {
+        for (SpewHeader header : apiRequest.getHeaders()) {
+            System.err.println("header: " + header.getName() + "=" + header.getValue());
+            if (hasBody && ContentTypeUtil.CONTENT_LENGTH_HEADER_NAME.equalsIgnoreCase(header.getName())) {
                 // Content length is derived from the HttpEntity (body), don't repeat it.
                 continue;
             }
-            requestBuilder.addHeader(headerEntry.getKey(), headerEntry.getValue());
+            requestBuilder.addHeader(header.getName(), header.getValue());
         }
 
         HttpUriRequest request = requestBuilder.build();

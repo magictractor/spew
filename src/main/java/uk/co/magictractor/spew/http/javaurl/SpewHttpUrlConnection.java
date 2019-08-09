@@ -18,9 +18,9 @@ package uk.co.magictractor.spew.http.javaurl;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.Map;
 
 import uk.co.magictractor.spew.api.SpewConnection;
+import uk.co.magictractor.spew.api.SpewHeader;
 import uk.co.magictractor.spew.api.SpewRequest;
 import uk.co.magictractor.spew.api.SpewResponse;
 import uk.co.magictractor.spew.util.ExceptionUtil;
@@ -41,8 +41,8 @@ public class SpewHttpUrlConnection implements SpewConnection {
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod(request.getHttpMethod());
 
-        for (Map.Entry<String, String> headerEntry : request.getHeaders().entrySet()) {
-            connection.addRequestProperty(headerEntry.getKey(), headerEntry.getValue());
+        for (SpewHeader header : request.getHeaders()) {
+            connection.addRequestProperty(header.getName(), header.getValue());
         }
 
         if (request.getBody() != null) {
