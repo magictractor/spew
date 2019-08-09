@@ -25,6 +25,7 @@ import com.google.common.base.Splitter;
 import com.google.common.io.CharStreams;
 
 import uk.co.magictractor.spew.api.SpewResponse;
+import uk.co.magictractor.spew.core.response.parser.AbstractSpewParsedResponse;
 import uk.co.magictractor.spew.core.response.parser.StringCentricSpewParsedResponse;
 import uk.co.magictractor.spew.util.IOUtil;
 
@@ -37,11 +38,14 @@ import uk.co.magictractor.spew.util.IOUtil;
  * values.
  * </p>
  */
-public class KeyValuePairsResponse implements StringCentricSpewParsedResponse {
+public class KeyValuePairsResponse
+        extends AbstractSpewParsedResponse
+        implements StringCentricSpewParsedResponse {
 
     private final Map<String, String> values;
 
     public KeyValuePairsResponse(SpewResponse response) {
+        super(response);
         values = IOUtil.applyThenClose(response.getBodyReader(), this::parse);
     }
 

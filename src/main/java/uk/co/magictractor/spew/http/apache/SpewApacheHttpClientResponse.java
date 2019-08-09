@@ -15,14 +15,20 @@
  */
 package uk.co.magictractor.spew.http.apache;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.http.Header;
 import org.apache.http.client.methods.CloseableHttpResponse;
 
+import uk.co.magictractor.spew.api.SpewHeader;
 import uk.co.magictractor.spew.core.response.AbstractOnCloseResponse;
 import uk.co.magictractor.spew.util.ExceptionUtil;
 
 public class SpewApacheHttpClientResponse extends AbstractOnCloseResponse {
 
     private final CloseableHttpResponse response;
+    private List<SpewHeader> headers;
 
     protected SpewApacheHttpClientResponse(CloseableHttpResponse response) {
         super(ExceptionUtil.call(() -> response.getEntity().getContent()));
@@ -30,8 +36,15 @@ public class SpewApacheHttpClientResponse extends AbstractOnCloseResponse {
     }
 
     @Override
-    public String getHeader(String headerName) {
-        return response.getFirstHeader(headerName).getValue();
+    public List<SpewHeader> getHeaders() {
+        if (headers == null) {
+            Header[] apacheHeaders = response.getAllHeaders();
+            headers = new ArrayList<>(apacheHeaders.length);
+            for (Header apacheHeader : apacheHeaders) {
+                headers.add(new SpewHeader(apacheHeader.getName(), apacheHeader.getValue()));
+            }
+        }
+        return headers;
     }
 
     @Override

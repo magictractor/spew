@@ -79,6 +79,9 @@ public class BoaOAuth2Connection extends AbstractBoaOAuthConnection<OAuth2Applic
 
         SpewRequest request = application.createGetRequest(getServiceProvider().getAuthorizationUri());
 
+        // GitHub returns application/x-www-form-urlencoded content type by default
+        request.addHeader(ContentTypeUtil.ACCEPT_HEADER_NAME, ContentTypeUtil.JSON_MIME_TYPES.get(0));
+
         // A bit mucky. The callback value comes from the handler but is also used in the verification function.
         AuthorizationHandler[] authHandlerHolder = new AuthorizationHandler[1];
         AuthorizationHandler authHandler = application
@@ -99,7 +102,7 @@ public class BoaOAuth2Connection extends AbstractBoaOAuthConnection<OAuth2Applic
         request.setQueryStringParam("scope", application.getScope());
 
         application.modifyAuthorizationRequest(request);
-        
+
         String authUri = request.getUrl();
         BrowserUtil.openBrowserTab(authUri);
 
@@ -127,6 +130,10 @@ public class BoaOAuth2Connection extends AbstractBoaOAuthConnection<OAuth2Applic
 
         // ah! needed to be POST else 404 (Google)
         SpewRequest request = application.createPostRequest(getServiceProvider().getTokenUri());
+
+        // GitHub returns application/x-www-form-urlencoded content type by default
+        request.addHeader(ContentTypeUtil.ACCEPT_HEADER_NAME, ContentTypeUtil.JSON_MIME_TYPES.get(0));
+
         request.setContentType(ContentTypeUtil.FORM_MIME_TYPE);
 
         request.setBodyParam("code", code);
@@ -148,7 +155,7 @@ public class BoaOAuth2Connection extends AbstractBoaOAuthConnection<OAuth2Applic
         // request.setParam("scope", "");
 
         application.modifyTokenRequest(request);
-        
+
         System.err.println("request: " + request);
 
         SpewParsedResponse response = authRequest(request);

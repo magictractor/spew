@@ -16,9 +16,14 @@
 package uk.co.magictractor.spew.oauth.springsocial.spike;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpInputMessage;
 
+import uk.co.magictractor.spew.api.SpewHeader;
 import uk.co.magictractor.spew.core.response.AbstractByteBufferResponse;
 
 /**
@@ -27,6 +32,7 @@ import uk.co.magictractor.spew.core.response.AbstractByteBufferResponse;
 public class HttpInputMessageResponse extends AbstractByteBufferResponse {
 
     private final HttpInputMessage message;
+    private List<SpewHeader> headers;
 
     public HttpInputMessageResponse(HttpInputMessage message) throws IOException {
         super(message.getBody());
@@ -34,8 +40,18 @@ public class HttpInputMessageResponse extends AbstractByteBufferResponse {
     }
 
     @Override
-    public String getHeader(String headerName) {
-        return message.getHeaders().getFirst(headerName);
+    public List<SpewHeader> getHeaders() {
+        if (headers == null) {
+            HttpHeaders springHeaders = message.getHeaders();
+            headers = new ArrayList<>(springHeaders.size());
+            for (Map.Entry<String, List<String>> springHeaderEntry : springHeaders.entrySet()) {
+                String headerName = springHeaderEntry.getKey();
+                for (String headerValue : springHeaderEntry.getValue()) {
+                    headers.add(new SpewHeader(headerName, headerValue));
+                }
+            }
+        }
+        return headers;
     }
 
 }

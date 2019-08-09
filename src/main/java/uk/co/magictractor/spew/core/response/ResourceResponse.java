@@ -21,8 +21,11 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
+import uk.co.magictractor.spew.api.SpewHeader;
 import uk.co.magictractor.spew.api.SpewResponse;
 import uk.co.magictractor.spew.util.ContentTypeUtil;
 import uk.co.magictractor.spew.util.ExceptionUtil;
@@ -36,6 +39,7 @@ public class ResourceResponse implements SpewResponse {
     private final String resourceName;
     private String contentType;
     private Optional<InputStream> bodyStream;
+    private List<SpewHeader> headers;
 
     public ResourceResponse(String resourceName) {
         this.relativeToClass = null;
@@ -48,11 +52,12 @@ public class ResourceResponse implements SpewResponse {
     }
 
     @Override
-    public String getHeader(String headerName) {
-        if (headerName.equalsIgnoreCase("Content-Type")) {
-            return getContentType();
+    public List<SpewHeader> getHeaders() {
+        if (headers == null) {
+            headers = new ArrayList<>(1);
+            headers.add(new SpewHeader(ContentTypeUtil.CONTENT_TYPE_HEADER_NAME, getContentType()));
         }
-        return null;
+        return headers;
     }
 
     public String getContentType() {

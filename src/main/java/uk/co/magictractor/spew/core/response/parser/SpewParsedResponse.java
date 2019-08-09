@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Optional;
 
 import uk.co.magictractor.spew.api.SpewApplication;
+import uk.co.magictractor.spew.api.SpewHeader;
 import uk.co.magictractor.spew.api.SpewResponse;
 import uk.co.magictractor.spew.util.ContentTypeUtil;
 import uk.co.magictractor.spew.util.spi.SPIUtil;
@@ -36,6 +37,10 @@ import uk.co.magictractor.spew.util.spi.SPIUtil;
  * </p>
  */
 public interface SpewParsedResponse {
+
+    String getHeader(String headerName);
+
+    List<SpewHeader> getHeaders();
 
     String getString(String key);
 

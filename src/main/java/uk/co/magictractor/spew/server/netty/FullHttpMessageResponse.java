@@ -16,22 +16,35 @@
 package uk.co.magictractor.spew.server.netty;
 
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 import io.netty.buffer.ByteBufInputStream;
 import io.netty.handler.codec.http.FullHttpMessage;
+import io.netty.handler.codec.http.HttpHeaders;
+import uk.co.magictractor.spew.api.SpewHeader;
 import uk.co.magictractor.spew.api.SpewResponse;
 
 public class FullHttpMessageResponse implements SpewResponse {
 
     private final FullHttpMessage message;
+    private List<SpewHeader> headers;
 
     public FullHttpMessageResponse(FullHttpMessage message) {
         this.message = message;
     }
 
     @Override
-    public String getHeader(String headerName) {
-        return message.headers().get(headerName);
+    public List<SpewHeader> getHeaders() {
+        if (headers == null) {
+            HttpHeaders httpHeaders = message.headers();
+            headers = new ArrayList<>(httpHeaders.size());
+            for (Map.Entry<String, String> headerEntry : httpHeaders.entries()) {
+                headers.add(new SpewHeader(headerEntry.getKey(), headerEntry.getValue()));
+            }
+        }
+        return headers;
     }
 
     @Override

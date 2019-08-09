@@ -18,7 +18,11 @@ package uk.co.magictractor.spew.http.javaurl;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
+import uk.co.magictractor.spew.api.SpewHeader;
 import uk.co.magictractor.spew.core.response.AbstractOnCloseResponse;
 import uk.co.magictractor.spew.util.ExceptionUtil;
 
@@ -28,6 +32,7 @@ import uk.co.magictractor.spew.util.ExceptionUtil;
 public class SpewHttpUrlConnectionResponse extends AbstractOnCloseResponse {
 
     private final HttpURLConnection connection;
+    private List<SpewHeader> headers;
 
     public SpewHttpUrlConnectionResponse(HttpURLConnection connection) {
         super(getStream(connection));
@@ -50,8 +55,18 @@ public class SpewHttpUrlConnectionResponse extends AbstractOnCloseResponse {
     }
 
     @Override
-    public String getHeader(String headerName) {
-        return connection.getHeaderField(headerName);
+    public List<SpewHeader> getHeaders() {
+        if (headers == null) {
+            Map<String, List<String>> httpUrlHeaders = connection.getHeaderFields();
+            headers = new ArrayList<>(httpUrlHeaders.size());
+            for (Map.Entry<String, List<String>> httpUrlHeaderEntry : httpUrlHeaders.entrySet()) {
+                String headerName = httpUrlHeaderEntry.getKey();
+                for (String headerValue : httpUrlHeaderEntry.getValue()) {
+                    headers.add(new SpewHeader(headerName, headerValue));
+                }
+            }
+        }
+        return headers;
     }
 
     @Override

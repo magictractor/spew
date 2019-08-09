@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.io.UncheckedIOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 import uk.co.magictractor.spew.util.ContentTypeUtil;
 
@@ -22,7 +23,16 @@ public interface SpewResponse {
      * @return
      * @see https://stackoverflow.com/questions/5258977/are-http-headers-case-sensitive
      */
-    String getHeader(String headerName);
+    default String getHeader(String headerName) {
+        for (SpewHeader candidate : getHeaders()) {
+            if (candidate.getName().equalsIgnoreCase(headerName)) {
+                return candidate.getValue();
+            }
+        }
+        return null;
+    }
+
+    List<SpewHeader> getHeaders();
 
     /**
      * <p>
