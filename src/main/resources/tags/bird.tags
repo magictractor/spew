@@ -12,7 +12,7 @@ dunnock
 fieldfare
 goldcrest
 goldeneye
-goldfinch
+goldfinch = Carduelis carduelis
 goosander
 great tit
 greenfinch = Chloris chloris
@@ -21,7 +21,7 @@ gull
   black-headed gull = Chroicocephalus ridibundus
   lesser black-backed gull
 kestrel
-kingfisher
+kingfisher = Alcedo atthis
 linnet
 long-tailed tit
 mallard
@@ -37,7 +37,7 @@ redwing
 robin
 shag
 siskin = Spinus spinus
-sparrowhawk
+sparrowhawk = Accipiter nisus
 starling
 stonechat
 swallow
