@@ -4,13 +4,13 @@ import java.util.function.Supplier;
 
 import com.google.gson.GsonBuilder;
 
-import uk.co.magictractor.spew.access.AuthorizationHandler;
-import uk.co.magictractor.spew.access.PasteVerificationCodeHandler;
 import uk.co.magictractor.spew.api.BadResponseException;
 import uk.co.magictractor.spew.api.SpewOAuth1ServiceProvider;
 import uk.co.magictractor.spew.api.SpewResponse;
-import uk.co.magictractor.spew.api.VerificationFunction;
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
+import uk.co.magictractor.spew.core.verification.AuthorizationHandler;
+import uk.co.magictractor.spew.core.verification.PasteVerificationCodeHandler;
+import uk.co.magictractor.spew.core.verification.VerificationFunction;
 import uk.co.magictractor.spew.util.ContentTypeUtil;
 
 /**

@@ -11,8 +11,9 @@ import com.jayway.jsonpath.spi.json.JsonProvider;
 import com.jayway.jsonpath.spi.mapper.GsonMappingProvider;
 import com.jayway.jsonpath.spi.mapper.MappingProvider;
 
-import uk.co.magictractor.spew.access.AuthorizationHandler;
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
+import uk.co.magictractor.spew.core.verification.AuthorizationHandler;
+import uk.co.magictractor.spew.core.verification.VerificationFunction;
 import uk.co.magictractor.spew.server.LocalServerAuthorizationHandler;
 import uk.co.magictractor.spew.util.ContentTypeUtil;
 

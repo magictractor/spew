@@ -17,10 +17,10 @@ package uk.co.magictractor.spew.example.dropbox;
 
 import java.util.function.Supplier;
 
-import uk.co.magictractor.spew.access.AuthorizationHandler;
 import uk.co.magictractor.spew.api.SpewOAuth2Application;
 import uk.co.magictractor.spew.api.SpewOAuth2ServiceProvider;
-import uk.co.magictractor.spew.api.VerificationFunction;
+import uk.co.magictractor.spew.core.verification.AuthorizationHandler;
+import uk.co.magictractor.spew.core.verification.VerificationFunction;
 import uk.co.magictractor.spew.provider.dropbox.Dropbox;
 import uk.co.magictractor.spew.server.LocalServerAuthorizationHandler;
 

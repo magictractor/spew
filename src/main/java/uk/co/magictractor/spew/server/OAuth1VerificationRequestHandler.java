@@ -17,8 +17,8 @@ package uk.co.magictractor.spew.server;
 
 import java.util.function.Supplier;
 
-import uk.co.magictractor.spew.api.VerificationFunction;
-import uk.co.magictractor.spew.api.VerificationInfo;
+import uk.co.magictractor.spew.core.verification.VerificationFunction;
+import uk.co.magictractor.spew.core.verification.VerificationInfo;
 
 /**
  *

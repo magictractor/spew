@@ -13,14 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.co.magictractor.spew.access;
+package uk.co.magictractor.spew.core.verification;
 
 import java.util.Scanner;
 import java.util.function.Supplier;
 
 import uk.co.magictractor.spew.api.SpewApplication;
-import uk.co.magictractor.spew.api.VerificationFunction;
-import uk.co.magictractor.spew.api.VerificationInfo;
 import uk.co.magictractor.spew.util.IOUtil;
 
 /**

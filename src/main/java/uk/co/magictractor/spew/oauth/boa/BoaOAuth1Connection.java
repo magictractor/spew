@@ -11,14 +11,14 @@ import javax.crypto.spec.SecretKeySpec;
 
 import com.google.common.io.BaseEncoding;
 
-import uk.co.magictractor.spew.access.AuthorizationHandler;
 import uk.co.magictractor.spew.api.SpewOAuth1Application;
 import uk.co.magictractor.spew.api.SpewOAuth1ServiceProvider;
 import uk.co.magictractor.spew.api.SpewRequest;
 import uk.co.magictractor.spew.api.SpewResponse;
-import uk.co.magictractor.spew.api.VerificationInfo;
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
 import uk.co.magictractor.spew.core.response.parser.text.KeyValuePairsResponse;
+import uk.co.magictractor.spew.core.verification.AuthorizationHandler;
+import uk.co.magictractor.spew.core.verification.VerificationInfo;
 import uk.co.magictractor.spew.provider.imagebam.ImageBam;
 import uk.co.magictractor.spew.store.EditableProperty;
 import uk.co.magictractor.spew.store.UserPropertyStore;

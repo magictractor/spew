@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Supplier;
 
+import uk.co.magictractor.spew.core.verification.VerificationFunction;
 import uk.co.magictractor.spew.server.OAuth1VerificationRequestHandler;
 import uk.co.magictractor.spew.server.RequestHandler;
 import uk.co.magictractor.spew.server.ResourceRequestHandler;

@@ -17,10 +17,10 @@ package uk.co.magictractor.spew.server;
 
 import java.util.function.Supplier;
 
-import uk.co.magictractor.spew.access.AbstractAuthorizationHandler;
 import uk.co.magictractor.spew.api.HasCallbackServer;
 import uk.co.magictractor.spew.api.SpewApplication;
-import uk.co.magictractor.spew.api.VerificationFunction;
+import uk.co.magictractor.spew.core.verification.AbstractAuthorizationHandler;
+import uk.co.magictractor.spew.core.verification.VerificationFunction;
 import uk.co.magictractor.spew.example.flickr.MyFlickrApp;
 import uk.co.magictractor.spew.util.spi.SPIUtil;
 
