@@ -18,12 +18,12 @@ package uk.co.magictractor.spew.oauth.springsocial.spike;
 import org.springframework.social.oauth1.GenericOAuth1ServiceProvider;
 import org.springframework.social.oauth1.OAuth1Version;
 
-import uk.co.magictractor.spew.api.OAuth1Application;
+import uk.co.magictractor.spew.api.SpewOAuth1Application;
 
 public class SpewOAuth1ServiceProvider extends GenericOAuth1ServiceProvider {
     //    extends AbstractOAuth1ServiceProvider<String> {
 
-    /* default */ SpewOAuth1ServiceProvider(OAuth1Application application) {
+    /* default */ SpewOAuth1ServiceProvider(SpewOAuth1Application application) {
 
         super(application.getConsumerKey(),
             application.getConsumerSecret(),

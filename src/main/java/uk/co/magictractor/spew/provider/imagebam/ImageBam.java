@@ -7,7 +7,7 @@ import com.google.gson.GsonBuilder;
 import uk.co.magictractor.spew.access.AuthorizationHandler;
 import uk.co.magictractor.spew.access.PasteVerificationCodeHandler;
 import uk.co.magictractor.spew.api.BadResponseException;
-import uk.co.magictractor.spew.api.OAuth1ServiceProvider;
+import uk.co.magictractor.spew.api.SpewOAuth1ServiceProvider;
 import uk.co.magictractor.spew.api.SpewResponse;
 import uk.co.magictractor.spew.api.VerificationFunction;
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
@@ -28,7 +28,7 @@ import uk.co.magictractor.spew.util.ContentTypeUtil;
  * presents some interested challenges to OAuth clients.
  * </p>
  */
-public class ImageBam implements OAuth1ServiceProvider {
+public class ImageBam implements SpewOAuth1ServiceProvider {
 
     public static final String REST_ENDPOINT = "http://www.imagebam.com/sys/API/resource/";
 

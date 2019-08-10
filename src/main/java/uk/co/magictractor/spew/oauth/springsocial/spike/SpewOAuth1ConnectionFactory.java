@@ -18,7 +18,7 @@ package uk.co.magictractor.spew.oauth.springsocial.spike;
 import org.springframework.social.oauth1.GenericOAuth1ConnectionFactory;
 import org.springframework.social.oauth1.OAuth1Version;
 
-import uk.co.magictractor.spew.api.OAuth1Application;
+import uk.co.magictractor.spew.api.SpewOAuth1Application;
 
 public class SpewOAuth1ConnectionFactory extends GenericOAuth1ConnectionFactory {
 
@@ -27,7 +27,7 @@ public class SpewOAuth1ConnectionFactory extends GenericOAuth1ConnectionFactory 
      * @param serviceProvider
      * @param apiAdapter
      */
-    public SpewOAuth1ConnectionFactory(OAuth1Application application) {
+    public SpewOAuth1ConnectionFactory(SpewOAuth1Application application) {
         //super(application.getClass().getSimpleName().toLowerCase(), new SpewOAuth1ServiceProvider(application), null);
         // TODO Auto-generated constructor stub
 

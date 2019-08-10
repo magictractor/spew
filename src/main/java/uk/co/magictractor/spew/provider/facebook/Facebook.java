@@ -15,7 +15,7 @@
  */
 package uk.co.magictractor.spew.provider.facebook;
 
-import uk.co.magictractor.spew.api.OAuth2ServiceProvider;
+import uk.co.magictractor.spew.api.SpewOAuth2ServiceProvider;
 
 /**
  * Creating a Facebook app requires a developer account. Creating a developer
@@ -25,7 +25,7 @@ import uk.co.magictractor.spew.api.OAuth2ServiceProvider;
 // https://developers.facebook.com/docs/graph-api/using-graph-api/
 // https://developers.facebook.com/docs/graph-api/using-graph-api/#paging
 // https://developers.facebook.com/docs/facebook-login/manually-build-a-login-flow
-public class Facebook implements OAuth2ServiceProvider {
+public class Facebook implements SpewOAuth2ServiceProvider {
 
     private static final Facebook INSTANCE = new Facebook();
 

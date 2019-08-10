@@ -15,17 +15,17 @@
  */
 package uk.co.magictractor.spew.example.facebook;
 
-import uk.co.magictractor.spew.api.OAuth2Application;
-import uk.co.magictractor.spew.api.OAuth2ServiceProvider;
+import uk.co.magictractor.spew.api.SpewOAuth2Application;
+import uk.co.magictractor.spew.api.SpewOAuth2ServiceProvider;
 import uk.co.magictractor.spew.provider.facebook.Facebook;
 
 /**
  *
  */
-public class MyFacebookApp implements OAuth2Application {
+public class MyFacebookApp implements SpewOAuth2Application {
 
     @Override
-    public OAuth2ServiceProvider getServiceProvider() {
+    public SpewOAuth2ServiceProvider getServiceProvider() {
         return Facebook.getInstance();
     }
 

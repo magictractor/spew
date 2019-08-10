@@ -6,7 +6,7 @@ import java.util.Map;
 
 import com.google.gson.GsonBuilder;
 
-import uk.co.magictractor.spew.api.OAuth2ServiceProvider;
+import uk.co.magictractor.spew.api.SpewOAuth2ServiceProvider;
 import uk.co.magictractor.spew.api.SpewRequest;
 import uk.co.magictractor.spew.json.BooleanTypeAdapter;
 import uk.co.magictractor.spew.json.InstantTypeAdapter;
@@ -22,7 +22,7 @@ import uk.co.magictractor.spew.provider.flickr.json.TagSetTypeAdapter;
 // Imgur requires redirect values to be specified in the app
 // https://imgur.com/account/settings/apps
 // to display a code for copy&paste, Imgur requires a "pin" request type - currently only "code" is supported
-public class Imgur implements OAuth2ServiceProvider {
+public class Imgur implements SpewOAuth2ServiceProvider {
 
     public static final String REST_ENDPOINT = "https://api.imgur.com/3/";
 

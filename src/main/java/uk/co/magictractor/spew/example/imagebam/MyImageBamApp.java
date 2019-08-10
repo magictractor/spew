@@ -1,13 +1,13 @@
 package uk.co.magictractor.spew.example.imagebam;
 
-import uk.co.magictractor.spew.api.OAuth1Application;
-import uk.co.magictractor.spew.api.OAuth1ServiceProvider;
+import uk.co.magictractor.spew.api.SpewOAuth1Application;
+import uk.co.magictractor.spew.api.SpewOAuth1ServiceProvider;
 import uk.co.magictractor.spew.provider.imagebam.ImageBam;
 
-public class MyImageBamApp implements OAuth1Application {
+public class MyImageBamApp implements SpewOAuth1Application {
 
     @Override
-    public OAuth1ServiceProvider getServiceProvider() {
+    public SpewOAuth1ServiceProvider getServiceProvider() {
         return ImageBam.getInstance();
     }
 

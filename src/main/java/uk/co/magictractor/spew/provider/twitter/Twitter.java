@@ -1,10 +1,10 @@
 package uk.co.magictractor.spew.provider.twitter;
 
-import uk.co.magictractor.spew.api.OAuth1ServiceProvider;
+import uk.co.magictractor.spew.api.SpewOAuth1ServiceProvider;
 
 // manage apps at apps.twitter.com
 // Twitter can be accessed via OAuth1 or OAuth2 - names TwitterOAuth1 and TwitterOAuth2?
-public class Twitter implements OAuth1ServiceProvider {
+public class Twitter implements SpewOAuth1ServiceProvider {
 
     private static final Twitter INSTANCE = new Twitter();
 

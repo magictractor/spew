@@ -1,13 +1,13 @@
 package uk.co.magictractor.spew.example.google;
 
-import uk.co.magictractor.spew.api.OAuth2Application;
-import uk.co.magictractor.spew.api.OAuth2ServiceProvider;
+import uk.co.magictractor.spew.api.SpewOAuth2Application;
+import uk.co.magictractor.spew.api.SpewOAuth2ServiceProvider;
 import uk.co.magictractor.spew.provider.google.Google;
 
-public class MyGooglePhotosApp implements OAuth2Application {
+public class MyGooglePhotosApp implements SpewOAuth2Application {
 
     @Override
-    public OAuth2ServiceProvider getServiceProvider() {
+    public SpewOAuth2ServiceProvider getServiceProvider() {
         return Google.getInstance();
     }
 

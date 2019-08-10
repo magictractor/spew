@@ -12,12 +12,13 @@ import uk.co.magictractor.spew.store.ApplicationPropertyStore;
 import uk.co.magictractor.spew.util.spi.SPIUtil;
 
 @SpewAuthType
-public interface OAuth2Application extends SpewApplication, HasCallbackServer {
+public interface SpewOAuth2Application extends SpewApplication, HasCallbackServer {
 
     @Override
-    OAuth2ServiceProvider getServiceProvider();
+    SpewOAuth2ServiceProvider getServiceProvider();
 
     default String getClientId() {
+        // TODO! firstNonNull would be better
         return SPIUtil.firstAvailable(ApplicationPropertyStore.class).getProperty(this, "client_id");
     }
 

@@ -28,7 +28,7 @@ import org.springframework.web.client.HttpMessageConverterExtractor;
 import org.springframework.web.client.RequestCallback;
 import org.springframework.web.client.RestOperations;
 
-import uk.co.magictractor.spew.api.OAuth1Application;
+import uk.co.magictractor.spew.api.SpewOAuth1Application;
 import uk.co.magictractor.spew.api.SpewConnection;
 import uk.co.magictractor.spew.api.SpewHeader;
 import uk.co.magictractor.spew.api.SpewRequest;
@@ -41,7 +41,7 @@ import uk.co.magictractor.spew.util.spi.SPIUtil;
 // https://docs.spring.io/spring-social/docs/current-SNAPSHOT/reference/htmlsingle/
 public class SpringSocialOAuth1Connection implements SpewConnection {
 
-    private final OAuth1Application application;
+    private final SpewOAuth1Application application;
 
     private EditableProperty userToken;
     private EditableProperty userSecret;
@@ -53,7 +53,7 @@ public class SpringSocialOAuth1Connection implements SpewConnection {
      * {@link SpringSocialConnectionFactory#createConnection}, usually
      * indirectly via OAuthConnectionFactory.
      */
-    /* default */ SpringSocialOAuth1Connection(OAuth1Application application) {
+    /* default */ SpringSocialOAuth1Connection(SpewOAuth1Application application) {
         this.application = application;
 
         SpewOAuth1ConnectionFactory connectionFactory = new SpewOAuth1ConnectionFactory(application);

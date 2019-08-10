@@ -1,6 +1,6 @@
 package uk.co.magictractor.spew.api;
 
-public interface OAuth1ServiceProvider extends SpewServiceProvider {
+public interface SpewOAuth1ServiceProvider extends SpewServiceProvider {
 
     String getTemporaryCredentialRequestUri();
 

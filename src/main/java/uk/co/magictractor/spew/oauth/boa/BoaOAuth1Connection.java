@@ -12,8 +12,8 @@ import javax.crypto.spec.SecretKeySpec;
 import com.google.common.io.BaseEncoding;
 
 import uk.co.magictractor.spew.access.AuthorizationHandler;
-import uk.co.magictractor.spew.api.OAuth1Application;
-import uk.co.magictractor.spew.api.OAuth1ServiceProvider;
+import uk.co.magictractor.spew.api.SpewOAuth1Application;
+import uk.co.magictractor.spew.api.SpewOAuth1ServiceProvider;
 import uk.co.magictractor.spew.api.SpewRequest;
 import uk.co.magictractor.spew.api.SpewResponse;
 import uk.co.magictractor.spew.api.VerificationInfo;
@@ -27,7 +27,7 @@ import uk.co.magictractor.spew.util.ExceptionUtil;
 import uk.co.magictractor.spew.util.spi.SPIUtil;
 
 // TODO! common interface for OAuth1 and OAuth2 connections (and no auth? / other auth?)
-public final class BoaOAuth1Connection extends AbstractBoaOAuthConnection<OAuth1Application, OAuth1ServiceProvider> {
+public final class BoaOAuth1Connection extends AbstractBoaOAuthConnection<SpewOAuth1Application, SpewOAuth1ServiceProvider> {
 
     // unit tests can call setSeed() on this
     private final Random nonceGenerator = new Random();
@@ -43,7 +43,7 @@ public final class BoaOAuth1Connection extends AbstractBoaOAuthConnection<OAuth1
      * {@link BoaConnectionFactory#createConnection}, usually indirectly via
      * OAuthConnectionFactory.
      */
-    /* default */ BoaOAuth1Connection(OAuth1Application application) {
+    /* default */ BoaOAuth1Connection(SpewOAuth1Application application) {
         super(application);
 
         this.userToken = SPIUtil.firstAvailable(UserPropertyStore.class).getProperty(application, "user_token");

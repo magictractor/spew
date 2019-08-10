@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 
 import com.google.gson.GsonBuilder;
 
-import uk.co.magictractor.spew.api.OAuth2ServiceProvider;
+import uk.co.magictractor.spew.api.SpewOAuth2ServiceProvider;
 import uk.co.magictractor.spew.json.BooleanTypeAdapter;
 import uk.co.magictractor.spew.json.InstantTypeAdapter;
 import uk.co.magictractor.spew.json.LocalDateTimeTypeAdapter;
@@ -22,7 +22,7 @@ import uk.co.magictractor.spew.provider.flickr.json.TagSetTypeAdapter;
 //346766315499-60ikghor22r0lkbdtqp6jpgvtpff8vg3.apps.googleusercontent.com
 //Client Secret
 //-JW9p0euMrM-ymQgeqEJ1MvZ
-public class Google implements OAuth2ServiceProvider {
+public class Google implements SpewOAuth2ServiceProvider {
 
     private static final Google INSTANCE = new Google();
 

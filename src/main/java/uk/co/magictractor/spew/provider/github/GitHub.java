@@ -15,7 +15,7 @@
  */
 package uk.co.magictractor.spew.provider.github;
 
-import uk.co.magictractor.spew.api.OAuth2ServiceProvider;
+import uk.co.magictractor.spew.api.SpewOAuth2ServiceProvider;
 
 /**
  *
@@ -25,7 +25,7 @@ import uk.co.magictractor.spew.api.OAuth2ServiceProvider;
 // https://developer.github.com/apps/quickstart-guides/using-the-github-api-in-your-app/
 // https://developer.github.com/v3/
 // TODO! GitHub also supports BasicAuth
-public class GitHub implements OAuth2ServiceProvider {
+public class GitHub implements SpewOAuth2ServiceProvider {
 
     private static final GitHub INSTANCE = new GitHub();
 

@@ -1,13 +1,13 @@
 package uk.co.magictractor.spew.example.flickr;
 
-import uk.co.magictractor.spew.api.OAuth1Application;
-import uk.co.magictractor.spew.api.OAuth1ServiceProvider;
+import uk.co.magictractor.spew.api.SpewOAuth1Application;
+import uk.co.magictractor.spew.api.SpewOAuth1ServiceProvider;
 import uk.co.magictractor.spew.provider.flickr.Flickr;
 
-public class MyFlickrApp implements OAuth1Application {
+public class MyFlickrApp implements SpewOAuth1Application {
 
     @Override
-    public OAuth1ServiceProvider getServiceProvider() {
+    public SpewOAuth1ServiceProvider getServiceProvider() {
         return Flickr.getInstance();
     }
 

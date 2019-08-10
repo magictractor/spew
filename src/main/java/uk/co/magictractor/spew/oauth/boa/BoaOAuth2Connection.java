@@ -12,8 +12,8 @@ import io.netty.buffer.ByteBuf;
 import io.netty.handler.codec.http.FullHttpMessage;
 import io.netty.handler.codec.http.QueryStringDecoder;
 import uk.co.magictractor.spew.access.AuthorizationHandler;
-import uk.co.magictractor.spew.api.OAuth2Application;
-import uk.co.magictractor.spew.api.OAuth2ServiceProvider;
+import uk.co.magictractor.spew.api.SpewOAuth2Application;
+import uk.co.magictractor.spew.api.SpewOAuth2ServiceProvider;
 import uk.co.magictractor.spew.api.SpewRequest;
 import uk.co.magictractor.spew.api.SpewResponse;
 import uk.co.magictractor.spew.api.VerificationInfo;
@@ -27,7 +27,7 @@ import uk.co.magictractor.spew.util.spi.SPIUtil;
 
 // https://tools.ietf.org/html/rfc6749
 // https://developers.google.com/identity/protocols/OAuth2
-public class BoaOAuth2Connection extends AbstractBoaOAuthConnection<OAuth2Application, OAuth2ServiceProvider> {
+public class BoaOAuth2Connection extends AbstractBoaOAuthConnection<SpewOAuth2Application, SpewOAuth2ServiceProvider> {
 
     /*
      * milliseconds to remove from expiry to ensure that we refresh if getting
@@ -45,7 +45,7 @@ public class BoaOAuth2Connection extends AbstractBoaOAuthConnection<OAuth2Applic
      * {@link BoaConnectionFactory#createConnection}, usually indirectly via
      * OAuthConnectionFactory.
      */
-    /* default */ BoaOAuth2Connection(OAuth2Application application) {
+    /* default */ BoaOAuth2Connection(SpewOAuth2Application application) {
         super(application);
 
         UserPropertyStore userPropertyStore = SPIUtil.firstAvailable(UserPropertyStore.class);
@@ -75,7 +75,7 @@ public class BoaOAuth2Connection extends AbstractBoaOAuthConnection<OAuth2Applic
 
     // https://developers.google.com/photos/library/guides/authentication-authorization
     private void authorize() {
-        OAuth2Application application = getApplication();
+        SpewOAuth2Application application = getApplication();
 
         SpewRequest request = application.createGetRequest(getServiceProvider().getAuthorizationUri());
 
@@ -126,7 +126,7 @@ public class BoaOAuth2Connection extends AbstractBoaOAuthConnection<OAuth2Applic
     }
 
     private void fetchAccessAndRefreshToken(String code, String callback) {
-        OAuth2Application application = getApplication();
+        SpewOAuth2Application application = getApplication();
 
         // ah! needed to be POST else 404 (Google)
         SpewRequest request = application.createPostRequest(getServiceProvider().getTokenUri());
