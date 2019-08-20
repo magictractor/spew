@@ -8,9 +8,9 @@ import io.undertow.server.HttpServerExchange;
 import io.undertow.util.Headers;
 import uk.co.magictractor.spew.server.CallbackServer;
 import uk.co.magictractor.spew.server.RequestHandler;
-import uk.co.magictractor.spew.util.spi.ClassDependantAvailability;
+import uk.co.magictractor.spew.util.spi.ClassDependentAvailability;
 
-public class UndertowCallbackServer implements CallbackServer, ClassDependantAvailability {
+public class UndertowCallbackServer implements CallbackServer, ClassDependentAvailability {
 
     private Undertow server;
 

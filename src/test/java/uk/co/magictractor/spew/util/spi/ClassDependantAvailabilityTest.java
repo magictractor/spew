@@ -25,17 +25,17 @@ public class ClassDependantAvailabilityTest {
 
     @Test
     public void testIsAvailable_true() {
-        ClassDependantAvailability testee = new TestIsAvailable("java.math.BigDecimal");
+        ClassDependentAvailability testee = new TestIsAvailable("java.math.BigDecimal");
         Assertions.assertThat(testee.isAvailable()).isEqualTo(true);
     }
 
     @Test
     public void testIsAvailable_false() {
-        ClassDependantAvailability testee = new TestIsAvailable("x.y.z.Bafflegab");
+        ClassDependentAvailability testee = new TestIsAvailable("x.y.z.Bafflegab");
         Assertions.assertThat(testee.isAvailable()).isEqualTo(false);
     }
 
-    private static class TestIsAvailable implements ClassDependantAvailability {
+    private static class TestIsAvailable implements ClassDependentAvailability {
 
         private final String requiresClassName;
 

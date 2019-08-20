@@ -15,7 +15,7 @@
  */
 package uk.co.magictractor.spew.util.spi;
 
-public interface ClassDependantAvailability extends Availability {
+public interface ClassDependentAvailability extends Availability {
 
     String requiresClassName();
 

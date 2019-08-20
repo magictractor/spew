@@ -18,9 +18,9 @@ package uk.co.magictractor.spew.http.apache;
 import uk.co.magictractor.spew.api.SpewApplication;
 import uk.co.magictractor.spew.api.SpewConnection;
 import uk.co.magictractor.spew.api.connection.SpewConnectionFactory;
-import uk.co.magictractor.spew.util.spi.ClassDependantAvailability;
+import uk.co.magictractor.spew.util.spi.ClassDependentAvailability;
 
-public class SpewApacheHttpClientConnectionFactory implements SpewConnectionFactory, ClassDependantAvailability {
+public class SpewApacheHttpClientConnectionFactory implements SpewConnectionFactory, ClassDependentAvailability {
 
     @Override
     public String requiresClassName() {

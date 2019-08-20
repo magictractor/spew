@@ -24,7 +24,7 @@ import uk.co.magictractor.spew.server.OutgoingErrorResponse;
 import uk.co.magictractor.spew.server.OutgoingResponse;
 import uk.co.magictractor.spew.server.OutgoingResponseBuilder;
 import uk.co.magictractor.spew.util.ExceptionUtil;
-import uk.co.magictractor.spew.util.spi.ClassDependantAvailability;
+import uk.co.magictractor.spew.util.spi.ClassDependentAvailability;
 
 /**
  * Server for receiving OAuth authorization callbacks. Based on example in
@@ -33,7 +33,7 @@ import uk.co.magictractor.spew.util.spi.ClassDependantAvailability;
 
 // TODO! look at using Undertow instead/
 // see https://javachannel.org/posts/netty-is-not-a-web-framework/
-public class NettyCallbackServer implements CallbackServer, ClassDependantAvailability {
+public class NettyCallbackServer implements CallbackServer, ClassDependentAvailability {
 
     private NioEventLoopGroup bossGroup;
     private NioEventLoopGroup workerGroup;
