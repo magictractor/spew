@@ -212,8 +212,8 @@ public final class BoaOAuth1Connection<SP extends SpewOAuth1ServiceProvider>
 
         signatureBaseStringBuilder.append(getApplication().getConsumerKey());
         signatureBaseStringBuilder.append(getApplication().getConsumerSecret());
-        signatureBaseStringBuilder.append(request.getQueryStringParam("oauth_timestamp"));
-        signatureBaseStringBuilder.append(request.getQueryStringParam("oauth_nonce"));
+        signatureBaseStringBuilder.append(request.getQueryStringParam("oauth_timestamp").get());
+        signatureBaseStringBuilder.append(request.getQueryStringParam("oauth_nonce").get());
         if (userToken.getValue() != null) {
             signatureBaseStringBuilder.append(userToken.getValue());
             signatureBaseStringBuilder.append(userSecret.getValue());
