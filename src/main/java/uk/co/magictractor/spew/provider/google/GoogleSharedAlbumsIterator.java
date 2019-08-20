@@ -3,8 +3,8 @@ package uk.co.magictractor.spew.provider.google;
 import java.util.Iterator;
 import java.util.List;
 
-import uk.co.magictractor.spew.api.SpewApplication;
 import uk.co.magictractor.spew.api.OutgoingHttpRequest;
+import uk.co.magictractor.spew.api.SpewApplication;
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
 import uk.co.magictractor.spew.example.google.MyGooglePhotosApp;
 import uk.co.magictractor.spew.example.google.pojo.GoogleAlbum;
@@ -33,7 +33,7 @@ public class GoogleSharedAlbumsIterator<E> extends GoogleServiceIterator<E> {
     public static class GoogleSharedAlbumsIteratorBuilder<E> extends
             GoogleServiceIteratorBuilder<E, GoogleSharedAlbumsIterator<E>, GoogleSharedAlbumsIteratorBuilder<E>> {
 
-        public GoogleSharedAlbumsIteratorBuilder(SpewApplication application, Class<E> elementType) {
+        public GoogleSharedAlbumsIteratorBuilder(SpewApplication<Google> application, Class<E> elementType) {
             super(application, elementType, new GoogleSharedAlbumsIterator<>());
         }
 

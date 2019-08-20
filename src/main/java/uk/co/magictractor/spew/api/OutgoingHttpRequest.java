@@ -17,7 +17,7 @@ import uk.co.magictractor.spew.util.ContentTypeUtil;
 
 public final class OutgoingHttpRequest implements SpewHttpRequest {
 
-    private final SpewApplication application;
+    private final SpewApplication<?> application;
 
     private final String httpMethod;
     private final String baseUrl;
@@ -47,7 +47,7 @@ public final class OutgoingHttpRequest implements SpewHttpRequest {
      * request.setQueryStringParam("nojsoncallback", "1");
      * </pre>
      */
-    OutgoingHttpRequest(SpewApplication application, String httpMethod, String url) {
+    OutgoingHttpRequest(SpewApplication<?> application, String httpMethod, String url) {
         this.application = application;
         this.httpMethod = httpMethod;
         this.baseUrl = url;

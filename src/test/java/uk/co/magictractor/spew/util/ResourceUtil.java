@@ -9,7 +9,7 @@ public final class ResourceUtil {
     private ResourceUtil() {
     }
 
-    public static SpewParsedResponse readResponse(SpewApplication application, Class<?> testClass, String fileName) {
+    public static SpewParsedResponse readResponse(SpewApplication<?> application, Class<?> testClass, String fileName) {
         ResourceResponse response = new ResourceResponse(testClass, fileName);
         return SpewParsedResponse.parse(application, response);
     }

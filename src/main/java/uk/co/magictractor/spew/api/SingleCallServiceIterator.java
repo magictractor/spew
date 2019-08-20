@@ -23,7 +23,7 @@ public abstract class SingleCallServiceIterator<E> extends PageServiceIterator<E
     public static class SingleCallServiceIteratorBuilder<E, I extends SingleCallServiceIterator<E>, B>
             extends PageServiceIteratorBuilder<E, I, B> {
 
-        protected SingleCallServiceIteratorBuilder(SpewApplication application, Class<E> elementType,
+        protected SingleCallServiceIteratorBuilder(SpewApplication<?> application, Class<E> elementType,
                 I iteratorInstance) {
             super(application, elementType, iteratorInstance);
         }

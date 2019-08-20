@@ -11,11 +11,11 @@ import javax.crypto.spec.SecretKeySpec;
 
 import com.google.common.io.BaseEncoding;
 
+import uk.co.magictractor.spew.api.OutgoingHttpRequest;
 import uk.co.magictractor.spew.api.SpewConnection;
+import uk.co.magictractor.spew.api.SpewHttpResponse;
 import uk.co.magictractor.spew.api.SpewOAuth1Application;
 import uk.co.magictractor.spew.api.SpewOAuth1ServiceProvider;
-import uk.co.magictractor.spew.api.OutgoingHttpRequest;
-import uk.co.magictractor.spew.api.SpewHttpResponse;
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
 import uk.co.magictractor.spew.core.response.parser.text.KeyValuePairsResponse;
 import uk.co.magictractor.spew.core.verification.AuthorizationHandler;
@@ -29,8 +29,8 @@ import uk.co.magictractor.spew.util.ExceptionUtil;
 import uk.co.magictractor.spew.util.spi.SPIUtil;
 
 // TODO! common interface for OAuth1 and OAuth2 connections (and no auth? / other auth?)
-public final class BoaOAuth1Connection
-        extends AbstractBoaOAuthConnection<SpewOAuth1Application, SpewOAuth1ServiceProvider> {
+public final class BoaOAuth1Connection<SP extends SpewOAuth1ServiceProvider>
+        extends AbstractBoaOAuthConnection<SpewOAuth1Application<SP>, SP> {
 
     // unit tests can call setSeed() on this
     private final Random nonceGenerator = new Random();
@@ -46,7 +46,7 @@ public final class BoaOAuth1Connection
      * {@link BoaConnectionFactory#createConnection}, usually indirectly via
      * OAuthConnectionFactory.
      */
-    /* default */ BoaOAuth1Connection(SpewOAuth1Application application) {
+    /* default */ BoaOAuth1Connection(SpewOAuth1Application<SP> application) {
         super(application);
 
         this.userToken = SPIUtil.firstAvailable(UserPropertyStore.class).getProperty(application, "user_token");
@@ -97,6 +97,10 @@ public final class BoaOAuth1Connection
 
         String authToken = response.getString("oauth_token");
         String authSecret = response.getString("oauth_token_secret");
+
+        if (authToken == null || authSecret == null) {
+            throw new IllegalStateException("missing oauth_token and/or oauth_token_secret values in " + response);
+        }
 
         // These are temporary values, only used to get the user's token and secret, so
         // don't persist them.
@@ -176,7 +180,7 @@ public final class BoaOAuth1Connection
         // String signature =
         // Base64.getEncoder().encodeToString(mac.doFinal(getSignatureBaseString(request).getBytes()));
         String signature;
-        if (ImageBam.getInstance().equals(getServiceProvider())) {
+        if (getServiceProvider() instanceof ImageBam) {
             // PHP example on ImageBam wiki uses MD5() function which returns hex
             // different base string, different hashing, and different encoding
             // ah! it's md5 - not HMAC-md5?!

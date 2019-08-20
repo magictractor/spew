@@ -5,9 +5,4 @@ import uk.co.magictractor.spew.provider.twitter.Twitter;
 
 public class MyTwitterApp implements SpewOAuth1Application<Twitter> {
 
-    @Override
-    public Twitter getServiceProvider() {
-        return Twitter.getInstance();
-    }
-
 }

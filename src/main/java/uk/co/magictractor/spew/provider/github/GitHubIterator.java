@@ -7,9 +7,9 @@ import java.util.Optional;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Streams;
 
+import uk.co.magictractor.spew.api.OutgoingHttpRequest;
 import uk.co.magictractor.spew.api.PageCountServiceIterator;
 import uk.co.magictractor.spew.api.SpewApplication;
-import uk.co.magictractor.spew.api.OutgoingHttpRequest;
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
 import uk.co.magictractor.spew.example.github.MyGitHubApp;
 import uk.co.magictractor.spew.example.github.pojo.GitHubRepository;
@@ -53,7 +53,7 @@ public class GitHubIterator<E> extends PageCountServiceIterator<E> {
     public static class GitHubIteratorBuilder<E>
             extends PageCountServiceIteratorBuilder<E, GitHubIterator<E>, GitHubIteratorBuilder<E>> {
 
-        public GitHubIteratorBuilder(SpewApplication application, Class<E> elementType) {
+        public GitHubIteratorBuilder(SpewApplication<GitHub> application, Class<E> elementType) {
             super(application, elementType, new GitHubIterator<>());
         }
     }

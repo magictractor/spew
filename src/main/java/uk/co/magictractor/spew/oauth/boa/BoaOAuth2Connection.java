@@ -11,11 +11,11 @@ import com.google.common.collect.Iterables;
 import io.netty.buffer.ByteBuf;
 import io.netty.handler.codec.http.FullHttpMessage;
 import io.netty.handler.codec.http.QueryStringDecoder;
+import uk.co.magictractor.spew.api.OutgoingHttpRequest;
 import uk.co.magictractor.spew.api.SpewConnection;
+import uk.co.magictractor.spew.api.SpewHttpResponse;
 import uk.co.magictractor.spew.api.SpewOAuth2Application;
 import uk.co.magictractor.spew.api.SpewOAuth2ServiceProvider;
-import uk.co.magictractor.spew.api.OutgoingHttpRequest;
-import uk.co.magictractor.spew.api.SpewHttpResponse;
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
 import uk.co.magictractor.spew.core.verification.AuthorizationHandler;
 import uk.co.magictractor.spew.core.verification.VerificationFunction;
@@ -29,7 +29,8 @@ import uk.co.magictractor.spew.util.spi.SPIUtil;
 
 // https://tools.ietf.org/html/rfc6749
 // https://developers.google.com/identity/protocols/OAuth2
-public class BoaOAuth2Connection extends AbstractBoaOAuthConnection<SpewOAuth2Application, SpewOAuth2ServiceProvider> {
+public class BoaOAuth2Connection<SP extends SpewOAuth2ServiceProvider>
+        extends AbstractBoaOAuthConnection<SpewOAuth2Application<SP>, SP> {
 
     /*
      * milliseconds to remove from expiry to ensure that we refresh if getting
@@ -47,7 +48,7 @@ public class BoaOAuth2Connection extends AbstractBoaOAuthConnection<SpewOAuth2Ap
      * {@link BoaConnectionFactory#createConnection}, usually indirectly via
      * OAuthConnectionFactory.
      */
-    /* default */ BoaOAuth2Connection(SpewOAuth2Application application) {
+    /* default */ BoaOAuth2Connection(SpewOAuth2Application<SP> application) {
         super(application);
 
         UserPropertyStore userPropertyStore = SPIUtil.firstAvailable(UserPropertyStore.class);

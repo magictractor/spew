@@ -56,7 +56,7 @@ public interface SpewParsedResponse {
 
     <T> List<T> getList(String path, Class<T> type);
 
-    static SpewParsedResponse parse(SpewApplication application, SpewHttpResponse response) {
+    static SpewParsedResponse parse(SpewApplication<?> application, SpewHttpResponse response) {
 
         Optional<SpewParsedResponse> instance = SPIUtil.firstNotNull(SpewParsedResponseFactory.class,
             factory -> factory.instanceFor(application, response));

@@ -30,7 +30,7 @@ public interface SpewConnectionFactory {
      *         case other implementations may be available (via SPI) to create
      *         the implementation
      */
-    public SpewConnection createConnection(SpewApplication application);
+    public SpewConnection createConnection(SpewApplication<?> application);
 
     default SpewConnection createConnectionWithoutAuth() {
         return null;

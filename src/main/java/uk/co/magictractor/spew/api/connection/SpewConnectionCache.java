@@ -40,7 +40,7 @@ public class SpewConnectionCache {
 
     private static SpewConnection initConnection(Class<? extends SpewApplication> applicationClass) {
         checkAuthType(applicationClass);
-        SpewApplication application = ExceptionUtil.call(() -> applicationClass.newInstance());
+        SpewApplication<?> application = ExceptionUtil.call(() -> applicationClass.newInstance());
         return SPIUtil.firstNotNull(SpewConnectionFactory.class, factory -> factory.createConnection(application))
                 .get();
         // TODO! wire in transport here??

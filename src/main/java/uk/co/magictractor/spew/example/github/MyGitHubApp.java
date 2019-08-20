@@ -23,11 +23,6 @@ import uk.co.magictractor.spew.provider.github.GitHub;
  */
 public class MyGitHubApp implements SpewOAuth2Application<GitHub> {
 
-    @Override
-    public GitHub getServiceProvider() {
-        return GitHub.getInstance();
-    }
-
     // https://developer.github.com/apps/building-oauth-apps/understanding-scopes-for-oauth-apps/#available-scopes
     @Override
     public String getScope() {

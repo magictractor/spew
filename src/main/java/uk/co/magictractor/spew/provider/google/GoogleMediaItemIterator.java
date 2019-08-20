@@ -3,8 +3,8 @@ package uk.co.magictractor.spew.provider.google;
 import java.util.Iterator;
 import java.util.List;
 
-import uk.co.magictractor.spew.api.SpewApplication;
 import uk.co.magictractor.spew.api.OutgoingHttpRequest;
+import uk.co.magictractor.spew.api.SpewApplication;
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
 import uk.co.magictractor.spew.example.google.MyGooglePhotosApp;
 import uk.co.magictractor.spew.example.google.pojo.GoogleMediaItem;
@@ -41,7 +41,7 @@ public class GoogleMediaItemIterator<E> extends GoogleServiceIterator<E> {
     public static class GoogleMediaItemIteratorBuilder<E> extends
             GoogleServiceIteratorBuilder<E, GoogleMediaItemIterator<E>, GoogleMediaItemIteratorBuilder<E>> {
 
-        public GoogleMediaItemIteratorBuilder(SpewApplication application, Class<E> elementType) {
+        public GoogleMediaItemIteratorBuilder(SpewApplication<Google> application, Class<E> elementType) {
             super(application, elementType, new GoogleMediaItemIterator<E>());
             addServerSideFilterHandler(DateTakenPhotoFilter.class, this::setDateTakenPhotoFilter);
         }

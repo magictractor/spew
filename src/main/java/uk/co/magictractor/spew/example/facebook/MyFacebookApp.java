@@ -23,9 +23,4 @@ import uk.co.magictractor.spew.provider.facebook.Facebook;
  */
 public class MyFacebookApp implements SpewOAuth2Application<Facebook> {
 
-    @Override
-    public Facebook getServiceProvider() {
-        return Facebook.getInstance();
-    }
-
 }

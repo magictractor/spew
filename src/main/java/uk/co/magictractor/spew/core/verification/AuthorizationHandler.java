@@ -49,9 +49,9 @@ public interface AuthorizationHandler {
     // VerificationFunction verificationFunction();
     Supplier<VerificationFunction> verificationFunctionSupplier();
 
-    void preOpenAuthorizationInBrowser(SpewApplication application);
+    void preOpenAuthorizationInBrowser(SpewApplication<?> application);
 
-    void postOpenAuthorizationInBrowser(SpewApplication application);
+    void postOpenAuthorizationInBrowser(SpewApplication<?> application);
 
     /**
      * <p>

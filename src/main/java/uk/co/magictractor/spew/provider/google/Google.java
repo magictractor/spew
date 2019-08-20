@@ -24,13 +24,7 @@ import uk.co.magictractor.spew.provider.flickr.json.TagSetTypeAdapter;
 //-JW9p0euMrM-ymQgeqEJ1MvZ
 public class Google implements SpewOAuth2ServiceProvider {
 
-    private static final Google INSTANCE = new Google();
-
     private Google() {
-    }
-
-    public static Google getInstance() {
-        return INSTANCE;
     }
 
     @Override
@@ -61,6 +55,7 @@ public class Google implements SpewOAuth2ServiceProvider {
     //		return "https://www.flickr.com/services/oauth/access_token";
     //	}
 
+    @Override
     public GsonBuilder getGsonBuilder() {
         GsonBuilder gsonBuilder = new GsonBuilder();
 

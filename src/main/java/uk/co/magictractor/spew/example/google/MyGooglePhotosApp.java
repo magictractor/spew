@@ -6,11 +6,6 @@ import uk.co.magictractor.spew.provider.google.Google;
 public class MyGooglePhotosApp implements SpewOAuth2Application<Google> {
 
     @Override
-    public Google getServiceProvider() {
-        return Google.getInstance();
-    }
-
-    @Override
     public String getScope() {
         // return "https://www.googleapis.com/auth/photoslibrary";
 

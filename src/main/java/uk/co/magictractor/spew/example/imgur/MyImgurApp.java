@@ -5,9 +5,4 @@ import uk.co.magictractor.spew.provider.imgur.Imgur;
 
 public class MyImgurApp implements SpewOAuth2Application<Imgur> {
 
-    @Override
-    public Imgur getServiceProvider() {
-        return Imgur.getInstance();
-    }
-
 }

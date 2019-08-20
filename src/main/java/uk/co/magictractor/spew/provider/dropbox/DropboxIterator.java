@@ -18,9 +18,9 @@ package uk.co.magictractor.spew.provider.dropbox;
 import java.util.Iterator;
 import java.util.List;
 
+import uk.co.magictractor.spew.api.OutgoingHttpRequest;
 import uk.co.magictractor.spew.api.PageTokenServiceIterator;
 import uk.co.magictractor.spew.api.SpewApplication;
-import uk.co.magictractor.spew.api.OutgoingHttpRequest;
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
 import uk.co.magictractor.spew.example.dropbox.MyDropboxApp;
 import uk.co.magictractor.spew.example.dropbox.pojo.DropboxFileOrFolder;
@@ -75,7 +75,7 @@ public class DropboxIterator<E> extends PageTokenServiceIterator<E> {
     public static class DropboxIteratorBuilder<E>
             extends PageTokenServiceIteratorBuilder<E, DropboxIterator<E>, DropboxIteratorBuilder<E>> {
 
-        public DropboxIteratorBuilder(SpewApplication application, Class<E> elementType) {
+        public DropboxIteratorBuilder(SpewApplication<Dropbox> application, Class<E> elementType) {
             super(application, elementType, new DropboxIterator<>());
         }
 

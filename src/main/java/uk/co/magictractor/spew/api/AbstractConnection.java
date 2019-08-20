@@ -1,6 +1,6 @@
 package uk.co.magictractor.spew.api;
 
-public abstract class AbstractConnection<APP extends SpewApplication, SP extends SpewServiceProvider>
+public abstract class AbstractConnection<APP extends SpewApplication<SP>, SP extends SpewServiceProvider>
         implements SpewConnection {
 
     private final APP application;
@@ -14,8 +14,7 @@ public abstract class AbstractConnection<APP extends SpewApplication, SP extends
     }
 
     public SP getServiceProvider() {
-        // TODO! generic or move this?
-        return (SP) application.getServiceProvider();
+        return application.getServiceProvider();
     }
 
 }

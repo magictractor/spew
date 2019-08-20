@@ -3,9 +3,9 @@ package uk.co.magictractor.spew.provider.imagebam;
 import java.util.Iterator;
 import java.util.List;
 
+import uk.co.magictractor.spew.api.OutgoingHttpRequest;
 import uk.co.magictractor.spew.api.SingleCallServiceIterator;
 import uk.co.magictractor.spew.api.SpewApplication;
-import uk.co.magictractor.spew.api.OutgoingHttpRequest;
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
 import uk.co.magictractor.spew.example.imagebam.MyImageBamApp;
 import uk.co.magictractor.spew.example.imagebam.pojo.ImageBamGallery;
@@ -29,7 +29,7 @@ public class ImageBamGalleryIterator<E> extends SingleCallServiceIterator<E> {
     public static class ImageBamGalleryIteratorBuilder<E> extends
             SingleCallServiceIteratorBuilder<E, ImageBamGalleryIterator<E>, ImageBamGalleryIteratorBuilder<E>> {
 
-        protected ImageBamGalleryIteratorBuilder(SpewApplication application, Class<E> elementType) {
+        protected ImageBamGalleryIteratorBuilder(SpewApplication<ImageBam> application, Class<E> elementType) {
             super(application, elementType, new ImageBamGalleryIterator<>());
         }
     }

@@ -26,11 +26,6 @@ import uk.co.magictractor.spew.server.LocalServerAuthorizationHandler;
 public class MyDropboxApp implements SpewOAuth2Application<Dropbox> {
 
     @Override
-    public Dropbox getServiceProvider() {
-        return Dropbox.getInstance();
-    }
-
-    @Override
     public AuthorizationHandler getAuthorizationHandler(Supplier<VerificationFunction> verificationFunctionSupplier) {
         //return new PasteVerificationCodeHandler(verificationFunction);
         return new LocalServerAuthorizationHandler(verificationFunctionSupplier);

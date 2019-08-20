@@ -8,7 +8,9 @@ import uk.co.magictractor.spew.core.verification.VerificationFunction;
 
 public interface SpewApplication<SP extends SpewServiceProvider> {
 
-    SP getServiceProvider();
+    default SP getServiceProvider() {
+        return SpewServiceProviderCache.getOrCreateForApplication(this);
+    }
 
     default SpewConnection getConnection() {
         return SpewConnectionCache.getOrCreateConnection(getClass());

@@ -3,9 +3,9 @@ package uk.co.magictractor.spew.provider.flickr;
 import java.util.Iterator;
 import java.util.List;
 
+import uk.co.magictractor.spew.api.OutgoingHttpRequest;
 import uk.co.magictractor.spew.api.PageCountServiceIterator;
 import uk.co.magictractor.spew.api.SpewApplication;
-import uk.co.magictractor.spew.api.OutgoingHttpRequest;
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
 import uk.co.magictractor.spew.example.flickr.MyFlickrApp;
 import uk.co.magictractor.spew.example.flickr.pojo.FlickrPhotoset;
@@ -52,7 +52,7 @@ public class FlickrPhotosetPhotosIterator<E> extends PageCountServiceIterator<E>
             extends
             PageCountServiceIteratorBuilder<E, FlickrPhotosetPhotosIterator<E>, FlickrPhotosetIteratorBuilder<E>> {
 
-        public FlickrPhotosetPhotosIteratorBuilder(SpewApplication application, Class<E> elementType,
+        public FlickrPhotosetPhotosIteratorBuilder(SpewApplication<Flickr> application, Class<E> elementType,
                 String photosetId) {
             super(application, elementType, new FlickrPhotosetPhotosIterator<>());
             getIteratorInstance().photosetId = photosetId;

@@ -5,9 +5,4 @@ import uk.co.magictractor.spew.provider.flickr.Flickr;
 
 public class MyFlickrApp implements SpewOAuth1Application<Flickr> {
 
-    @Override
-    public Flickr getServiceProvider() {
-        return Flickr.getInstance();
-    }
-
 }

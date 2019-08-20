@@ -27,13 +27,7 @@ import uk.co.magictractor.spew.api.SpewOAuth2ServiceProvider;
 // https://developers.facebook.com/docs/facebook-login/manually-build-a-login-flow
 public class Facebook implements SpewOAuth2ServiceProvider {
 
-    private static final Facebook INSTANCE = new Facebook();
-
     private Facebook() {
-    }
-
-    public static Facebook getInstance() {
-        return INSTANCE;
     }
 
     @Override

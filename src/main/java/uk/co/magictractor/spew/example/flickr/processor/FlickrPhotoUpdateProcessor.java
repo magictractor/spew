@@ -8,8 +8,8 @@ import java.util.stream.Collectors;
 
 import com.google.common.base.Joiner;
 
-import uk.co.magictractor.spew.api.SpewApplication;
 import uk.co.magictractor.spew.api.OutgoingHttpRequest;
+import uk.co.magictractor.spew.api.SpewApplication;
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
 import uk.co.magictractor.spew.example.flickr.MyFlickrApp;
 import uk.co.magictractor.spew.example.flickr.pojo.FlickrPhoto;
@@ -30,9 +30,9 @@ import uk.co.magictractor.spew.provider.flickr.FlickrPhotosetPhotosIterator.Flic
 
 public class FlickrPhotoUpdateProcessor extends PhotoUpdateProcessor {
 
-    private final SpewApplication application;
+    private final SpewApplication<Flickr> application;
 
-    public FlickrPhotoUpdateProcessor(SpewApplication application) {
+    public FlickrPhotoUpdateProcessor(SpewApplication<Flickr> application) {
         this.application = application;
     }
 

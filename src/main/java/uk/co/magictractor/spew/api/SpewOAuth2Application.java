@@ -18,11 +18,6 @@ import uk.co.magictractor.spew.util.spi.SPIUtil;
 public interface SpewOAuth2Application<SP extends SpewOAuth2ServiceProvider>
         extends SpewApplication<SP>, HasCallbackServer {
 
-    //@Override
-    //SpewOAuth2ServiceProvider getServiceProvider();
-    @Override
-    SP getServiceProvider();
-
     default String getClientId() {
         // TODO! firstNonNull would be better
         return SPIUtil.firstAvailable(ApplicationPropertyStore.class).getProperty(this, "client_id");

@@ -6,8 +6,8 @@ import java.util.Map;
 
 import com.google.gson.GsonBuilder;
 
-import uk.co.magictractor.spew.api.SpewOAuth2ServiceProvider;
 import uk.co.magictractor.spew.api.OutgoingHttpRequest;
+import uk.co.magictractor.spew.api.SpewOAuth2ServiceProvider;
 import uk.co.magictractor.spew.json.BooleanTypeAdapter;
 import uk.co.magictractor.spew.json.InstantTypeAdapter;
 import uk.co.magictractor.spew.json.LocalDateTimeTypeAdapter;
@@ -26,13 +26,7 @@ public class Imgur implements SpewOAuth2ServiceProvider {
 
     public static final String REST_ENDPOINT = "https://api.imgur.com/3/";
 
-    private static final Imgur INSTANCE = new Imgur();
-
     private Imgur() {
-    }
-
-    public static Imgur getInstance() {
-        return INSTANCE;
     }
 
     @Override

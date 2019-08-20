@@ -6,8 +6,8 @@ import java.time.LocalDateTime;
 import com.google.gson.GsonBuilder;
 
 import uk.co.magictractor.spew.api.BadResponseException;
-import uk.co.magictractor.spew.api.SpewOAuth1ServiceProvider;
 import uk.co.magictractor.spew.api.OutgoingHttpRequest;
+import uk.co.magictractor.spew.api.SpewOAuth1ServiceProvider;
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
 import uk.co.magictractor.spew.json.BooleanTypeAdapter;
 import uk.co.magictractor.spew.json.InstantTypeAdapter;
@@ -20,12 +20,6 @@ public class Flickr implements SpewOAuth1ServiceProvider {
 
     public static final String REST_ENDPOINT = "https://api.flickr.com/services/rest";
 
-    //	https://api.imgur.com/oauth2/addclient
-    //		https://api.imgur.com/oauth2/authorize
-    //		https://api.imgur.com/oauth2/token
-
-    private static final Flickr INSTANCE = new Flickr();
-
     private Flickr() {
     }
 
@@ -34,10 +28,6 @@ public class Flickr implements SpewOAuth1ServiceProvider {
     public void prepareRequest(OutgoingHttpRequest request) {
         request.setQueryStringParam("format", "json");
         request.setQueryStringParam("nojsoncallback", "1");
-    }
-
-    public static Flickr getInstance() {
-        return INSTANCE;
     }
 
     @Override

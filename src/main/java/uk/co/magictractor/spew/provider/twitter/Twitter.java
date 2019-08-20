@@ -6,12 +6,6 @@ import uk.co.magictractor.spew.api.SpewOAuth1ServiceProvider;
 // Twitter can be accessed via OAuth1 or OAuth2 - names TwitterOAuth1 and TwitterOAuth2?
 public class Twitter implements SpewOAuth1ServiceProvider {
 
-    private static final Twitter INSTANCE = new Twitter();
-
-    public static Twitter getInstance() {
-        return INSTANCE;
-    }
-
     // https://developer.twitter.com/en/docs/basics/authentication/api-reference/request_token
     @Override
     public String getTemporaryCredentialRequestUri() {

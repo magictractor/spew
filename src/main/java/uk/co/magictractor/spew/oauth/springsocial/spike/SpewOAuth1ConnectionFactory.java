@@ -27,7 +27,7 @@ public class SpewOAuth1ConnectionFactory extends GenericOAuth1ConnectionFactory 
      * @param serviceProvider
      * @param apiAdapter
      */
-    public SpewOAuth1ConnectionFactory(SpewOAuth1Application application) {
+    public SpewOAuth1ConnectionFactory(SpewOAuth1Application<?> application) {
         //super(application.getClass().getSimpleName().toLowerCase(), new SpewOAuth1ServiceProvider(application), null);
         // TODO Auto-generated constructor stub
 

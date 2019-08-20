@@ -20,12 +20,6 @@ import uk.co.magictractor.spew.api.SpewOAuth2ServiceProvider;
 // https://www.dropbox.com/developers/apps
 public class Dropbox implements SpewOAuth2ServiceProvider {
 
-    private static final Dropbox INSTANCE = new Dropbox();
-
-    public static Dropbox getInstance() {
-        return INSTANCE;
-    }
-
     private Dropbox() {
     }
 

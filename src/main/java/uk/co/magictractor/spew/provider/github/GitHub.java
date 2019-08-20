@@ -27,13 +27,7 @@ import uk.co.magictractor.spew.api.SpewOAuth2ServiceProvider;
 // TODO! GitHub also supports BasicAuth
 public class GitHub implements SpewOAuth2ServiceProvider {
 
-    private static final GitHub INSTANCE = new GitHub();
-
     private GitHub() {
-    }
-
-    public static GitHub getInstance() {
-        return INSTANCE;
     }
 
     @Override
