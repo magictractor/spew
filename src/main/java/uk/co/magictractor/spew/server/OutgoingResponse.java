@@ -16,10 +16,10 @@
 package uk.co.magictractor.spew.server;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import uk.co.magictractor.spew.api.SpewHeader;
+import uk.co.magictractor.spew.api.SpewHttpResponse;
 
 /**
  * <p>
@@ -30,33 +30,28 @@ import uk.co.magictractor.spew.api.SpewHeader;
  * These can be used across multiple CallbackServer implementations.
  * </p>
  */
-public abstract class SimpleResponse {
+public abstract class OutgoingResponse implements SpewHttpResponse {
 
     private int httpStatus = 200;
-    private List<SpewHeader> headers;
+    private List<SpewHeader> headers = new ArrayList<>();
 
     public void setHttpStatus(int httpStatus) {
         this.httpStatus = httpStatus;
     }
 
-    public int getHttpStatus() {
+    @Override
+    public int getStatus() {
         return httpStatus;
     }
 
+    @Override
     public List<SpewHeader> getHeaders() {
-        return headers == null ? Collections.emptyList() : headers;
+        return headers;
     }
 
-    // default visibility so the builder may access it, but the response is otherwise immutable
+    // default visibility so the builder may access it, but the OutgoingResponse is otherwise immutable
     /* default */ void addHeaders(List<SpewHeader> addHeaders) {
-        ensureHeaders();
         headers.addAll(addHeaders);
-    }
-
-    private void ensureHeaders() {
-        if (headers == null) {
-            headers = new ArrayList<>();
-        }
     }
 
 }

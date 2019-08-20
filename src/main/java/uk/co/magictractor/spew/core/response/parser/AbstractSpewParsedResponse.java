@@ -18,16 +18,16 @@ package uk.co.magictractor.spew.core.response.parser;
 import java.util.List;
 
 import uk.co.magictractor.spew.api.SpewHeader;
-import uk.co.magictractor.spew.api.SpewResponse;
+import uk.co.magictractor.spew.api.SpewHttpResponse;
 
 /**
  *
  */
 public abstract class AbstractSpewParsedResponse implements SpewParsedResponse {
 
-    private final SpewResponse response;
+    private final SpewHttpResponse response;
 
-    protected AbstractSpewParsedResponse(SpewResponse response) {
+    protected AbstractSpewParsedResponse(SpewHttpResponse response) {
         this.response = response;
     }
 

@@ -21,26 +21,31 @@ import java.util.List;
 import java.util.Map;
 
 import io.netty.buffer.ByteBufInputStream;
-import io.netty.handler.codec.http.FullHttpMessage;
+import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpHeaders;
 import uk.co.magictractor.spew.api.SpewHeader;
-import uk.co.magictractor.spew.api.SpewResponse;
+import uk.co.magictractor.spew.api.SpewHttpResponse;
 
-public class FullHttpMessageResponse implements SpewResponse {
+public class IncomingNettyResponse implements SpewHttpResponse {
 
-    private final FullHttpMessage message;
+    private final FullHttpResponse nettyResponse;
     private List<SpewHeader> headers;
 
-    public FullHttpMessageResponse(FullHttpMessage message) {
-        this.message = message;
+    public IncomingNettyResponse(FullHttpResponse nettyResponse) {
+        this.nettyResponse = nettyResponse;
+    }
+
+    @Override
+    public int getStatus() {
+        return nettyResponse.status().code();
     }
 
     @Override
     public List<SpewHeader> getHeaders() {
         if (headers == null) {
-            HttpHeaders httpHeaders = message.headers();
-            headers = new ArrayList<>(httpHeaders.size());
-            for (Map.Entry<String, String> headerEntry : httpHeaders.entries()) {
+            HttpHeaders nettyHeaders = nettyResponse.headers();
+            headers = new ArrayList<>(nettyHeaders.size());
+            for (Map.Entry<String, String> headerEntry : nettyHeaders.entries()) {
                 headers.add(new SpewHeader(headerEntry.getKey(), headerEntry.getValue()));
             }
         }
@@ -49,7 +54,7 @@ public class FullHttpMessageResponse implements SpewResponse {
 
     @Override
     public InputStream getBodyInputStream() {
-        return new ByteBufInputStream(message.content());
+        return new ByteBufInputStream(nettyResponse.content());
     }
 
 }

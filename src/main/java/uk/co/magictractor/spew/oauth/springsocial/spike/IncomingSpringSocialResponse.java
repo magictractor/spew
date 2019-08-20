@@ -21,28 +21,34 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpInputMessage;
+import org.springframework.http.client.ClientHttpResponse;
 
 import uk.co.magictractor.spew.api.SpewHeader;
 import uk.co.magictractor.spew.core.response.AbstractByteBufferResponse;
+import uk.co.magictractor.spew.util.ExceptionUtil;
 
 /**
  *
  */
-public class HttpInputMessageResponse extends AbstractByteBufferResponse {
+public class IncomingSpringSocialResponse extends AbstractByteBufferResponse {
 
-    private final HttpInputMessage message;
+    private final ClientHttpResponse springResponse;
     private List<SpewHeader> headers;
 
-    public HttpInputMessageResponse(HttpInputMessage message) throws IOException {
-        super(message.getBody());
-        this.message = message;
+    public IncomingSpringSocialResponse(ClientHttpResponse springResponse) throws IOException {
+        super(springResponse.getBody());
+        this.springResponse = springResponse;
+    }
+
+    @Override
+    public int getStatus() {
+        return ExceptionUtil.call(() -> springResponse.getRawStatusCode());
     }
 
     @Override
     public List<SpewHeader> getHeaders() {
         if (headers == null) {
-            HttpHeaders springHeaders = message.getHeaders();
+            HttpHeaders springHeaders = springResponse.getHeaders();
             headers = new ArrayList<>(springHeaders.size());
             for (Map.Entry<String, List<String>> springHeaderEntry : springHeaders.entrySet()) {
                 String headerName = springHeaderEntry.getKey();

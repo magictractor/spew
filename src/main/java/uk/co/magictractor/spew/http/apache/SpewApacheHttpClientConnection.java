@@ -26,15 +26,15 @@ import org.apache.http.impl.client.HttpClients;
 
 import uk.co.magictractor.spew.api.SpewConnection;
 import uk.co.magictractor.spew.api.SpewHeader;
-import uk.co.magictractor.spew.api.SpewRequest;
-import uk.co.magictractor.spew.api.SpewResponse;
+import uk.co.magictractor.spew.api.OutgoingHttpRequest;
+import uk.co.magictractor.spew.api.SpewHttpResponse;
 import uk.co.magictractor.spew.util.ContentTypeUtil;
 import uk.co.magictractor.spew.util.ExceptionUtil;
 
 public class SpewApacheHttpClientConnection implements SpewConnection {
 
     @Override
-    public SpewResponse request(SpewRequest apiRequest) {
+    public SpewHttpResponse request(OutgoingHttpRequest apiRequest) {
         /**
          * Some providers (including Twitter) log a warning related to the
          * format of the expiry date in cookies when the request config is not
@@ -74,7 +74,7 @@ public class SpewApacheHttpClientConnection implements SpewConnection {
 
         CloseableHttpResponse response = ExceptionUtil.call(() -> httpClient.execute(request));
 
-        return new SpewApacheHttpClientResponse(response);
+        return new IncomingApacheHttpClientResponse(response);
     }
 
 }

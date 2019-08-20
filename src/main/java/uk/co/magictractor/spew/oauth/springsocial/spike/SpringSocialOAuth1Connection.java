@@ -31,8 +31,8 @@ import org.springframework.web.client.RestOperations;
 import uk.co.magictractor.spew.api.SpewOAuth1Application;
 import uk.co.magictractor.spew.api.SpewConnection;
 import uk.co.magictractor.spew.api.SpewHeader;
-import uk.co.magictractor.spew.api.SpewRequest;
-import uk.co.magictractor.spew.api.SpewResponse;
+import uk.co.magictractor.spew.api.OutgoingHttpRequest;
+import uk.co.magictractor.spew.api.SpewHttpResponse;
 import uk.co.magictractor.spew.store.EditableProperty;
 import uk.co.magictractor.spew.store.UserPropertyStore;
 import uk.co.magictractor.spew.util.ExceptionUtil;
@@ -66,20 +66,20 @@ public class SpringSocialOAuth1Connection implements SpewConnection {
     }
 
     @Override
-    public SpewResponse request(SpewRequest apiRequest) {
+    public SpewHttpResponse request(OutgoingHttpRequest apiRequest) {
         // Convert to URI because execute(String, ...) escapes the String.
         URI uri = ExceptionUtil.call(() -> new URI(apiRequest.getUrl()));
         HttpMethod method = HttpMethod.valueOf(apiRequest.getHttpMethod());
         // RequestCallback requestCallback = System.err::println;
         RequestCallback requestCallback = httpRequest -> populateHttpRequest(httpRequest, apiRequest);
         SpewResponseHttpMessageConverter converter = new SpewResponseHttpMessageConverter(application);
-        HttpMessageConverterExtractor<SpewResponse> responseExtractor = new HttpMessageConverterExtractor<>(
+        HttpMessageConverterExtractor<SpewHttpResponse> responseExtractor = new HttpMessageConverterExtractor<>(
             String.class, Arrays.asList(converter));
 
         return connection.getApi().execute(uri, method, requestCallback, responseExtractor);
     }
 
-    private void populateHttpRequest(ClientHttpRequest httpRequest, SpewRequest apiRequest) throws IOException {
+    private void populateHttpRequest(ClientHttpRequest httpRequest, OutgoingHttpRequest apiRequest) throws IOException {
 
         HttpHeaders headers = httpRequest.getHeaders();
         for (SpewHeader header : apiRequest.getHeaders()) {

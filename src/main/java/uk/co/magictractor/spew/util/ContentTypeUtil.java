@@ -30,8 +30,8 @@ import java.util.Objects;
 import com.google.common.base.Splitter;
 import com.jayway.jsonpath.Configuration;
 
-import uk.co.magictractor.spew.api.SpewRequest;
-import uk.co.magictractor.spew.api.SpewResponse;
+import uk.co.magictractor.spew.api.OutgoingHttpRequest;
+import uk.co.magictractor.spew.api.SpewHttpResponse;
 
 /**
  *
@@ -67,7 +67,7 @@ public class ContentTypeUtil {
     }
 
     // TODO! request or response?
-    public static String fromHeader(SpewResponse response) {
+    public static String fromHeader(SpewHttpResponse response) {
         // TODO! simplify here and test case sensitivity in unit tests
         String upper = response.getHeader("Content-Type");
         String lower = response.getHeader("content-type");
@@ -91,7 +91,7 @@ public class ContentTypeUtil {
     }
 
     // TODO! request or response?
-    public static String fromBody(SpewResponse response) {
+    public static String fromBody(SpewHttpResponse response) {
         byte[] bytes = new byte[4];
 
         InputStream bodyStream = response.getBodyInputStream();
@@ -157,7 +157,7 @@ public class ContentTypeUtil {
     }
 
     // TODO! request or response param?
-    public static Charset charsetFromHeader(SpewResponse response) {
+    public static Charset charsetFromHeader(SpewHttpResponse response) {
         String header = response.getHeader(CONTENT_TYPE_HEADER_NAME);
         Charset charset = null;
         if (header != null) {
@@ -174,7 +174,7 @@ public class ContentTypeUtil {
         return charset;
     }
 
-    public static byte[] bodyBytes(SpewRequest request, Configuration jsonConfiguration) {
+    public static byte[] bodyBytes(OutgoingHttpRequest request, Configuration jsonConfiguration) {
         String contentType = request.getContentType();
         if (isJson(contentType)) {
             return bodyJsonBytes(request, jsonConfiguration);
@@ -189,14 +189,14 @@ public class ContentTypeUtil {
         throw new IllegalArgumentException("Code need modified to write request body for content type " + contentType);
     }
 
-    private static byte[] bodyJsonBytes(SpewRequest request, Configuration jsonConfiguration) {
+    private static byte[] bodyJsonBytes(OutgoingHttpRequest request, Configuration jsonConfiguration) {
         String requestBody = jsonConfiguration.jsonProvider().toJson(request.getBodyParams());
         //logger.trace("request body: " + requestBody);
         // TODO! encoding
         return requestBody.getBytes();
     }
 
-    private static byte[] bodyFormBytes(SpewRequest request) {
+    private static byte[] bodyFormBytes(OutgoingHttpRequest request) {
         StringBuilder bodyBuilder = new StringBuilder();
         boolean first = true;
         for (Map.Entry<String, Object> entry : request.getBodyParams().entrySet()) {

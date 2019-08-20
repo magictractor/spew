@@ -25,16 +25,16 @@ import com.google.common.base.Splitter;
 
 import io.netty.handler.codec.http.FullHttpRequest;
 import uk.co.magictractor.spew.api.SpewHeader;
-import uk.co.magictractor.spew.server.ServerRequest;
+import uk.co.magictractor.spew.server.SpewHttpRequest;
 
-public class FullHttpMessageRequest implements ServerRequest {
+public class IncomingNettyRequest implements SpewHttpRequest {
 
     private final FullHttpRequest request;
     private String baseUri;
     private Map<String, String> queryStringParams;
     private List<SpewHeader> headers;
 
-    public FullHttpMessageRequest(FullHttpRequest request) {
+    public IncomingNettyRequest(FullHttpRequest request) {
         this.request = request;
     }
 

@@ -20,13 +20,13 @@ import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import uk.co.magictractor.spew.api.SpewResponse;
+import uk.co.magictractor.spew.api.SpewHttpResponse;
 
-public abstract class AbstractOnCloseResponse implements SpewResponse {
+public abstract class AbstractIncomingOnCloseResponse implements SpewHttpResponse {
 
     private final OnCloseInputStream bodyStream;
 
-    protected AbstractOnCloseResponse(InputStream bodyStream) {
+    protected AbstractIncomingOnCloseResponse(InputStream bodyStream) {
         this.bodyStream = new OnCloseInputStream(bodyStream);
     }
 

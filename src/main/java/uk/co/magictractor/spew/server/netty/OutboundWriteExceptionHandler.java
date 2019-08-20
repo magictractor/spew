@@ -30,7 +30,7 @@ import io.netty.channel.ChannelPromise;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
 import io.netty.handler.codec.http.DefaultHttpResponse;
 import io.netty.handler.codec.http.HttpResponseStatus;
-import uk.co.magictractor.spew.server.SimpleErrorResponse;
+import uk.co.magictractor.spew.server.OutgoingErrorResponse;
 
 /**
  * See https://github.com/netty/netty/issues/4721.
@@ -77,8 +77,8 @@ public class OutboundWriteExceptionHandler extends ChannelOutboundHandlerAdapter
      * </p>
      */
     private DefaultHttpResponse buildErrorResponse() {
-        SimpleErrorResponse simpleError = new SimpleErrorResponse(errorStatus.code(), errorMessage);
-        return new SimpleResponseEncoder().encode(simpleError);
+        OutgoingErrorResponse simpleError = new OutgoingErrorResponse(errorStatus.code(), errorMessage);
+        return new OutgoingResponseEncoder().encode(simpleError);
     }
 
     /**

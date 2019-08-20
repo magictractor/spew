@@ -6,11 +6,11 @@ public interface SpewOAuth2ServiceProvider extends SpewServiceProvider {
 
     String getTokenUri();
 
-    default void modifyAuthorizationRequest(SpewRequest request) {
+    default void modifyAuthorizationRequest(OutgoingHttpRequest request) {
         // Do nothing.
     }
 
-    default void modifyTokenRequest(SpewRequest request) {
+    default void modifyTokenRequest(OutgoingHttpRequest request) {
         // Do nothing.
     }
 

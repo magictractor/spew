@@ -15,7 +15,7 @@
  */
 package uk.co.magictractor.spew.server;
 
-import java.io.InputStream;
+import uk.co.magictractor.spew.api.SpewHttpResponse;
 
 /**
  * <p>
@@ -26,12 +26,13 @@ import java.io.InputStream;
  * Used with static and template responses.
  * </p>
  */
-public interface SimpleResourceResponse {
+// hmm... bin this?
+public interface OutgoingResourceResponse extends SpewHttpResponse {
 
-    public int getHttpStatus();
+    // public int getStatus();
 
-    InputStream getBodyInputStream();
+    // InputStream getBodyInputStream();
 
-    String getHeader(String headerName);
+    // String getHeader(String headerName);
 
 }

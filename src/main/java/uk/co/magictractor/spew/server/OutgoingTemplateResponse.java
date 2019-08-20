@@ -31,7 +31,7 @@ import uk.co.magictractor.spew.util.ExceptionUtil;
  * Simple representation of an HTML page with text substitutions made for values
  * in the template delimited by curly braces.
  */
-public class SimpleTemplateResponse extends SimpleResponse implements SimpleResourceResponse {
+public class OutgoingTemplateResponse extends OutgoingResponse implements OutgoingResourceResponse {
 
     private static String suffix = ".template";
 
@@ -43,22 +43,22 @@ public class SimpleTemplateResponse extends SimpleResponse implements SimpleReso
 
     private Charset charset = StandardCharsets.UTF_8;
 
-    public static SimpleResponse ifExists(Class<?> relativeToClass, String resourceName,
+    public static OutgoingResponse ifExists(Class<?> relativeToClass, String resourceName,
             Function<String, String> valueFunction) {
         ResourceResponse resourceResponse = new ResourceResponse(relativeToClass, resourceName + suffix);
 
         if (resourceResponse.exists()) {
-            return new SimpleTemplateResponse(resourceResponse, valueFunction);
+            return new OutgoingTemplateResponse(resourceResponse, valueFunction);
         }
         else if (resourceName.endsWith(suffix)) {
             // Prevent templates being rendered as static files.
-            return SimpleErrorResponse.notFound();
+            return OutgoingErrorResponse.notFound();
         }
 
         return null;
     }
 
-    public SimpleTemplateResponse(ResourceResponse spewResponse, Function<String, String> valueFunction) {
+    public OutgoingTemplateResponse(ResourceResponse spewResponse, Function<String, String> valueFunction) {
         if (!spewResponse.exists()) {
             throw new IllegalArgumentException("Resource does not exist");
         }
@@ -66,7 +66,7 @@ public class SimpleTemplateResponse extends SimpleResponse implements SimpleReso
         this.valueFunction = valueFunction;
     }
 
-    public SimpleTemplateResponse(Class<?> relativeToClass, String resourceName,
+    public OutgoingTemplateResponse(Class<?> relativeToClass, String resourceName,
             Function<String, String> valueFunction) {
         this(new ResourceResponse(relativeToClass, resourceName), valueFunction);
     }

@@ -21,17 +21,17 @@ import java.util.function.Function;
 
 import uk.co.magictractor.spew.api.SpewHeader;
 
-public class SimpleResponseBuilder {
+public class OutgoingResponseBuilder {
 
-    private SimpleResponse response;
+    private OutgoingResponse response;
     private boolean isDone;
     private boolean shutdown;
     private List<SpewHeader> headers;
     private List<Function<String, String>> valueFunctions;
 
-    public SimpleResponse build() {
+    public OutgoingResponse build() {
         if (response == null) {
-            response = SimpleErrorResponse.notFound();
+            response = OutgoingErrorResponse.notFound();
         }
 
         if (headers != null) {
@@ -41,7 +41,7 @@ public class SimpleResponseBuilder {
         return response;
     }
 
-    public SimpleResponseBuilder withResponse(SimpleResponse response) {
+    public OutgoingResponseBuilder withResponse(OutgoingResponse response) {
         if (this.response != null) {
             throw new IllegalStateException("A response has already been set");
         }
@@ -55,19 +55,19 @@ public class SimpleResponseBuilder {
         return this;
     }
 
-    public SimpleResponseBuilder withStaticIfExists(Class<?> relativeToClass, String resourceName) {
-        return withResponse(SimpleStaticResponse.ifExists(relativeToClass, resourceName));
+    public OutgoingResponseBuilder withStaticIfExists(Class<?> relativeToClass, String resourceName) {
+        return withResponse(OutgoingStaticResponse.ifExists(relativeToClass, resourceName));
     }
 
-    public SimpleResponseBuilder withTemplateIfExists(Class<?> relativeToClass, String resourceName) {
-        return withResponse(SimpleTemplateResponse.ifExists(relativeToClass, resourceName, this::getValue));
+    public OutgoingResponseBuilder withTemplateIfExists(Class<?> relativeToClass, String resourceName) {
+        return withResponse(OutgoingTemplateResponse.ifExists(relativeToClass, resourceName, this::getValue));
     }
 
-    public SimpleResponseBuilder withRedirect(String location) {
-        return withResponse(new SimpleRedirectResponse(location));
+    public OutgoingResponseBuilder withRedirect(String location) {
+        return withResponse(new OutgoingRedirectResponse(location));
     }
 
-    public SimpleResponseBuilder withHeader(String name, String value) {
+    public OutgoingResponseBuilder withHeader(String name, String value) {
         if (headers == null) {
             headers = new ArrayList<>();
         }
@@ -76,7 +76,7 @@ public class SimpleResponseBuilder {
         return this;
     }
 
-    public SimpleResponseBuilder withValueFunction(Function<String, String> valueFunction) {
+    public OutgoingResponseBuilder withValueFunction(Function<String, String> valueFunction) {
         if (valueFunctions == null) {
             valueFunctions = new ArrayList<>();
         }
@@ -85,7 +85,7 @@ public class SimpleResponseBuilder {
         return this;
     }
 
-    public SimpleResponseBuilder withShutdown() {
+    public OutgoingResponseBuilder withShutdown() {
         this.shutdown = true;
         return this;
     }

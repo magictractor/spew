@@ -15,15 +15,19 @@
  */
 package uk.co.magictractor.spew.server;
 
+import java.io.InputStream;
+
 /**
  * Simple representation of an error page which can be used across multiple
  * CallbackServer implementations.
  */
-public class SimpleErrorResponse extends SimpleResponse {
+public class OutgoingErrorResponse extends OutgoingResponse {
+
+    private static final OutgoingErrorResponse NOT_FOUND = new OutgoingErrorResponse(404, "Not found");
 
     private final String message;
 
-    public SimpleErrorResponse(int httpStatus, String message) {
+    public OutgoingErrorResponse(int httpStatus, String message) {
         setHttpStatus(httpStatus);
         this.message = message;
     }
@@ -38,14 +42,20 @@ public class SimpleErrorResponse extends SimpleResponse {
             return message;
         }
         else if ("httpStatus".equals(key)) {
-            return Integer.toString(getHttpStatus());
+            return Integer.toString(getStatus());
         }
 
         return null;
     }
 
-    public static SimpleErrorResponse notFound() {
-        return new SimpleErrorResponse(404, "Not found");
+    public static OutgoingErrorResponse notFound() {
+        return NOT_FOUND;
+    }
+
+    @Override
+    public InputStream getBodyInputStream() {
+        throw new UnsupportedOperationException(
+            "Error responses should be mapped to a template or similar to define the body");
     }
 
 }

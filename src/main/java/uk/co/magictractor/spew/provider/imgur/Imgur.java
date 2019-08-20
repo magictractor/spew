@@ -7,7 +7,7 @@ import java.util.Map;
 import com.google.gson.GsonBuilder;
 
 import uk.co.magictractor.spew.api.SpewOAuth2ServiceProvider;
-import uk.co.magictractor.spew.api.SpewRequest;
+import uk.co.magictractor.spew.api.OutgoingHttpRequest;
 import uk.co.magictractor.spew.json.BooleanTypeAdapter;
 import uk.co.magictractor.spew.json.InstantTypeAdapter;
 import uk.co.magictractor.spew.json.LocalDateTimeTypeAdapter;
@@ -46,7 +46,7 @@ public class Imgur implements SpewOAuth2ServiceProvider {
     }
 
     @Override
-    public void modifyAuthorizationRequest(SpewRequest request) {
+    public void modifyAuthorizationRequest(OutgoingHttpRequest request) {
         System.err.println("modifyAuthorizationRequest: " + request);
         Map<String, String> queryParams = request.getQueryStringParams();
         if (queryParams.get("redirect_uri").equals(getOutOfBandUri())) {
@@ -57,7 +57,7 @@ public class Imgur implements SpewOAuth2ServiceProvider {
     }
 
     @Override
-    public void modifyTokenRequest(SpewRequest request) {
+    public void modifyTokenRequest(OutgoingHttpRequest request) {
         System.err.println("modifyTokenRequest: " + request);
         Map<String, Object> bodyParams = request.getBodyParams();
         if (bodyParams.get("redirect_uri").equals(getOutOfBandUri())) {

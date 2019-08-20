@@ -4,7 +4,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import uk.co.magictractor.spew.api.SpewApplication;
-import uk.co.magictractor.spew.api.SpewRequest;
+import uk.co.magictractor.spew.api.OutgoingHttpRequest;
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
 import uk.co.magictractor.spew.example.google.MyGooglePhotosApp;
 import uk.co.magictractor.spew.example.google.pojo.GoogleAlbum;
@@ -16,7 +16,7 @@ public class GoogleSharedAlbumsIterator<E> extends GoogleServiceIterator<E> {
     }
 
     @Override
-    protected SpewRequest createPageRequest() {
+    protected OutgoingHttpRequest createPageRequest() {
         // This would include unshared albums
         // https://developers.google.com/photos/library/reference/rest/v1/albums/list
         // return new OAuthRequest("https://photoslibrary.googleapis.com/v1/albums");

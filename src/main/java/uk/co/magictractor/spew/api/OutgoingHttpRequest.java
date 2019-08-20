@@ -12,10 +12,10 @@ import com.google.common.base.MoreObjects;
 
 import uk.co.magictractor.spew.api.connection.SpewConnectionCache;
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
-import uk.co.magictractor.spew.server.ServerRequest;
+import uk.co.magictractor.spew.server.SpewHttpRequest;
 import uk.co.magictractor.spew.util.ContentTypeUtil;
 
-public final class SpewRequest implements ServerRequest {
+public final class OutgoingHttpRequest implements SpewHttpRequest {
 
     private final SpewApplication application;
 
@@ -47,7 +47,7 @@ public final class SpewRequest implements ServerRequest {
      * request.setQueryStringParam("nojsoncallback", "1");
      * </pre>
      */
-    /* default */ SpewRequest(SpewApplication application, String httpMethod, String url) {
+    OutgoingHttpRequest(SpewApplication application, String httpMethod, String url) {
         this.application = application;
         this.httpMethod = httpMethod;
         this.baseUrl = url;
@@ -185,7 +185,7 @@ public final class SpewRequest implements ServerRequest {
         prepareToSend();
 
         SpewConnection connection = SpewConnectionCache.getOrCreateConnection(application.getClass());
-        SpewResponse response = connection.request(this);
+        SpewHttpResponse response = connection.request(this);
         sent = true;
 
         SpewParsedResponse parsedResponse = SpewParsedResponse.parse(application, response);

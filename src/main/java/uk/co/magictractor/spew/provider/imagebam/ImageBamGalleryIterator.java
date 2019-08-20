@@ -5,7 +5,7 @@ import java.util.List;
 
 import uk.co.magictractor.spew.api.SingleCallServiceIterator;
 import uk.co.magictractor.spew.api.SpewApplication;
-import uk.co.magictractor.spew.api.SpewRequest;
+import uk.co.magictractor.spew.api.OutgoingHttpRequest;
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
 import uk.co.magictractor.spew.example.imagebam.MyImageBamApp;
 import uk.co.magictractor.spew.example.imagebam.pojo.ImageBamGallery;
@@ -17,7 +17,7 @@ public class ImageBamGalleryIterator<E> extends SingleCallServiceIterator<E> {
 
     @Override
     protected List<E> fetchPage() {
-        SpewRequest request = getApplication().createGetRequest(ImageBam.REST_ENDPOINT + "get_galleries");
+        OutgoingHttpRequest request = getApplication().createGetRequest(ImageBam.REST_ENDPOINT + "get_galleries");
 
         SpewParsedResponse response = request.sendRequest();
 

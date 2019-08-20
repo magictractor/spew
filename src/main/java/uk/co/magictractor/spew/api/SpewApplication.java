@@ -14,30 +14,30 @@ public interface SpewApplication {
         return SpewConnectionCache.getOrCreateConnection(getClass());
     }
 
-    default SpewRequest createRequest(String httpMethod, String url) {
-        SpewRequest request = new SpewRequest(this, httpMethod, url);
+    default OutgoingHttpRequest createRequest(String httpMethod, String url) {
+        OutgoingHttpRequest request = new OutgoingHttpRequest(this, httpMethod, url);
         // TODO! skip prep during auth
         prepareRequest(request);
         return request;
     }
 
-    default void prepareRequest(SpewRequest request) {
+    default void prepareRequest(OutgoingHttpRequest request) {
         getServiceProvider().prepareRequest(request);
     }
 
-    default String getContentType(SpewResponse response) {
+    default String getContentType(SpewHttpResponse response) {
         return getServiceProvider().getContentType(response);
     }
 
-    default SpewRequest createGetRequest(String url) {
+    default OutgoingHttpRequest createGetRequest(String url) {
         return createRequest("GET", url);
     }
 
-    default SpewRequest createPostRequest(String url) {
+    default OutgoingHttpRequest createPostRequest(String url) {
         return createRequest("POST", url);
     }
 
-    default SpewRequest createDelRequest(String url) {
+    default OutgoingHttpRequest createDelRequest(String url) {
         return createRequest("DEL", url);
     }
 

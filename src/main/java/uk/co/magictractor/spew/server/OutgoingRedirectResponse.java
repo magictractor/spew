@@ -15,20 +15,28 @@
  */
 package uk.co.magictractor.spew.server;
 
+import java.io.InputStream;
+
 /**
  * Simple representation of a redirect which can be used across multiple
  * CallbackServer implementations.
  */
-public class SimpleRedirectResponse extends SimpleResponse {
+public class OutgoingRedirectResponse extends OutgoingResponse {
 
     private final String location;
 
-    public SimpleRedirectResponse(String location) {
+    public OutgoingRedirectResponse(String location) {
         this.location = location;
     }
 
     public String getLocation() {
         return location;
+    }
+
+    // TODO! empty stream or throw an exception?
+    @Override
+    public InputStream getBodyInputStream() {
+        throw new UnsupportedOperationException("Redirects do not have a body");
     }
 
 }

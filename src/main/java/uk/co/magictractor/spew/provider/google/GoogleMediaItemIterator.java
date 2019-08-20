@@ -4,7 +4,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import uk.co.magictractor.spew.api.SpewApplication;
-import uk.co.magictractor.spew.api.SpewRequest;
+import uk.co.magictractor.spew.api.OutgoingHttpRequest;
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
 import uk.co.magictractor.spew.example.google.MyGooglePhotosApp;
 import uk.co.magictractor.spew.example.google.pojo.GoogleMediaItem;
@@ -22,8 +22,8 @@ public class GoogleMediaItemIterator<E> extends GoogleServiceIterator<E> {
     }
 
     @Override
-    protected SpewRequest createPageRequest() {
-        SpewRequest request = getApplication()
+    protected OutgoingHttpRequest createPageRequest() {
+        OutgoingHttpRequest request = getApplication()
                 .createPostRequest("https://photoslibrary.googleapis.com/v1/mediaItems:search");
 
         if (dateTakenRange != null) {

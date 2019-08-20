@@ -10,7 +10,9 @@ import java.util.List;
 
 import uk.co.magictractor.spew.util.ContentTypeUtil;
 
-public interface SpewResponse {
+public interface SpewHttpResponse {
+
+    int getStatus();
 
     /**
      * <p>

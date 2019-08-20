@@ -22,7 +22,7 @@ import java.util.Optional;
 import uk.co.magictractor.spew.api.SpewHeader;
 
 // TODO! reconcile this with SpewRequest
-public interface ServerRequest {
+public interface SpewHttpRequest {
 
     // TODO! uri or url?
     public String getUrl();

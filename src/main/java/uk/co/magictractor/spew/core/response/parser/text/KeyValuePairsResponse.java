@@ -24,7 +24,7 @@ import java.util.Map;
 import com.google.common.base.Splitter;
 import com.google.common.io.CharStreams;
 
-import uk.co.magictractor.spew.api.SpewResponse;
+import uk.co.magictractor.spew.api.SpewHttpResponse;
 import uk.co.magictractor.spew.core.response.parser.AbstractSpewParsedResponse;
 import uk.co.magictractor.spew.core.response.parser.StringCentricSpewParsedResponse;
 import uk.co.magictractor.spew.util.IOUtil;
@@ -44,7 +44,7 @@ public class KeyValuePairsResponse
 
     private final Map<String, String> values;
 
-    public KeyValuePairsResponse(SpewResponse response) {
+    public KeyValuePairsResponse(SpewHttpResponse response) {
         super(response);
         values = IOUtil.applyThenClose(response.getBodyReader(), this::parse);
     }

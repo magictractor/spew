@@ -14,8 +14,8 @@ import com.google.common.io.BaseEncoding;
 import uk.co.magictractor.spew.api.SpewConnection;
 import uk.co.magictractor.spew.api.SpewOAuth1Application;
 import uk.co.magictractor.spew.api.SpewOAuth1ServiceProvider;
-import uk.co.magictractor.spew.api.SpewRequest;
-import uk.co.magictractor.spew.api.SpewResponse;
+import uk.co.magictractor.spew.api.OutgoingHttpRequest;
+import uk.co.magictractor.spew.api.SpewHttpResponse;
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
 import uk.co.magictractor.spew.core.response.parser.text.KeyValuePairsResponse;
 import uk.co.magictractor.spew.core.verification.AuthorizationHandler;
@@ -54,7 +54,7 @@ public final class BoaOAuth1Connection
     }
 
     @Override
-    public SpewResponse request(SpewRequest apiRequest) {
+    public SpewHttpResponse request(OutgoingHttpRequest apiRequest) {
         // TODO! (optionally?) verify existing tokens? - and need similar for spring social
         if (userToken.getValue() == null) {
             authorizeUser();
@@ -65,13 +65,13 @@ public final class BoaOAuth1Connection
         return ExceptionUtil.call(() -> request0(apiRequest, this::addOAuthSignature));
     }
 
-    private void addOAuthSignature(SpewRequest request) {
+    private void addOAuthSignature(OutgoingHttpRequest request) {
         request.setQueryStringParam("oauth_signature", getSignature(request));
     }
 
-    private SpewParsedResponse authRequest(SpewRequest apiRequest) {
+    private SpewParsedResponse authRequest(OutgoingHttpRequest apiRequest) {
         forAll(apiRequest);
-        SpewResponse response = ExceptionUtil.call(() -> request0(apiRequest, this::addOAuthSignature));
+        SpewHttpResponse response = ExceptionUtil.call(() -> request0(apiRequest, this::addOAuthSignature));
 
         return new KeyValuePairsResponse(response);
     }
@@ -88,7 +88,7 @@ public final class BoaOAuth1Connection
 
     private void openAuthorizationUriInBrowser(String callback) {
         // TODO! POST?
-        SpewRequest request = getApplication()
+        OutgoingHttpRequest request = getApplication()
                 .createGetRequest(getServiceProvider().getTemporaryCredentialRequestUri());
 
         request.setQueryStringParam("oauth_callback", callback);
@@ -139,7 +139,7 @@ public final class BoaOAuth1Connection
 
     private void fetchToken(String authToken, String verificationCode) {
         // TODO! POST? - imagebam allows get or post
-        SpewRequest request = getApplication().createGetRequest(getServiceProvider().getTokenRequestUri());
+        OutgoingHttpRequest request = getApplication().createGetRequest(getServiceProvider().getTokenRequestUri());
         request.setQueryStringParam("oauth_token", authToken);
         request.setQueryStringParam("oauth_verifier", verificationCode);
         SpewParsedResponse response = authRequest(request);
@@ -152,7 +152,7 @@ public final class BoaOAuth1Connection
 
     // See https://www.flickr.com/services/api/auth.oauth.html
     // https://gist.github.com/ishikawa/88599/3195bdeecabeb38aa62872ab61877aefa6aef89e
-    private String getSignature(SpewRequest request) {
+    private String getSignature(OutgoingHttpRequest request) {
         // AARGH - ImageBam refers to "key" where I have used
         // getSignatureBaseString(request)
         // TODO! consumer key only absent for auth
@@ -203,7 +203,7 @@ public final class BoaOAuth1Connection
         return signature;
     }
 
-    private String getImageBamSignatureBaseString(SpewRequest request) {
+    private String getImageBamSignatureBaseString(OutgoingHttpRequest request) {
         StringBuilder signatureBaseStringBuilder = new StringBuilder();
 
         signatureBaseStringBuilder.append(getApplication().getConsumerKey());
@@ -219,7 +219,7 @@ public final class BoaOAuth1Connection
     }
 
     // See https://www.flickr.com/services/api/auth.oauth.html
-    private String getSignatureBaseString(SpewRequest request) {
+    private String getSignatureBaseString(OutgoingHttpRequest request) {
         StringBuilder signatureBaseStringBuilder = new StringBuilder();
         signatureBaseStringBuilder.append(request.getHttpMethod());
         signatureBaseStringBuilder.append('&');
@@ -230,7 +230,7 @@ public final class BoaOAuth1Connection
         return signatureBaseStringBuilder.toString();
     }
 
-    private String getSignatureQueryString(SpewRequest request) {
+    private String getSignatureQueryString(OutgoingHttpRequest request) {
         // TODO! maybe ignore some params - see Flickr upload photo
         TreeMap<String, Object> orderedParams = new TreeMap<>(request.getQueryStringParams());
         StringBuilder stringBuilder = new StringBuilder();
@@ -257,12 +257,12 @@ public final class BoaOAuth1Connection
         return urlEncoded.replace("+", "%20").replace("*", "%2A").replace("%7E", "~");
     }
 
-    private void forApi(SpewRequest request) {
+    private void forApi(OutgoingHttpRequest request) {
         request.setQueryStringParam("api_key", getApplication().getConsumerKey());
         request.setQueryStringParam("oauth_token", userToken.getValue());
     }
 
-    private void forAll(SpewRequest request) {
+    private void forAll(OutgoingHttpRequest request) {
         // hmm... same as api_key? (in forApi())
         request.setQueryStringParam("oauth_consumer_key", getApplication().getConsumerKey());
 

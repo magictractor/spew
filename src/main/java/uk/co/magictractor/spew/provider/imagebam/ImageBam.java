@@ -6,7 +6,7 @@ import com.google.gson.GsonBuilder;
 
 import uk.co.magictractor.spew.api.BadResponseException;
 import uk.co.magictractor.spew.api.SpewOAuth1ServiceProvider;
-import uk.co.magictractor.spew.api.SpewResponse;
+import uk.co.magictractor.spew.api.SpewHttpResponse;
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
 import uk.co.magictractor.spew.core.verification.AuthorizationHandler;
 import uk.co.magictractor.spew.core.verification.PasteVerificationCodeHandler;
@@ -42,7 +42,7 @@ public class ImageBam implements SpewOAuth1ServiceProvider {
     }
 
     @Override
-    public String getContentType(SpewResponse response) {
+    public String getContentType(SpewHttpResponse response) {
         // Workaround for header reporting "text/hmtl" for JSON
         String contentType = ContentTypeUtil.fromHeader(response);
         if ("text/html".contentEquals(contentType)) {

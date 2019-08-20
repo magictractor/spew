@@ -23,7 +23,7 @@ import java.util.Optional;
 
 import uk.co.magictractor.spew.api.SpewApplication;
 import uk.co.magictractor.spew.api.SpewHeader;
-import uk.co.magictractor.spew.api.SpewResponse;
+import uk.co.magictractor.spew.api.SpewHttpResponse;
 import uk.co.magictractor.spew.util.ContentTypeUtil;
 import uk.co.magictractor.spew.util.spi.SPIUtil;
 
@@ -56,7 +56,7 @@ public interface SpewParsedResponse {
 
     <T> List<T> getList(String path, Class<T> type);
 
-    static SpewParsedResponse parse(SpewApplication application, SpewResponse response) {
+    static SpewParsedResponse parse(SpewApplication application, SpewHttpResponse response) {
 
         Optional<SpewParsedResponse> instance = SPIUtil.firstNotNull(SpewParsedResponseFactory.class,
             factory -> factory.instanceFor(application, response));

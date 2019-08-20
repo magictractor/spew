@@ -8,7 +8,7 @@ public class SpewRequestTest {
 
     @Test
     void testBaseUrl() {
-        SpewRequest request = setUpExampleRequest();
+        OutgoingHttpRequest request = setUpExampleRequest();
         // TODO! hamcrest
         // assertThat(request.getUrl(), Matchers.eq)
         assertEquals("https://api.flickr.com/services/rest/request_token", request.getBaseUrl());
@@ -33,8 +33,8 @@ public class SpewRequestTest {
     /**
      * Set up example from https://www.flickr.com/services/api/auth.oauth.html
      */
-    private SpewRequest setUpExampleRequest() {
-        SpewRequest request = new SpewRequest(null, "GET", "https://api.flickr.com/services/rest/request_token");
+    private OutgoingHttpRequest setUpExampleRequest() {
+        OutgoingHttpRequest request = new OutgoingHttpRequest(null, "GET", "https://api.flickr.com/services/rest/request_token");
 
         // request.removeParam("format");
         // request.removeParam("nojsoncallback");

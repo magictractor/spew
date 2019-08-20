@@ -24,7 +24,7 @@ public class SessionRequestHandler implements RequestHandler {
     private final String sessionId = System.currentTimeMillis() + ":" + new Random().nextLong();
 
     @Override
-    public void handleRequest(ServerRequest request, SimpleResponseBuilder responseBuilder) {
+    public void handleRequest(SpewHttpRequest request, OutgoingResponseBuilder responseBuilder) {
         String cookies = request.getHeader("Cookie");
         System.err.println("cookies: " + cookies + " (" + request.getUrl() + ")");
 

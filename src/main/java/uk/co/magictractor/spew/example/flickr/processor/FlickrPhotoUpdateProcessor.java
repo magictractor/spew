@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 import com.google.common.base.Joiner;
 
 import uk.co.magictractor.spew.api.SpewApplication;
-import uk.co.magictractor.spew.api.SpewRequest;
+import uk.co.magictractor.spew.api.OutgoingHttpRequest;
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
 import uk.co.magictractor.spew.example.flickr.MyFlickrApp;
 import uk.co.magictractor.spew.example.flickr.pojo.FlickrPhoto;
@@ -63,7 +63,7 @@ public class FlickrPhotoUpdateProcessor extends PhotoUpdateProcessor {
         // TODO Auto-generated method stub
         System.err.println("set title: " + photo.getTitle());
 
-        SpewRequest request = application.createPostRequest(Flickr.REST_ENDPOINT);
+        OutgoingHttpRequest request = application.createPostRequest(Flickr.REST_ENDPOINT);
 
         request.setQueryStringParam("method", "flickr.photos.setMeta");
 
@@ -77,7 +77,7 @@ public class FlickrPhotoUpdateProcessor extends PhotoUpdateProcessor {
         // TODO Auto-generated method stub
         System.err.println("set tags: " + photo.getTagSet());
 
-        SpewRequest request = application.createPostRequest(Flickr.REST_ENDPOINT);
+        OutgoingHttpRequest request = application.createPostRequest(Flickr.REST_ENDPOINT);
 
         request.setQueryStringParam("method", "flickr.photos.setTags");
 
@@ -118,7 +118,7 @@ public class FlickrPhotoUpdateProcessor extends PhotoUpdateProcessor {
      * @param context
      */
     private FlickrPhotoset createAlbum(MutableAlbum mutableAlbum, PhotoProcessorContext context) {
-        SpewRequest request = application.createPostRequest(Flickr.REST_ENDPOINT);
+        OutgoingHttpRequest request = application.createPostRequest(Flickr.REST_ENDPOINT);
         request.setQueryStringParam("method", "flickr.photosets.create");
         request.setQueryStringParam("title", mutableAlbum.getTitle());
         request.setQueryStringParam("primary_photo_id", mutableAlbum.getPhotos().get(0).getServiceProviderId());
@@ -178,7 +178,7 @@ public class FlickrPhotoUpdateProcessor extends PhotoUpdateProcessor {
     }
 
     private void addPhoto(String photosetId, String photoId) {
-        SpewRequest request = application.createPostRequest(Flickr.REST_ENDPOINT);
+        OutgoingHttpRequest request = application.createPostRequest(Flickr.REST_ENDPOINT);
         request.setQueryStringParam("method", "flickr.photosets.addPhoto");
         request.setQueryStringParam("photoset_id", photosetId);
         request.setQueryStringParam("photo_id", photoId);
@@ -191,7 +191,7 @@ public class FlickrPhotoUpdateProcessor extends PhotoUpdateProcessor {
     }
 
     private void reorderPhotos(MutableAlbum album, List<String> photoIds) {
-        SpewRequest request = application.createPostRequest(Flickr.REST_ENDPOINT);
+        OutgoingHttpRequest request = application.createPostRequest(Flickr.REST_ENDPOINT);
         request.setQueryStringParam("method", "flickr.photosets.reorderPhotos");
         request.setQueryStringParam("photoset_id", album.getServiceProviderId());
         String photoIdsString = Joiner.on(',').join(photoIds);

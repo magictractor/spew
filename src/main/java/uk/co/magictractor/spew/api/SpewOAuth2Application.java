@@ -29,11 +29,11 @@ public interface SpewOAuth2Application extends SpewApplication, HasCallbackServe
         return SPIUtil.firstAvailable(ApplicationPropertyStore.class).getProperty(this, "client_secret");
     }
 
-    default void modifyAuthorizationRequest(SpewRequest request) {
+    default void modifyAuthorizationRequest(OutgoingHttpRequest request) {
         getServiceProvider().modifyAuthorizationRequest(request);
     }
 
-    default void modifyTokenRequest(SpewRequest request) {
+    default void modifyTokenRequest(OutgoingHttpRequest request) {
         getServiceProvider().modifyTokenRequest(request);
     }
 

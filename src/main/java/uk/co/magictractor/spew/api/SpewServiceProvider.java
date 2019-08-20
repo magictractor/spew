@@ -37,7 +37,7 @@ public interface SpewServiceProvider {
      * Default implementation does nothing.
      * </p>
      */
-    default void prepareRequest(SpewRequest request) {
+    default void prepareRequest(OutgoingHttpRequest request) {
         // Do nothing
     }
 
@@ -47,7 +47,7 @@ public interface SpewServiceProvider {
      * the HTTP header.
      * </p>
      */
-    default String getContentType(SpewResponse response) {
+    default String getContentType(SpewHttpResponse response) {
         return ContentTypeUtil.fromHeader(response);
     }
 

@@ -24,7 +24,7 @@ import uk.co.magictractor.spew.api.connection.SpewConnectionCache;
 public class ConnectionValuesRequestHandler implements RequestHandler {
 
     @Override
-    public void handleRequest(ServerRequest request, SimpleResponseBuilder responseBuilder) {
+    public void handleRequest(SpewHttpRequest request, OutgoingResponseBuilder responseBuilder) {
         Optional<String> connectionId = request.getQueryStringParam("connection");
         if (!connectionId.isPresent()) {
             return;

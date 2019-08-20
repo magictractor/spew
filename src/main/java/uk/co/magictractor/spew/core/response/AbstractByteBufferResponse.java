@@ -21,14 +21,14 @@ import java.io.InputStream;
 
 import com.google.common.io.ByteStreams;
 
-import uk.co.magictractor.spew.api.SpewResponse;
+import uk.co.magictractor.spew.api.SpewHttpResponse;
 
 /**
  * Base class for response implementations which need to read and cache their
  * input stream because the third party library used for the connection will
  * automatically close the input stream.
  */
-public abstract class AbstractByteBufferResponse implements SpewResponse {
+public abstract class AbstractByteBufferResponse implements SpewHttpResponse {
 
     private final ByteArrayInputStream byteStream;
 

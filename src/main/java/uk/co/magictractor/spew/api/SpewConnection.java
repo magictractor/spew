@@ -29,6 +29,6 @@ public interface SpewConnection {
      * for application code.
      * </p>
      */
-    SpewResponse request(SpewRequest apiRequest);
+    SpewHttpResponse request(OutgoingHttpRequest apiRequest);
 
 }

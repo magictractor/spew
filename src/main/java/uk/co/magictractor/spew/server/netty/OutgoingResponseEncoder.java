@@ -32,39 +32,39 @@ import io.netty.handler.codec.http.DefaultHttpResponse;
 import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import uk.co.magictractor.spew.api.SpewHeader;
-import uk.co.magictractor.spew.server.SimpleErrorResponse;
-import uk.co.magictractor.spew.server.SimpleRedirectResponse;
-import uk.co.magictractor.spew.server.SimpleResourceResponse;
-import uk.co.magictractor.spew.server.SimpleResponse;
-import uk.co.magictractor.spew.server.SimpleStaticResponse;
-import uk.co.magictractor.spew.server.SimpleTemplateResponse;
+import uk.co.magictractor.spew.server.OutgoingErrorResponse;
+import uk.co.magictractor.spew.server.OutgoingRedirectResponse;
+import uk.co.magictractor.spew.server.OutgoingResourceResponse;
+import uk.co.magictractor.spew.server.OutgoingResponse;
+import uk.co.magictractor.spew.server.OutgoingStaticResponse;
+import uk.co.magictractor.spew.server.OutgoingTemplateResponse;
 import uk.co.magictractor.spew.util.ExceptionUtil;
 
 @Sharable
-public class SimpleResponseEncoder extends MessageToMessageEncoder<SimpleResponse> {
+public class OutgoingResponseEncoder extends MessageToMessageEncoder<OutgoingResponse> {
 
     @Override
-    protected void encode(ChannelHandlerContext ctx, SimpleResponse next, List<Object> out) throws Exception {
+    protected void encode(ChannelHandlerContext ctx, OutgoingResponse next, List<Object> out) throws Exception {
         DefaultHttpResponse nettyResponse = encode(next);
         if (nettyResponse != null) {
             out.add(nettyResponse);
         }
     }
 
-    /* default */ DefaultHttpResponse encode(SimpleResponse simpleResponse) {
+    /* default */ DefaultHttpResponse encode(OutgoingResponse simpleResponse) {
         DefaultHttpResponse nettyResponse = null;
 
-        if (simpleResponse instanceof SimpleStaticResponse) {
-            nettyResponse = response((SimpleStaticResponse) simpleResponse);
+        if (simpleResponse instanceof OutgoingStaticResponse) {
+            nettyResponse = response((OutgoingStaticResponse) simpleResponse);
         }
-        else if (simpleResponse instanceof SimpleTemplateResponse) {
-            nettyResponse = template((SimpleTemplateResponse) simpleResponse);
+        else if (simpleResponse instanceof OutgoingTemplateResponse) {
+            nettyResponse = template((OutgoingTemplateResponse) simpleResponse);
         }
-        else if (simpleResponse instanceof SimpleRedirectResponse) {
-            nettyResponse = redirect((SimpleRedirectResponse) simpleResponse);
+        else if (simpleResponse instanceof OutgoingRedirectResponse) {
+            nettyResponse = redirect((OutgoingRedirectResponse) simpleResponse);
         }
-        else if (simpleResponse instanceof SimpleErrorResponse) {
-            nettyResponse = error((SimpleErrorResponse) simpleResponse);
+        else if (simpleResponse instanceof OutgoingErrorResponse) {
+            nettyResponse = error((OutgoingErrorResponse) simpleResponse);
         }
         else {
             throw new IllegalStateException(
@@ -79,32 +79,26 @@ public class SimpleResponseEncoder extends MessageToMessageEncoder<SimpleRespons
         return nettyResponse;
     }
 
-    private DefaultHttpResponse response(SimpleStaticResponse staticResponse) {
+    private DefaultHttpResponse response(OutgoingStaticResponse staticResponse) {
         // TODO! add if modified since
         return resource(staticResponse);
     }
 
-    private DefaultHttpResponse template(SimpleTemplateResponse templateResponse) {
+    private DefaultHttpResponse template(OutgoingTemplateResponse templateResponse) {
         return resource(templateResponse);
     }
 
-    private DefaultHttpResponse resource(SimpleResourceResponse simpleResponse) {
+    private DefaultHttpResponse resource(OutgoingResourceResponse simpleResponse) {
         // TODO! Not the only code where the whole stream gets read into a byte array - change to getBody() -> byte[]?
         byte[] contentBytes = ExceptionUtil.call(() -> ByteStreams.toByteArray(simpleResponse.getBodyInputStream()));
         ByteBuf content = Unpooled.wrappedBuffer(contentBytes);
         DefaultFullHttpResponse response = new DefaultFullHttpResponse(HTTP_1_1,
-            HttpResponseStatus.valueOf(simpleResponse.getHttpStatus()), content);
-
-        // TODO! headers...
-
-        // TODO! not here, should already be in pre-send code
-        // response.headers().add("Content-Type", simpleResponse.getHeader("Content-Type"));
-        // response.headers().add("Content-Length", contentBytes.length);
+            HttpResponseStatus.valueOf(simpleResponse.getStatus()), content);
 
         return response;
     }
 
-    private DefaultHttpResponse redirect(SimpleRedirectResponse redirectResponse) {
+    private DefaultHttpResponse redirect(OutgoingRedirectResponse redirectResponse) {
 
         DefaultHttpResponse response = new DefaultHttpResponse(HTTP_1_1, SEE_OTHER);
         response.headers().add("Location", redirectResponse.getLocation());
@@ -112,11 +106,11 @@ public class SimpleResponseEncoder extends MessageToMessageEncoder<SimpleRespons
         return response;
     }
 
-    private DefaultHttpResponse error(SimpleErrorResponse errorResponse) {
+    private DefaultHttpResponse error(OutgoingErrorResponse errorResponse) {
 
-        SimpleTemplateResponse errorTemplate = new SimpleTemplateResponse(errorResponse.getClass(),
+        OutgoingTemplateResponse errorTemplate = new OutgoingTemplateResponse(errorResponse.getClass(),
             "error.html.template", key -> errorResponse.getValue(key));
-        errorTemplate.setHttpStatus(errorResponse.getHttpStatus());
+        errorTemplate.setHttpStatus(errorResponse.getStatus());
 
         return template(errorTemplate);
     }

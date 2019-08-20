@@ -23,16 +23,16 @@ import uk.co.magictractor.spew.core.response.ResourceResponse;
  * Simple representation of a static page.
  */
 // TODO! last modified time - available via Files
-public class SimpleStaticResponse extends SimpleResponse implements SimpleResourceResponse {
+public class OutgoingStaticResponse extends OutgoingResponse implements OutgoingResourceResponse {
 
     private final ResourceResponse spewResponse;
 
-    public static SimpleStaticResponse ifExists(Class<?> relativeToClass, String resourceName) {
+    public static OutgoingStaticResponse ifExists(Class<?> relativeToClass, String resourceName) {
         ResourceResponse resourceResponse = new ResourceResponse(relativeToClass, resourceName);
-        return resourceResponse.exists() ? new SimpleStaticResponse(resourceResponse) : null;
+        return resourceResponse.exists() ? new OutgoingStaticResponse(resourceResponse) : null;
     }
 
-    public SimpleStaticResponse(ResourceResponse spewResponse) {
+    public OutgoingStaticResponse(ResourceResponse spewResponse) {
         if (!spewResponse.exists()) {
             throw new IllegalArgumentException("Resource does not exist");
         }

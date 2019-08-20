@@ -28,7 +28,7 @@ public class TemplateRequestHandler implements RequestHandler {
     }
 
     @Override
-    public void handleRequest(ServerRequest request, SimpleResponseBuilder responseBuilder) {
+    public void handleRequest(SpewHttpRequest request, OutgoingResponseBuilder responseBuilder) {
 
         String baseUrl = request.getBaseUrl();
         if (!baseUrl.startsWith("/")) {

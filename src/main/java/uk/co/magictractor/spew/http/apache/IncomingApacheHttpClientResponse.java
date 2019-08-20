@@ -22,17 +22,22 @@ import org.apache.http.Header;
 import org.apache.http.client.methods.CloseableHttpResponse;
 
 import uk.co.magictractor.spew.api.SpewHeader;
-import uk.co.magictractor.spew.core.response.AbstractOnCloseResponse;
+import uk.co.magictractor.spew.core.response.AbstractIncomingOnCloseResponse;
 import uk.co.magictractor.spew.util.ExceptionUtil;
 
-public class SpewApacheHttpClientResponse extends AbstractOnCloseResponse {
+public class IncomingApacheHttpClientResponse extends AbstractIncomingOnCloseResponse {
 
     private final CloseableHttpResponse response;
     private List<SpewHeader> headers;
 
-    protected SpewApacheHttpClientResponse(CloseableHttpResponse response) {
+    protected IncomingApacheHttpClientResponse(CloseableHttpResponse response) {
         super(ExceptionUtil.call(() -> response.getEntity().getContent()));
         this.response = response;
+    }
+
+    @Override
+    public int getStatus() {
+        return response.getStatusLine().getStatusCode();
     }
 
     @Override

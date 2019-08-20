@@ -7,7 +7,7 @@ import com.google.gson.GsonBuilder;
 
 import uk.co.magictractor.spew.api.BadResponseException;
 import uk.co.magictractor.spew.api.SpewOAuth1ServiceProvider;
-import uk.co.magictractor.spew.api.SpewRequest;
+import uk.co.magictractor.spew.api.OutgoingHttpRequest;
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
 import uk.co.magictractor.spew.json.BooleanTypeAdapter;
 import uk.co.magictractor.spew.json.InstantTypeAdapter;
@@ -31,7 +31,7 @@ public class Flickr implements SpewOAuth1ServiceProvider {
 
     // TODO! stop these being added to auth calls
     @Override
-    public void prepareRequest(SpewRequest request) {
+    public void prepareRequest(OutgoingHttpRequest request) {
         request.setQueryStringParam("format", "json");
         request.setQueryStringParam("nojsoncallback", "1");
     }

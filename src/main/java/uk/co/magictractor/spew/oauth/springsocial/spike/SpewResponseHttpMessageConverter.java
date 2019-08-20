@@ -22,15 +22,16 @@ import java.util.List;
 import org.springframework.http.HttpInputMessage;
 import org.springframework.http.HttpOutputMessage;
 import org.springframework.http.MediaType;
+import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.converter.HttpMessageNotWritableException;
 
 import uk.co.magictractor.spew.api.SpewApplication;
-import uk.co.magictractor.spew.api.SpewResponse;
+import uk.co.magictractor.spew.api.SpewHttpResponse;
 
 // TODO! make consistent with whatever Boa code does
-public class SpewResponseHttpMessageConverter implements HttpMessageConverter<SpewResponse> {
+public class SpewResponseHttpMessageConverter implements HttpMessageConverter<SpewHttpResponse> {
 
     private final SpewApplication application;
 
@@ -60,14 +61,14 @@ public class SpewResponseHttpMessageConverter implements HttpMessageConverter<Sp
     }
 
     @Override
-    public SpewResponse read(Class<? extends SpewResponse> clazz, HttpInputMessage inputMessage)
+    public SpewHttpResponse read(Class<? extends SpewHttpResponse> clazz, HttpInputMessage inputMessage)
             throws IOException, HttpMessageNotReadableException {
 
-        return new HttpInputMessageResponse(inputMessage);
+        return new IncomingSpringSocialResponse((ClientHttpResponse) inputMessage);
     }
 
     @Override
-    public void write(SpewResponse t, MediaType contentType, HttpOutputMessage outputMessage)
+    public void write(SpewHttpResponse t, MediaType contentType, HttpOutputMessage outputMessage)
             throws IOException, HttpMessageNotWritableException {
         throw new UnsupportedOperationException();
     }

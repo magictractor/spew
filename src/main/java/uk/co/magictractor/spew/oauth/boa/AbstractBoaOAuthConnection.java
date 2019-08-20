@@ -9,8 +9,8 @@ import org.slf4j.LoggerFactory;
 import uk.co.magictractor.spew.api.AbstractConnection;
 import uk.co.magictractor.spew.api.SpewApplication;
 import uk.co.magictractor.spew.api.SpewConnection;
-import uk.co.magictractor.spew.api.SpewRequest;
-import uk.co.magictractor.spew.api.SpewResponse;
+import uk.co.magictractor.spew.api.OutgoingHttpRequest;
+import uk.co.magictractor.spew.api.SpewHttpResponse;
 import uk.co.magictractor.spew.api.SpewServiceProvider;
 import uk.co.magictractor.spew.api.connection.SpewConnectionFactory;
 import uk.co.magictractor.spew.util.spi.SPIUtil;
@@ -36,12 +36,12 @@ public abstract class AbstractBoaOAuthConnection<APP extends SpewApplication, SP
         return logger;
     }
 
-    protected final SpewResponse request0(SpewRequest request) throws IOException {
+    protected final SpewHttpResponse request0(OutgoingHttpRequest request) throws IOException {
         return request0(request, null);
     }
 
     // http://www.baeldung.com/java-http-request
-    protected final SpewResponse request0(SpewRequest request, Consumer<SpewRequest> initConnection)
+    protected final SpewHttpResponse request0(OutgoingHttpRequest request, Consumer<OutgoingHttpRequest> initConnection)
             throws IOException {
 
         // Used to set authentication in headers for OAuth2, and outh_signature query param for OAuth1

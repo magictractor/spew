@@ -26,14 +26,14 @@ import java.util.List;
 import java.util.Optional;
 
 import uk.co.magictractor.spew.api.SpewHeader;
-import uk.co.magictractor.spew.api.SpewResponse;
+import uk.co.magictractor.spew.api.SpewHttpResponse;
 import uk.co.magictractor.spew.util.ContentTypeUtil;
 import uk.co.magictractor.spew.util.ExceptionUtil;
 
 /**
  *
  */
-public class ResourceResponse implements SpewResponse {
+public class ResourceResponse implements SpewHttpResponse {
 
     private final Class<?> relativeToClass;
     private final String resourceName;
@@ -49,6 +49,11 @@ public class ResourceResponse implements SpewResponse {
     public ResourceResponse(Class<?> relativeToClass, String resourceName) {
         this.relativeToClass = relativeToClass;
         this.resourceName = resourceName;
+    }
+
+    @Override
+    public int getStatus() {
+        return 200;
     }
 
     @Override

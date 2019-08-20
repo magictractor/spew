@@ -4,7 +4,7 @@ import java.util.List;
 
 import uk.co.magictractor.spew.api.PageTokenServiceIterator;
 import uk.co.magictractor.spew.api.SpewApplication;
-import uk.co.magictractor.spew.api.SpewRequest;
+import uk.co.magictractor.spew.api.OutgoingHttpRequest;
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
 
 // https://developer.twitter.com/en/docs/tweets/timelines/api-reference/get-statuses-user_timeline.html
@@ -18,7 +18,7 @@ public class TweetIterator<E> extends PageTokenServiceIterator<E> {
 
     @Override
     protected PageAndNextToken<E> fetchPage(String pageToken) {
-        SpewRequest request = getApplication()
+        OutgoingHttpRequest request = getApplication()
                 .createGetRequest("https://api.twitter.com/1.1/statuses/user_timeline.json");
 
         getLogger().debug("set max_id={}", pageToken);

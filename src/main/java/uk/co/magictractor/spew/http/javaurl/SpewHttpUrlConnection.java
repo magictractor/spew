@@ -21,8 +21,8 @@ import java.net.URL;
 
 import uk.co.magictractor.spew.api.SpewConnection;
 import uk.co.magictractor.spew.api.SpewHeader;
-import uk.co.magictractor.spew.api.SpewRequest;
-import uk.co.magictractor.spew.api.SpewResponse;
+import uk.co.magictractor.spew.api.OutgoingHttpRequest;
+import uk.co.magictractor.spew.api.SpewHttpResponse;
 import uk.co.magictractor.spew.util.ExceptionUtil;
 
 /**
@@ -31,11 +31,11 @@ import uk.co.magictractor.spew.util.ExceptionUtil;
 public class SpewHttpUrlConnection implements SpewConnection {
 
     @Override
-    public SpewResponse request(SpewRequest request) {
+    public SpewHttpResponse request(OutgoingHttpRequest request) {
         return ExceptionUtil.call(() -> request0(request));
     }
 
-    public SpewResponse request0(SpewRequest request) throws IOException {
+    public SpewHttpResponse request0(OutgoingHttpRequest request) throws IOException {
         // URL has no knowledge of escaping, the application must do that. See URL Javadoc.
         URL url = new URL(request.getUrl());
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -50,7 +50,7 @@ public class SpewHttpUrlConnection implements SpewConnection {
             connection.getOutputStream().write(request.getBody());
         }
 
-        return new SpewHttpUrlConnectionResponse(connection);
+        return new IncomingHttpUrlConnectionResponse(connection);
     }
 
 }

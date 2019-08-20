@@ -14,8 +14,8 @@ import io.netty.handler.codec.http.QueryStringDecoder;
 import uk.co.magictractor.spew.api.SpewConnection;
 import uk.co.magictractor.spew.api.SpewOAuth2Application;
 import uk.co.magictractor.spew.api.SpewOAuth2ServiceProvider;
-import uk.co.magictractor.spew.api.SpewRequest;
-import uk.co.magictractor.spew.api.SpewResponse;
+import uk.co.magictractor.spew.api.OutgoingHttpRequest;
+import uk.co.magictractor.spew.api.SpewHttpResponse;
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
 import uk.co.magictractor.spew.core.verification.AuthorizationHandler;
 import uk.co.magictractor.spew.core.verification.VerificationFunction;
@@ -57,7 +57,7 @@ public class BoaOAuth2Connection extends AbstractBoaOAuthConnection<SpewOAuth2Ap
     }
 
     @Override
-    public SpewResponse request(SpewRequest apiRequest) {
+    public SpewHttpResponse request(OutgoingHttpRequest apiRequest) {
 
         if (accessToken.getValue() == null) {
             // authenticateUser();
@@ -71,7 +71,7 @@ public class BoaOAuth2Connection extends AbstractBoaOAuthConnection<SpewOAuth2Ap
         return ExceptionUtil.call(() -> request0(apiRequest, this::setAuthHeader));
     }
 
-    private void setAuthHeader(SpewRequest request) {
+    private void setAuthHeader(OutgoingHttpRequest request) {
         request.addHeader("Authorization", "Bearer " + accessToken.getValue());
     }
 
@@ -79,7 +79,7 @@ public class BoaOAuth2Connection extends AbstractBoaOAuthConnection<SpewOAuth2Ap
     private void authorize() {
         SpewOAuth2Application application = getApplication();
 
-        SpewRequest request = application.createGetRequest(getServiceProvider().getAuthorizationUri());
+        OutgoingHttpRequest request = application.createGetRequest(getServiceProvider().getAuthorizationUri());
 
         // GitHub returns application/x-www-form-urlencoded content type by default
         request.addHeader(ContentTypeUtil.ACCEPT_HEADER_NAME, ContentTypeUtil.JSON_MIME_TYPES.get(0));
@@ -132,7 +132,7 @@ public class BoaOAuth2Connection extends AbstractBoaOAuthConnection<SpewOAuth2Ap
         SpewOAuth2Application application = getApplication();
 
         // ah! needed to be POST else 404 (Google)
-        SpewRequest request = application.createPostRequest(getServiceProvider().getTokenUri());
+        OutgoingHttpRequest request = application.createPostRequest(getServiceProvider().getTokenUri());
 
         // GitHub returns application/x-www-form-urlencoded content type by default
         request.addHeader(ContentTypeUtil.ACCEPT_HEADER_NAME, ContentTypeUtil.JSON_MIME_TYPES.get(0));
@@ -179,7 +179,7 @@ public class BoaOAuth2Connection extends AbstractBoaOAuthConnection<SpewOAuth2Ap
     // TODO! handle invalid/expired refresh tokens
     // https://developers.google.com/identity/protocols/OAuth2InstalledApp#offline
     private void fetchRefreshedAccessToken() {
-        SpewRequest request = getApplication().createPostRequest(getServiceProvider().getTokenUri());
+        OutgoingHttpRequest request = getApplication().createPostRequest(getServiceProvider().getTokenUri());
 
         request.setBodyParam("refresh_token", refreshToken.getValue());
         request.setBodyParam("client_id", getApplication().getClientId());
@@ -256,13 +256,13 @@ public class BoaOAuth2Connection extends AbstractBoaOAuthConnection<SpewOAuth2Ap
     //        "token_type": "Bearer"
     //      }
 
-    private SpewParsedResponse authRequest(SpewRequest apiRequest) {
+    private SpewParsedResponse authRequest(OutgoingHttpRequest apiRequest) {
         // forAll(apiRequest);
 
         // TODO! more elegant way to prep the request rather than repeating this here?
         apiRequest.prepareToSend();
 
-        SpewResponse response = ExceptionUtil.call(() -> request0(apiRequest));
+        SpewHttpResponse response = ExceptionUtil.call(() -> request0(apiRequest));
         return SpewParsedResponse.parse(getApplication(), response);
     }
 

@@ -28,7 +28,7 @@ public class ResourceRequestHandler implements RequestHandler {
     }
 
     @Override
-    public void handleRequest(ServerRequest request, SimpleResponseBuilder responseBuilder) {
+    public void handleRequest(SpewHttpRequest request, OutgoingResponseBuilder responseBuilder) {
         // DO NOT COMMIT  - testing exception handling
         if (1 < 2) {
             // throw new IllegalStateException("big badda boom");

@@ -19,10 +19,10 @@ import io.netty.handler.codec.http.HttpRequestDecoder;
 import io.netty.handler.codec.http.HttpResponseEncoder;
 import uk.co.magictractor.spew.server.CallbackServer;
 import uk.co.magictractor.spew.server.RequestHandler;
-import uk.co.magictractor.spew.server.ServerRequest;
-import uk.co.magictractor.spew.server.SimpleErrorResponse;
-import uk.co.magictractor.spew.server.SimpleResponse;
-import uk.co.magictractor.spew.server.SimpleResponseBuilder;
+import uk.co.magictractor.spew.server.SpewHttpRequest;
+import uk.co.magictractor.spew.server.OutgoingErrorResponse;
+import uk.co.magictractor.spew.server.OutgoingResponse;
+import uk.co.magictractor.spew.server.OutgoingResponseBuilder;
 import uk.co.magictractor.spew.util.ExceptionUtil;
 import uk.co.magictractor.spew.util.spi.ClassDependantAvailability;
 
@@ -72,7 +72,7 @@ public class NettyCallbackServer implements CallbackServer, ClassDependantAvaila
                             // Don't want to handle HttpChunks (see HttpSnoopServerInitializer)
                             p.addLast(new HttpObjectAggregator(1048576));
 
-                            p.addLast(new SimpleResponseEncoder());
+                            p.addLast(new OutgoingResponseEncoder());
 
                             // This adds listeners which will handle exceptions if SimpleResponseEncoder is buggy.
                             // Outbound handlers are processed in reverse order.
@@ -125,12 +125,12 @@ public class NettyCallbackServer implements CallbackServer, ClassDependantAvaila
         @Override
         public void channelRead(ChannelHandlerContext ctx, Object msg) {
             FullHttpRequest httpRequest = (FullHttpRequest) msg;
-            handle(ctx, new FullHttpMessageRequest(httpRequest));
+            handle(ctx, new IncomingNettyRequest(httpRequest));
         }
 
-        private void handle(ChannelHandlerContext ctx, ServerRequest request) {
+        private void handle(ChannelHandlerContext ctx, SpewHttpRequest request) {
 
-            SimpleResponseBuilder responseBuilder = new SimpleResponseBuilder();
+            OutgoingResponseBuilder responseBuilder = new OutgoingResponseBuilder();
 
             for (RequestHandler handler : requestHandlers) {
                 handler.handleRequest(request, responseBuilder);
@@ -143,7 +143,7 @@ public class NettyCallbackServer implements CallbackServer, ClassDependantAvaila
                 shutdown();
             }
 
-            SimpleResponse response = responseBuilder.build();
+            OutgoingResponse response = responseBuilder.build();
             if (response != null) {
                 ctx.writeAndFlush(responseBuilder.build()).addListener(ChannelFutureListener.CLOSE);
             }
@@ -155,7 +155,7 @@ public class NettyCallbackServer implements CallbackServer, ClassDependantAvaila
     }
 
     private void handleUnknown(ChannelHandlerContext ctx) {
-        SimpleErrorResponse response = SimpleErrorResponse.notFound();
+        OutgoingErrorResponse response = OutgoingErrorResponse.notFound();
         ctx.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
     }
 

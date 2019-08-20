@@ -23,20 +23,25 @@ import java.util.List;
 import java.util.Map;
 
 import uk.co.magictractor.spew.api.SpewHeader;
-import uk.co.magictractor.spew.core.response.AbstractOnCloseResponse;
+import uk.co.magictractor.spew.core.response.AbstractIncomingOnCloseResponse;
 import uk.co.magictractor.spew.util.ExceptionUtil;
 
 /**
  *
  */
-public class SpewHttpUrlConnectionResponse extends AbstractOnCloseResponse {
+public class IncomingHttpUrlConnectionResponse extends AbstractIncomingOnCloseResponse {
 
     private final HttpURLConnection connection;
     private List<SpewHeader> headers;
 
-    public SpewHttpUrlConnectionResponse(HttpURLConnection connection) {
+    public IncomingHttpUrlConnectionResponse(HttpURLConnection connection) {
         super(getStream(connection));
         this.connection = connection;
+    }
+
+    @Override
+    public int getStatus() {
+        return ExceptionUtil.call(() -> connection.getResponseCode());
     }
 
     private static InputStream getStream(HttpURLConnection connection) {
