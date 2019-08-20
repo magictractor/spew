@@ -15,13 +15,29 @@
  */
 package uk.co.magictractor.spew.server;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Function;
+
+import uk.co.magictractor.spew.api.SpewHeader;
+
 public class SimpleResponseBuilder {
 
     private SimpleResponse response;
     private boolean isDone;
     private boolean shutdown;
+    private List<SpewHeader> headers;
+    private List<Function<String, String>> valueFunctions;
 
     public SimpleResponse build() {
+        if (response == null) {
+            response = SimpleErrorResponse.notFound();
+        }
+
+        if (headers != null) {
+            response.addHeaders(headers);
+        }
+
         return response;
     }
 
@@ -30,7 +46,7 @@ public class SimpleResponseBuilder {
             throw new IllegalStateException("A response has already been set");
         }
         if (response == null) {
-            // Most likely a non-existant static resource.
+            // Most likely a non-existent static resource.
             return this;
         }
 
@@ -43,8 +59,30 @@ public class SimpleResponseBuilder {
         return withResponse(SimpleStaticResponse.ifExists(relativeToClass, resourceName));
     }
 
+    public SimpleResponseBuilder withTemplateIfExists(Class<?> relativeToClass, String resourceName) {
+        return withResponse(SimpleTemplateResponse.ifExists(relativeToClass, resourceName, this::getValue));
+    }
+
     public SimpleResponseBuilder withRedirect(String location) {
         return withResponse(new SimpleRedirectResponse(location));
+    }
+
+    public SimpleResponseBuilder withHeader(String name, String value) {
+        if (headers == null) {
+            headers = new ArrayList<>();
+        }
+        headers.add(new SpewHeader(name, value));
+
+        return this;
+    }
+
+    public SimpleResponseBuilder withValueFunction(Function<String, String> valueFunction) {
+        if (valueFunctions == null) {
+            valueFunctions = new ArrayList<>();
+        }
+        valueFunctions.add(valueFunction);
+
+        return this;
     }
 
     public SimpleResponseBuilder withShutdown() {
@@ -58,6 +96,18 @@ public class SimpleResponseBuilder {
 
     public boolean isDone() {
         return isDone;
+    }
+
+    private String getValue(String key) {
+        if (valueFunctions != null) {
+            for (Function<String, String> valueFunction : valueFunctions) {
+                String value = valueFunction.apply(key);
+                if (value != null) {
+                    return value;
+                }
+            }
+        }
+        return null;
     }
 
 }

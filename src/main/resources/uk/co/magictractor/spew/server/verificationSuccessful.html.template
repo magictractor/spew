@@ -4,5 +4,6 @@
 </head>
 <body>
 <p>Verification was successful.</p>
+dasjdhga ${application.name}
 </body>
 </html>

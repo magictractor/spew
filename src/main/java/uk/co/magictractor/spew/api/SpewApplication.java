@@ -11,7 +11,7 @@ public interface SpewApplication {
     SpewServiceProvider getServiceProvider();
 
     default SpewConnection getConnection() {
-        return SpewConnectionCache.getConnection(getClass());
+        return SpewConnectionCache.getOrCreateConnection(getClass());
     }
 
     default SpewRequest createRequest(String httpMethod, String url) {

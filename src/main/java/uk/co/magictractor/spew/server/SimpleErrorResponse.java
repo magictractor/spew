@@ -32,4 +32,20 @@ public class SimpleErrorResponse extends SimpleResponse {
         return message;
     }
 
+    public String getValue(String key) {
+
+        if ("message".equals(key)) {
+            return message;
+        }
+        else if ("httpStatus".equals(key)) {
+            return Integer.toString(getHttpStatus());
+        }
+
+        return null;
+    }
+
+    public static SimpleErrorResponse notFound() {
+        return new SimpleErrorResponse(404, "Not found");
+    }
+
 }

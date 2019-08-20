@@ -16,12 +16,15 @@
 package uk.co.magictractor.spew.server.netty;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Splitter;
 
 import io.netty.handler.codec.http.FullHttpRequest;
+import uk.co.magictractor.spew.api.SpewHeader;
 import uk.co.magictractor.spew.server.ServerRequest;
 
 public class FullHttpMessageRequest implements ServerRequest {
@@ -29,6 +32,7 @@ public class FullHttpMessageRequest implements ServerRequest {
     private final FullHttpRequest request;
     private String baseUri;
     private Map<String, String> queryStringParams;
+    private List<SpewHeader> headers;
 
     public FullHttpMessageRequest(FullHttpRequest request) {
         this.request = request;
@@ -71,8 +75,15 @@ public class FullHttpMessageRequest implements ServerRequest {
     }
 
     @Override
-    public String getQueryStringParam(String paramName) {
-        return getQueryStringParams().get(paramName);
+    public List<SpewHeader> getHeaders() {
+        if (headers == null) {
+            headers = request.headers()
+                    .entries()
+                    .stream()
+                    .map(e -> new SpewHeader(e.getKey(), e.getValue()))
+                    .collect(Collectors.toList());
+        }
+        return headers;
     }
 
     @Override

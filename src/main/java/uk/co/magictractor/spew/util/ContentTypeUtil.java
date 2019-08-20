@@ -66,6 +66,7 @@ public class ContentTypeUtil {
         return HTML_MIME_TYPES.contains(contentType);
     }
 
+    // TODO! request or response?
     public static String fromHeader(SpewResponse response) {
         // TODO! simplify here and test case sensitivity in unit tests
         String upper = response.getHeader("Content-Type");
@@ -89,6 +90,7 @@ public class ContentTypeUtil {
         return value;
     }
 
+    // TODO! request or response?
     public static String fromBody(SpewResponse response) {
         byte[] bytes = new byte[4];
 
@@ -118,7 +120,7 @@ public class ContentTypeUtil {
      * <p>
      * When the resource name has multiple dots, each part of the extension,
      * split by dots is examined to determine the content type. This is to
-     * handle name such as "mainPage.html.template".
+     * handle name such as "mainPage.html.template". TODO! yuck??
      * </p>
      */
     public static String fromResourceName(String resourceName) {
@@ -154,6 +156,7 @@ public class ContentTypeUtil {
         return contentType;
     }
 
+    // TODO! request or response param?
     public static Charset charsetFromHeader(SpewResponse response) {
         String header = response.getHeader(CONTENT_TYPE_HEADER_NAME);
         Charset charset = null;

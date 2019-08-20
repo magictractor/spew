@@ -15,6 +15,12 @@
  */
 package uk.co.magictractor.spew.server;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import uk.co.magictractor.spew.api.SpewHeader;
+
 /**
  * <p>
  * Simple responses are platform agnostic containers of information to be
@@ -26,8 +32,8 @@ package uk.co.magictractor.spew.server;
  */
 public abstract class SimpleResponse {
 
-    // TODO! move this to error,
     private int httpStatus = 200;
+    private List<SpewHeader> headers;
 
     public void setHttpStatus(int httpStatus) {
         this.httpStatus = httpStatus;
@@ -35,6 +41,22 @@ public abstract class SimpleResponse {
 
     public int getHttpStatus() {
         return httpStatus;
+    }
+
+    public List<SpewHeader> getHeaders() {
+        return headers == null ? Collections.emptyList() : headers;
+    }
+
+    // default visibility so the builder may access it, but the response is otherwise immutable
+    /* default */ void addHeaders(List<SpewHeader> addHeaders) {
+        ensureHeaders();
+        headers.addAll(addHeaders);
+    }
+
+    private void ensureHeaders() {
+        if (headers == null) {
+            headers = new ArrayList<>();
+        }
     }
 
 }

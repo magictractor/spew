@@ -5,10 +5,12 @@ import java.util.List;
 import java.util.function.Supplier;
 
 import uk.co.magictractor.spew.core.verification.VerificationFunction;
+import uk.co.magictractor.spew.server.ConnectionValuesRequestHandler;
 import uk.co.magictractor.spew.server.OAuth2VerificationRequestHandler;
 import uk.co.magictractor.spew.server.RequestHandler;
 import uk.co.magictractor.spew.server.ResourceRequestHandler;
 import uk.co.magictractor.spew.server.ShutdownOnceVerifiedRequestHandler;
+import uk.co.magictractor.spew.server.TemplateRequestHandler;
 import uk.co.magictractor.spew.store.ApplicationPropertyStore;
 import uk.co.magictractor.spew.util.spi.SPIUtil;
 
@@ -58,8 +60,10 @@ public interface SpewOAuth2Application extends SpewApplication, HasCallbackServe
     @Override
     default List<RequestHandler> getServerRequestHandlers(Supplier<VerificationFunction> verificationFunctionSupplier) {
         return Arrays.asList(
+            new ConnectionValuesRequestHandler(),
             new OAuth2VerificationRequestHandler(verificationFunctionSupplier),
             new ShutdownOnceVerifiedRequestHandler(),
+            new TemplateRequestHandler(serverResourcesRelativeToClass()),
             new ResourceRequestHandler(serverResourcesRelativeToClass()));
     }
 

@@ -155,7 +155,7 @@ public class NettyCallbackServer implements CallbackServer, ClassDependantAvaila
     }
 
     private void handleUnknown(ChannelHandlerContext ctx) {
-        SimpleErrorResponse response = new SimpleErrorResponse(404, "Not found");
+        SimpleErrorResponse response = SimpleErrorResponse.notFound();
         ctx.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
     }
 

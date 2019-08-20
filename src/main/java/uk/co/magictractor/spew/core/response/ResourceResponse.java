@@ -77,13 +77,6 @@ public class ResourceResponse implements SpewResponse {
             return;
         }
 
-        //        if (relativeToClass == null) {
-        //            bodyStream = Optional.ofNullable(getClass().getClassLoader().getResourceAsStream(resourceName));
-        //        }
-        //        else {
-        //            bodyStream = Optional.ofNullable(relativeToClass.getResourceAsStream(resourceName));
-        //        }
-
         URL resource;
         if (relativeToClass == null) {
             resource = getClass().getClassLoader().getResource(resourceName);
@@ -93,7 +86,6 @@ public class ResourceResponse implements SpewResponse {
         }
 
         if (resource == null) {
-            System.err.println("resource does not exist with name " + resourceName);
             bodyStream = Optional.empty();
             return;
         }
@@ -117,6 +109,7 @@ public class ResourceResponse implements SpewResponse {
     }
 
     public boolean exists() {
+        // TODO! check Path instead, and get timestamp from Path
         ensureBodyInputStream();
         return bodyStream.isPresent();
     }

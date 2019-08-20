@@ -11,12 +11,14 @@ import com.google.common.collect.Iterables;
 import io.netty.buffer.ByteBuf;
 import io.netty.handler.codec.http.FullHttpMessage;
 import io.netty.handler.codec.http.QueryStringDecoder;
+import uk.co.magictractor.spew.api.SpewConnection;
 import uk.co.magictractor.spew.api.SpewOAuth2Application;
 import uk.co.magictractor.spew.api.SpewOAuth2ServiceProvider;
 import uk.co.magictractor.spew.api.SpewRequest;
 import uk.co.magictractor.spew.api.SpewResponse;
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
 import uk.co.magictractor.spew.core.verification.AuthorizationHandler;
+import uk.co.magictractor.spew.core.verification.VerificationFunction;
 import uk.co.magictractor.spew.core.verification.VerificationInfo;
 import uk.co.magictractor.spew.store.EditableProperty;
 import uk.co.magictractor.spew.store.UserPropertyStore;
@@ -85,7 +87,8 @@ public class BoaOAuth2Connection extends AbstractBoaOAuthConnection<SpewOAuth2Ap
         // A bit mucky. The callback value comes from the handler but is also used in the verification function.
         AuthorizationHandler[] authHandlerHolder = new AuthorizationHandler[1];
         AuthorizationHandler authHandler = application
-                .getAuthorizationHandler(() -> (info -> verify(info, authHandlerHolder[0].getCallbackValue())));
+                .getAuthorizationHandler(
+                    () -> new BoaOAuth2VerificationFunction(authHandlerHolder[0].getCallbackValue()));
         authHandlerHolder[0] = authHandler;
 
         authHandler.preOpenAuthorizationInBrowser(application);
@@ -263,10 +266,23 @@ public class BoaOAuth2Connection extends AbstractBoaOAuthConnection<SpewOAuth2Ap
         return SpewParsedResponse.parse(getApplication(), response);
     }
 
-    //    @Override
-    //    public SpewResponse request(ConnectionRequest request) {
-    //        // TODO Auto-generated method stub
-    //        return null;
-    //    }
+    private class BoaOAuth2VerificationFunction implements VerificationFunction {
+
+        private final String callback;
+
+        public BoaOAuth2VerificationFunction(String callback) {
+            this.callback = callback;
+        }
+
+        @Override
+        public Boolean apply(VerificationInfo info) {
+            return BoaOAuth2Connection.this.verify(info, callback);
+        }
+
+        @Override
+        public SpewConnection getConnection() {
+            return BoaOAuth2Connection.this;
+        }
+    }
 
 }

@@ -17,11 +17,15 @@ package uk.co.magictractor.spew.core.verification;
 
 import java.util.function.Function;
 
+import uk.co.magictractor.spew.api.SpewConnection;
+
 /**
  * Function used to complete authorization using the verification code from the
  * service provider's website.
  */
-@FunctionalInterface
+//@FunctionalInterface
 public interface VerificationFunction extends Function<VerificationInfo, Boolean> {
+
+    SpewConnection getConnection();
 
 }

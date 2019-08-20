@@ -6,8 +6,8 @@
 </head>
 <body>
 <div class="error">
-<span class="httpStatus">{httpStatus}</span>
-<span class="message">{message}</span>
+<span class="httpStatus">${httpStatus}</span>
+<span class="message">${message}</span>
 </div>
 </body>
 </html>

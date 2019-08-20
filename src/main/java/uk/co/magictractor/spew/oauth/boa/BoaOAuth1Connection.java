@@ -11,6 +11,7 @@ import javax.crypto.spec.SecretKeySpec;
 
 import com.google.common.io.BaseEncoding;
 
+import uk.co.magictractor.spew.api.SpewConnection;
 import uk.co.magictractor.spew.api.SpewOAuth1Application;
 import uk.co.magictractor.spew.api.SpewOAuth1ServiceProvider;
 import uk.co.magictractor.spew.api.SpewRequest;
@@ -18,6 +19,7 @@ import uk.co.magictractor.spew.api.SpewResponse;
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
 import uk.co.magictractor.spew.core.response.parser.text.KeyValuePairsResponse;
 import uk.co.magictractor.spew.core.verification.AuthorizationHandler;
+import uk.co.magictractor.spew.core.verification.VerificationFunction;
 import uk.co.magictractor.spew.core.verification.VerificationInfo;
 import uk.co.magictractor.spew.provider.imagebam.ImageBam;
 import uk.co.magictractor.spew.store.EditableProperty;
@@ -27,7 +29,8 @@ import uk.co.magictractor.spew.util.ExceptionUtil;
 import uk.co.magictractor.spew.util.spi.SPIUtil;
 
 // TODO! common interface for OAuth1 and OAuth2 connections (and no auth? / other auth?)
-public final class BoaOAuth1Connection extends AbstractBoaOAuthConnection<SpewOAuth1Application, SpewOAuth1ServiceProvider> {
+public final class BoaOAuth1Connection
+        extends AbstractBoaOAuthConnection<SpewOAuth1Application, SpewOAuth1ServiceProvider> {
 
     // unit tests can call setSeed() on this
     private final Random nonceGenerator = new Random();
@@ -75,7 +78,7 @@ public final class BoaOAuth1Connection extends AbstractBoaOAuthConnection<SpewOA
 
     private void authorizeUser() {
         AuthorizationHandler authorizationHandler = getApplication()
-                .getAuthorizationHandler(() -> this::verifyAuthentication);
+                .getAuthorizationHandler(BoaOAuth1VerificationFunction::new);
         authorizationHandler.preOpenAuthorizationInBrowser(getApplication());
 
         openAuthorizationUriInBrowser(authorizationHandler.getCallbackValue());
@@ -272,6 +275,19 @@ public final class BoaOAuth1Connection extends AbstractBoaOAuthConnection<SpewOA
 
         request.setQueryStringParam("oauth_version", "1.0");
         request.setQueryStringParam("oauth_signature_method", getServiceProvider().getRequestSignatureMethod());
+    }
+
+    private class BoaOAuth1VerificationFunction implements VerificationFunction {
+
+        @Override
+        public Boolean apply(VerificationInfo info) {
+            return BoaOAuth1Connection.this.verifyAuthentication(info);
+        }
+
+        @Override
+        public SpewConnection getConnection() {
+            return BoaOAuth1Connection.this;
+        }
     }
 
 }

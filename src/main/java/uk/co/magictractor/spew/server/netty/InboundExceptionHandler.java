@@ -22,16 +22,8 @@ public class InboundExceptionHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        if (LOGGER.isDebugEnabled()) {
-            if (LOGGER.isTraceEnabled()) {
-                LOGGER.trace("Exception caught:\n", cause);
-            }
-            else {
-                LOGGER.debug("Exception caught: {}", cause.getMessage());
-            }
-        }
+        LOGGER.error("Inbound exception caught:\n", cause);
 
-        // TODO! shutdown the server?
         ByteBuf content = Unpooled.copiedBuffer("There was a problem", StandardCharsets.UTF_8);
         DefaultFullHttpResponse response = new DefaultFullHttpResponse(HTTP_1_1, INTERNAL_SERVER_ERROR, content);
 

@@ -29,7 +29,9 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToMessageEncoder;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
 import io.netty.handler.codec.http.DefaultHttpResponse;
+import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpResponseStatus;
+import uk.co.magictractor.spew.api.SpewHeader;
 import uk.co.magictractor.spew.server.SimpleErrorResponse;
 import uk.co.magictractor.spew.server.SimpleRedirectResponse;
 import uk.co.magictractor.spew.server.SimpleResourceResponse;
@@ -43,38 +45,38 @@ public class SimpleResponseEncoder extends MessageToMessageEncoder<SimpleRespons
 
     @Override
     protected void encode(ChannelHandlerContext ctx, SimpleResponse next, List<Object> out) throws Exception {
-        DefaultHttpResponse encoded = encode(next);
-        if (encoded != null) {
-            out.add(encoded);
+        DefaultHttpResponse nettyResponse = encode(next);
+        if (nettyResponse != null) {
+            out.add(nettyResponse);
         }
     }
 
-    public DefaultHttpResponse encode(SimpleResponse simpleResponse) {
-        DefaultHttpResponse encoded = null;
+    private DefaultHttpResponse encode(SimpleResponse simpleResponse) {
+        DefaultHttpResponse nettyResponse = null;
 
         if (simpleResponse instanceof SimpleStaticResponse) {
-            encoded = response((SimpleStaticResponse) simpleResponse);
+            nettyResponse = response((SimpleStaticResponse) simpleResponse);
         }
         else if (simpleResponse instanceof SimpleTemplateResponse) {
-            encoded = template((SimpleTemplateResponse) simpleResponse);
+            nettyResponse = template((SimpleTemplateResponse) simpleResponse);
         }
         else if (simpleResponse instanceof SimpleRedirectResponse) {
-            encoded = redirect((SimpleRedirectResponse) simpleResponse);
+            nettyResponse = redirect((SimpleRedirectResponse) simpleResponse);
         }
         else if (simpleResponse instanceof SimpleErrorResponse) {
-            encoded = error((SimpleErrorResponse) simpleResponse);
+            nettyResponse = error((SimpleErrorResponse) simpleResponse);
         }
         else {
             throw new IllegalStateException(
                 "Code needs modified to handle " + simpleResponse.getClass().getSimpleName());
         }
 
-        // TODO! handle terminate
-        //        if (next.isTerminate()) {
-        //            shutdown();
-        //        }
+        HttpHeaders nettyHeaders = nettyResponse.headers();
+        for (SpewHeader header : simpleResponse.getHeaders()) {
+            nettyHeaders.add(header.getName(), header.getValue());
+        }
 
-        return encoded;
+        return nettyResponse;
     }
 
     private DefaultHttpResponse response(SimpleStaticResponse staticResponse) {
@@ -93,8 +95,11 @@ public class SimpleResponseEncoder extends MessageToMessageEncoder<SimpleRespons
         DefaultFullHttpResponse response = new DefaultFullHttpResponse(HTTP_1_1,
             HttpResponseStatus.valueOf(simpleResponse.getHttpStatus()), content);
 
-        response.headers().add("Content-Type", simpleResponse.getHeader("Content-Type"));
-        response.headers().add("Content-Length", contentBytes.length);
+        // TODO! headers...
+
+        // TODO! not here, should already be in pre-send code
+        // response.headers().add("Content-Type", simpleResponse.getHeader("Content-Type"));
+        // response.headers().add("Content-Length", contentBytes.length);
 
         return response;
     }
@@ -110,10 +115,8 @@ public class SimpleResponseEncoder extends MessageToMessageEncoder<SimpleRespons
     private DefaultHttpResponse error(SimpleErrorResponse errorResponse) {
 
         SimpleTemplateResponse errorTemplate = new SimpleTemplateResponse(errorResponse.getClass(),
-            "error.html.template");
+            "error.html.template", key -> errorResponse.getValue(key));
         errorTemplate.setHttpStatus(errorResponse.getHttpStatus());
-        errorTemplate.addSubstitution("message", errorResponse.getMessage());
-        errorTemplate.addSubstitution("httpStatus", errorResponse.getHttpStatus());
 
         return template(errorTemplate);
     }

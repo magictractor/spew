@@ -34,12 +34,12 @@ public class OAuth1VerificationRequestHandler implements RequestHandler {
     @Override
     public void handleRequest(ServerRequest request, SimpleResponseBuilder responseBuilder) {
         String baseUrl = request.getBaseUrl();
-        if (!baseUrl.contentEquals("/")) {
+        if (!baseUrl.equals("/")) {
             return;
         }
 
-        String authToken = request.getQueryStringParam("oauth_token");
-        String authVerifier = request.getQueryStringParam("oauth_verifier");
+        String authToken = request.getQueryStringParam("oauth_token").orElse(null);
+        String authVerifier = request.getQueryStringParam("oauth_verifier").orElse(null);
 
         if (authToken == null || authVerifier == null) {
             throw new IllegalArgumentException("Expected values were missing from authorization response");
@@ -47,15 +47,20 @@ public class OAuth1VerificationRequestHandler implements RequestHandler {
 
         // TODO! check whether the authToken changes or is repeated
         VerificationInfo verificationInfo = new VerificationInfo(authVerifier).withAuthToken(authToken);
+        VerificationFunction verificationFunction = verificationFunctionSupplier.get();
         boolean verified = verificationFunctionSupplier.get().apply(verificationInfo);
 
-        // TODO! change these to templates and add some info about the application / service provider
+        StringBuilder urlBuilder = new StringBuilder();
         if (verified) {
-            responseBuilder.withRedirect("/verificationSuccessful.html");
+            urlBuilder.append("/verificationSuccessful.html");
         }
         else {
-            responseBuilder.withRedirect("/verificationFailed.html");
+            urlBuilder.append("/verificationFailed.html");
         }
+        urlBuilder.append("?connection=");
+        urlBuilder.append(verificationFunction.getConnection().getId());
+
+        responseBuilder.withRedirect(urlBuilder.toString());
     }
 
 }

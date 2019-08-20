@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import com.google.common.base.MoreObjects;
 
@@ -113,6 +114,7 @@ public final class SpewRequest implements ServerRequest {
         this.contentType = contentType;
     }
 
+    @Override
     public List<SpewHeader> getHeaders() {
         return headers;
     }
@@ -144,9 +146,8 @@ public final class SpewRequest implements ServerRequest {
     }
 
     @Override
-    public String getQueryStringParam(String key) {
-        // TODO! do not convert to empty string - do null handling where it's needed
-        return queryStringParams.containsKey(key) ? queryStringParams.get(key) : "";
+    public Optional<String> getQueryStringParam(String key) {
+        return Optional.ofNullable(queryStringParams.get(key));
     }
 
     public byte[] getBody() {
@@ -183,7 +184,7 @@ public final class SpewRequest implements ServerRequest {
 
         prepareToSend();
 
-        SpewConnection connection = SpewConnectionCache.getConnection(application.getClass());
+        SpewConnection connection = SpewConnectionCache.getOrCreateConnection(application.getClass());
         SpewResponse response = connection.request(this);
         sent = true;
 

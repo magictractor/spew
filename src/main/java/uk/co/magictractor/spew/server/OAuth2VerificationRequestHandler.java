@@ -34,30 +34,32 @@ public class OAuth2VerificationRequestHandler implements RequestHandler {
     @Override
     public void handleRequest(ServerRequest request, SimpleResponseBuilder responseBuilder) {
         String baseUrl = request.getBaseUrl();
-        if (!baseUrl.contentEquals("/")) {
+        if (!baseUrl.equals("/")) {
             return;
         }
 
         System.err.println("request: " + request);
 
-        String code = request.getQueryStringParam("code");
+        String code = request.getQueryStringParam("code")
+                .orElseThrow(() -> new IllegalArgumentException("Expected code in the authorization response"));
 
-        if (code == null) {
-            throw new IllegalArgumentException("Expected code in the authorization response");
-        }
         System.err.println("code: " + code);
 
         VerificationInfo verificationInfo = new VerificationInfo(code);
+        VerificationFunction verificationFunction = verificationFunctionSupplier.get();
         boolean verified = verificationFunctionSupplier.get().apply(verificationInfo);
 
-        // TODO! change these to templates and add some info about the application / service provider
-        // TODO! common code with OAuth1VerificationRequestHandler
+        StringBuilder urlBuilder = new StringBuilder();
         if (verified) {
-            responseBuilder.withRedirect("/verificationSuccessful.html");
+            urlBuilder.append("/verificationSuccessful.html");
         }
         else {
-            responseBuilder.withRedirect("/verificationFailed.html");
+            urlBuilder.append("/verificationFailed.html");
         }
+        urlBuilder.append("?connection=");
+        urlBuilder.append(verificationFunction.getConnection().getId());
+
+        responseBuilder.withRedirect(urlBuilder.toString());
     }
 
 }

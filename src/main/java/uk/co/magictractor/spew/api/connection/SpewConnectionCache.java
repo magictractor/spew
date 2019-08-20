@@ -15,7 +15,15 @@ public class SpewConnectionCache {
 
     private static final Map<Class<? extends SpewApplication>, SpewConnection> connections = new HashMap<>();
 
-    public static SpewConnection getConnection(Class<? extends SpewApplication> applicationClass) {
+    public static SpewConnection getConnection(String connectionId) {
+        return connections.values()
+                .stream()
+                .filter(conn -> connectionId.equals(conn.getId()))
+                .findAny()
+                .orElseThrow(() -> new IllegalArgumentException());
+    }
+
+    public static SpewConnection getOrCreateConnection(Class<? extends SpewApplication> applicationClass) {
         SpewConnection connection = connections.get(applicationClass);
         if (connection == null) {
             synchronized (applicationClass) {

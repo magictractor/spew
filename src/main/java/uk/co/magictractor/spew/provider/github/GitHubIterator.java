@@ -36,10 +36,12 @@ public class GitHubIterator<E> extends PageCountServiceIterator<E> {
 
         String linkHeader = response.getHeader("Link");
         System.err.println("link: " + linkHeader);
-        Iterable<String> links = Splitter.on(',').trimResults().split(linkHeader);
-        Optional<String> nextLink = Streams.stream(links).filter(link -> link.endsWith("rel=\"next\"")).findAny();
-        if (nextLink.isEmpty()) {
-            endOfPages();
+        if (linkHeader != null) {
+            Iterable<String> links = Splitter.on(',').trimResults().split(linkHeader);
+            Optional<String> nextLink = Streams.stream(links).filter(link -> link.endsWith("rel=\"next\"")).findAny();
+            if (nextLink.isEmpty()) {
+                endOfPages();
+            }
         }
 
         return response.getList("$", getElementType());

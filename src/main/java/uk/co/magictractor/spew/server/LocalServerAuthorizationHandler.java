@@ -19,8 +19,10 @@ import java.util.function.Supplier;
 
 import uk.co.magictractor.spew.api.HasCallbackServer;
 import uk.co.magictractor.spew.api.SpewApplication;
+import uk.co.magictractor.spew.api.SpewConnection;
 import uk.co.magictractor.spew.core.verification.AbstractAuthorizationHandler;
 import uk.co.magictractor.spew.core.verification.VerificationFunction;
+import uk.co.magictractor.spew.core.verification.VerificationInfo;
 import uk.co.magictractor.spew.example.flickr.MyFlickrApp;
 import uk.co.magictractor.spew.util.spi.SPIUtil;
 
@@ -69,8 +71,21 @@ public class LocalServerAuthorizationHandler extends AbstractAuthorizationHandle
     // DO NOT COMMIT
     // temp for testing static pages
     public static void main(String[] args) {
-        LocalServerAuthorizationHandler handler = new LocalServerAuthorizationHandler(() -> (info -> true));
+        LocalServerAuthorizationHandler handler = new LocalServerAuthorizationHandler(DummyVerificationFunction::new);
         handler.preOpenAuthorizationInBrowser(new MyFlickrApp());
+    }
+
+    private static final class DummyVerificationFunction implements VerificationFunction {
+
+        @Override
+        public Boolean apply(VerificationInfo t) {
+            return true;
+        }
+
+        @Override
+        public SpewConnection getConnection() {
+            throw new UnsupportedOperationException();
+        }
     }
 
 }

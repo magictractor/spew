@@ -22,8 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.function.Function;
 
 import uk.co.magictractor.spew.core.response.ResourceResponse;
 import uk.co.magictractor.spew.util.ExceptionUtil;
@@ -34,32 +33,42 @@ import uk.co.magictractor.spew.util.ExceptionUtil;
  */
 public class SimpleTemplateResponse extends SimpleResponse implements SimpleResourceResponse {
 
-    private final ResourceResponse spewResponse;
-    private final Map<String, String> substitutionMap = new HashMap<>();
+    private static String suffix = ".template";
 
-    private String keyStart = "{";
+    private final ResourceResponse spewResponse;
+    private final Function<String, String> valueFunction;
+
+    private String keyStart = "${";
     private String keyEnd = "}";
 
     private Charset charset = StandardCharsets.UTF_8;
 
-    public static SimpleTemplateResponse ifExists(Class<?> relativeToClass, String resourceName) {
-        ResourceResponse resourceResponse = new ResourceResponse(relativeToClass, resourceName);
-        return resourceResponse.exists() ? new SimpleTemplateResponse(resourceResponse) : null;
+    public static SimpleResponse ifExists(Class<?> relativeToClass, String resourceName,
+            Function<String, String> valueFunction) {
+        ResourceResponse resourceResponse = new ResourceResponse(relativeToClass, resourceName + suffix);
+
+        if (resourceResponse.exists()) {
+            return new SimpleTemplateResponse(resourceResponse, valueFunction);
+        }
+        else if (resourceName.endsWith(suffix)) {
+            // Prevent templates being rendered as static files.
+            return SimpleErrorResponse.notFound();
+        }
+
+        return null;
     }
 
-    public SimpleTemplateResponse(ResourceResponse spewResponse) {
+    public SimpleTemplateResponse(ResourceResponse spewResponse, Function<String, String> valueFunction) {
         if (!spewResponse.exists()) {
             throw new IllegalArgumentException("Resource does not exist");
         }
         this.spewResponse = spewResponse;
+        this.valueFunction = valueFunction;
     }
 
-    public SimpleTemplateResponse(Class<?> relativeToClass, String resourceName) {
-        this(new ResourceResponse(relativeToClass, resourceName));
-    }
-
-    public void addSubstitution(String key, Object value) {
-        substitutionMap.put(keyStart + key + keyEnd, value.toString());
+    public SimpleTemplateResponse(Class<?> relativeToClass, String resourceName,
+            Function<String, String> valueFunction) {
+        this(new ResourceResponse(relativeToClass, resourceName), valueFunction);
     }
 
     @Override
@@ -115,8 +124,8 @@ public class SimpleTemplateResponse extends SimpleResponse implements SimpleReso
             return -1;
         }
 
-        String key = line.substring(startIndex, endIndex + 1);
-        String substitution = substitutionMap.get(key);
+        String key = line.substring(startIndex + keyStart.length(), endIndex - keyEnd.length() + 1);
+        String substitution = valueFunction.apply(key);
         if (substitution == null) {
             System.err.println("no substitution value found for " + key);
             substitutionBuilder.append(line.substring(fromIndex, endIndex + 1));
