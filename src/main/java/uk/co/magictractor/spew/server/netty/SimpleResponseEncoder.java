@@ -51,7 +51,7 @@ public class SimpleResponseEncoder extends MessageToMessageEncoder<SimpleRespons
         }
     }
 
-    private DefaultHttpResponse encode(SimpleResponse simpleResponse) {
+    /* default */ DefaultHttpResponse encode(SimpleResponse simpleResponse) {
         DefaultHttpResponse nettyResponse = null;
 
         if (simpleResponse instanceof SimpleStaticResponse) {
