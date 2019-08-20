@@ -16,16 +16,15 @@
 package uk.co.magictractor.spew.example.github;
 
 import uk.co.magictractor.spew.api.SpewOAuth2Application;
-import uk.co.magictractor.spew.api.SpewOAuth2ServiceProvider;
 import uk.co.magictractor.spew.provider.github.GitHub;
 
 /**
  *
  */
-public class MyGitHubApp implements SpewOAuth2Application {
+public class MyGitHubApp implements SpewOAuth2Application<GitHub> {
 
     @Override
-    public SpewOAuth2ServiceProvider getServiceProvider() {
+    public GitHub getServiceProvider() {
         return GitHub.getInstance();
     }
 

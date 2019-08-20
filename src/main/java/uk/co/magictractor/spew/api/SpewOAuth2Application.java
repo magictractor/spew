@@ -15,10 +15,13 @@ import uk.co.magictractor.spew.store.ApplicationPropertyStore;
 import uk.co.magictractor.spew.util.spi.SPIUtil;
 
 @SpewAuthType
-public interface SpewOAuth2Application extends SpewApplication, HasCallbackServer {
+public interface SpewOAuth2Application<SP extends SpewOAuth2ServiceProvider>
+        extends SpewApplication<SP>, HasCallbackServer {
 
+    //@Override
+    //SpewOAuth2ServiceProvider getServiceProvider();
     @Override
-    SpewOAuth2ServiceProvider getServiceProvider();
+    SP getServiceProvider();
 
     default String getClientId() {
         // TODO! firstNonNull would be better

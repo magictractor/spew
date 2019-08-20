@@ -16,16 +16,15 @@
 package uk.co.magictractor.spew.example.facebook;
 
 import uk.co.magictractor.spew.api.SpewOAuth2Application;
-import uk.co.magictractor.spew.api.SpewOAuth2ServiceProvider;
 import uk.co.magictractor.spew.provider.facebook.Facebook;
 
 /**
  *
  */
-public class MyFacebookApp implements SpewOAuth2Application {
+public class MyFacebookApp implements SpewOAuth2Application<Facebook> {
 
     @Override
-    public SpewOAuth2ServiceProvider getServiceProvider() {
+    public Facebook getServiceProvider() {
         return Facebook.getInstance();
     }
 

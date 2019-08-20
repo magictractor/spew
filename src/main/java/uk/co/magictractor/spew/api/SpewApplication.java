@@ -6,9 +6,9 @@ import uk.co.magictractor.spew.api.connection.SpewConnectionCache;
 import uk.co.magictractor.spew.core.verification.AuthorizationHandler;
 import uk.co.magictractor.spew.core.verification.VerificationFunction;
 
-public interface SpewApplication {
+public interface SpewApplication<SP extends SpewServiceProvider> {
 
-    SpewServiceProvider getServiceProvider();
+    SP getServiceProvider();
 
     default SpewConnection getConnection() {
         return SpewConnectionCache.getOrCreateConnection(getClass());

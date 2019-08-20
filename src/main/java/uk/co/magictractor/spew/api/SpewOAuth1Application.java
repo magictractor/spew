@@ -15,10 +15,13 @@ import uk.co.magictractor.spew.store.ApplicationPropertyStore;
 import uk.co.magictractor.spew.util.spi.SPIUtil;
 
 @SpewAuthType
-public interface SpewOAuth1Application extends SpewApplication, HasCallbackServer {
+public interface SpewOAuth1Application<SP extends SpewOAuth1ServiceProvider>
+        extends SpewApplication<SP>, HasCallbackServer {
 
+    //@Override
+    //SpewOAuth1ServiceProvider getServiceProvider();
     @Override
-    SpewOAuth1ServiceProvider getServiceProvider();
+    SP getServiceProvider();
 
     default String getConsumerKey() {
         return SPIUtil.firstAvailable(ApplicationPropertyStore.class).getProperty(this, "consumer_key");
