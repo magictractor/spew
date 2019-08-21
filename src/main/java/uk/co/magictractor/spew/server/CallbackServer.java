@@ -17,6 +17,8 @@ package uk.co.magictractor.spew.server;
 
 import java.util.List;
 
+import uk.co.magictractor.spew.api.SpewHttpResponse;
+
 /**
  * Common interface for NettyCallbackServer and any alternative implementations.
  */
@@ -33,5 +35,25 @@ public interface CallbackServer {
      * failure response, and the server then being stopped.
      */
     void join();
+
+    void shutdown();
+
+    default SpewHttpResponse handleRequest(SpewHttpRequest request, List<RequestHandler> requestHandlers) {
+
+        OutgoingResponseBuilder responseBuilder = new OutgoingResponseBuilder();
+
+        for (RequestHandler handler : requestHandlers) {
+            handler.handleRequest(request, responseBuilder);
+            if (responseBuilder.isDone()) {
+                break;
+            }
+        }
+
+        if (responseBuilder.isShutdown()) {
+            shutdown();
+        }
+
+        return responseBuilder.build();
+    }
 
 }

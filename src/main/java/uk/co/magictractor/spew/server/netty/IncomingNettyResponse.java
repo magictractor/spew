@@ -26,6 +26,7 @@ import io.netty.handler.codec.http.HttpHeaders;
 import uk.co.magictractor.spew.api.SpewHeader;
 import uk.co.magictractor.spew.api.SpewHttpResponse;
 
+// no references to this??
 public class IncomingNettyResponse implements SpewHttpResponse {
 
     private final FullHttpResponse nettyResponse;

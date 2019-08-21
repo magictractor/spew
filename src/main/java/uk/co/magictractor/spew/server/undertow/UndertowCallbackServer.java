@@ -1,15 +1,22 @@
 package uk.co.magictractor.spew.server.undertow;
 
+import java.nio.ByteBuffer;
 import java.util.List;
 
 import io.undertow.Undertow;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
-import io.undertow.util.Headers;
+import io.undertow.util.HeaderMap;
+import io.undertow.util.HttpString;
+import uk.co.magictractor.spew.api.SpewHeader;
+import uk.co.magictractor.spew.api.SpewHttpResponse;
 import uk.co.magictractor.spew.server.CallbackServer;
 import uk.co.magictractor.spew.server.RequestHandler;
+import uk.co.magictractor.spew.server.SpewHttpRequest;
+import uk.co.magictractor.spew.util.ExceptionUtil;
 import uk.co.magictractor.spew.util.spi.ClassDependentAvailability;
 
+// Undertow suggested by https://javachannel.org/posts/netty-is-not-a-web-framework
 public class UndertowCallbackServer implements CallbackServer, ClassDependentAvailability {
 
     private Undertow server;
@@ -23,21 +30,55 @@ public class UndertowCallbackServer implements CallbackServer, ClassDependentAva
     public void run(List<RequestHandler> requestHandlers, int port) {
         server = Undertow.builder()
                 .addHttpListener(port, "localhost")
-                .setHandler(new HttpHandler() {
-                    @Override
-                    public void handleRequest(final HttpServerExchange exchange) throws Exception {
-                        exchange.getResponseHeaders().put(Headers.CONTENT_TYPE, "text/plain");
-                        exchange.getResponseSender().send("Hello World");
-                    }
-                })
+                //                .setHandler(new HttpHandler() {
+                //                    @Override
+                //                    public void handleRequest(final HttpServerExchange exchange) throws Exception {
+                //                        exchange.getResponseHeaders().put(Headers.CONTENT_TYPE, "text/plain");
+                //                        exchange.getResponseSender().send("Hello World");
+                //                    }
+                //                })
+                .setHandler(new UndertowHttpHandler(requestHandlers))
                 .build();
         server.start();
     }
 
     @Override
     public void join() {
-        // TODO Auto-generated method stub
+        ExceptionUtil.call(() -> server.getWorker().awaitTermination());
+    }
 
+    @Override
+    public void shutdown() {
+        server.stop();
+    }
+
+    private class UndertowHttpHandler implements HttpHandler {
+
+        private final List<RequestHandler> requestHandlers;
+
+        public UndertowHttpHandler(List<RequestHandler> requestHandlers) {
+            this.requestHandlers = requestHandlers;
+        }
+
+        @Override
+        public void handleRequest(HttpServerExchange exchange) throws Exception {
+
+            SpewHttpRequest request = new IncomingUndertowRequest(exchange);
+
+            SpewHttpResponse response = UndertowCallbackServer.this.handleRequest(request, requestHandlers);
+
+            exchange.setStatusCode(response.getStatus());
+
+            HeaderMap undertowHeaders = exchange.getResponseHeaders();
+            for (SpewHeader header : response.getHeaders()) {
+                undertowHeaders.add(new HttpString(header.getName()), header.getValue());
+            }
+
+            ByteBuffer body = response.getBodyByteBuffer();
+            if (body != null) {
+                exchange.getResponseSender().send(body);
+            }
+        }
     }
 
 }

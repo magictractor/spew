@@ -25,6 +25,7 @@ import uk.co.magictractor.spew.core.response.ResourceResponse;
 // TODO! last modified time - available via Files
 public class OutgoingStaticResponse extends OutgoingResponse implements OutgoingResourceResponse {
 
+    // TODO! just return this ResourceResponse?
     private final ResourceResponse spewResponse;
 
     public static OutgoingStaticResponse ifExists(Class<?> relativeToClass, String resourceName) {

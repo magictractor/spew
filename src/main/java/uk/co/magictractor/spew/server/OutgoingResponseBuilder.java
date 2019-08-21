@@ -30,7 +30,7 @@ public class OutgoingResponseBuilder {
     private List<Function<String, String>> valueFunctions;
 
     public OutgoingResponse build() {
-        if (response == null) {
+        if (response == null && !shutdown) {
             response = OutgoingErrorResponse.notFound();
         }
 

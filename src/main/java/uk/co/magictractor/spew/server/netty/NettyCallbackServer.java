@@ -17,12 +17,10 @@ import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpRequestDecoder;
 import io.netty.handler.codec.http.HttpResponseEncoder;
+import uk.co.magictractor.spew.api.SpewHttpResponse;
 import uk.co.magictractor.spew.server.CallbackServer;
 import uk.co.magictractor.spew.server.RequestHandler;
 import uk.co.magictractor.spew.server.SpewHttpRequest;
-import uk.co.magictractor.spew.server.OutgoingErrorResponse;
-import uk.co.magictractor.spew.server.OutgoingResponse;
-import uk.co.magictractor.spew.server.OutgoingResponseBuilder;
 import uk.co.magictractor.spew.util.ExceptionUtil;
 import uk.co.magictractor.spew.util.spi.ClassDependentAvailability;
 
@@ -31,8 +29,6 @@ import uk.co.magictractor.spew.util.spi.ClassDependentAvailability;
  * https://netty.io/wiki/user-guide-for-4.x.html.
  */
 
-// TODO! look at using Undertow instead/
-// see https://javachannel.org/posts/netty-is-not-a-web-framework/
 public class NettyCallbackServer implements CallbackServer, ClassDependentAvailability {
 
     private NioEventLoopGroup bossGroup;
@@ -109,6 +105,7 @@ public class NettyCallbackServer implements CallbackServer, ClassDependentAvaila
         f.channel().closeFuture().sync();
     }
 
+    @Override
     public void shutdown() {
         workerGroup.shutdownGracefully();
         bossGroup.shutdownGracefully();
@@ -129,34 +126,11 @@ public class NettyCallbackServer implements CallbackServer, ClassDependentAvaila
         }
 
         private void handle(ChannelHandlerContext ctx, SpewHttpRequest request) {
-
-            OutgoingResponseBuilder responseBuilder = new OutgoingResponseBuilder();
-
-            for (RequestHandler handler : requestHandlers) {
-                handler.handleRequest(request, responseBuilder);
-                if (responseBuilder.isDone()) {
-                    break;
-                }
-            }
-
-            if (responseBuilder.isShutdown()) {
-                shutdown();
-            }
-
-            OutgoingResponse response = responseBuilder.build();
+            SpewHttpResponse response = handleRequest(request, requestHandlers);
             if (response != null) {
-                ctx.writeAndFlush(responseBuilder.build()).addListener(ChannelFutureListener.CLOSE);
-            }
-            else {
-                // TODO! append this to the list of handlers?
-                handleUnknown(ctx);
+                ctx.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
             }
         }
-    }
-
-    private void handleUnknown(ChannelHandlerContext ctx) {
-        OutgoingErrorResponse response = OutgoingErrorResponse.notFound();
-        ctx.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
     }
 
 }

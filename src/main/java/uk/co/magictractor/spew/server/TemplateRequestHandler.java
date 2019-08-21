@@ -32,7 +32,7 @@ public class TemplateRequestHandler implements RequestHandler {
 
         String baseUrl = request.getBaseUrl();
         if (!baseUrl.startsWith("/")) {
-            throw new IllegalArgumentException("BaseUrl does not start with a slash");
+            throw new IllegalArgumentException("BaseUrl does not start with a slash: " + baseUrl);
         }
         String resourceName = baseUrl.substring(1);
 

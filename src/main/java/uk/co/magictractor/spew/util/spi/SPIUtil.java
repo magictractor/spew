@@ -63,6 +63,7 @@ public final class SPIUtil {
 
         addDefault(SpewParsedResponseFactory.class, new JaywayResponseFactory());
 
+        //addDefault(CallbackServer.class, new UndertowCallbackServer());
         addDefault(CallbackServer.class, new NettyCallbackServer());
     }
 

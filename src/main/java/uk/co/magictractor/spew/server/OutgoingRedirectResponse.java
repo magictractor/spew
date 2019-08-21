@@ -33,10 +33,9 @@ public class OutgoingRedirectResponse extends OutgoingResponse {
         return location;
     }
 
-    // TODO! empty stream or throw an exception?
     @Override
     public InputStream getBodyInputStream() {
-        throw new UnsupportedOperationException("Redirects do not have a body");
+        return null;
     }
 
 }

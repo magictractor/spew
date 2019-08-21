@@ -25,8 +25,10 @@ import uk.co.magictractor.spew.api.SpewHeader;
 public interface SpewHttpRequest {
 
     // TODO! uri or url?
+    // TODO! rename
     public String getUrl();
 
+    // TODO! rename - this is the path
     public String getBaseUrl();
 
     public Map<String, String> getQueryStringParams();
