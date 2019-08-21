@@ -227,7 +227,7 @@ public final class BoaOAuth1Connection<SP extends SpewOAuth1ServiceProvider>
         StringBuilder signatureBaseStringBuilder = new StringBuilder();
         signatureBaseStringBuilder.append(request.getHttpMethod());
         signatureBaseStringBuilder.append('&');
-        signatureBaseStringBuilder.append(oauthEncode(request.getBaseUrl()));
+        signatureBaseStringBuilder.append(oauthEncode(request.getPath()));
         signatureBaseStringBuilder.append('&');
         signatureBaseStringBuilder.append(oauthEncode(getSignatureQueryString(request)));
 

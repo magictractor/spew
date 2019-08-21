@@ -30,11 +30,11 @@ public class TemplateRequestHandler implements RequestHandler {
     @Override
     public void handleRequest(SpewHttpRequest request, OutgoingResponseBuilder responseBuilder) {
 
-        String baseUrl = request.getBaseUrl();
-        if (!baseUrl.startsWith("/")) {
-            throw new IllegalArgumentException("BaseUrl does not start with a slash: " + baseUrl);
+        String path = request.getPath();
+        if (!path.startsWith("/")) {
+            throw new IllegalArgumentException("path does not start with a slash: " + path);
         }
-        String resourceName = baseUrl.substring(1);
+        String resourceName = path.substring(1);
 
         responseBuilder.withTemplateIfExists(relativeToClass, resourceName);
     }

@@ -21,15 +21,18 @@ import java.util.Optional;
 
 import uk.co.magictractor.spew.api.SpewHeader;
 
-// TODO! reconcile this with SpewRequest
 public interface SpewHttpRequest {
 
-    // TODO! uri or url?
-    // TODO! rename
-    public String getUrl();
-
-    // TODO! rename - this is the path
-    public String getBaseUrl();
+    /**
+     * <p>
+     * Request path. Not null or empty, and always begins with a slash (an
+     * absolute path).
+     * </p>
+     * <p>
+     * For example http://me.com/foo/bar?a=1 has path "/foo/bar".
+     * </p>
+     */
+    public String getPath();
 
     public Map<String, String> getQueryStringParams();
 

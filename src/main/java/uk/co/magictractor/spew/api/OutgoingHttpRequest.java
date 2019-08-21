@@ -20,7 +20,7 @@ public final class OutgoingHttpRequest implements SpewHttpRequest {
     private final SpewApplication<?> application;
 
     private final String httpMethod;
-    private final String baseUrl;
+    private final String path;
     private final Map<String, String> queryStringParams = new LinkedHashMap<>();
     private final Map<String, Object> bodyParams = new LinkedHashMap<>();
     private byte[] body;
@@ -47,34 +47,39 @@ public final class OutgoingHttpRequest implements SpewHttpRequest {
      * request.setQueryStringParam("nojsoncallback", "1");
      * </pre>
      */
-    OutgoingHttpRequest(SpewApplication<?> application, String httpMethod, String url) {
+    OutgoingHttpRequest(SpewApplication<?> application, String httpMethod, String path) {
         this.application = application;
         this.httpMethod = httpMethod;
-        this.baseUrl = url;
+        if (path.contains("?")) {
+            throw new IllegalStateException("query parameters should be added using setQueryStringParam()");
+        }
+        this.path = path;
     }
 
     @Override
-    public String getBaseUrl() {
-        return baseUrl;
+    public String getPath() {
+        return path;
     }
 
-    /**
-     * @deprecated avoid using this - it's likely to get binned
-     */
-    @Deprecated
-    public String getUnescapedUrl() {
-        return getUrl(false);
-    }
+    ///**
+    // * @deprecated avoid using this - it's likely to get binned
+    // */
+    //    @Deprecated
+    //    public String getUnescapedUrl() {
+    //        return getUrl(false);
+    //    }
+    //
 
-    @Override
+    //  @Override
     public String getUrl() {
         return getUrl(true);
     }
 
     // TODO! do something better than the escapeValue param
+    @Deprecated
     private String getUrl(boolean escapeValue) {
         StringBuilder urlBuilder = new StringBuilder();
-        urlBuilder.append(baseUrl);
+        urlBuilder.append(path);
 
         boolean first = true;
         for (Map.Entry<String, String> entry : queryStringParams.entrySet()) {
@@ -223,7 +228,8 @@ public final class OutgoingHttpRequest implements SpewHttpRequest {
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(getClass())
-                .add("url", getUrl())
+                .add("path", path)
+                .add("queryParams", getQueryStringParams())
                 .add("bodyParams", getBodyParams())
                 .toString();
     }

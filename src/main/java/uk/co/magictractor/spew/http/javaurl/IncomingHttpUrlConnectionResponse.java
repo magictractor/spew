@@ -66,6 +66,10 @@ public class IncomingHttpUrlConnectionResponse extends AbstractIncomingOnCloseRe
             headers = new ArrayList<>(httpUrlHeaders.size());
             for (Map.Entry<String, List<String>> httpUrlHeaderEntry : httpUrlHeaders.entrySet()) {
                 String headerName = httpUrlHeaderEntry.getKey();
+                if (headerName == null) {
+                    // This is the status line, ignore it. Typical value is "HTTP/1.1 200 OK".
+                    continue;
+                }
                 for (String headerValue : httpUrlHeaderEntry.getValue()) {
                     headers.add(new SpewHeader(headerName, headerValue));
                 }

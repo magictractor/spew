@@ -1,17 +1,16 @@
 package uk.co.magictractor.spew.api;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.jupiter.api.Test;
 
 public class SpewRequestTest {
 
     @Test
-    void testBaseUrl() {
+    void testPath() {
         OutgoingHttpRequest request = setUpExampleRequest();
-        // TODO! hamcrest
-        // assertThat(request.getUrl(), Matchers.eq)
-        assertEquals("https://api.flickr.com/services/rest/request_token", request.getBaseUrl());
+        // TODO! this is wrong for the path?!
+        assertThat(request.getPath()).isEqualTo("https://api.flickr.com/services/rest/request_token");
     }
 
     // TODO! the example does not document which secret is used to generate the
@@ -34,7 +33,8 @@ public class SpewRequestTest {
      * Set up example from https://www.flickr.com/services/api/auth.oauth.html
      */
     private OutgoingHttpRequest setUpExampleRequest() {
-        OutgoingHttpRequest request = new OutgoingHttpRequest(null, "GET", "https://api.flickr.com/services/rest/request_token");
+        OutgoingHttpRequest request = new OutgoingHttpRequest(null, "GET",
+            "https://api.flickr.com/services/rest/request_token");
 
         // request.removeParam("format");
         // request.removeParam("nojsoncallback");

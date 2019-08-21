@@ -20,9 +20,9 @@ public class ShutdownOnceVerifiedRequestHandler implements RequestHandler {
     // TODO! common constants for success and failure URLS
     @Override
     public void handleRequest(SpewHttpRequest request, OutgoingResponseBuilder responseBuilder) {
-        String baseUrl = request.getBaseUrl();
-        if ("/verificationSuccessful.html".equals(baseUrl)
-                || "/verificationFailure.html".equals(baseUrl)) {
+        String path = request.getPath();
+        if ("/verificationSuccessful.html".equals(path)
+                || "/verificationFailure.html".equals(path)) {
             responseBuilder.withShutdown();
         }
     }

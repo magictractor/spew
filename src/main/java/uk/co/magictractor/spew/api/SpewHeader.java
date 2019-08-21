@@ -16,6 +16,7 @@
 package uk.co.magictractor.spew.api;
 
 import com.google.common.base.MoreObjects;
+import com.google.common.base.Strings;
 
 public class SpewHeader {
 
@@ -23,6 +24,12 @@ public class SpewHeader {
     private final String value;
 
     public SpewHeader(String name, String value) {
+        if (Strings.isNullOrEmpty(name)) {
+            throw new IllegalArgumentException("name must not be null or empty");
+        }
+        if (Strings.isNullOrEmpty(value)) {
+            throw new IllegalArgumentException("value must not be null or empty");
+        }
         this.name = name;
         this.value = value;
     }

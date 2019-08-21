@@ -34,11 +34,11 @@ public class ResourceRequestHandler implements RequestHandler {
             // throw new IllegalStateException("big badda boom");
         }
 
-        String baseUrl = request.getBaseUrl();
-        if (!baseUrl.startsWith("/")) {
-            throw new IllegalArgumentException("BaseUrl does not start with a slash");
+        String path = request.getPath();
+        if (!path.startsWith("/")) {
+            throw new IllegalArgumentException("path does not start with a slash");
         }
-        String resourceName = baseUrl.substring(1);
+        String resourceName = path.substring(1);
 
         //return SimpleStaticResponse.ifExists(relativeToClass, resourceName);
         responseBuilder.withStaticIfExists(relativeToClass, resourceName);

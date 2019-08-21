@@ -30,7 +30,7 @@ import uk.co.magictractor.spew.server.SpewHttpRequest;
 public class IncomingNettyRequest implements SpewHttpRequest {
 
     private final FullHttpRequest request;
-    private String baseUri;
+    private String path;
     private Map<String, String> queryStringParams;
     private List<SpewHeader> headers;
 
@@ -38,24 +38,24 @@ public class IncomingNettyRequest implements SpewHttpRequest {
         this.request = request;
     }
 
-    @Override
-    public String getUrl() {
-        return request.uri();
-    }
+    //    @Override
+    //    public String getPath() {
+    //        return request.uri();
+    //    }
 
     @Override
-    public String getBaseUrl() {
-        if (baseUri == null) {
+    public String getPath() {
+        if (path == null) {
             String uri = request.uri();
             int qIndex = uri.indexOf("?");
             if (qIndex != -1) {
-                baseUri = uri.substring(0, qIndex);
+                path = uri.substring(0, qIndex);
             }
             else {
-                baseUri = uri;
+                path = uri;
             }
         }
-        return baseUri;
+        return path;
     }
 
     @Override
@@ -89,7 +89,7 @@ public class IncomingNettyRequest implements SpewHttpRequest {
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(getClass())
-                .add("url", getUrl())
+                .add("url", request.uri())
                 .toString();
     }
 

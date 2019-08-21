@@ -33,8 +33,8 @@ public class OAuth2VerificationRequestHandler implements RequestHandler {
 
     @Override
     public void handleRequest(SpewHttpRequest request, OutgoingResponseBuilder responseBuilder) {
-        String baseUrl = request.getBaseUrl();
-        if (!baseUrl.equals("/")) {
+        String path = request.getPath();
+        if (!path.equals("/")) {
             return;
         }
 

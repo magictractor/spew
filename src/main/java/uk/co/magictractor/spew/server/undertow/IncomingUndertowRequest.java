@@ -37,15 +37,14 @@ public class IncomingUndertowRequest implements SpewHttpRequest {
         this.undertowExchange = undertowExchange;
     }
 
-    @Override
-    public String getUrl() {
-        String queryString = undertowExchange.getQueryString();
-        return queryString.isEmpty() ? getBaseUrl() : getBaseUrl() + "?" + queryString;
-    }
+    //    @Override
+    //    public String getUrl() {
+    //        String queryString = undertowExchange.getQueryString();
+    //        return queryString.isEmpty() ? getBaseUrl() : getBaseUrl() + "?" + queryString;
+    //    }
 
     @Override
-    public String getBaseUrl() {
-        // TODO URI or URL??
+    public String getPath() {
         return undertowExchange.getRequestPath();
     }
 
