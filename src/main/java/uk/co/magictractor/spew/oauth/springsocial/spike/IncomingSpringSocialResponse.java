@@ -24,13 +24,15 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.client.ClientHttpResponse;
 
 import uk.co.magictractor.spew.api.SpewHeader;
-import uk.co.magictractor.spew.core.response.AbstractByteBufferResponse;
+import uk.co.magictractor.spew.api.SpewHttpResponse;
+import uk.co.magictractor.spew.core.response.AbstractByteArrayMessage;
 import uk.co.magictractor.spew.util.ExceptionUtil;
+import uk.co.magictractor.spew.util.HttpMessageUtil;
 
 /**
  *
  */
-public class IncomingSpringSocialResponse extends AbstractByteBufferResponse {
+public class IncomingSpringSocialResponse extends AbstractByteArrayMessage implements SpewHttpResponse {
 
     private final ClientHttpResponse springResponse;
     private List<SpewHeader> headers;
@@ -58,6 +60,11 @@ public class IncomingSpringSocialResponse extends AbstractByteBufferResponse {
             }
         }
         return headers;
+    }
+
+    @Override
+    public String toString() {
+        return HttpMessageUtil.toStringHelper(this).toString();
     }
 
 }

@@ -15,9 +15,9 @@
  */
 package uk.co.magictractor.spew.oauth.springsocial.spike;
 
-import uk.co.magictractor.spew.api.SpewOAuth1Application;
 import uk.co.magictractor.spew.api.SpewApplication;
 import uk.co.magictractor.spew.api.SpewConnection;
+import uk.co.magictractor.spew.api.SpewOAuth1Application;
 import uk.co.magictractor.spew.api.connection.SpewConnectionFactory;
 
 /**

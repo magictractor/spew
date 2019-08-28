@@ -16,8 +16,6 @@
 package uk.co.magictractor.spew.core.response.parser;
 
 import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Optional;
 
@@ -65,13 +63,11 @@ public interface SpewParsedResponse {
         }
 
         String headerContentType = response.getHeader(ContentTypeUtil.CONTENT_TYPE_HEADER_NAME);
-        // TODO! perhaps get encoding from header
-        InputStreamReader bodyReader = new InputStreamReader(response.getBodyInputStream(), StandardCharsets.UTF_8);
-        BufferedReader bufferedBodyReader = new BufferedReader(bodyReader);
+        BufferedReader bodyReader = response.getBodyReader();
         StringBuilder messageBuilder = new StringBuilder()
                 .append("Unable to parse response\nContent-Type: ")
                 .append(headerContentType);
-        bufferedBodyReader.lines().forEach(line -> {
+        bodyReader.lines().forEach(line -> {
             messageBuilder.append('\n').append(line);
         });
 

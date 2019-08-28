@@ -49,8 +49,14 @@ public class UndertowCallbackServer implements CallbackServer, ClassDependentAva
 
     @Override
     public void shutdown() {
-        server.stop();
+        server.getWorker().shutdown();
+        // shutdownAfterSend = true;
+        //shutdownNow();
     }
+
+    //    private void shutdownNow() {
+    //        server.getWorker().shutdown();
+    //    }
 
     private class UndertowHttpHandler implements HttpHandler {
 
@@ -75,10 +81,26 @@ public class UndertowCallbackServer implements CallbackServer, ClassDependentAva
             }
 
             ByteBuffer body = response.getBodyByteBuffer();
-            if (body != null) {
-                exchange.getResponseSender().send(body);
-            }
+            // Add IoCallback impl to send()?
+            exchange.getResponseSender().send(body);
         }
     }
+
+    //    private class UndertowIoCallback extends DefaultIoCallback {
+    //
+    //        @Override
+    //        public void onComplete(final HttpServerExchange exchange, final Sender sender) {
+    //            super.onComplete(exchange, sender);
+    //            if (UndertowCallbackServer.this.shutdownAfterSend) {
+    //                UndertowCallbackServer.this.shutdownNow();
+    //            }
+    //        }
+    //
+    //        @Override
+    //        public void onException(final HttpServerExchange exchange, final Sender sender, final IOException exception) {
+    //            super.onException(exchange, sender, exception);
+    //        }
+    //
+    //    }
 
 }

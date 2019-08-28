@@ -23,14 +23,9 @@ import java.io.InputStream;
  */
 public class OutgoingRedirectResponse extends OutgoingResponse {
 
-    private final String location;
-
     public OutgoingRedirectResponse(String location) {
-        this.location = location;
-    }
-
-    public String getLocation() {
-        return location;
+        setHttpStatus(303);
+        addHeader("Location", location);
     }
 
     @Override

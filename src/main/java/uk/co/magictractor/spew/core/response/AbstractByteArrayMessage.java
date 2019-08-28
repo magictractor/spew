@@ -21,29 +21,38 @@ import java.io.InputStream;
 
 import com.google.common.io.ByteStreams;
 
-import uk.co.magictractor.spew.api.SpewHttpResponse;
+import uk.co.magictractor.spew.api.SpewHttpMessage;
 
 /**
  * Base class for response implementations which need to read and cache their
  * input stream because the third party library used for the connection will
- * automatically close the input stream.
+ * automatically close the input stream. (TODO! update comment - could be other
+ * reasons for using this)
  */
-public abstract class AbstractByteBufferResponse implements SpewHttpResponse {
+public abstract class AbstractByteArrayMessage implements SpewHttpMessage {
 
+    private final byte[] bytes;
     private final ByteArrayInputStream byteStream;
 
-    protected AbstractByteBufferResponse(InputStream inputStream) throws IOException {
+    protected AbstractByteArrayMessage(InputStream inputStream) throws IOException {
         // Content-Length likely to be in header, scope for optimisation here.
         this(ByteStreams.toByteArray(inputStream));
+        inputStream.close();
     }
 
-    protected AbstractByteBufferResponse(byte[] bytes) {
+    protected AbstractByteArrayMessage(byte[] bytes) {
+        this.bytes = bytes;
         byteStream = new ByteArrayInputStream(bytes);
     }
 
     @Override
     public final InputStream getBodyInputStream() {
         return byteStream;
+    }
+
+    @Override
+    public final byte[] getBodyBytes() {
+        return bytes;
     }
 
 }

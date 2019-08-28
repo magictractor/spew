@@ -21,6 +21,7 @@ import java.io.InputStream;
  * Simple representation of an error page which can be used across multiple
  * CallbackServer implementations.
  */
+// TODO! modify this to be a subclass of OutgoingTemplateResponse
 public class OutgoingErrorResponse extends OutgoingResponse {
 
     private static final OutgoingErrorResponse NOT_FOUND = new OutgoingErrorResponse(404, "Not found");
@@ -54,8 +55,9 @@ public class OutgoingErrorResponse extends OutgoingResponse {
 
     @Override
     public InputStream getBodyInputStream() {
-        throw new UnsupportedOperationException(
-            "Error responses should be mapped to a template or similar to define the body");
+        return null;
+        //throw new UnsupportedOperationException(
+        //    "Error responses should be mapped to a template or similar to define the body");
     }
 
 }

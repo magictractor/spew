@@ -25,6 +25,7 @@ import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpHeaders;
 import uk.co.magictractor.spew.api.SpewHeader;
 import uk.co.magictractor.spew.api.SpewHttpResponse;
+import uk.co.magictractor.spew.util.HttpMessageUtil;
 
 // no references to this??
 public class IncomingNettyResponse implements SpewHttpResponse {
@@ -56,6 +57,11 @@ public class IncomingNettyResponse implements SpewHttpResponse {
     @Override
     public InputStream getBodyInputStream() {
         return new ByteBufInputStream(nettyResponse.content());
+    }
+
+    @Override
+    public String toString() {
+        return HttpMessageUtil.toStringHelper(this).toString();
     }
 
 }

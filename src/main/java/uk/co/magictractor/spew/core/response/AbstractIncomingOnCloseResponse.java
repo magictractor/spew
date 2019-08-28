@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import uk.co.magictractor.spew.api.SpewHttpResponse;
+import uk.co.magictractor.spew.util.HttpMessageUtil;
 
 public abstract class AbstractIncomingOnCloseResponse implements SpewHttpResponse {
 
@@ -52,6 +53,11 @@ public abstract class AbstractIncomingOnCloseResponse implements SpewHttpRespons
                 onClose();
             }
         }
+    }
+
+    @Override
+    public String toString() {
+        return HttpMessageUtil.toStringHelper(this).toString();
     }
 
 }

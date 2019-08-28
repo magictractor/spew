@@ -20,6 +20,7 @@ import java.util.List;
 
 import uk.co.magictractor.spew.api.SpewHeader;
 import uk.co.magictractor.spew.api.SpewHttpResponse;
+import uk.co.magictractor.spew.util.HttpMessageUtil;
 
 /**
  * <p>
@@ -49,9 +50,17 @@ public abstract class OutgoingResponse implements SpewHttpResponse {
         return headers;
     }
 
+    protected void addHeader(String name, String value) {
+        headers.add(new SpewHeader(name, value));
+    }
+
     // default visibility so the builder may access it, but the OutgoingResponse is otherwise immutable
     /* default */ void addHeaders(List<SpewHeader> addHeaders) {
         headers.addAll(addHeaders);
     }
 
+    @Override
+    public String toString() {
+        return HttpMessageUtil.toStringHelper(this).toString();
+    }
 }

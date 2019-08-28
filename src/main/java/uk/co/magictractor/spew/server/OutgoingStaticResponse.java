@@ -1,5 +1,5 @@
 /**
- * Copyright 2019 Ken Dobson
+ * Copyright 2015-2019 Ken Dobson
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,39 +15,85 @@
  */
 package uk.co.magictractor.spew.server;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
-import uk.co.magictractor.spew.core.response.ResourceResponse;
+import uk.co.magictractor.spew.util.ExceptionUtil;
+import uk.co.magictractor.spew.util.HttpMessageUtil;
 
 /**
- * Simple representation of a static page.
+ *
  */
 // TODO! last modified time - available via Files
-public class OutgoingStaticResponse extends OutgoingResponse implements OutgoingResourceResponse {
+public class OutgoingStaticResponse extends OutgoingResponse {
 
-    // TODO! just return this ResourceResponse?
-    private final ResourceResponse spewResponse;
+    private final Path bodyPath;
+    private String contentType;
+    private InputStream bodyStream;
 
     public static OutgoingStaticResponse ifExists(Class<?> relativeToClass, String resourceName) {
-        ResourceResponse resourceResponse = new ResourceResponse(relativeToClass, resourceName);
-        return resourceResponse.exists() ? new OutgoingStaticResponse(resourceResponse) : null;
+        OutgoingStaticResponse resourceResponse = new OutgoingStaticResponse(relativeToClass, resourceName);
+        return resourceResponse.exists() ? resourceResponse : null;
     }
 
-    public OutgoingStaticResponse(ResourceResponse spewResponse) {
-        if (!spewResponse.exists()) {
-            throw new IllegalArgumentException("Resource does not exist");
+    public OutgoingStaticResponse(Class<?> relativeToClass, String resourceName) {
+        URL resource;
+        if (relativeToClass == null) {
+            resource = getClass().getClassLoader().getResource(resourceName);
         }
-        this.spewResponse = spewResponse;
+        else {
+            resource = relativeToClass.getResource(resourceName);
+        }
+
+        System.err.println("resource: " + resource);
+        if (resource != null) {
+            URI resourceUri = ExceptionUtil.call(() -> resource.toURI());
+            bodyPath = Paths.get(resourceUri);
+        }
+        else {
+            bodyPath = null;
+        }
+    }
+
+    // bin??
+    //    public String getContentType() {
+    //        if (contentType == null) {
+    //            contentType = determineContentType();
+    //        }
+    //        return contentType;
+    //    }
+
+    // TODO! split out code for determining content type from file name (perhaps with SPI)
+    //    private String determineContentType() {
+    //        return ContentTypeUtil.fromResourceName(resourceName);
+    //    }
+
+    @Override
+    public final InputStream getBodyInputStream() {
+        if (bodyStream == null) {
+            bodyStream = ExceptionUtil.call(() -> createBodyInputStream(bodyPath));
+        }
+        return bodyStream;
+    }
+
+    protected InputStream createBodyInputStream(Path bodyPath) throws IOException {
+        return Files.newInputStream(bodyPath);
+    }
+
+    public boolean exists() {
+        return bodyPath != null && /* Files.exists(path) && */ !Files.isDirectory(bodyPath);
     }
 
     @Override
-    public String getHeader(String headerName) {
-        return spewResponse.getHeader(headerName);
-    }
-
-    @Override
-    public InputStream getBodyInputStream() {
-        return spewResponse.getBodyInputStream();
+    public String toString() {
+        return HttpMessageUtil.toStringHelper(this)
+                .add("bodyPath", bodyPath)
+                .toString();
     }
 
 }

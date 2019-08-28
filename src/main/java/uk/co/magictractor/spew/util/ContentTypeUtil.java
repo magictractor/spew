@@ -31,7 +31,7 @@ import com.google.common.base.Splitter;
 import com.jayway.jsonpath.Configuration;
 
 import uk.co.magictractor.spew.api.OutgoingHttpRequest;
-import uk.co.magictractor.spew.api.SpewHttpResponse;
+import uk.co.magictractor.spew.api.SpewHttpMessage;
 
 /**
  *
@@ -66,11 +66,10 @@ public class ContentTypeUtil {
         return HTML_MIME_TYPES.contains(contentType);
     }
 
-    // TODO! request or response?
-    public static String fromHeader(SpewHttpResponse response) {
+    public static String fromHeader(SpewHttpMessage httpMessage) {
         // TODO! simplify here and test case sensitivity in unit tests
-        String upper = response.getHeader("Content-Type");
-        String lower = response.getHeader("content-type");
+        String upper = httpMessage.getHeader("Content-Type");
+        String lower = httpMessage.getHeader("content-type");
         if (!Objects.deepEquals(upper, lower)) {
             // hmm, why doesn't this blow up? there was a workaround for this before...
             throw new IllegalStateException("getHeader() should be case insensitive");
@@ -90,18 +89,17 @@ public class ContentTypeUtil {
         return value;
     }
 
-    // TODO! request or response?
-    public static String fromBody(SpewHttpResponse response) {
+    public static String fromBody(SpewHttpMessage httpMessage) {
         byte[] bytes = new byte[4];
 
-        InputStream bodyStream = response.getBodyInputStream();
+        InputStream bodyStream = httpMessage.getBodyInputStream();
         bodyStream.mark(bytes.length);
         try {
             bodyStream.read(bytes);
             bodyStream.reset();
         }
         catch (IOException e) {
-            throw new UncheckedIOException("IOException using " + response.getClass().getSimpleName(), e);
+            throw new UncheckedIOException("IOException using " + httpMessage.getClass().getSimpleName(), e);
         }
 
         if (bytes[0] == '{') {
@@ -156,9 +154,8 @@ public class ContentTypeUtil {
         return contentType;
     }
 
-    // TODO! request or response param?
-    public static Charset charsetFromHeader(SpewHttpResponse response) {
-        String header = response.getHeader(CONTENT_TYPE_HEADER_NAME);
+    public static Charset charsetFromHeader(SpewHttpMessage httpMessage) {
+        String header = httpMessage.getHeader(CONTENT_TYPE_HEADER_NAME);
         Charset charset = null;
         if (header != null) {
             int index = header.indexOf(";charset=");

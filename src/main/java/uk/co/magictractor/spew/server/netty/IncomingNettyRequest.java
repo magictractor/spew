@@ -15,17 +15,19 @@
  */
 package uk.co.magictractor.spew.server.netty;
 
+import java.io.InputStream;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.google.common.base.MoreObjects;
 import com.google.common.base.Splitter;
 
+import io.netty.buffer.ByteBufInputStream;
 import io.netty.handler.codec.http.FullHttpRequest;
 import uk.co.magictractor.spew.api.SpewHeader;
 import uk.co.magictractor.spew.server.SpewHttpRequest;
+import uk.co.magictractor.spew.util.HttpMessageUtil;
 
 public class IncomingNettyRequest implements SpewHttpRequest {
 
@@ -33,15 +35,11 @@ public class IncomingNettyRequest implements SpewHttpRequest {
     private String path;
     private Map<String, String> queryStringParams;
     private List<SpewHeader> headers;
+    private InputStream bodyStream;
 
     public IncomingNettyRequest(FullHttpRequest request) {
         this.request = request;
     }
-
-    //    @Override
-    //    public String getPath() {
-    //        return request.uri();
-    //    }
 
     @Override
     public String getPath() {
@@ -87,10 +85,16 @@ public class IncomingNettyRequest implements SpewHttpRequest {
     }
 
     @Override
+    public InputStream getBodyInputStream() {
+        if (bodyStream == null) {
+            bodyStream = new ByteBufInputStream(request.content());
+        }
+        return bodyStream;
+    }
+
+    @Override
     public String toString() {
-        return MoreObjects.toStringHelper(getClass())
-                .add("url", request.uri())
-                .toString();
+        return HttpMessageUtil.toStringHelper(this).toString();
     }
 
 }

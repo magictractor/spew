@@ -1,5 +1,7 @@
 package uk.co.magictractor.spew.api;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -8,12 +10,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import com.google.common.base.MoreObjects;
+import com.google.common.base.MoreObjects.ToStringHelper;
 
 import uk.co.magictractor.spew.api.connection.SpewConnectionCache;
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
 import uk.co.magictractor.spew.server.SpewHttpRequest;
 import uk.co.magictractor.spew.util.ContentTypeUtil;
+import uk.co.magictractor.spew.util.HttpMessageUtil;
 
 public final class OutgoingHttpRequest implements SpewHttpRequest {
 
@@ -226,12 +229,18 @@ public final class OutgoingHttpRequest implements SpewHttpRequest {
     }
 
     @Override
+    public InputStream getBodyInputStream() {
+        return new ByteArrayInputStream(body);
+    }
+
+    @Override
     public String toString() {
-        return MoreObjects.toStringHelper(getClass())
-                .add("path", path)
-                .add("queryParams", getQueryStringParams())
-                .add("bodyParams", getBodyParams())
-                .toString();
+        ToStringHelper helper = HttpMessageUtil.toStringHelper(this);
+        if (!bodyParams.isEmpty()) {
+            helper.add("bodyParams", bodyParams);
+        }
+
+        return helper.toString();
     }
 
 }

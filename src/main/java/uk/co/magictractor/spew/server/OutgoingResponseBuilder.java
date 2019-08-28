@@ -19,6 +19,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
+import com.google.common.base.MoreObjects;
+import com.google.common.base.MoreObjects.ToStringHelper;
+
 import uk.co.magictractor.spew.api.SpewHeader;
 
 public class OutgoingResponseBuilder {
@@ -108,6 +111,26 @@ public class OutgoingResponseBuilder {
             }
         }
         return null;
+    }
+
+    @Override
+    public String toString() {
+        ToStringHelper helper = MoreObjects.toStringHelper(getClass())
+                .add("response", response);
+        if (isDone) {
+            helper.add("isDone", true);
+        }
+        if (isShutdown()) {
+            helper.add("shutdown", true);
+        }
+        if (headers != null) {
+            helper.add("headers", headers);
+        }
+        if (valueFunctions != null) {
+            helper.add("valueFunctions.size", valueFunctions.size());
+        }
+
+        return helper.toString();
     }
 
 }

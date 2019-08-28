@@ -22,20 +22,19 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 import java.util.function.Function;
 
-import uk.co.magictractor.spew.core.response.ResourceResponse;
-import uk.co.magictractor.spew.util.ExceptionUtil;
+import uk.co.magictractor.spew.util.HttpMessageUtil;
 
 /**
  * Simple representation of an HTML page with text substitutions made for values
  * in the template delimited by curly braces.
  */
-public class OutgoingTemplateResponse extends OutgoingResponse implements OutgoingResourceResponse {
+public class OutgoingTemplateResponse extends OutgoingStaticResponse {
 
     private static String suffix = ".template";
 
-    private final ResourceResponse spewResponse;
     private final Function<String, String> valueFunction;
 
     private String keyStart = "${";
@@ -45,44 +44,31 @@ public class OutgoingTemplateResponse extends OutgoingResponse implements Outgoi
 
     public static OutgoingResponse ifExists(Class<?> relativeToClass, String resourceName,
             Function<String, String> valueFunction) {
-        ResourceResponse resourceResponse = new ResourceResponse(relativeToClass, resourceName + suffix);
+        OutgoingTemplateResponse response = new OutgoingTemplateResponse(relativeToClass, resourceName + suffix,
+            valueFunction);
 
-        if (resourceResponse.exists()) {
-            return new OutgoingTemplateResponse(resourceResponse, valueFunction);
+        if (response.exists()) {
+            return response;
         }
         else if (resourceName.endsWith(suffix)) {
-            // Prevent templates being rendered as static files.
+            // Prevent templates being rendered as static files when templates are handled before static files.
             return OutgoingErrorResponse.notFound();
         }
 
         return null;
     }
 
-    public OutgoingTemplateResponse(ResourceResponse spewResponse, Function<String, String> valueFunction) {
-        if (!spewResponse.exists()) {
-            throw new IllegalArgumentException("Resource does not exist");
-        }
-        this.spewResponse = spewResponse;
+    public OutgoingTemplateResponse(Class<?> relativeToClass, String resourceName,
+            Function<String, String> valueFunction) {
+
+        super(relativeToClass, resourceName);
+
         this.valueFunction = valueFunction;
     }
 
-    public OutgoingTemplateResponse(Class<?> relativeToClass, String resourceName,
-            Function<String, String> valueFunction) {
-        this(new ResourceResponse(relativeToClass, resourceName), valueFunction);
-    }
-
     @Override
-    public String getHeader(String headerName) {
-        return spewResponse.getHeader(headerName);
-    }
-
-    @Override
-    public InputStream getBodyInputStream() {
-        return ExceptionUtil.call(() -> getBodyInputStream0());
-    }
-
-    private InputStream getBodyInputStream0() throws IOException {
-        BufferedReader templateReader = spewResponse.getBodyReader();
+    protected InputStream createBodyInputStream(Path bodyPath) throws IOException {
+        BufferedReader templateReader = HttpMessageUtil.getBodyReader(this, super.createBodyInputStream(bodyPath));
 
         ByteArrayOutputStream pageBuilder = new ByteArrayOutputStream();
 

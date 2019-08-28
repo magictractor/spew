@@ -15,13 +15,12 @@
  */
 package uk.co.magictractor.spew.server;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import uk.co.magictractor.spew.api.SpewHeader;
+import uk.co.magictractor.spew.api.SpewHttpMessage;
 
-public interface SpewHttpRequest {
+public interface SpewHttpRequest extends SpewHttpMessage {
 
     /**
      * <p>
@@ -38,30 +37,6 @@ public interface SpewHttpRequest {
 
     default Optional<String> getQueryStringParam(String paramName) {
         return Optional.ofNullable(getQueryStringParams().get(paramName));
-    }
-
-    public List<SpewHeader> getHeaders();
-
-    /**
-     * <p>
-     * Note that header names should be case insensitive, but with some third
-     * party libraries header names are case sensitive, in which case the
-     * SpewResponse wrapper should work around the case sensitivity.
-     * </p>
-     *
-     * @param headerName case insensitive header name
-     * @return
-     * @see https://stackoverflow.com/questions/5258977/are-http-headers-case-sensitive
-     */
-    // TODO! duplicated in SpewRequest
-    // TODO! make Optional<> and also check for single header, plus add methods for multiple headers with same name
-    default String getHeader(String headerName) {
-        for (SpewHeader candidate : getHeaders()) {
-            if (candidate.getName().equalsIgnoreCase(headerName)) {
-                return candidate.getValue();
-            }
-        }
-        return null;
     }
 
 }
