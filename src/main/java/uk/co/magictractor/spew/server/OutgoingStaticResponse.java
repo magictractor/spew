@@ -17,14 +17,12 @@ package uk.co.magictractor.spew.server;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
 import uk.co.magictractor.spew.util.ExceptionUtil;
 import uk.co.magictractor.spew.util.HttpMessageUtil;
+import uk.co.magictractor.spew.util.PathUtil;
 
 /**
  *
@@ -37,27 +35,15 @@ public class OutgoingStaticResponse extends OutgoingResponse {
     private InputStream bodyStream;
 
     public static OutgoingStaticResponse ifExists(Class<?> relativeToClass, String resourceName) {
-        OutgoingStaticResponse resourceResponse = new OutgoingStaticResponse(relativeToClass, resourceName);
-        return resourceResponse.exists() ? resourceResponse : null;
+        Path bodyPath = PathUtil.ifExistsRegularFile(relativeToClass, resourceName);
+        return bodyPath != null ? new OutgoingStaticResponse(bodyPath) : null;
     }
 
-    public OutgoingStaticResponse(Class<?> relativeToClass, String resourceName) {
-        URL resource;
-        if (relativeToClass == null) {
-            resource = getClass().getClassLoader().getResource(resourceName);
+    public OutgoingStaticResponse(Path bodyPath) {
+        if (bodyPath == null) {
+            throw new IllegalArgumentException("bodyPath must not be null");
         }
-        else {
-            resource = relativeToClass.getResource(resourceName);
-        }
-
-        System.err.println("resource: " + resource);
-        if (resource != null) {
-            URI resourceUri = ExceptionUtil.call(() -> resource.toURI());
-            bodyPath = Paths.get(resourceUri);
-        }
-        else {
-            bodyPath = null;
-        }
+        this.bodyPath = bodyPath;
     }
 
     // bin??
@@ -83,10 +69,6 @@ public class OutgoingStaticResponse extends OutgoingResponse {
 
     protected InputStream createBodyInputStream(Path bodyPath) throws IOException {
         return Files.newInputStream(bodyPath);
-    }
-
-    public boolean exists() {
-        return bodyPath != null && /* Files.exists(path) && */ !Files.isDirectory(bodyPath);
     }
 
     @Override

@@ -26,6 +26,7 @@ import java.nio.file.Path;
 import java.util.function.Function;
 
 import uk.co.magictractor.spew.util.HttpMessageUtil;
+import uk.co.magictractor.spew.util.PathUtil;
 
 /**
  * Simple representation of an HTML page with text substitutions made for values
@@ -44,11 +45,10 @@ public class OutgoingTemplateResponse extends OutgoingStaticResponse {
 
     public static OutgoingResponse ifExists(Class<?> relativeToClass, String resourceName,
             Function<String, String> valueFunction) {
-        OutgoingTemplateResponse response = new OutgoingTemplateResponse(relativeToClass, resourceName + suffix,
-            valueFunction);
+        Path bodyPath = PathUtil.ifExistsRegularFile(relativeToClass, resourceName + suffix);
 
-        if (response.exists()) {
-            return response;
+        if (bodyPath != null) {
+            return new OutgoingTemplateResponse(bodyPath, valueFunction);
         }
         else if (resourceName.endsWith(suffix)) {
             // Prevent templates being rendered as static files when templates are handled before static files.
@@ -58,11 +58,25 @@ public class OutgoingTemplateResponse extends OutgoingStaticResponse {
         return null;
     }
 
-    public OutgoingTemplateResponse(Class<?> relativeToClass, String resourceName,
-            Function<String, String> valueFunction) {
+    protected OutgoingTemplateResponse(String resourceName) {
+        this(PathUtil.regularFile(CallbackServer.class, resourceName + suffix));
+    }
 
-        super(relativeToClass, resourceName);
+    public OutgoingTemplateResponse(Path bodyPath) {
+        super(bodyPath);
 
+        this.valueFunction = (key) -> {
+            throw new IllegalStateException("getSubstitutionValue() must be overridden if a value function is not provided");
+        };
+    }
+
+    public OutgoingTemplateResponse(Path bodyPath, Function<String, String> valueFunction) {
+
+        super(bodyPath);
+
+        if (valueFunction == null) {
+            throw new IllegalArgumentException("valueFunction must not be null");
+        }
         this.valueFunction = valueFunction;
     }
 
@@ -111,7 +125,7 @@ public class OutgoingTemplateResponse extends OutgoingStaticResponse {
         }
 
         String key = line.substring(startIndex + keyStart.length(), endIndex - keyEnd.length() + 1);
-        String substitution = valueFunction.apply(key);
+        String substitution = getSubstitutionValue(key);
         if (substitution == null) {
             System.err.println("no substitution value found for " + key);
             substitutionBuilder.append(line.substring(fromIndex, endIndex + 1));
@@ -121,6 +135,10 @@ public class OutgoingTemplateResponse extends OutgoingStaticResponse {
         substitutionBuilder.append(line.substring(fromIndex, startIndex));
         substitutionBuilder.append(substitution);
         return endIndex + 1;
+    }
+
+    protected String getSubstitutionValue(String key) {
+        return valueFunction.apply(key);
     }
 
 }

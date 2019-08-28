@@ -20,7 +20,7 @@ public class SpewConnectionCache {
                 .stream()
                 .filter(conn -> connectionId.equals(conn.getId()))
                 .findAny()
-                .orElseThrow(() -> new IllegalArgumentException());
+                .orElseThrow(() -> new IllegalArgumentException("Connection not found"));
     }
 
     public static SpewConnection getOrCreateConnection(Class<? extends SpewApplication> applicationClass) {
