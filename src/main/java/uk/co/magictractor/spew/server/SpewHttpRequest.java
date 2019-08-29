@@ -25,7 +25,6 @@ public interface SpewHttpRequest extends SpewHttpMessage {
     /**
      * Generally GET or POST, although other methods may be encountered.
      */
-    // push up to message?
     public String getHttpMethod();
 
     /**
