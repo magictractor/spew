@@ -13,20 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.co.magictractor.spew.server;
+package uk.co.magictractor.spew.util;
 
-import uk.co.magictractor.spew.util.HttpMessageUtil;
+import static org.assertj.core.api.Assertions.assertThat;
+
+import org.junit.jupiter.api.Test;
 
 /**
- * Simple representation of a redirect which can be used across multiple
- * CallbackServer implementations.
+ *
  */
-public class OutgoingRedirectResponse extends OutgoingResponse {
+public class StringUtilTest {
 
-    public OutgoingRedirectResponse(String location) {
-        super(HttpMessageUtil.emptyBodyBytes());
-        setHttpStatus(303);
-        addHeader("Location", location);
+    @Test
+    public void testWordify() {
+        assertThat(StringUtil.wordify("FooBarDing")).isEqualTo("Foo Bar Ding");
     }
 
 }

@@ -24,9 +24,10 @@ import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 
+import uk.co.magictractor.spew.api.OutgoingHttpRequest;
+import uk.co.magictractor.spew.api.SpewApplication;
 import uk.co.magictractor.spew.api.SpewConnection;
 import uk.co.magictractor.spew.api.SpewHeader;
-import uk.co.magictractor.spew.api.OutgoingHttpRequest;
 import uk.co.magictractor.spew.api.SpewHttpResponse;
 import uk.co.magictractor.spew.util.ContentTypeUtil;
 import uk.co.magictractor.spew.util.ExceptionUtil;
@@ -56,13 +57,13 @@ public class SpewApacheHttpClientConnection implements SpewConnection {
                 .create(apiRequest.getHttpMethod())
                 .setUri(apiRequest.getUrl());
 
-        boolean hasBody = apiRequest.getBody() != null;
+        byte[] body = apiRequest.getBodyBytes();
+        boolean hasBody = body != null;
         if (hasBody) {
-            requestBuilder.setEntity(new ByteArrayEntity(apiRequest.getBody()));
+            requestBuilder.setEntity(new ByteArrayEntity(body));
         }
 
         for (SpewHeader header : apiRequest.getHeaders()) {
-            System.err.println("header: " + header.getName() + "=" + header.getValue());
             if (hasBody && ContentTypeUtil.CONTENT_LENGTH_HEADER_NAME.equalsIgnoreCase(header.getName())) {
                 // Content length is derived from the HttpEntity (body), don't repeat it.
                 continue;
@@ -75,6 +76,11 @@ public class SpewApacheHttpClientConnection implements SpewConnection {
         CloseableHttpResponse response = ExceptionUtil.call(() -> httpClient.execute(request));
 
         return new IncomingApacheHttpClientResponse(response);
+    }
+
+    @Override
+    public SpewApplication<?> getApplication() {
+        throw new UnsupportedOperationException("getApplication() not yet supported for transport connections");
     }
 
 }

@@ -15,13 +15,7 @@
  */
 package uk.co.magictractor.spew.api;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.UncheckedIOException;
-import java.nio.ByteBuffer;
 import java.util.List;
-
-import uk.co.magictractor.spew.util.HttpMessageUtil;
 
 public interface SpewHttpMessage {
 
@@ -68,19 +62,21 @@ public interface SpewHttpMessage {
      * @throws UncheckedIOException if an underlying IOException has to be
      *         handled
      */
-    InputStream getBodyInputStream();
+    // InputStream getBodyInputStream();
 
-    /** @return body bytes, never null, may be empty */
-    default byte[] getBodyBytes() {
-        return HttpMessageUtil.getBodyBytes(this);
-    }
+    /** @return body bytes, may be null or empty */
+    //    default byte[] getBodyBytes() {
+    //        return HttpMessageUtil.getBodyBytes(this);
+    //    }
+    byte[] getBodyBytes();
 
-    default ByteBuffer getBodyByteBuffer() {
-        return HttpMessageUtil.getBodyByteBuffer(this);
-    }
+    //    default ByteBuffer getBodyByteBuffer() {
+    //        return HttpMessageUtil.getBodyByteBuffer(this);
+    //    }
+    //ByteBuffer getBodyByteBuffer();
 
-    default BufferedReader getBodyReader() {
-        return HttpMessageUtil.getBodyReader(this);
-    }
+    //    default BufferedReader getBodyReader() {
+    //        return HttpMessageUtil.getBodyReader(this);
+    //    }
 
 }

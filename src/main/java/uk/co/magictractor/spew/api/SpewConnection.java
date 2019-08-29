@@ -20,6 +20,8 @@ public interface SpewConnection {
         return Integer.toString(System.identityHashCode(this));
     }
 
+    SpewApplication<?> getApplication();
+
     /**
      * <p>
      * This is used to make authorisation requests as well as API requests.

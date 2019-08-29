@@ -27,6 +27,7 @@ import com.google.common.io.CharStreams;
 import uk.co.magictractor.spew.api.SpewHttpResponse;
 import uk.co.magictractor.spew.core.response.parser.AbstractSpewParsedResponse;
 import uk.co.magictractor.spew.core.response.parser.StringCentricSpewParsedResponse;
+import uk.co.magictractor.spew.util.HttpMessageUtil;
 import uk.co.magictractor.spew.util.IOUtil;
 
 /**
@@ -46,7 +47,7 @@ public class KeyValuePairsResponse
 
     public KeyValuePairsResponse(SpewHttpResponse response) {
         super(response);
-        values = IOUtil.applyThenClose(response.getBodyReader(), this::parse);
+        values = IOUtil.applyThenClose(HttpMessageUtil.getBodyReader(response), this::parse);
     }
 
     private Map<String, String> parse(Reader bodyReader) throws IOException {

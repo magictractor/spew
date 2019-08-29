@@ -58,9 +58,9 @@ public class OutgoingResponseBuilder {
         return this;
     }
 
-    public OutgoingResponseBuilder withStaticIfExists(Class<?> relativeToClass, String resourceName) {
-        return withResponse(OutgoingStaticResponse.ifExists(relativeToClass, resourceName));
-    }
+    //    public OutgoingResponseBuilder withStaticIfExists(Class<?> relativeToClass, String resourceName) {
+    //        return withResponse(OutgoingStaticResponse.ifExists(relativeToClass, resourceName));
+    //    }
 
     public OutgoingResponseBuilder withTemplateIfExists(Class<?> relativeToClass, String resourceName) {
         return withResponse(OutgoingTemplateResponse.ifExists(relativeToClass, resourceName, this::getValue));

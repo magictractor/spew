@@ -5,8 +5,13 @@ import java.util.function.Supplier;
 import uk.co.magictractor.spew.api.connection.SpewConnectionCache;
 import uk.co.magictractor.spew.core.verification.AuthorizationHandler;
 import uk.co.magictractor.spew.core.verification.VerificationFunction;
+import uk.co.magictractor.spew.util.StringUtil;
 
 public interface SpewApplication<SP extends SpewServiceProvider> {
+
+    default String getName() {
+        return StringUtil.wordify(getClass().getSimpleName());
+    }
 
     default SP getServiceProvider() {
         return SpewServiceProviderCache.getOrCreateForApplication(this);

@@ -23,6 +23,12 @@ import uk.co.magictractor.spew.api.SpewHttpMessage;
 public interface SpewHttpRequest extends SpewHttpMessage {
 
     /**
+     * Generally GET or POST, although other methods may be encountered.
+     */
+    // push up to message?
+    public String getHttpMethod();
+
+    /**
      * <p>
      * Request path. Not null or empty, and always begins with a slash (an
      * absolute path).

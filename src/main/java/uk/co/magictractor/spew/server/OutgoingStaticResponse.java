@@ -15,12 +15,10 @@
  */
 package uk.co.magictractor.spew.server;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Instant;
 
-import uk.co.magictractor.spew.util.ExceptionUtil;
+import uk.co.magictractor.spew.util.ContentTypeUtil;
 import uk.co.magictractor.spew.util.HttpMessageUtil;
 import uk.co.magictractor.spew.util.PathUtil;
 
@@ -32,18 +30,21 @@ public class OutgoingStaticResponse extends OutgoingResponse {
 
     private final Path bodyPath;
     private String contentType;
-    private InputStream bodyStream;
-
-    public static OutgoingStaticResponse ifExists(Class<?> relativeToClass, String resourceName) {
-        Path bodyPath = PathUtil.ifExistsRegularFile(relativeToClass, resourceName);
-        return bodyPath != null ? new OutgoingStaticResponse(bodyPath) : null;
-    }
 
     public OutgoingStaticResponse(Path bodyPath) {
+        super(bodyPath);
         if (bodyPath == null) {
             throw new IllegalArgumentException("bodyPath must not be null");
         }
         this.bodyPath = bodyPath;
+        Instant lastModified = PathUtil.getLastModified(bodyPath);
+        addHeader("Cache-Control", "public,max-age=1000");
+        //addHeader("Cache-Control", "public, must-revalidate, max-age=10000");
+        //addHeader("Cache-Control", "public, max-age=0");
+        addHeader("Last-Modified", lastModified);
+        // addHeader("Expires", Instant.ofEpochMilli(10000 + System.currentTimeMillis()));
+
+        addHeader("Content-Type", ContentTypeUtil.fromResourceName(bodyPath.getFileName().toString()));
     }
 
     // bin??
@@ -58,18 +59,6 @@ public class OutgoingStaticResponse extends OutgoingResponse {
     //    private String determineContentType() {
     //        return ContentTypeUtil.fromResourceName(resourceName);
     //    }
-
-    @Override
-    public final InputStream getBodyInputStream() {
-        if (bodyStream == null) {
-            bodyStream = ExceptionUtil.call(() -> createBodyInputStream(bodyPath));
-        }
-        return bodyStream;
-    }
-
-    protected InputStream createBodyInputStream(Path bodyPath) throws IOException {
-        return Files.newInputStream(bodyPath);
-    }
 
     @Override
     public String toString() {

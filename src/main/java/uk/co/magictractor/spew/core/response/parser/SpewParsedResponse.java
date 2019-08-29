@@ -23,6 +23,7 @@ import uk.co.magictractor.spew.api.SpewApplication;
 import uk.co.magictractor.spew.api.SpewHeader;
 import uk.co.magictractor.spew.api.SpewHttpResponse;
 import uk.co.magictractor.spew.util.ContentTypeUtil;
+import uk.co.magictractor.spew.util.HttpMessageUtil;
 import uk.co.magictractor.spew.util.spi.SPIUtil;
 
 /**
@@ -63,7 +64,7 @@ public interface SpewParsedResponse {
         }
 
         String headerContentType = response.getHeader(ContentTypeUtil.CONTENT_TYPE_HEADER_NAME);
-        BufferedReader bodyReader = response.getBodyReader();
+        BufferedReader bodyReader = HttpMessageUtil.getBodyReader(response);
         StringBuilder messageBuilder = new StringBuilder()
                 .append("Unable to parse response\nContent-Type: ")
                 .append(headerContentType);

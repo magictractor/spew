@@ -14,6 +14,7 @@ import uk.co.magictractor.spew.server.CallbackServer;
 import uk.co.magictractor.spew.server.RequestHandler;
 import uk.co.magictractor.spew.server.SpewHttpRequest;
 import uk.co.magictractor.spew.util.ExceptionUtil;
+import uk.co.magictractor.spew.util.HttpMessageUtil;
 import uk.co.magictractor.spew.util.spi.ClassDependentAvailability;
 
 // Undertow suggested by https://javachannel.org/posts/netty-is-not-a-web-framework
@@ -80,9 +81,9 @@ public class UndertowCallbackServer implements CallbackServer, ClassDependentAva
                 undertowHeaders.add(new HttpString(header.getName()), header.getValue());
             }
 
-            ByteBuffer body = response.getBodyByteBuffer();
+            ByteBuffer bodyByteBuffer = HttpMessageUtil.getBodyByteBuffer(response);
             // Add IoCallback impl to send()?
-            exchange.getResponseSender().send(body);
+            exchange.getResponseSender().send(bodyByteBuffer);
         }
     }
 

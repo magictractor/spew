@@ -13,20 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.co.magictractor.spew.server;
+package uk.co.magictractor.spew.util;
 
-import uk.co.magictractor.spew.util.HttpMessageUtil;
+import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * Simple representation of a redirect which can be used across multiple
- * CallbackServer implementations.
- */
-public class OutgoingRedirectResponse extends OutgoingResponse {
+import java.time.Instant;
 
-    public OutgoingRedirectResponse(String location) {
-        super(HttpMessageUtil.emptyBodyBytes());
-        setHttpStatus(303);
-        addHeader("Location", location);
+import org.junit.jupiter.api.Test;
+
+public class HttpMessageUtilTest {
+
+    @Test
+    public void testAsHeaderString() {
+        long milli = 1567020003111L;
+        Instant instant = Instant.ofEpochMilli(milli);
+        assertThat(HttpMessageUtil.asHeaderString(instant)).isEqualTo("Wed, 28 Aug 2019 19:20:03 UTC");
     }
 
 }

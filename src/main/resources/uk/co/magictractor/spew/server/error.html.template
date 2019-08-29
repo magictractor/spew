@@ -3,6 +3,7 @@
 <link rel="stylesheet" href="css/common.css">
 <link rel="stylesheet" href="css/error.css">
 <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.1/build/base-min.css">
+<link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgo=">
 </head>
 <body>
 <div class="error">

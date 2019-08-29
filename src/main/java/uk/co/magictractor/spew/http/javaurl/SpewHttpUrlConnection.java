@@ -19,9 +19,10 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import uk.co.magictractor.spew.api.OutgoingHttpRequest;
+import uk.co.magictractor.spew.api.SpewApplication;
 import uk.co.magictractor.spew.api.SpewConnection;
 import uk.co.magictractor.spew.api.SpewHeader;
-import uk.co.magictractor.spew.api.OutgoingHttpRequest;
 import uk.co.magictractor.spew.api.SpewHttpResponse;
 import uk.co.magictractor.spew.util.ExceptionUtil;
 
@@ -45,12 +46,18 @@ public class SpewHttpUrlConnection implements SpewConnection {
             connection.addRequestProperty(header.getName(), header.getValue());
         }
 
-        if (request.getBody() != null) {
+        byte[] body = request.getBodyBytes();
+        if (body != null) {
             connection.setDoOutput(true);
-            connection.getOutputStream().write(request.getBody());
+            connection.getOutputStream().write(body);
         }
 
         return new IncomingHttpUrlConnectionResponse(connection);
+    }
+
+    @Override
+    public SpewApplication<?> getApplication() {
+        throw new UnsupportedOperationException("getApplication() not yet supported for transport connections");
     }
 
 }

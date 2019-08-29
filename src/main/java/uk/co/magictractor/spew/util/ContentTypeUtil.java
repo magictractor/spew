@@ -15,9 +15,6 @@
  */
 package uk.co.magictractor.spew.util;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UncheckedIOException;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -90,17 +87,7 @@ public class ContentTypeUtil {
     }
 
     public static String fromBody(SpewHttpMessage httpMessage) {
-        byte[] bytes = new byte[4];
-
-        InputStream bodyStream = httpMessage.getBodyInputStream();
-        bodyStream.mark(bytes.length);
-        try {
-            bodyStream.read(bytes);
-            bodyStream.reset();
-        }
-        catch (IOException e) {
-            throw new UncheckedIOException("IOException using " + httpMessage.getClass().getSimpleName(), e);
-        }
+        byte[] bytes = httpMessage.getBodyBytes();
 
         if (bytes[0] == '{') {
             return JSON_MIME_TYPES.get(0);

@@ -20,6 +20,7 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Instant;
 
 /**
  *
@@ -66,4 +67,7 @@ public final class PathUtil {
         return path;
     }
 
+    public static Instant getLastModified(Path path) {
+        return ExceptionUtil.call(() -> Files.getLastModifiedTime(path)).toInstant();
+    }
 }

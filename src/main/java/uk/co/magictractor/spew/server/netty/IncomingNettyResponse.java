@@ -15,7 +15,6 @@
  */
 package uk.co.magictractor.spew.server.netty;
 
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -25,15 +24,17 @@ import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpHeaders;
 import uk.co.magictractor.spew.api.SpewHeader;
 import uk.co.magictractor.spew.api.SpewHttpResponse;
+import uk.co.magictractor.spew.core.response.AbstractByteArrayMessage;
 import uk.co.magictractor.spew.util.HttpMessageUtil;
 
 // no references to this??
-public class IncomingNettyResponse implements SpewHttpResponse {
+public class IncomingNettyResponse extends AbstractByteArrayMessage implements SpewHttpResponse {
 
     private final FullHttpResponse nettyResponse;
     private List<SpewHeader> headers;
 
     public IncomingNettyResponse(FullHttpResponse nettyResponse) {
+        super(new ByteBufInputStream(nettyResponse.content()));
         this.nettyResponse = nettyResponse;
     }
 
@@ -52,11 +53,6 @@ public class IncomingNettyResponse implements SpewHttpResponse {
             }
         }
         return headers;
-    }
-
-    @Override
-    public InputStream getBodyInputStream() {
-        return new ByteBufInputStream(nettyResponse.content());
     }
 
     @Override

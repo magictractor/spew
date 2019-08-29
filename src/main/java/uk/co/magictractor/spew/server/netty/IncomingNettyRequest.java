@@ -15,7 +15,6 @@
  */
 package uk.co.magictractor.spew.server.netty;
 
-import java.io.InputStream;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -26,19 +25,25 @@ import com.google.common.base.Splitter;
 import io.netty.buffer.ByteBufInputStream;
 import io.netty.handler.codec.http.FullHttpRequest;
 import uk.co.magictractor.spew.api.SpewHeader;
+import uk.co.magictractor.spew.core.response.AbstractByteArrayMessage;
 import uk.co.magictractor.spew.server.SpewHttpRequest;
 import uk.co.magictractor.spew.util.HttpMessageUtil;
 
-public class IncomingNettyRequest implements SpewHttpRequest {
+public class IncomingNettyRequest extends AbstractByteArrayMessage implements SpewHttpRequest {
 
     private final FullHttpRequest request;
     private String path;
     private Map<String, String> queryStringParams;
     private List<SpewHeader> headers;
-    private InputStream bodyStream;
 
     public IncomingNettyRequest(FullHttpRequest request) {
+        super(new ByteBufInputStream(request.content()));
         this.request = request;
+    }
+
+    @Override
+    public String getHttpMethod() {
+        return request.method().name();
     }
 
     @Override
@@ -82,14 +87,6 @@ public class IncomingNettyRequest implements SpewHttpRequest {
                     .collect(Collectors.toList());
         }
         return headers;
-    }
-
-    @Override
-    public InputStream getBodyInputStream() {
-        if (bodyStream == null) {
-            bodyStream = new ByteBufInputStream(request.content());
-        }
-        return bodyStream;
     }
 
     @Override

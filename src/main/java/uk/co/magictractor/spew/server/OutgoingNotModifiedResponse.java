@@ -21,12 +21,17 @@ import uk.co.magictractor.spew.util.HttpMessageUtil;
  * Simple representation of a redirect which can be used across multiple
  * CallbackServer implementations.
  */
-public class OutgoingRedirectResponse extends OutgoingResponse {
+public class OutgoingNotModifiedResponse extends OutgoingResponse {
 
-    public OutgoingRedirectResponse(String location) {
+    private static final OutgoingNotModifiedResponse INSTANCE = new OutgoingNotModifiedResponse();
+
+    public static OutgoingNotModifiedResponse getInstance() {
+        return INSTANCE;
+    }
+
+    private OutgoingNotModifiedResponse() {
         super(HttpMessageUtil.emptyBodyBytes());
-        setHttpStatus(303);
-        addHeader("Location", location);
+        setHttpStatus(304);
     }
 
 }

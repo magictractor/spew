@@ -16,15 +16,14 @@
 package uk.co.magictractor.spew.server;
 
 import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.function.Function;
 
+import uk.co.magictractor.spew.util.ExceptionUtil;
 import uk.co.magictractor.spew.util.HttpMessageUtil;
 import uk.co.magictractor.spew.util.PathUtil;
 
@@ -32,7 +31,7 @@ import uk.co.magictractor.spew.util.PathUtil;
  * Simple representation of an HTML page with text substitutions made for values
  * in the template delimited by curly braces.
  */
-public class OutgoingTemplateResponse extends OutgoingStaticResponse {
+public class OutgoingTemplateResponse extends OutgoingResponse {
 
     private static String suffix = ".template";
 
@@ -43,6 +42,7 @@ public class OutgoingTemplateResponse extends OutgoingStaticResponse {
 
     private Charset charset = StandardCharsets.UTF_8;
 
+    // bin this? static equivalent was removed when if-modified-since was added
     public static OutgoingResponse ifExists(Class<?> relativeToClass, String resourceName,
             Function<String, String> valueFunction) {
         Path bodyPath = PathUtil.ifExistsRegularFile(relativeToClass, resourceName + suffix);
@@ -66,8 +66,11 @@ public class OutgoingTemplateResponse extends OutgoingStaticResponse {
         super(bodyPath);
 
         this.valueFunction = (key) -> {
-            throw new IllegalStateException("getSubstitutionValue() must be overridden if a value function is not provided");
+            throw new IllegalStateException(
+                "getSubstitutionValue() must be overridden if a value function is not provided");
         };
+
+        addHeader("cache-control", "no-cache, must-revalidate, max-age=0");
     }
 
     public OutgoingTemplateResponse(Path bodyPath, Function<String, String> valueFunction) {
@@ -78,11 +81,18 @@ public class OutgoingTemplateResponse extends OutgoingStaticResponse {
             throw new IllegalArgumentException("valueFunction must not be null");
         }
         this.valueFunction = valueFunction;
+
+        // header...
     }
 
     @Override
-    protected InputStream createBodyInputStream(Path bodyPath) throws IOException {
-        BufferedReader templateReader = HttpMessageUtil.getBodyReader(this, super.createBodyInputStream(bodyPath));
+    public byte[] getBodyBytes() {
+        return ExceptionUtil.call(() -> getBodyBytes0());
+    }
+
+    private byte[] getBodyBytes0() throws IOException {
+
+        BufferedReader templateReader = HttpMessageUtil.getBodyReader(this, super.getBodyBytes());
 
         ByteArrayOutputStream pageBuilder = new ByteArrayOutputStream();
 
@@ -98,7 +108,7 @@ public class OutgoingTemplateResponse extends OutgoingStaticResponse {
             line = templateReader.readLine();
         }
 
-        return new ByteArrayInputStream(pageBuilder.toByteArray());
+        return pageBuilder.toByteArray();
     }
 
     private String performSubstitutions(String line) {

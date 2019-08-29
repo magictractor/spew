@@ -45,8 +45,11 @@ public class ConnectionValuesRequestHandler implements RequestHandler {
 
         @Override
         public String apply(String key) {
-            if ("application.name".equals(key)) {
-                return "AAARGH";
+            if ("app.name".equals(key)) {
+                return connection.getApplication().getName();
+            }
+            else if ("sp.name".equals(key)) {
+                return connection.getApplication().getServiceProvider().getName();
             }
             return null;
         }

@@ -15,7 +15,6 @@
  */
 package uk.co.magictractor.spew.server.undertow;
 
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.LinkedHashMap;
@@ -26,17 +25,24 @@ import io.undertow.server.HttpServerExchange;
 import io.undertow.util.HeaderMap;
 import io.undertow.util.HeaderValues;
 import uk.co.magictractor.spew.api.SpewHeader;
+import uk.co.magictractor.spew.core.response.AbstractByteArrayMessage;
 import uk.co.magictractor.spew.server.SpewHttpRequest;
 import uk.co.magictractor.spew.util.HttpMessageUtil;
 
-public class IncomingUndertowRequest implements SpewHttpRequest {
+public class IncomingUndertowRequest extends AbstractByteArrayMessage implements SpewHttpRequest {
 
     private final HttpServerExchange undertowExchange;
     private List<SpewHeader> headers;
     private Map<String, String> queryParams;
 
     public IncomingUndertowRequest(HttpServerExchange undertowExchange) {
+        super(undertowExchange.getInputStream());
         this.undertowExchange = undertowExchange;
+    }
+
+    @Override
+    public String getHttpMethod() {
+        return undertowExchange.getRequestMethod().toString();
     }
 
     @Override
@@ -74,11 +80,6 @@ public class IncomingUndertowRequest implements SpewHttpRequest {
             }
         }
         return headers;
-    }
-
-    @Override
-    public InputStream getBodyInputStream() {
-        return undertowExchange.getInputStream();
     }
 
     @Override

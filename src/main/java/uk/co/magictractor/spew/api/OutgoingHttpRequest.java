@@ -1,7 +1,5 @@
 package uk.co.magictractor.spew.api;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -26,7 +24,7 @@ public final class OutgoingHttpRequest implements SpewHttpRequest {
     private final String path;
     private final Map<String, String> queryStringParams = new LinkedHashMap<>();
     private final Map<String, Object> bodyParams = new LinkedHashMap<>();
-    private byte[] body;
+    private byte[] bodyBytes;
     // POST (and PUT) requests should have a content type
     // TODO! better to have this set explicitly and only once
     private String contentType = ContentTypeUtil.JSON_MIME_TYPES.get(0);
@@ -158,9 +156,10 @@ public final class OutgoingHttpRequest implements SpewHttpRequest {
         return Optional.ofNullable(queryStringParams.get(key));
     }
 
-    public byte[] getBody() {
+    @Override
+    public byte[] getBodyBytes() {
         // TODO! maybe check if there are params but no body yet
-        return body;
+        return bodyBytes;
     }
 
     public Map<String, Object> getBodyParams() {
@@ -213,9 +212,9 @@ public final class OutgoingHttpRequest implements SpewHttpRequest {
             // setDoOutput(true);
             if (!getBodyParams().isEmpty()) {
                 // TODO! allow body to have been set explicitly
-                body = ContentTypeUtil.bodyBytes(this, application.getServiceProvider().getJsonConfiguration());
+                bodyBytes = ContentTypeUtil.bodyBytes(this, application.getServiceProvider().getJsonConfiguration());
                 addHeader(ContentTypeUtil.CONTENT_TYPE_HEADER_NAME, getContentType());
-                addHeader(ContentTypeUtil.CONTENT_LENGTH_HEADER_NAME, body.length);
+                addHeader(ContentTypeUtil.CONTENT_LENGTH_HEADER_NAME, bodyBytes.length);
             }
             else {
                 // Prevent 411 Content Length Required
@@ -226,11 +225,6 @@ public final class OutgoingHttpRequest implements SpewHttpRequest {
             // Move this check into setBodyParam()?
             throw new IllegalStateException("Body params not supported for HTTP method " + getHttpMethod());
         }
-    }
-
-    @Override
-    public InputStream getBodyInputStream() {
-        return new ByteArrayInputStream(body);
     }
 
     @Override

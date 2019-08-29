@@ -23,13 +23,14 @@ import java.util.List;
 import java.util.Map;
 
 import uk.co.magictractor.spew.api.SpewHeader;
-import uk.co.magictractor.spew.core.response.AbstractIncomingOnCloseResponse;
+import uk.co.magictractor.spew.api.SpewHttpResponse;
+import uk.co.magictractor.spew.core.response.AbstractByteArrayMessage;
 import uk.co.magictractor.spew.util.ExceptionUtil;
 
 /**
  *
  */
-public class IncomingHttpUrlConnectionResponse extends AbstractIncomingOnCloseResponse {
+public class IncomingHttpUrlConnectionResponse extends AbstractByteArrayMessage implements SpewHttpResponse {
 
     private final HttpURLConnection connection;
     private List<SpewHeader> headers;
@@ -76,11 +77,6 @@ public class IncomingHttpUrlConnectionResponse extends AbstractIncomingOnCloseRe
             }
         }
         return headers;
-    }
-
-    @Override
-    public void onClose() {
-        connection.disconnect();
     }
 
 }

@@ -15,6 +15,7 @@
  */
 package uk.co.magictractor.spew.core.response.parser.jayway;
 
+import java.io.InputStream;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.List;
@@ -28,6 +29,7 @@ import uk.co.magictractor.spew.api.SpewApplication;
 import uk.co.magictractor.spew.api.SpewHttpResponse;
 import uk.co.magictractor.spew.core.response.parser.AbstractSpewParsedResponse;
 import uk.co.magictractor.spew.core.response.parser.ObjectCentricSpewParsedResponse;
+import uk.co.magictractor.spew.util.HttpMessageUtil;
 import uk.co.magictractor.spew.util.IOUtil;
 
 /**
@@ -43,9 +45,10 @@ public class JaywayResponse
      * Default visibility because instances should only be created via
      * JaywayResponseParserInit.
      */
-    /* default */ JaywayResponse(SpewApplication application, SpewHttpResponse response) {
+    /* default */ JaywayResponse(SpewApplication<?> application, SpewHttpResponse response) {
         super(response);
-        IOUtil.acceptThenClose(response.getBodyInputStream(), body -> {
+        InputStream bodyInputStream = HttpMessageUtil.getBodyInputStream(response);
+        IOUtil.acceptThenClose(bodyInputStream, body -> {
             ctx = JsonPath.parse(body, application.getServiceProvider().getJsonConfiguration());
         });
     }

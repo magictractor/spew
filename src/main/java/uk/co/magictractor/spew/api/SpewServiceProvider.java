@@ -27,6 +27,10 @@ import uk.co.magictractor.spew.util.ContentTypeUtil;
 // https://en.wikipedia.org/wiki/List_of_OAuth_providers
 public interface SpewServiceProvider {
 
+    default String getName() {
+        return getClass().getSimpleName();
+    }
+
     /**
      * <p>
      * May be overridden to ensure that every request has standard parameters.

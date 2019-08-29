@@ -15,13 +15,14 @@
  */
 package uk.co.magictractor.spew.core.response;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import com.google.common.io.ByteStreams;
 
 import uk.co.magictractor.spew.api.SpewHttpMessage;
+import uk.co.magictractor.spew.util.ExceptionUtil;
 
 /**
  * Base class for response implementations which need to read and cache their
@@ -31,28 +32,26 @@ import uk.co.magictractor.spew.api.SpewHttpMessage;
  */
 public abstract class AbstractByteArrayMessage implements SpewHttpMessage {
 
-    private final byte[] bytes;
-    private final ByteArrayInputStream byteStream;
+    private final byte[] bodyBytes;
 
-    protected AbstractByteArrayMessage(InputStream inputStream) throws IOException {
+    protected AbstractByteArrayMessage(Path bodyPath) {
         // Content-Length likely to be in header, scope for optimisation here.
-        this(ByteStreams.toByteArray(inputStream));
-        inputStream.close();
+        this(ExceptionUtil.call(() -> Files.newInputStream(bodyPath)));
+    }
+
+    protected AbstractByteArrayMessage(InputStream bodyInputStream) {
+        // Content-Length likely to be in header, scope for optimisation here.
+        this(ExceptionUtil.call(() -> ByteStreams.toByteArray(bodyInputStream)));
+        ExceptionUtil.call(() -> bodyInputStream.close());
     }
 
     protected AbstractByteArrayMessage(byte[] bytes) {
-        this.bytes = bytes;
-        byteStream = new ByteArrayInputStream(bytes);
+        this.bodyBytes = bytes;
     }
 
     @Override
-    public final InputStream getBodyInputStream() {
-        return byteStream;
-    }
-
-    @Override
-    public final byte[] getBodyBytes() {
-        return bytes;
+    public byte[] getBodyBytes() {
+        return bodyBytes;
     }
 
 }

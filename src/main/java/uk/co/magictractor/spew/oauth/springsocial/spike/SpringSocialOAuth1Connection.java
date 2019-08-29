@@ -28,11 +28,12 @@ import org.springframework.web.client.HttpMessageConverterExtractor;
 import org.springframework.web.client.RequestCallback;
 import org.springframework.web.client.RestOperations;
 
-import uk.co.magictractor.spew.api.SpewOAuth1Application;
+import uk.co.magictractor.spew.api.OutgoingHttpRequest;
+import uk.co.magictractor.spew.api.SpewApplication;
 import uk.co.magictractor.spew.api.SpewConnection;
 import uk.co.magictractor.spew.api.SpewHeader;
-import uk.co.magictractor.spew.api.OutgoingHttpRequest;
 import uk.co.magictractor.spew.api.SpewHttpResponse;
+import uk.co.magictractor.spew.api.SpewOAuth1Application;
 import uk.co.magictractor.spew.store.EditableProperty;
 import uk.co.magictractor.spew.store.UserPropertyStore;
 import uk.co.magictractor.spew.util.ExceptionUtil;
@@ -46,7 +47,7 @@ public class SpringSocialOAuth1Connection implements SpewConnection {
     private EditableProperty userToken;
     private EditableProperty userSecret;
 
-    private Connection<RestOperations> connection;
+    private Connection<RestOperations> springConnection;
 
     /**
      * Default visibility, applications should obtain instances via
@@ -62,7 +63,7 @@ public class SpringSocialOAuth1Connection implements SpewConnection {
         this.userSecret = SPIUtil.firstAvailable(UserPropertyStore.class).getProperty(application, "user_secret");
 
         OAuthToken token = new OAuthToken(userToken.getValue(), userSecret.getValue());
-        connection = connectionFactory.createConnection(token);
+        springConnection = connectionFactory.createConnection(token);
     }
 
     @Override
@@ -76,7 +77,7 @@ public class SpringSocialOAuth1Connection implements SpewConnection {
         HttpMessageConverterExtractor<SpewHttpResponse> responseExtractor = new HttpMessageConverterExtractor<>(
             String.class, Arrays.asList(converter));
 
-        return connection.getApi().execute(uri, method, requestCallback, responseExtractor);
+        return springConnection.getApi().execute(uri, method, requestCallback, responseExtractor);
     }
 
     private void populateHttpRequest(ClientHttpRequest httpRequest, OutgoingHttpRequest apiRequest) throws IOException {
@@ -86,9 +87,15 @@ public class SpringSocialOAuth1Connection implements SpewConnection {
             headers.add(header.getName(), header.getValue());
         }
 
-        if (apiRequest.getBody() != null) {
-            httpRequest.getBody().write(apiRequest.getBody());
+        byte[] body = apiRequest.getBodyBytes();
+        if (body != null) {
+            httpRequest.getBody().write(body);
         }
+    }
+
+    @Override
+    public SpewApplication<?> getApplication() {
+        return application;
     }
 
 }

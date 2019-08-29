@@ -15,6 +15,12 @@
  */
 package uk.co.magictractor.spew.server;
 
+import java.nio.file.Path;
+import java.util.stream.Collectors;
+
+import uk.co.magictractor.spew.util.PathUtil;
+
+// TODO! rename
 public class ResourceRequestHandler implements RequestHandler {
 
     private final Class<?> relativeToClass;
@@ -40,8 +46,29 @@ public class ResourceRequestHandler implements RequestHandler {
         }
         String resourceName = path.substring(1);
 
-        //return SimpleStaticResponse.ifExists(relativeToClass, resourceName);
-        responseBuilder.withStaticIfExists(relativeToClass, resourceName);
+        Path bodyPath = PathUtil.ifExistsRegularFile(relativeToClass, resourceName);
+        if (bodyPath == null) {
+            return;
+        }
+
+        System.err.println(request.getHttpMethod() + " " + request.getPath() + " has headers "
+                + request.getHeaders()
+                        .stream()
+                        .map(h -> h.getName() + "=" + h.getValue())
+                        .collect(Collectors.toList()));
+
+        String ifModifiedSince = request.getHeader("If-Modified-Since");
+        OutgoingResponse response;
+        if (ifModifiedSince != null) {
+            PathUtil.getLastModified(bodyPath);
+            // TODO! compare timestamps
+            response = OutgoingNotModifiedResponse.getInstance();
+        }
+        else {
+            response = new OutgoingStaticResponse(bodyPath);
+        }
+
+        responseBuilder.withResponse(response);
     }
 
 }

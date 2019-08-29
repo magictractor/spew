@@ -16,16 +16,22 @@
 package uk.co.magictractor.spew.util;
 
 import java.io.BufferedReader;
-import java.io.IOException;
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+import java.time.format.TextStyle;
+import java.time.temporal.ChronoField;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
-import com.google.common.io.ByteStreams;
 
 import uk.co.magictractor.spew.api.SpewHttpMessage;
 import uk.co.magictractor.spew.api.SpewHttpResponse;
@@ -39,50 +45,60 @@ public final class HttpMessageUtil {
     private static final byte[] EMPTY_BODY_BYTES = new byte[0];
     private static final ByteBuffer EMPTY_BODY_BYTE_BUFFER = ByteBuffer.wrap(EMPTY_BODY_BYTES);
 
+    private static final DateTimeFormatter HEADER_INSTANT_FORMATTER = new DateTimeFormatterBuilder()
+            .parseCaseInsensitive()
+            .appendText(ChronoField.DAY_OF_WEEK, TextStyle.SHORT)
+            .appendLiteral(", ")
+            .appendValue(ChronoField.DAY_OF_MONTH, 2)
+            .appendLiteral(' ')
+            .appendText(ChronoField.MONTH_OF_YEAR, TextStyle.SHORT)
+            .appendLiteral(' ')
+            .appendValue(ChronoField.YEAR, 4)
+            .appendLiteral(' ')
+            .appendValue(ChronoField.HOUR_OF_DAY, 2)
+            .appendLiteral(':')
+            .appendValue(ChronoField.MINUTE_OF_HOUR, 2)
+            .appendLiteral(':')
+            .appendValue(ChronoField.SECOND_OF_MINUTE, 2)
+            .appendLiteral(" GMT")
+            .toFormatter();
+
     private HttpMessageUtil() {
     }
 
-    public static byte[] getBodyBytes(SpewHttpMessage httpMessage) {
-        InputStream bodyInputStream = httpMessage.getBodyInputStream();
-        if (bodyInputStream == null) {
-            return EMPTY_BODY_BYTES;
-        }
-
-        return ExceptionUtil.call(() -> getBodyBytes0(bodyInputStream));
-    }
-
-    private static byte[] getBodyBytes0(InputStream bodyInputStream) throws IOException {
-
-        // TODO! mark and reset
-        // bodyInputStream.mark(readlimit); // hmm, need big read limit. Get size from headers?
-        byte[] bytes = ByteStreams.toByteArray(bodyInputStream);
-
-        return bytes;
-    }
-
-    public static ByteBuffer getBodyByteBuffer(SpewHttpMessage httpMessage) {
-        if (httpMessage.getBodyInputStream() == null) {
-            return EMPTY_BODY_BYTE_BUFFER;
-        }
-
-        return ByteBuffer.wrap(getBodyBytes(httpMessage));
-    }
-
-    public static BufferedReader getBodyReader(SpewHttpMessage httpMessage) {
-        InputStream bodyStream = httpMessage.getBodyInputStream();
-        if (bodyStream == null) {
+    public static InputStream getBodyInputStream(SpewHttpMessage httpMessage) {
+        byte[] bodyBytes = httpMessage.getBodyBytes();
+        if (bodyBytes == null || bodyBytes.length == 0) {
             return null;
         }
 
-        return getBodyReader(httpMessage, bodyStream);
+        return new ByteArrayInputStream(bodyBytes);
     }
 
-    public static BufferedReader getBodyReader(SpewHttpMessage httpMessage, InputStream bodyStream) {
+    public static ByteBuffer getBodyByteBuffer(SpewHttpMessage httpMessage) {
+        byte[] bodyBytes = httpMessage.getBodyBytes();
+        if (bodyBytes == null || bodyBytes.length == 0) {
+            return EMPTY_BODY_BYTE_BUFFER;
+        }
+
+        return ByteBuffer.wrap(bodyBytes);
+    }
+
+    public static BufferedReader getBodyReader(SpewHttpMessage httpMessage) {
+        byte[] bodyBytes = httpMessage.getBodyBytes();
+        if (bodyBytes == null || bodyBytes.length == 0) {
+            return null;
+        }
+
+        return getBodyReader(httpMessage, bodyBytes);
+    }
+
+    public static BufferedReader getBodyReader(SpewHttpMessage httpMessage, byte[] bodyBytes) {
         Charset charset = ContentTypeUtil.charsetFromHeader(httpMessage);
         if (charset == null) {
             charset = StandardCharsets.UTF_8;
         }
-        return new BufferedReader(new InputStreamReader(bodyStream, charset));
+        return new BufferedReader(new InputStreamReader(new ByteArrayInputStream(bodyBytes), charset));
     }
 
     public static ToStringHelper toStringHelper(SpewHttpRequest request) {
@@ -100,6 +116,16 @@ public final class HttpMessageUtil {
                 .add("status", response.getStatus());
 
         return helper;
+    }
+
+    public static byte[] emptyBodyBytes() {
+        return EMPTY_BODY_BYTES;
+    }
+
+    // Sun, 06 Nov 1994 08:49:37 GMT
+    public static String asHeaderString(Instant instant) {
+        OffsetDateTime t = instant.atOffset(ZoneOffset.UTC);
+        return HEADER_INSTANT_FORMATTER.format(t);
     }
 
 }

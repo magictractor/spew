@@ -22,10 +22,11 @@ import org.apache.http.Header;
 import org.apache.http.client.methods.CloseableHttpResponse;
 
 import uk.co.magictractor.spew.api.SpewHeader;
-import uk.co.magictractor.spew.core.response.AbstractIncomingOnCloseResponse;
+import uk.co.magictractor.spew.api.SpewHttpResponse;
+import uk.co.magictractor.spew.core.response.AbstractByteArrayMessage;
 import uk.co.magictractor.spew.util.ExceptionUtil;
 
-public class IncomingApacheHttpClientResponse extends AbstractIncomingOnCloseResponse {
+public class IncomingApacheHttpClientResponse extends AbstractByteArrayMessage implements SpewHttpResponse {
 
     private final CloseableHttpResponse response;
     private List<SpewHeader> headers;
@@ -50,11 +51,6 @@ public class IncomingApacheHttpClientResponse extends AbstractIncomingOnCloseRes
             }
         }
         return headers;
-    }
-
-    @Override
-    public void onClose() {
-        ExceptionUtil.call(() -> response.close());
     }
 
 }
