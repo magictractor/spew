@@ -13,40 +13,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.co.magictractor.spew.core.response;
+package uk.co.magictractor.spew.core.message;
 
-import java.io.InputStream;
-import java.nio.file.Files;
 import java.nio.file.Path;
 
-import com.google.common.io.ByteStreams;
-
 import uk.co.magictractor.spew.api.SpewHttpMessage;
-import uk.co.magictractor.spew.util.ExceptionUtil;
+import uk.co.magictractor.spew.util.PathUtil;
 
 /**
- * Base class for response implementations which need to read and cache their
- * input stream because the third party library used for the connection will
- * automatically close the input stream. (TODO! update comment - could be other
- * reasons for using this)
+ * <p>
+ * Base class for messages which have the whole body available without blocking,
+ * such as outgoing responses and dummy requests for unit tests based on local
+ * files.
+ * </p>
+ * <p>
+ * This class should generally not be used for incoming requests and responses,
+ * as it could result in the input stream being read from the server's main
+ * thread rather than a worker thread (this behaviour seen with Undertow).
+ * AbstractInputStreamMessage is a better choice for those.
+ * </p>
  */
 public abstract class AbstractByteArrayMessage implements SpewHttpMessage {
 
     private final byte[] bodyBytes;
 
-    protected AbstractByteArrayMessage(Path bodyPath) {
-        // Content-Length likely to be in header, scope for optimisation here.
-        this(ExceptionUtil.call(() -> Files.newInputStream(bodyPath)));
-    }
-
-    protected AbstractByteArrayMessage(InputStream bodyInputStream) {
-        // Content-Length likely to be in header, scope for optimisation here.
-        this(ExceptionUtil.call(() -> ByteStreams.toByteArray(bodyInputStream)));
-        ExceptionUtil.call(() -> bodyInputStream.close());
-    }
-
     protected AbstractByteArrayMessage(byte[] bytes) {
         this.bodyBytes = bytes;
+    }
+
+    protected AbstractByteArrayMessage(Path bodyPath) {
+        bodyBytes = PathUtil.read(bodyPath);
     }
 
     @Override

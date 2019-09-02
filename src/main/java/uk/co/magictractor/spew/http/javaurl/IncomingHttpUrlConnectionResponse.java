@@ -24,19 +24,19 @@ import java.util.Map;
 
 import uk.co.magictractor.spew.api.SpewHeader;
 import uk.co.magictractor.spew.api.SpewHttpResponse;
-import uk.co.magictractor.spew.core.response.AbstractByteArrayMessage;
+import uk.co.magictractor.spew.core.message.AbstractInputStreamMessage;
 import uk.co.magictractor.spew.util.ExceptionUtil;
 
 /**
  *
  */
-public class IncomingHttpUrlConnectionResponse extends AbstractByteArrayMessage implements SpewHttpResponse {
+public class IncomingHttpUrlConnectionResponse extends AbstractInputStreamMessage implements SpewHttpResponse {
 
     private final HttpURLConnection connection;
     private List<SpewHeader> headers;
 
     public IncomingHttpUrlConnectionResponse(HttpURLConnection connection) {
-        super(getStream(connection));
+        super(() -> getStream(connection));
         this.connection = connection;
     }
 
@@ -45,11 +45,11 @@ public class IncomingHttpUrlConnectionResponse extends AbstractByteArrayMessage 
         return ExceptionUtil.call(() -> connection.getResponseCode());
     }
 
-    private static InputStream getStream(HttpURLConnection connection) {
-        return ExceptionUtil.call(() -> getStream0(connection));
-    }
+    //    private static InputStream getStream(HttpURLConnection connection) {
+    //        return ExceptionUtil.call(() -> getStream0(connection));
+    //    }
 
-    private static InputStream getStream0(HttpURLConnection connection) throws IOException {
+    private static InputStream getStream(HttpURLConnection connection) throws IOException {
         /*
          * getInputStream() throws an exception for some status codes and
          * getErrorStream() is null until getInputStream() has been called.

@@ -25,18 +25,18 @@ import io.undertow.server.HttpServerExchange;
 import io.undertow.util.HeaderMap;
 import io.undertow.util.HeaderValues;
 import uk.co.magictractor.spew.api.SpewHeader;
-import uk.co.magictractor.spew.core.response.AbstractByteArrayMessage;
+import uk.co.magictractor.spew.core.message.AbstractInputStreamMessage;
 import uk.co.magictractor.spew.server.SpewHttpRequest;
 import uk.co.magictractor.spew.util.HttpMessageUtil;
 
-public class IncomingUndertowRequest extends AbstractByteArrayMessage implements SpewHttpRequest {
+public class IncomingUndertowRequest extends AbstractInputStreamMessage implements SpewHttpRequest {
 
     private final HttpServerExchange undertowExchange;
     private List<SpewHeader> headers;
     private Map<String, String> queryParams;
 
     public IncomingUndertowRequest(HttpServerExchange undertowExchange) {
-        super(undertowExchange.getInputStream());
+        super(() -> undertowExchange.getInputStream());
         this.undertowExchange = undertowExchange;
     }
 
@@ -77,6 +77,7 @@ public class IncomingUndertowRequest extends AbstractByteArrayMessage implements
                     headers.add(
                         new SpewHeader(undertowHeaderValues.getHeaderName().toString(), undertowHeaderValues.get(i)));
                 }
+                fiCookie = undertowHeaders.fiNext(fiCookie);
             }
         }
         return headers;

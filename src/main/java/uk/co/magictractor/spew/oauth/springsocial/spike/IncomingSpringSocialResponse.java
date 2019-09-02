@@ -25,20 +25,20 @@ import org.springframework.http.client.ClientHttpResponse;
 
 import uk.co.magictractor.spew.api.SpewHeader;
 import uk.co.magictractor.spew.api.SpewHttpResponse;
-import uk.co.magictractor.spew.core.response.AbstractByteArrayMessage;
+import uk.co.magictractor.spew.core.message.AbstractInputStreamMessage;
 import uk.co.magictractor.spew.util.ExceptionUtil;
 import uk.co.magictractor.spew.util.HttpMessageUtil;
 
 /**
  *
  */
-public class IncomingSpringSocialResponse extends AbstractByteArrayMessage implements SpewHttpResponse {
+public class IncomingSpringSocialResponse extends AbstractInputStreamMessage implements SpewHttpResponse {
 
     private final ClientHttpResponse springResponse;
     private List<SpewHeader> headers;
 
     public IncomingSpringSocialResponse(ClientHttpResponse springResponse) throws IOException {
-        super(springResponse.getBody());
+        super(() -> springResponse.getBody());
         this.springResponse = springResponse;
     }
 

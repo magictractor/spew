@@ -50,4 +50,9 @@ public final class ExceptionUtil {
         void accept(T t) throws E;
     }
 
+    @FunctionalInterface
+    public interface SupplierWithException<T, E extends Exception> {
+        T get() throws E;
+    }
+
 }

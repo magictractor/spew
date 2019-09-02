@@ -73,8 +73,8 @@ public final class SPIUtil {
         addDefault(SpewParsedResponseFactory.class, new JaywayResponseFactory());
 
         // Could have a Wiremock implementation too
-        addDefault(CallbackServer.class, new NettyCallbackServer());
         addDefault(CallbackServer.class, new UndertowCallbackServer());
+        addDefault(CallbackServer.class, new NettyCallbackServer());
 
         addDefault(ContentTypeFromResourceName.class, new HardCodedContentTypeFromResourceName());
         addDefault(ContentTypeFromResourceName.class, new ApacheTikaContentTypeFromResourceName());

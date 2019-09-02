@@ -24,17 +24,17 @@ import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpHeaders;
 import uk.co.magictractor.spew.api.SpewHeader;
 import uk.co.magictractor.spew.api.SpewHttpResponse;
-import uk.co.magictractor.spew.core.response.AbstractByteArrayMessage;
+import uk.co.magictractor.spew.core.message.AbstractInputStreamMessage;
 import uk.co.magictractor.spew.util.HttpMessageUtil;
 
 // no references to this??
-public class IncomingNettyResponse extends AbstractByteArrayMessage implements SpewHttpResponse {
+public class IncomingNettyResponse extends AbstractInputStreamMessage implements SpewHttpResponse {
 
     private final FullHttpResponse nettyResponse;
     private List<SpewHeader> headers;
 
     public IncomingNettyResponse(FullHttpResponse nettyResponse) {
-        super(new ByteBufInputStream(nettyResponse.content()));
+        super(() -> new ByteBufInputStream(nettyResponse.content()));
         this.nettyResponse = nettyResponse;
     }
 

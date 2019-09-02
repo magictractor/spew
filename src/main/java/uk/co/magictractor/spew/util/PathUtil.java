@@ -15,6 +15,8 @@
  */
 package uk.co.magictractor.spew.util;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URL;
 import java.nio.file.Files;
@@ -70,4 +72,18 @@ public final class PathUtil {
     public static Instant getLastModified(Path path) {
         return ExceptionUtil.call(() -> Files.getLastModifiedTime(path)).toInstant();
     }
+
+    public static byte[] read(Path path) {
+        return ExceptionUtil.call(() -> read0(path));
+    }
+
+    public static byte[] read0(Path path) throws IOException {
+        int size = (int) Files.size(path);
+        byte[] bytes = new byte[size];
+        try (InputStream inputStream = Files.newInputStream(path)) {
+            inputStream.read(bytes);
+        }
+        return bytes;
+    }
+
 }

@@ -15,7 +15,6 @@
  */
 package uk.co.magictractor.spew.server;
 
-import java.io.InputStream;
 import java.nio.file.Path;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -23,7 +22,7 @@ import java.util.List;
 
 import uk.co.magictractor.spew.api.SpewHeader;
 import uk.co.magictractor.spew.api.SpewHttpResponse;
-import uk.co.magictractor.spew.core.response.AbstractByteArrayMessage;
+import uk.co.magictractor.spew.core.message.AbstractByteArrayMessage;
 import uk.co.magictractor.spew.util.HttpMessageUtil;
 
 /**
@@ -48,10 +47,6 @@ public abstract class OutgoingResponse extends AbstractByteArrayMessage implemen
 
     protected OutgoingResponse(byte[] bodyBytes) {
         super(bodyBytes);
-    }
-
-    protected OutgoingResponse(InputStream bodyStream) {
-        super(bodyStream);
     }
 
     public void setHttpStatus(int httpStatus) {

@@ -23,16 +23,15 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 
 import uk.co.magictractor.spew.api.SpewHeader;
 import uk.co.magictractor.spew.api.SpewHttpResponse;
-import uk.co.magictractor.spew.core.response.AbstractByteArrayMessage;
-import uk.co.magictractor.spew.util.ExceptionUtil;
+import uk.co.magictractor.spew.core.message.AbstractInputStreamMessage;
 
-public class IncomingApacheHttpClientResponse extends AbstractByteArrayMessage implements SpewHttpResponse {
+public class IncomingApacheHttpClientResponse extends AbstractInputStreamMessage implements SpewHttpResponse {
 
     private final CloseableHttpResponse response;
     private List<SpewHeader> headers;
 
     protected IncomingApacheHttpClientResponse(CloseableHttpResponse response) {
-        super(ExceptionUtil.call(() -> response.getEntity().getContent()));
+        super(() -> response.getEntity().getContent());
         this.response = response;
     }
 
