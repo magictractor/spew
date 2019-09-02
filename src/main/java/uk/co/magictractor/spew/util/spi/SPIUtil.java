@@ -16,6 +16,7 @@
 package uk.co.magictractor.spew.util.spi;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,6 +29,10 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import uk.co.magictractor.spew.api.connection.SpewConnectionFactory;
+import uk.co.magictractor.spew.core.contenttype.ApacheTikaContentTypeFromResourceName;
+import uk.co.magictractor.spew.core.contenttype.ContentTypeFromResourceName;
+import uk.co.magictractor.spew.core.contenttype.FallbackOctetStreamContentTypeFromResourceName;
+import uk.co.magictractor.spew.core.contenttype.HardCodedContentTypeFromResourceName;
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponseFactory;
 import uk.co.magictractor.spew.core.response.parser.jayway.JaywayResponseFactory;
 import uk.co.magictractor.spew.http.apache.SpewApacheHttpClientConnectionFactory;
@@ -51,6 +56,9 @@ public final class SPIUtil {
     @SuppressWarnings("rawtypes")
     private static final Map<Class, List> DEFAULT_IMPLEMENTATIONS = new HashMap<>();
 
+    @SuppressWarnings("rawtypes")
+    private static final Map<Class, List> AVAILABLE_IMPLEMENTATIONS = new HashMap<>();
+
     static {
         addDefault(ApplicationPropertyStore.class, new ResourceFileApplicationPropertyStore());
 
@@ -65,8 +73,13 @@ public final class SPIUtil {
         addDefault(SpewParsedResponseFactory.class, new JaywayResponseFactory());
 
         // Could have a Wiremock implementation too
-        addDefault(CallbackServer.class, new UndertowCallbackServer());
         addDefault(CallbackServer.class, new NettyCallbackServer());
+        addDefault(CallbackServer.class, new UndertowCallbackServer());
+
+        addDefault(ContentTypeFromResourceName.class, new HardCodedContentTypeFromResourceName());
+        addDefault(ContentTypeFromResourceName.class, new ApacheTikaContentTypeFromResourceName());
+        // Fallback to "application/octet-stream", only hit if Tika is not available.
+        addDefault(ContentTypeFromResourceName.class, new FallbackOctetStreamContentTypeFromResourceName());
     }
 
     private static <T> void addDefault(Class<T> apiClass, T implementation) {
@@ -101,10 +114,34 @@ public final class SPIUtil {
     }
 
     private static <T> Stream<T> available(Class<T> apiClass) {
+        List<T> available = AVAILABLE_IMPLEMENTATIONS.get(apiClass);
+        if (available == null) {
+            synchronized (apiClass) {
+                available = AVAILABLE_IMPLEMENTATIONS.get(apiClass);
+                if (available == null) {
+                    available = findAvailable(apiClass);
+                    init(available);
+                    AVAILABLE_IMPLEMENTATIONS.put(apiClass, available);
+                }
+            }
+        }
+
+        return available.stream();
+    }
+
+    private static <T> void init(List<T> implementations) {
+        for (Object implementation : implementations) {
+            if (implementation instanceof Init) {
+                ((Init) implementation).init();
+            }
+        }
+    }
+
+    private static <T> List<T> findAvailable(Class<T> apiClass) {
         String sysImpl = System.getProperty(apiClass.getName());
         if (sysImpl != null) {
             T impl = loadAvailableSystemPropertyImplementation(sysImpl);
-            return Stream.of(impl);
+            return Collections.singletonList(impl);
         }
 
         ServiceLoader<T> serviceLoader = ServiceLoader.load(apiClass);
@@ -116,7 +153,10 @@ public final class SPIUtil {
             candidates = defaultImplementations(apiClass);
         }
 
-        return candidates.stream().filter(SPIUtil::isImplementationAvailable);
+        return candidates
+                .stream()
+                .filter(SPIUtil::isImplementationAvailable)
+                .collect(Collectors.toList());
     }
 
     private static boolean isImplementationAvailable(Object implementation) {

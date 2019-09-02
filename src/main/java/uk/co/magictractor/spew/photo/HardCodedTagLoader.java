@@ -19,7 +19,7 @@ package uk.co.magictractor.spew.photo;
  * Initial TagLoader implementation for legacy code.
  */
 // bin this once better approach has been coded
-public class HardcodedTagLoader implements TagLoader {
+public class HardCodedTagLoader implements TagLoader {
 
     private static final String SUBJECT = "SUBJECT";
 

@@ -47,7 +47,7 @@ public class JaywayResponse
      */
     /* default */ JaywayResponse(SpewApplication<?> application, SpewHttpResponse response) {
         super(response);
-        InputStream bodyInputStream = HttpMessageUtil.getBodyInputStream(response);
+        InputStream bodyInputStream = HttpMessageUtil.createBodyInputStream(response);
         IOUtil.acceptThenClose(bodyInputStream, body -> {
             ctx = JsonPath.parse(body, application.getServiceProvider().getJsonConfiguration());
         });

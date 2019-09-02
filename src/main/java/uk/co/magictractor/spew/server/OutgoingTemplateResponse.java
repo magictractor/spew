@@ -92,7 +92,7 @@ public class OutgoingTemplateResponse extends OutgoingResponse {
 
     private byte[] getBodyBytes0() throws IOException {
 
-        BufferedReader templateReader = HttpMessageUtil.getBodyReader(this, super.getBodyBytes());
+        BufferedReader templateReader = HttpMessageUtil.createBodyReader(this, super.getBodyBytes());
 
         ByteArrayOutputStream pageBuilder = new ByteArrayOutputStream();
 

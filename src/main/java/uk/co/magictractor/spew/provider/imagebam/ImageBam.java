@@ -12,6 +12,7 @@ import uk.co.magictractor.spew.core.verification.AuthorizationHandler;
 import uk.co.magictractor.spew.core.verification.PasteVerificationCodeHandler;
 import uk.co.magictractor.spew.core.verification.VerificationFunction;
 import uk.co.magictractor.spew.util.ContentTypeUtil;
+import uk.co.magictractor.spew.util.HttpMessageUtil;
 
 /**
  * <p>
@@ -39,8 +40,8 @@ public class ImageBam implements SpewOAuth1ServiceProvider {
     public String getContentType(SpewHttpResponse response) {
         // Workaround for header reporting "text/hmtl" for JSON
         String contentType = ContentTypeUtil.fromHeader(response);
-        if ("text/html".contentEquals(contentType)) {
-            contentType = ContentTypeUtil.fromBody(response);
+        if ("text/html".contentEquals(contentType) && HttpMessageUtil.bodyStartsWith(response, "{")) {
+            contentType = ContentTypeUtil.JSON_MIME_TYPES.get(0);
         }
 
         return contentType;

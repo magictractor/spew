@@ -47,7 +47,7 @@ public class KeyValuePairsResponse
 
     public KeyValuePairsResponse(SpewHttpResponse response) {
         super(response);
-        values = IOUtil.applyThenClose(HttpMessageUtil.getBodyReader(response), this::parse);
+        values = IOUtil.applyThenClose(HttpMessageUtil.createBodyReader(response), this::parse);
     }
 
     private Map<String, String> parse(Reader bodyReader) throws IOException {

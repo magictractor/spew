@@ -66,7 +66,7 @@ public final class HttpMessageUtil {
     private HttpMessageUtil() {
     }
 
-    public static InputStream getBodyInputStream(SpewHttpMessage httpMessage) {
+    public static InputStream createBodyInputStream(SpewHttpMessage httpMessage) {
         byte[] bodyBytes = httpMessage.getBodyBytes();
         if (bodyBytes == null || bodyBytes.length == 0) {
             return null;
@@ -75,7 +75,7 @@ public final class HttpMessageUtil {
         return new ByteArrayInputStream(bodyBytes);
     }
 
-    public static ByteBuffer getBodyByteBuffer(SpewHttpMessage httpMessage) {
+    public static ByteBuffer createBodyByteBuffer(SpewHttpMessage httpMessage) {
         byte[] bodyBytes = httpMessage.getBodyBytes();
         if (bodyBytes == null || bodyBytes.length == 0) {
             return EMPTY_BODY_BYTE_BUFFER;
@@ -84,16 +84,17 @@ public final class HttpMessageUtil {
         return ByteBuffer.wrap(bodyBytes);
     }
 
-    public static BufferedReader getBodyReader(SpewHttpMessage httpMessage) {
+    public static BufferedReader createBodyReader(SpewHttpMessage httpMessage) {
         byte[] bodyBytes = httpMessage.getBodyBytes();
         if (bodyBytes == null || bodyBytes.length == 0) {
             return null;
         }
 
-        return getBodyReader(httpMessage, bodyBytes);
+        return createBodyReader(httpMessage, bodyBytes);
     }
 
-    public static BufferedReader getBodyReader(SpewHttpMessage httpMessage, byte[] bodyBytes) {
+    // meh...
+    public static BufferedReader createBodyReader(SpewHttpMessage httpMessage, byte[] bodyBytes) {
         Charset charset = ContentTypeUtil.charsetFromHeader(httpMessage);
         if (charset == null) {
             charset = StandardCharsets.UTF_8;
@@ -126,6 +127,28 @@ public final class HttpMessageUtil {
     public static String asHeaderString(Instant instant) {
         OffsetDateTime t = instant.atOffset(ZoneOffset.UTC);
         return HEADER_INSTANT_FORMATTER.format(t);
+    }
+
+    /**
+     * Assumes String is ASCII, characters in the String are cast to bytes
+     * rather than being encoded via a Charset.
+     */
+    public static boolean bodyStartsWith(SpewHttpMessage message, String str) {
+        byte[] bodyBytes = message.getBodyBytes();
+        if (bodyBytes == null) {
+            return false;
+        }
+        if (str.length() > bodyBytes.length) {
+            return false;
+        }
+
+        for (int i = 0; i < str.length(); i++) {
+            if (bodyBytes[i] != str.charAt(i)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
 }

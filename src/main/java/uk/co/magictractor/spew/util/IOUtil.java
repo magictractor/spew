@@ -24,7 +24,7 @@ public final class IOUtil {
         return ExceptionUtil.call(() -> applyThenClose0(closeable, consumer));
     }
 
-    public static <T extends Closeable, R, E extends Exception> R applyThenClose0(T closeable,
+    private static <T extends Closeable, R, E extends Exception> R applyThenClose0(T closeable,
             FunctionWithException<T, R, E> consumer) throws E, IOException {
         try (T c = closeable) {
             return consumer.apply(closeable);

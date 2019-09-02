@@ -19,21 +19,26 @@ import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import com.google.common.base.Splitter;
 import com.jayway.jsonpath.Configuration;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import uk.co.magictractor.spew.api.OutgoingHttpRequest;
 import uk.co.magictractor.spew.api.SpewHttpMessage;
+import uk.co.magictractor.spew.core.contenttype.ContentTypeFromResourceName;
+import uk.co.magictractor.spew.util.spi.SPIUtil;
 
 /**
  *
  */
 public class ContentTypeUtil {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ContentTypeUtil.class);
 
     public static final String CONTENT_TYPE_HEADER_NAME = "Content-Type";
     public static final String CONTENT_LENGTH_HEADER_NAME = "Content-Length";
@@ -44,12 +49,14 @@ public class ContentTypeUtil {
     public static final List<String> JSON_MIME_TYPES = Arrays.asList("application/json", "text/javascript");
     public static final List<String> HTML_MIME_TYPES = Arrays.asList("text/html");
     private static final List<String> CSS_MIME_TYPES = Arrays.asList("text/css");
+    private static final List<String> JPEG_MIME_TYPES = Arrays.asList("image/jpeg");
     // Auth requests should use this rather than JSON. Some service providers tolerate JSON for auth.
     public static final String FORM_MIME_TYPE = "application/x-www-form-urlencoded";
 
     private static final List<String> JSON_EXTENSIONS = Arrays.asList("json");
     private static final List<String> HTML_EXTENSIONS = Arrays.asList("html", "htm");
     private static final List<String> CSS_EXTENSIONS = Arrays.asList("css");
+    private static final List<String> JPEG_EXTENSIONS = Arrays.asList("jpg", "jpeg");
 
     private ContentTypeUtil() {
     }
@@ -86,18 +93,6 @@ public class ContentTypeUtil {
         return value;
     }
 
-    public static String fromBody(SpewHttpMessage httpMessage) {
-        byte[] bytes = httpMessage.getBodyBytes();
-
-        if (bytes[0] == '{') {
-            return JSON_MIME_TYPES.get(0);
-        }
-
-        // TODO! refer to better libraries would could be used
-        throw new IllegalArgumentException(
-            "Unable to determine the content type of the response by inspecting the body");
-    }
-
     /**
      * <p>
      * Determine a content type based on the extension of the resource name.
@@ -109,36 +104,12 @@ public class ContentTypeUtil {
      * </p>
      */
     public static String fromResourceName(String resourceName) {
-
-        Iterable<String> parts = Splitter.on('.').split(resourceName.toLowerCase());
-        Iterator<String> partIterator = parts.iterator();
-        // Discard the first part which is the filename with extension stripped.
-        partIterator.next();
-        while (partIterator.hasNext()) {
-            String contentType = fromExtensionPart(partIterator.next());
-            if (contentType != null) {
-                return contentType;
-            }
-        }
-
-        throw new IllegalArgumentException(
-            "Unable to determine the content type of the resource from name " + resourceName);
-
-    }
-
-    private static String fromExtensionPart(String extensionPart) {
-        String contentType = null;
-        if (HTML_EXTENSIONS.contains(extensionPart)) {
-            contentType = HTML_MIME_TYPES.get(0);
-        }
-        else if (JSON_EXTENSIONS.contains(extensionPart)) {
-            contentType = JSON_MIME_TYPES.get(0);
-        }
-        else if (CSS_EXTENSIONS.contains(extensionPart)) {
-            contentType = CSS_MIME_TYPES.get(0);
-        }
-
-        return contentType;
+        return SPIUtil
+                .firstNotNull(ContentTypeFromResourceName.class, t -> t.determineContentType(resourceName))
+                .orElseGet(() -> {
+                    LOGGER.warn("Unable to determine content type for resource name " + resourceName);
+                    return "application/octet-stream";
+                });
     }
 
     public static Charset charsetFromHeader(SpewHttpMessage httpMessage) {

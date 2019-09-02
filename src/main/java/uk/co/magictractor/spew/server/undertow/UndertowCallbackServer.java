@@ -81,7 +81,7 @@ public class UndertowCallbackServer implements CallbackServer, ClassDependentAva
                 undertowHeaders.add(new HttpString(header.getName()), header.getValue());
             }
 
-            ByteBuffer bodyByteBuffer = HttpMessageUtil.getBodyByteBuffer(response);
+            ByteBuffer bodyByteBuffer = HttpMessageUtil.createBodyByteBuffer(response);
             // Add IoCallback impl to send()?
             exchange.getResponseSender().send(bodyByteBuffer);
         }

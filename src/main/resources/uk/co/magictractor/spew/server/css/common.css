@@ -1,7 +1,11 @@
 html {
-  font-family: sans-serif;
-  font-size: 40px;
   margin-left: 100px;
   margin-top: 50px;
+}
+
+body {
+  font-family: sans-serif;
+  font-size: 40px;
   color: #225555;
+  /* background-image: url("/image/kingfisher.jpg"); */
 }
