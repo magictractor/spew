@@ -2,8 +2,6 @@ package uk.co.magictractor.spew.provider.imagebam;
 
 import java.util.function.Supplier;
 
-import com.google.gson.GsonBuilder;
-
 import uk.co.magictractor.spew.api.BadResponseException;
 import uk.co.magictractor.spew.api.SpewHttpResponse;
 import uk.co.magictractor.spew.api.SpewOAuth1ServiceProvider;
@@ -65,20 +63,6 @@ public class ImageBam implements SpewOAuth1ServiceProvider {
     @Override
     public String getRequestSignatureMethod() {
         return "MD5";
-    }
-
-    @Override
-    public GsonBuilder getGsonBuilder() {
-        GsonBuilder gsonBuilder = new GsonBuilder();
-
-        // gsonBuilder.registerTypeAdapter(boolean.class, new BooleanTypeAdapter());
-        // gsonBuilder.registerTypeAdapter(LocalDateTime.class, new
-        // LocalDateTimeTypeAdapter("yyyy-MM-dd HH:mm:ss"));
-        // gsonBuilder.registerTypeAdapter(Instant.class,
-        // InstantTypeAdapter.EPOCH_SECONDS);
-        // gsonBuilder.registerTypeAdapter(TagSet.class, new TagSetTypeAdapter());
-
-        return gsonBuilder;
     }
 
     // {"rsp":{"status":"fail","error_code":108,"error_message":"permission denied: gallery_id"}}

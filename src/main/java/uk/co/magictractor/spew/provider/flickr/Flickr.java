@@ -1,18 +1,16 @@
 package uk.co.magictractor.spew.provider.flickr;
 
-import java.time.Instant;
-import java.time.LocalDateTime;
-
-import com.google.gson.GsonBuilder;
+import java.util.Arrays;
+import java.util.List;
 
 import uk.co.magictractor.spew.api.BadResponseException;
 import uk.co.magictractor.spew.api.OutgoingHttpRequest;
 import uk.co.magictractor.spew.api.SpewOAuth1ServiceProvider;
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
-import uk.co.magictractor.spew.json.BooleanTypeAdapter;
-import uk.co.magictractor.spew.json.InstantTypeAdapter;
-import uk.co.magictractor.spew.json.LocalDateTimeTypeAdapter;
-import uk.co.magictractor.spew.photo.TagSet;
+import uk.co.magictractor.spew.core.typeadapter.BooleanTypeAdapter;
+import uk.co.magictractor.spew.core.typeadapter.InstantTypeAdapter;
+import uk.co.magictractor.spew.core.typeadapter.LocalDateTimeTypeAdapter;
+import uk.co.magictractor.spew.core.typeadapter.SpewTypeAdapter;
 import uk.co.magictractor.spew.provider.flickr.json.TagSetTypeAdapter;
 
 // https://www.flickr.com/services/apps/create/
@@ -52,26 +50,12 @@ public class Flickr implements SpewOAuth1ServiceProvider {
     }
 
     @Override
-    public GsonBuilder getGsonBuilder() {
-        GsonBuilder gsonBuilder = new GsonBuilder();
-
-        //		gsonBuilder.setFieldNamingStrategy(new FieldNamingStrategy() {
-        //			@Override
-        //			public String translateName(Field f) {
-        //				// underscore seen in machine_tags
-        //				return f.getName().toLowerCase().replace("_", "");
-        //			}
-        //		});
-        gsonBuilder.registerTypeAdapter(boolean.class, new BooleanTypeAdapter());
-        gsonBuilder.registerTypeAdapter(LocalDateTime.class, new LocalDateTimeTypeAdapter("yyyy-MM-dd HH:mm:ss"));
-        gsonBuilder.registerTypeAdapter(Instant.class, InstantTypeAdapter.EPOCH_SECONDS);
-        gsonBuilder.registerTypeAdapter(TagSet.class, new TagSetTypeAdapter());
-
-        // gsonBuilder.registerTypeAdapter(List.class, new ListTypeAdapter());
-
-        // gsonBuilder.registerTypeAdapterFactory(new FlickrTagsTypeAdapterFactory());
-
-        return gsonBuilder;
+    public List<SpewTypeAdapter<?>> getTypeAdapters() {
+        return Arrays.asList(
+            BooleanTypeAdapter.ZERO_AND_ONE,
+            new LocalDateTimeTypeAdapter("yyyy-MM-dd HH:mm:ss"),
+            InstantTypeAdapter.EPOCH_SECONDS,
+            TagSetTypeAdapter.getInstance());
     }
 
     // {"stat":"fail","code":1,"message":"User not found"}

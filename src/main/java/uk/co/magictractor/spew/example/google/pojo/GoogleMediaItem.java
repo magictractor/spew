@@ -86,7 +86,7 @@ public class GoogleMediaItem implements Photo {
     }
 
     public class GoogleMediaMetadata {
-        // Google does have zone information "2018-11-20T15:09:42Z"
+        // Google does have zone information "2018-11-20T15:09:42Z" => instant here?
         private LocalDateTime creationTime;
         private int width;
         private int height;
@@ -95,7 +95,6 @@ public class GoogleMediaItem implements Photo {
 
     // TODO! change name of this or Photo - looks like this should implement Photo??
     public class GooglePhoto {
-        // Google does have zone information "2018-11-20T15:09:42Z"
         private String cameraMake;
         private String cameraModel;
         private String focalLength;

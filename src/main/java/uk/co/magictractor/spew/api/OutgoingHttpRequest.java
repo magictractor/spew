@@ -12,6 +12,7 @@ import com.google.common.base.MoreObjects.ToStringHelper;
 
 import uk.co.magictractor.spew.api.connection.SpewConnectionCache;
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
+import uk.co.magictractor.spew.core.response.parser.jayway.JaywayConfigurationCache;
 import uk.co.magictractor.spew.server.SpewHttpRequest;
 import uk.co.magictractor.spew.util.ContentTypeUtil;
 import uk.co.magictractor.spew.util.HttpMessageUtil;
@@ -104,6 +105,7 @@ public final class OutgoingHttpRequest implements SpewHttpRequest {
         return urlBuilder.toString();
     }
 
+    @Override
     public String getHttpMethod() {
         return httpMethod;
     }
@@ -212,7 +214,7 @@ public final class OutgoingHttpRequest implements SpewHttpRequest {
             // setDoOutput(true);
             if (!getBodyParams().isEmpty()) {
                 // TODO! allow body to have been set explicitly
-                bodyBytes = ContentTypeUtil.bodyBytes(this, application.getServiceProvider().getJsonConfiguration());
+                bodyBytes = ContentTypeUtil.bodyBytes(this, JaywayConfigurationCache.getConfiguration(application));
                 addHeader(ContentTypeUtil.CONTENT_TYPE_HEADER_NAME, getContentType());
                 addHeader(ContentTypeUtil.CONTENT_LENGTH_HEADER_NAME, bodyBytes.length);
             }

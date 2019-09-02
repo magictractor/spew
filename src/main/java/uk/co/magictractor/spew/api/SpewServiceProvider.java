@@ -1,17 +1,11 @@
 package uk.co.magictractor.spew.api;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.function.Supplier;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.jayway.jsonpath.Configuration;
-import com.jayway.jsonpath.Option;
-import com.jayway.jsonpath.spi.json.GsonJsonProvider;
-import com.jayway.jsonpath.spi.json.JsonProvider;
-import com.jayway.jsonpath.spi.mapper.GsonMappingProvider;
-import com.jayway.jsonpath.spi.mapper.MappingProvider;
-
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
+import uk.co.magictractor.spew.core.typeadapter.SpewTypeAdapter;
 import uk.co.magictractor.spew.core.verification.AuthorizationHandler;
 import uk.co.magictractor.spew.core.verification.VerificationFunction;
 import uk.co.magictractor.spew.server.LocalServerAuthorizationHandler;
@@ -55,22 +49,8 @@ public interface SpewServiceProvider {
         return ContentTypeUtil.fromHeader(response);
     }
 
-    // TODO! move Gson away from here
-    default GsonBuilder getGsonBuilder() {
-        return new GsonBuilder();
-    }
-
-    // TODO! generalise type mappings so they can be used for both Json and XML
-    default Configuration getJsonConfiguration() {
-        Gson gson = getGsonBuilder().setPrettyPrinting().create();
-        JsonProvider jsonProvider = new GsonJsonProvider(gson);
-        MappingProvider mappingProvider = new GsonMappingProvider(gson);
-
-        // Option.DEFAULT_PATH_LEAF_TO_NULL required for nextPageToken used with Google paged services
-        return new Configuration.ConfigurationBuilder().jsonProvider(jsonProvider)
-                .mappingProvider(mappingProvider)
-                .options(Option.DEFAULT_PATH_LEAF_TO_NULL)
-                .build();
+    default List<SpewTypeAdapter<?>> getTypeAdapters() {
+        return Collections.emptyList();
     }
 
     /**

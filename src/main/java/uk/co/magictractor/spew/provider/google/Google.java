@@ -1,16 +1,11 @@
 package uk.co.magictractor.spew.provider.google;
 
-import java.time.Instant;
-import java.time.LocalDateTime;
-
-import com.google.gson.GsonBuilder;
+import java.util.Arrays;
+import java.util.List;
 
 import uk.co.magictractor.spew.api.SpewOAuth2ServiceProvider;
-import uk.co.magictractor.spew.json.BooleanTypeAdapter;
-import uk.co.magictractor.spew.json.InstantTypeAdapter;
-import uk.co.magictractor.spew.json.LocalDateTimeTypeAdapter;
-import uk.co.magictractor.spew.photo.TagSet;
-import uk.co.magictractor.spew.provider.flickr.json.TagSetTypeAdapter;
+import uk.co.magictractor.spew.core.typeadapter.LocalDateTimeTypeAdapter;
+import uk.co.magictractor.spew.core.typeadapter.SpewTypeAdapter;
 
 // https://aaronparecki.com/oauth-2-simplified/#web-server-apps
 //
@@ -56,23 +51,10 @@ public class Google implements SpewOAuth2ServiceProvider {
     //	}
 
     @Override
-    public GsonBuilder getGsonBuilder() {
-        GsonBuilder gsonBuilder = new GsonBuilder();
-
-        // TODO! this option and perhaps other settings should be defaults for all
-        // service providers
-        // gsonBuilder.set
-
-        gsonBuilder.registerTypeAdapter(boolean.class, new BooleanTypeAdapter());
-        // TODO! Z shouldn't be quoted here?? - handle offset properly
-        gsonBuilder.registerTypeAdapter(LocalDateTime.class, new LocalDateTimeTypeAdapter("yyyy-MM-dd'T'HH:mm:ss'Z'"));
-        gsonBuilder.registerTypeAdapter(Instant.class, InstantTypeAdapter.EPOCH_MILLIS);
-        gsonBuilder.registerTypeAdapter(TagSet.class, new TagSetTypeAdapter());
-
-        // gsonBuilder.registerTypeAdapter(List.class, new ListTypeAdapter());
-
-        // gsonBuilder.registerTypeAdapterFactory(new FlickrTagsTypeAdapterFactory());
-
-        return gsonBuilder;
+    public List<SpewTypeAdapter<?>> getTypeAdapters() {
+        return Arrays.asList(
+            // TODO! Z shouldn't be quoted here?? - handle offset properly
+            new LocalDateTimeTypeAdapter("yyyy-MM-dd'T'HH:mm:ss'Z'"));
     }
+
 }

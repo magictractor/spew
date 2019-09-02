@@ -49,7 +49,7 @@ public class JaywayResponse
         super(response);
         InputStream bodyInputStream = HttpMessageUtil.createBodyInputStream(response);
         IOUtil.acceptThenClose(bodyInputStream, body -> {
-            ctx = JsonPath.parse(body, application.getServiceProvider().getJsonConfiguration());
+            ctx = JsonPath.parse(body, JaywayConfigurationCache.getConfiguration(application));
         });
     }
 

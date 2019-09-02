@@ -1,18 +1,33 @@
 package uk.co.magictractor.spew.provider.flickr.json;
 
-import java.lang.reflect.Type;
-
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParseException;
-
+import uk.co.magictractor.spew.core.typeadapter.SpewTypeAdapter;
 import uk.co.magictractor.spew.photo.TagSet;
+import uk.co.magictractor.spew.util.ExceptionUtil;
 
-public class TagSetTypeAdapter implements JsonDeserializer<TagSet> {
+public class TagSetTypeAdapter implements SpewTypeAdapter<TagSet> {
 
-    public TagSet deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
-            throws JsonParseException {
-        return new TagSet(json.getAsString());
+    private static final TagSetTypeAdapter INSTANCE = new TagSetTypeAdapter();
+
+    public static TagSetTypeAdapter getInstance() {
+        return INSTANCE;
     }
+
+    private TagSetTypeAdapter() {
+    }
+
+    @Override
+    public Class<TagSet> getType() {
+        return TagSet.class;
+    }
+
+    @Override
+    public TagSet fromString(String valueAsString) {
+        return new TagSet(valueAsString);
+    }
+
+    @Override
+    public String toString(TagSet value) {
+        throw ExceptionUtil.notYetImplemented();
+    }
+
 }
