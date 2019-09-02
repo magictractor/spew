@@ -6,7 +6,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.ServiceLoader;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -14,6 +13,8 @@ import com.google.common.base.MoreObjects;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import uk.co.magictractor.spew.util.spi.SPIUtil;
 
 public class Tag {
 
@@ -122,10 +123,7 @@ public class Tag {
     }
 
     private static void initTags() {
-        ServiceLoader.load(TagLoader.class).forEach((loader) -> {
-            LOGGER.debug("loading tags with {}", loader);
-            loader.loadTags();
-        });
+        SPIUtil.available(TagLoader.class).forEach(TagLoader::loadTags);
     }
 
     private static void addTagToMap(String key, Tag tag) {

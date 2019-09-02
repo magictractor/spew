@@ -39,6 +39,9 @@ import uk.co.magictractor.spew.http.apache.SpewApacheHttpClientConnectionFactory
 import uk.co.magictractor.spew.http.javaurl.SpewHttpUrlConnectionFactory;
 import uk.co.magictractor.spew.oauth.boa.BoaConnectionFactory;
 import uk.co.magictractor.spew.oauth.springsocial.spike.SpringSocialConnectionFactory;
+import uk.co.magictractor.spew.photo.HardCodedTagLoader;
+import uk.co.magictractor.spew.photo.IndentedFileTagLoader;
+import uk.co.magictractor.spew.photo.TagLoader;
 import uk.co.magictractor.spew.server.CallbackServer;
 import uk.co.magictractor.spew.server.netty.NettyCallbackServer;
 import uk.co.magictractor.spew.server.undertow.UndertowCallbackServer;
@@ -80,6 +83,9 @@ public final class SPIUtil {
         addDefault(ContentTypeFromResourceName.class, new ApacheTikaContentTypeFromResourceName());
         // Fallback to "application/octet-stream", only hit if Tika is not available.
         addDefault(ContentTypeFromResourceName.class, new FallbackOctetStreamContentTypeFromResourceName());
+
+        addDefault(TagLoader.class, new IndentedFileTagLoader());
+        addDefault(TagLoader.class, new HardCodedTagLoader());
     }
 
     private static <T> void addDefault(Class<T> apiClass, T implementation) {
@@ -113,7 +119,7 @@ public final class SPIUtil {
                 .findFirst();
     }
 
-    private static <T> Stream<T> available(Class<T> apiClass) {
+    public static <T> Stream<T> available(Class<T> apiClass) {
         List<T> available = AVAILABLE_IMPLEMENTATIONS.get(apiClass);
         if (available == null) {
             synchronized (apiClass) {
