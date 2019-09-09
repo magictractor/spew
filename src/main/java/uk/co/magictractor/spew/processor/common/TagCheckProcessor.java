@@ -34,7 +34,9 @@ public class TagCheckProcessor implements Processor<Photo, MutablePhoto, PhotoPr
     private void checkTagType(TagType tagType, TagSet tagSet, PhotoProcessorContext context) {
         Tag deepestTag = tagSet.getDeepestTag(tagType);
         if (deepestTag == null) {
-            System.err.println("No tag of type " + tagType);
+            if (!tagType.isOptional()) {
+                System.err.println("No tag of type " + tagType);
+            }
         }
         else if (deepestTag.hasChildren()) {
             System.err.println("Deepest tag of type " + tagType + " has more specific child tags: " + deepestTag);

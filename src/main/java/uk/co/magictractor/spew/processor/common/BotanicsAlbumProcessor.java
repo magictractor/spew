@@ -29,7 +29,7 @@ public class BotanicsAlbumProcessor implements Processor<Photo, MutablePhoto, Ph
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BotanicsAlbumProcessor.class);
 
-    private static final TagType LOCATION_TAG_TYPE = TagType.valueOf("LOCATION");
+    private static final TagType LOCATION_TAG_TYPE = TagType.fetch("LOCATION");
     private static final Tag BOTANICS_TAG = Tag.fetchTag("RBGE");
 
     @Override

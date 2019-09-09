@@ -22,7 +22,7 @@ import uk.co.magictractor.spew.provider.twitter.TweetIterator.TweetIteratorBuild
 
 public class TweetProcessor implements SimpleProcessor<Tweet> {
 
-    private static final Collection<Tag> SUBJECT_TAGS = Tag.fetchTerminalTags(TagType.valueOf("SUBJECT"));
+    private static final Collection<Tag> SUBJECT_TAGS = Tag.fetchTerminalTags(TagType.fetch("SUBJECT"));
 
     private static final Comparator<ScoreAndTweet> DEFAULT_COMPARATOR = Comparator
             .comparing(ScoreAndTweet::getScore)

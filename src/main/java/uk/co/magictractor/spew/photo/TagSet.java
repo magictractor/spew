@@ -33,7 +33,7 @@ public class TagSet {
     }
 
     public Tag getDeepestTag(String tagTypeName) {
-        return getDeepestTag(TagType.valueOf(tagTypeName));
+        return getDeepestTag(TagType.fetch(tagTypeName));
     }
 
     // TODO! unknown tags will break this

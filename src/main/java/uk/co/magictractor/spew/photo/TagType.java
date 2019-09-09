@@ -13,16 +13,27 @@ public class TagType implements Comparable<TagType> {
 
     private static AtomicInteger nextOrder = new AtomicInteger();
 
+    static {
+        // TagTypes are initialised from resource files along with Tags
+        Tag.fetchTagIfPresent("something");
+    }
+
     private final String name;
     private final int order;
+    private final boolean optional;
 
-    private TagType(String name) {
+    private TagType(String name, Map<String, String> properties) {
         this.name = name;
         this.order = nextOrder.getAndIncrement();
+        this.optional = "true".equals(properties.get("optional"));
     }
 
     public String getName() {
         return name;
+    }
+
+    public boolean isOptional() {
+        return optional;
     }
 
     @Override
@@ -30,11 +41,19 @@ public class TagType implements Comparable<TagType> {
         return order - other.order;
     }
 
-    // TODO! change to fetch() and fetchOrCreate() - like Tag
-    public static TagType valueOf(String name) {
+    public static TagType fetch(String name) {
         TagType tagType = INSTANCES.get(name);
         if (tagType == null) {
-            tagType = new TagType(name);
+            throw new IllegalArgumentException(TagType.class.getSimpleName() + " with name '" + name + "' not found");
+        }
+
+        return tagType;
+    }
+
+    public static TagType fetchOrCreate(String name, Map<String, String> newInstanceProperties) {
+        TagType tagType = INSTANCES.get(name);
+        if (tagType == null) {
+            tagType = new TagType(name, newInstanceProperties);
             INSTANCES.put(name, tagType);
         }
 

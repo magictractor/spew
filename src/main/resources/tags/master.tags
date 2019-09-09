@@ -36,3 +36,7 @@ amphibian
 
 !LOCATION
 + location.tags
+
+# TODO! MODIFIER should be optional, but SUBJECT and LOCATION are mandatory (ie should not show a warning for this)
+!MODIFIER  [optional=true]
++ modifier.tags

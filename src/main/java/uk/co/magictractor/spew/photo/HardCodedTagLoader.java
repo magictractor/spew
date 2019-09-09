@@ -147,14 +147,14 @@ public class HardCodedTagLoader implements TagLoader {
     }
 
     private void init(String tagTypeName, String... tagNames) {
-        TagType tagType = TagType.valueOf(tagTypeName);
+        TagType tagType = TagType.fetch(tagTypeName);
         for (String tagName : tagNames) {
             init(tagType, tagName);
         }
     }
 
     private Tag init(String tagTypeName, String tagName) {
-        return init(TagType.valueOf(tagTypeName), tagName);
+        return init(TagType.fetch(tagTypeName), tagName);
     }
 
     private Tag init(TagType tagType, String tagName) {

@@ -24,8 +24,10 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayDeque;
+import java.util.Collections;
 import java.util.Deque;
 import java.util.Iterator;
+import java.util.Map;
 
 import com.google.common.base.Splitter;
 
@@ -78,22 +80,22 @@ public class IndentedFileTagLoader implements TagLoader {
             return;
         }
 
-        IndentAndRemainder indentAndRemainder = handleIndent(line);
-        String remainder = indentAndRemainder.remainder;
+        IndentAndValue indentAndValue = handleIndent(line);
+        String value = indentAndValue.value;
 
-        if (remainder.charAt(0) == '!') {
-            handleNewTagType(remainder.substring(1).trim());
+        if (value.charAt(0) == '!') {
+            handleNewTagType(value.substring(1).trim(), indentAndValue.properties);
         }
-        else if (remainder.charAt(0) == '+') {
-            handleOtherFile(remainder.substring(1).trim());
+        else if (value.charAt(0) == '+') {
+            handleOtherFile(value.substring(1).trim());
         }
         else {
-            handleChild(remainder, indentAndRemainder.indent);
+            handleChild(value, indentAndValue.indent);
         }
     }
 
-    private void handleNewTagType(String tagTypeName) {
-        tagType = TagType.valueOf(tagTypeName);
+    private void handleNewTagType(String tagTypeName, Map<String, String> properties) {
+        tagType = TagType.fetchOrCreate(tagTypeName, properties);
         tagsAndIndents.clear();
     }
 
@@ -148,8 +150,8 @@ public class IndentedFileTagLoader implements TagLoader {
         tagsAndIndents.push(new TagAndIndent(tag, indent));
     }
 
-    private IndentAndRemainder handleIndent(String line) {
-        IndentAndRemainder indentAndRemainder = parseIndent(line);
+    private IndentAndValue handleIndent(String line) {
+        IndentAndValue indentAndRemainder = parseIndent(line);
         int indent = indentAndRemainder.indent;
         for (int i = tagsAndIndents.size(); i > 0; i--) {
             if (tagsAndIndents.peek().indent >= indent) {
@@ -163,7 +165,7 @@ public class IndentedFileTagLoader implements TagLoader {
         return indentAndRemainder;
     }
 
-    private IndentAndRemainder parseIndent(String line) {
+    private IndentAndValue parseIndent(String line) {
         int i = 0;
         while (Character.isWhitespace(line.charAt(i))) {
             boolean isTab = (line.charAt(i) == '\t');
@@ -191,16 +193,27 @@ public class IndentedFileTagLoader implements TagLoader {
             indent--;
         }
 
-        return new IndentAndRemainder(indent, line.substring(i).trim());
+        return new IndentAndValue(indent, line.substring(i).trim());
     }
 
-    private static final class IndentAndRemainder {
+    private static final class IndentAndValue {
         private final int indent;
-        private final String remainder;
+        private final String value;
+        private final Map<String, String> properties;
 
-        IndentAndRemainder(int indent, String remainder) {
+        IndentAndValue(int indent, String remainder) {
             this.indent = indent;
-            this.remainder = remainder;
+            int propsStart = remainder.indexOf("[");
+            if (propsStart == -1) {
+                value = remainder;
+                properties = Collections.emptyMap();
+            }
+            else {
+                int propsEnd = remainder.indexOf("]", propsStart + 1);
+                String propsString = remainder.substring(propsStart + 1, propsEnd);
+                value = remainder.substring(0, propsStart).trim();
+                properties = Splitter.on(",").withKeyValueSeparator("=").split(propsString);
+            }
         }
     }
 

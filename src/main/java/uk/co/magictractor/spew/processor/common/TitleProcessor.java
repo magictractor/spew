@@ -24,7 +24,7 @@ public class TitleProcessor implements Processor<Photo, MutablePhoto, PhotoProce
 
     public TitleProcessor(String titleTagTypeName) {
         // TODO! if there's no tag with this name throw an error rather than creating it (or skip this processor)
-        this.titleTagType = TagType.valueOf(titleTagTypeName);
+        this.titleTagType = TagType.fetch(titleTagTypeName);
     }
 
     /**
