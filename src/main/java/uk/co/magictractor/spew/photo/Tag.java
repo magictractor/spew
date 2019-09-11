@@ -114,7 +114,8 @@ public class Tag {
         StringBuilder canonicalNameBuilder = new StringBuilder();
         for (int i = 0; i < name.length(); i++) {
             char c = name.charAt(i);
-            if (Character.isLetter(c)) {
+            // Allow machine tag style like "irecord:id=1234"
+            if (Character.isLetterOrDigit(c) || c == ':' || c == '=') {
                 canonicalNameBuilder.append(Character.toLowerCase(c));
             }
         }
