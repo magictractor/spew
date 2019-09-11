@@ -84,8 +84,8 @@ public class HardCodedTagLoader implements TagLoader {
         Tag wagtail = init(bird, "Wagtail");
         init(wagtail, "Grey wagtail", "Pied wagtail");
 
-        Tag warbler = init(bird, "Warbler");
-        init(warbler, "Chiffchaff", "Willow warbler");
+        // Tag warbler = init(bird, "Warbler");
+        // init(warbler, "Chiffchaff", "Willow warbler");
 
         // also a warbler
         Tag whiteThroat = init(bird, "White throat");

@@ -23,7 +23,7 @@ gull
 kestrel
 kingfisher = Alcedo atthis
 linnet
-long-tailed tit
+long-tailed tit = Aegithalos caudatus
 mallard
 moorhen
 nuthatch = Sitta europaea
@@ -50,6 +50,8 @@ thrush
 treecreeper
 tufted duck
 water rail
+warbler
+  chiffchaff = Phylloscopus collybita
 waxwing
 woodpecker
   great spotted woodpecker = Dendrocopos major
