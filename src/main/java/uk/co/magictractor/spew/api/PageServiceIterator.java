@@ -23,6 +23,7 @@ public abstract class PageServiceIterator<E> extends AbstractIterator<E> {
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
     private SpewApplication<?> application;
+    private List<Consumer<OutgoingHttpRequest>> beforeSendConsumers;
     private Class<E> elementType;
 
     /**
@@ -90,12 +91,24 @@ public abstract class PageServiceIterator<E> extends AbstractIterator<E> {
 
     protected abstract List<? extends E> nextPage();
 
-    //    protected SpewConnection getConnection() {
-    //        return connection;
-    //    }
+    protected OutgoingHttpRequest createGetRequest(String url) {
+        return createRequest("GET", url);
+    }
 
-    protected SpewApplication<?> getApplication() {
-        return application;
+    protected OutgoingHttpRequest createPostRequest(String url) {
+        return createRequest("POST", url);
+    }
+
+    protected OutgoingHttpRequest createRequest(String httpMethod, String url) {
+        OutgoingHttpRequest request = application.createRequest(httpMethod, url);
+        request.beforeSend(r -> beforeSend(r));
+        return request;
+    }
+
+    private void beforeSend(OutgoingHttpRequest request) {
+        if (beforeSendConsumers != null) {
+            beforeSendConsumers.forEach(rc -> rc.accept(request));
+        }
     }
 
     /**
@@ -147,6 +160,25 @@ public abstract class PageServiceIterator<E> extends AbstractIterator<E> {
                 }
                 clientSideFilters.add(filter);
             }
+            return (B) this;
+        }
+
+        /**
+         * <p>
+         * A hook which permits body and query parameter values to be set on
+         * requests from the iterator which are not set by the iterator, or to
+         * override values set by the iterator.
+         * </p>
+         * <p>
+         * This allows iterator implementations to be minimal while allowing
+         * implementors flexibility to use all options provided by the API.
+         * </p>
+         */
+        public B withBeforeSendConsumer(Consumer<OutgoingHttpRequest> beforeSendConsumer) {
+            if (iter.beforeSendConsumers == null) {
+                iter.beforeSendConsumers = new ArrayList<>();
+            }
+            iter.beforeSendConsumers.add(beforeSendConsumer);
             return (B) this;
         }
 

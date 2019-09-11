@@ -7,6 +7,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 import com.google.common.base.MoreObjects.ToStringHelper;
 
@@ -30,6 +31,7 @@ public final class OutgoingHttpRequest implements SpewHttpRequest {
     // TODO! better to have this set explicitly and only once
     private String contentType = ContentTypeUtil.JSON_MIME_TYPES.get(0);
     private List<SpewHeader> headers = new ArrayList<>();
+    private List<Consumer<OutgoingHttpRequest>> beforeSendConsumers;
 
     private boolean sent;
 
@@ -204,11 +206,22 @@ public final class OutgoingHttpRequest implements SpewHttpRequest {
         return parsedResponse;
     }
 
+    public void beforeSend(Consumer<OutgoingHttpRequest> beforeSendConsumer) {
+        if (beforeSendConsumers == null) {
+            beforeSendConsumers = new ArrayList<>();
+        }
+        beforeSendConsumers.add(beforeSendConsumer);
+    }
+
     /**
      * Create body from body params and tidy up headers before request is sent.
      */
     // TODO! not public - auth requests needing prepped too - maybe infer it?
     public void prepareToSend() {
+        if (beforeSendConsumers != null) {
+            beforeSendConsumers.forEach(consumer -> consumer.accept(this));
+        }
+
         // TODO! not just POST? PUT too
         if ("POST".equals(getHttpMethod())) {
             // setDoOutput(true);

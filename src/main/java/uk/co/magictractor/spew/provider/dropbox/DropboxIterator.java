@@ -41,8 +41,7 @@ public class DropboxIterator<E> extends PageTokenServiceIterator<E> {
         }
 
         // https://www.dropbox.com/developers/documentation/http/documentation#sharing-list_folders
-        OutgoingHttpRequest request = getApplication()
-                .createPostRequest(url);
+        OutgoingHttpRequest request = createPostRequest(url);
 
         if (pageToken != null) {
             request.setBodyParam("cursor", pageToken);

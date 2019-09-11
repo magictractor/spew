@@ -22,7 +22,7 @@ public class ImageBamPhotoIterator<E> extends SingleCallServiceIterator<E> {
 
     @Override
     protected List<E> fetchPage() {
-        OutgoingHttpRequest request = getApplication().createPostRequest(ImageBam.REST_ENDPOINT + "get_gallery_images");
+        OutgoingHttpRequest request = createPostRequest(ImageBam.REST_ENDPOINT + "get_gallery_images");
 
         // TODO! set gallery id
 

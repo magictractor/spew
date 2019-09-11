@@ -23,7 +23,7 @@ public class FlickrPhotosetIterator<E> extends PageCountServiceIterator<E> {
 
     @Override
     protected List<E> fetchPage(int pageNumber) {
-        OutgoingHttpRequest request = getApplication().createPostRequest(Flickr.REST_ENDPOINT);
+        OutgoingHttpRequest request = createPostRequest(Flickr.REST_ENDPOINT);
 
         request.setQueryStringParam("method", "flickr.photosets.getList");
 

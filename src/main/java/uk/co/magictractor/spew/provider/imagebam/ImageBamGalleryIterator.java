@@ -17,7 +17,7 @@ public class ImageBamGalleryIterator<E> extends SingleCallServiceIterator<E> {
 
     @Override
     protected List<E> fetchPage() {
-        OutgoingHttpRequest request = getApplication().createGetRequest(ImageBam.REST_ENDPOINT + "get_galleries");
+        OutgoingHttpRequest request = createGetRequest(ImageBam.REST_ENDPOINT + "get_galleries");
 
         SpewParsedResponse response = request.sendRequest();
 

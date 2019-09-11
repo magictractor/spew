@@ -23,8 +23,7 @@ public class GitHubIterator<E> extends PageCountServiceIterator<E> {
 
     @Override
     protected List<E> fetchPage(int pageNumber) {
-        OutgoingHttpRequest request = getApplication()
-                .createGetRequest("https://api.github.com/user/repos");
+        OutgoingHttpRequest request = createGetRequest("https://api.github.com/user/repos");
 
         request.setQueryStringParam("page", pageNumber);
         // Default 30, max 100

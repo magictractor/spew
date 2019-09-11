@@ -23,8 +23,7 @@ public class GoogleMediaItemIterator<E> extends GoogleServiceIterator<E> {
 
     @Override
     protected OutgoingHttpRequest createPageRequest() {
-        OutgoingHttpRequest request = getApplication()
-                .createPostRequest("https://photoslibrary.googleapis.com/v1/mediaItems:search");
+        OutgoingHttpRequest request = createPostRequest("https://photoslibrary.googleapis.com/v1/mediaItems:search");
 
         if (dateTakenRange != null) {
             request.setBodyParam("filters", new GoogleFilters(dateTakenRange));

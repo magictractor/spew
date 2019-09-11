@@ -22,7 +22,7 @@ public class GoogleSharedAlbumsIterator<E> extends GoogleServiceIterator<E> {
         // return new OAuthRequest("https://photoslibrary.googleapis.com/v1/albums");
 
         // https://developers.google.com/photos/library/reference/rest/v1/sharedAlbums/list
-        return getApplication().createGetRequest("https://photoslibrary.googleapis.com/v1/sharedAlbums");
+        return createGetRequest("https://photoslibrary.googleapis.com/v1/sharedAlbums");
     }
 
     @Override
