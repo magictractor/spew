@@ -114,8 +114,9 @@ public class Tag {
         StringBuilder canonicalNameBuilder = new StringBuilder();
         for (int i = 0; i < name.length(); i++) {
             char c = name.charAt(i);
-            // Allow machine tag style like "irecord:id=1234"
-            if (Character.isLetterOrDigit(c) || c == ':' || c == '=') {
+            // Strip whitespace and hyphens
+            // Punctuation permitted for machine tag style like "irecord:id=1234"
+            if (!Character.isWhitespace(c) && c != '-') {
                 canonicalNameBuilder.append(Character.toLowerCase(c));
             }
         }
@@ -136,24 +137,17 @@ public class Tag {
     }
 
     public static Tag fetchOrCreateTag(String tagName) {
-        return fetchOrCreateTagCanonical(canonicalName(tagName));
-    }
-
-    public static Tag fetchOrCreateTagCanonical(String canonicalTagName) {
-        if (!TAG_MAP.containsKey(canonicalTagName)) {
-            Tag tag = new Tag(null, null, canonicalTagName, 0);
-            return tag;
+        String canonicalTagName = canonicalName(tagName);
+        Tag tag = TAG_MAP.get(canonicalTagName);
+        if (tag == null) {
+            tag = new Tag(null, null, tagName, 0);
+            // Do not add to the map, that was done in the constructor.
         }
-        return TAG_MAP.get(canonicalTagName);
+        return tag;
     }
 
     public static Tag fetchTag(String tagName) {
-        return fetchTagCanonical(canonicalName(tagName));
-    }
-
-    // For use with Flickr or other service providers which use the same
-    // TODO! perhaps have SPI for tag canonical form?
-    public static Tag fetchTagCanonical(String canonicalTagName) {
+        String canonicalTagName = canonicalName(tagName);
         if (!TAG_MAP.containsKey(canonicalTagName)) {
             throw new IllegalArgumentException("No tag has compact name '" + canonicalTagName + "'");
         }

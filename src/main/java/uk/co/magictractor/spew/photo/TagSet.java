@@ -1,20 +1,30 @@
 package uk.co.magictractor.spew.photo;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
-import java.util.Set;
 
+import com.google.common.base.MoreObjects;
+
+/**
+ * A TagSet contains the Tags associated with a Photo. A Tag may only appear in
+ * a TagSet once (like a java.util.Set), but the order of Tags in a TagSet is
+ * considered when checking for equality.
+ */
+// TODO! rename since some behaviour is not like a java.util.Set.
 public class TagSet {
 
-    private final Set<Tag> tags;
+    // add() has been modified to behave like a Set, but TagSets with different orders are not equal
+    private final List<Tag> tags = new ArrayList<>();
+    private final List<Tag> immutableTags = Collections.unmodifiableList(tags);
 
     /**
      * @param tagString space separated tags
      */
     // TODO! Flickr specific?
     public TagSet(String tagString) {
-        tags = new HashSet<>();
 
         for (String compactTagName : tagString.split(" ")) {
 
@@ -24,12 +34,12 @@ public class TagSet {
                 throw new IllegalStateException();
             }
 
-            tags.add(tag);
+            addTag(tag);
         }
     }
 
     public TagSet(TagSet cloneTagSet) {
-        tags = new HashSet<>(cloneTagSet.tags);
+        tags.addAll(cloneTagSet.tags);
     }
 
     public Tag getDeepestTag(String tagTypeName) {
@@ -48,34 +58,10 @@ public class TagSet {
         return result;
     }
 
-    // TODO! this is Flickr specific
-    public String getQuotedTagNamesWithAliasesAndParents() {
-        boolean first = true;
-        StringBuilder compactTagNamesBuilder = new StringBuilder();
-        for (Tag tag : getOrderedTagsWithParents()) {
-            if (first) {
-                first = false;
-            }
-            else {
-                compactTagNamesBuilder.append(' ');
-            }
-
-            compactTagNamesBuilder.append('"');
-            compactTagNamesBuilder.append(tag.getTagName());
-            compactTagNamesBuilder.append('"');
-
-            for (String alias : tag.getAliases()) {
-                compactTagNamesBuilder.append(" \"");
-                compactTagNamesBuilder.append(alias);
-                compactTagNamesBuilder.append('"');
-            }
-        }
-
-        return compactTagNamesBuilder.toString();
-    }
-
     public void addTag(Tag tag) {
-        tags.add(tag);
+        if (!tags.contains(tag)) {
+            tags.add(tag);
+        }
     }
 
     public void removeTag(Tag tag) {
@@ -85,26 +71,12 @@ public class TagSet {
         }
     }
 
-    // TODO! order? unmodifiable?
-    public Set<Tag> getTags() {
-        return tags;
+    public Collection<Tag> getTags() {
+        return immutableTags;
     }
 
-    private List<Tag> getOrderedTagsWithParents() {
-        Set<Tag> tagsWithParents = new HashSet<>(tags);
-
-        for (Tag tag : tags) {
-            Tag parentTag = tag.getParent();
-            while (parentTag != null) {
-                tagsWithParents.add(parentTag);
-                parentTag = parentTag.getParent();
-            }
-        }
-
-        List<Tag> orderedTagsWithParents = new ArrayList<>(tagsWithParents);
-        orderedTagsWithParents.sort(TagComparator.ASCENDING);
-
-        return orderedTagsWithParents;
+    public void sort(Comparator<Tag> comparator) {
+        tags.sort(comparator);
     }
 
     @Override
@@ -122,7 +94,6 @@ public class TagSet {
 
     @Override
     public String toString() {
-        // TODO!
-        return "Tags [tags=" + tags + "]";
+        return MoreObjects.toStringHelper(this).add("tags", tags).toString();
     }
 }

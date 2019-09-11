@@ -24,6 +24,8 @@ public class FlickrPhoto implements Photo {
     // public String tags;
     private TagSet tags;
     // these are not Flickr's auto tags, they are tags using "x:y=z" syntax
+    // It seems that any tags here are also included in tags. They may be set with regular tags.
+    // So might be able to remove this field?
     private TagSet machineTagSet;
     private boolean ispublic;
     private boolean isfriend;
@@ -68,6 +70,10 @@ public class FlickrPhoto implements Photo {
         return null;
     }
 
+    /*
+     * Note that machine tags (a:b=c) are included here. The API includes
+     * machine tags in the "tags" fields as well as the "machine_tags" field.
+     */
     @Override
     public TagSet getTagSet() {
         return tags;
@@ -83,6 +89,7 @@ public class FlickrPhoto implements Photo {
         return datetaken == null ? null : datetaken.toInstant(ZoneOffset.UTC);
     }
 
+    @Override
     public Instant getDateTimeUpload() {
         return dateupload;
     }

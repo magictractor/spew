@@ -16,6 +16,8 @@ import uk.co.magictractor.spew.example.flickr.pojo.FlickrPhoto;
 import uk.co.magictractor.spew.example.flickr.pojo.FlickrPhotoset;
 import uk.co.magictractor.spew.photo.Photo;
 import uk.co.magictractor.spew.photo.PhotoComparator;
+import uk.co.magictractor.spew.photo.Tag;
+import uk.co.magictractor.spew.photo.TagSet;
 import uk.co.magictractor.spew.photo.filter.DateTakenPhotoFilter;
 import uk.co.magictractor.spew.photo.local.dates.DateRange;
 import uk.co.magictractor.spew.processor.common.MutableAlbum;
@@ -82,10 +84,35 @@ public class FlickrPhotoUpdateProcessor extends PhotoUpdateProcessor {
         request.setQueryStringParam("method", "flickr.photos.setTags");
 
         request.setQueryStringParam("photo_id", photo.getServiceProviderId());
-        // TODO! refactor this method - a processor has added the parents already
-        request.setQueryStringParam("tags", photo.getTagSet().getQuotedTagNamesWithAliasesAndParents());
+
+        request.setQueryStringParam("tags", createTagString(photo.getTagSet()));
 
         request.sendRequest();
+    }
+
+    public String createTagString(TagSet tagSet) {
+        boolean first = true;
+        StringBuilder compactTagNamesBuilder = new StringBuilder();
+        for (Tag tag : tagSet.getTags()) {
+            if (first) {
+                first = false;
+            }
+            else {
+                compactTagNamesBuilder.append(' ');
+            }
+
+            compactTagNamesBuilder.append('"');
+            compactTagNamesBuilder.append(tag.getTagName());
+            compactTagNamesBuilder.append('"');
+
+            for (String alias : tag.getAliases()) {
+                compactTagNamesBuilder.append(" \"");
+                compactTagNamesBuilder.append(alias);
+                compactTagNamesBuilder.append('"');
+            }
+        }
+
+        return compactTagNamesBuilder.toString();
     }
 
     @Override
@@ -210,7 +237,7 @@ public class FlickrPhotoUpdateProcessor extends PhotoUpdateProcessor {
     public static void main(String[] args) {
         PhotoTidyProcessorChain processorChain = new PhotoTidyProcessorChain(
             new FlickrPhotoUpdateProcessor(new MyFlickrApp()));
-        LocalDate since = LocalDate.now().minusMonths(1).withDayOfMonth(1);
+        LocalDate since = LocalDate.now().minusMonths(/* 1 */0).withDayOfMonth(1);
         Iterator<FlickrPhoto> iterator = new FlickrPhotoIteratorBuilder<>(new MyFlickrApp(), FlickrPhoto.class)
                 .withFilter(new DateTakenPhotoFilter(DateRange.uptoToday(since)))
                 .build();

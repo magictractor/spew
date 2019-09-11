@@ -25,6 +25,18 @@ public interface Photo {
 
     String getDescription();
 
+    /**
+     * <p>
+     * Some photo sites do not have tags, but they could be mimicked by using a
+     * specific syntax in a description or comment, such as
+     * </p>
+     * 
+     * <pre>
+     * keywords: tag1, tag2, tag3
+     * </pre>
+     *
+     * @return
+     */
     TagSet getTagSet();
 
     Instant getDateTimeTaken();

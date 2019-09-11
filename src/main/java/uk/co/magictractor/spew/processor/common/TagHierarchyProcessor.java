@@ -2,13 +2,19 @@ package uk.co.magictractor.spew.processor.common;
 
 import uk.co.magictractor.spew.photo.Photo;
 import uk.co.magictractor.spew.photo.Tag;
+import uk.co.magictractor.spew.photo.TagComparator;
 import uk.co.magictractor.spew.photo.TagSet;
 import uk.co.magictractor.spew.photo.TagType;
 import uk.co.magictractor.spew.processor.Processor;
 
 /**
+ * <p>
  * Ensure that parent tags are included too. For example for "common hawker"
  * ensure "dragonfly" and "odonata" tags are included.
+ * </p>
+ * <p>
+ * Also ensure tags are correctly ordered.
+ * </p>
  */
 public class TagHierarchyProcessor implements Processor<Photo, MutablePhoto, PhotoProcessorContext> {
 
@@ -22,6 +28,8 @@ public class TagHierarchyProcessor implements Processor<Photo, MutablePhoto, Pho
         for (TagType tagType : TagType.values()) {
             addTagHierarchy(tagType, tagSet);
         }
+
+        tagSet.sort(TagComparator.ASCENDING);
     }
 
     private void addTagHierarchy(TagType tagType, TagSet tagSet) {
