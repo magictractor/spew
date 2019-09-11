@@ -27,7 +27,7 @@ public class HttpMessageUtilTest {
     public void testAsHeaderString() {
         long milli = 1567020003111L;
         Instant instant = Instant.ofEpochMilli(milli);
-        assertThat(HttpMessageUtil.asHeaderString(instant)).isEqualTo("Wed, 28 Aug 2019 19:20:03 UTC");
+        assertThat(HttpMessageUtil.asHeaderString(instant)).isEqualTo("Wed, 28 Aug 2019 19:20:03 GMT");
     }
 
 }
