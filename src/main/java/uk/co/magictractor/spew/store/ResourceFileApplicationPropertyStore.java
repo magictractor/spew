@@ -23,10 +23,10 @@ import uk.co.magictractor.spew.api.SpewApplication;
 public class ResourceFileApplicationPropertyStore
         implements ApplicationPropertyStore {
 
-    private Map<SpewApplication, ResourceFileProperties> propertiesMap = new HashMap<>();
+    private Map<SpewApplication<?>, ResourceFileProperties> propertiesMap = new HashMap<>();
 
     @Override
-    public String getProperty(SpewApplication application, String propertyName) {
+    public String getProperty(SpewApplication<?> application, String propertyName) {
         ResourceFileProperties properties = propertiesMap.computeIfAbsent(application,
             app -> new ResourceFileProperties(application));
         return properties.getProperty(propertyName);

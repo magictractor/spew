@@ -39,7 +39,7 @@ public class LocalServerAuthorizationHandler extends AbstractAuthorizationHandle
     }
 
     @Override
-    public void preOpenAuthorizationInBrowser(SpewApplication application) {
+    public void preOpenAuthorizationInBrowser(SpewApplication<?> application) {
         if (!HasCallbackServer.class.isInstance(application)) {
             throw new IllegalArgumentException(
                 "Application should implement HasCallbackServer if it can have authorization callbacks");
@@ -62,7 +62,7 @@ public class LocalServerAuthorizationHandler extends AbstractAuthorizationHandle
     }
 
     @Override
-    public void postOpenAuthorizationInBrowser(SpewApplication application) {
+    public void postOpenAuthorizationInBrowser(SpewApplication<?> application) {
         // Wait until the server shuts down, hopefully after it has served a successful verification page.
         // TODO! how to ensure the server gets shutdown... maybe add postValidation() too
         server.join();

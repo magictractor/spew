@@ -146,13 +146,6 @@ public class HardCodedTagLoader implements TagLoader {
         init(insect, "Slug");
     }
 
-    private void init(String tagTypeName, String... tagNames) {
-        TagType tagType = TagType.fetch(tagTypeName);
-        for (String tagName : tagNames) {
-            init(tagType, tagName);
-        }
-    }
-
     private Tag init(String tagTypeName, String tagName) {
         return init(TagType.fetch(tagTypeName), tagName);
     }

@@ -26,10 +26,10 @@ import uk.co.magictractor.spew.api.connection.SpewConnectionFactory;
 public class SpringSocialConnectionFactory implements SpewConnectionFactory {
 
     @Override
-    public SpewConnection createConnection(SpewApplication application) {
+    public SpewConnection createConnection(SpewApplication<?> application) {
         // TODO OAuth2
         // TODO! push some code up
-        return new SpringSocialOAuth1Connection((SpewOAuth1Application) application);
+        return new SpringSocialOAuth1Connection((SpewOAuth1Application<?>) application);
     }
 
 }

@@ -42,7 +42,7 @@ import uk.co.magictractor.spew.util.spi.SPIUtil;
 // https://docs.spring.io/spring-social/docs/current-SNAPSHOT/reference/htmlsingle/
 public class SpringSocialOAuth1Connection implements SpewConnection {
 
-    private final SpewOAuth1Application application;
+    private final SpewOAuth1Application<?> application;
 
     private EditableProperty userToken;
     private EditableProperty userSecret;
@@ -54,7 +54,7 @@ public class SpringSocialOAuth1Connection implements SpewConnection {
      * {@link SpringSocialConnectionFactory#createConnection}, usually
      * indirectly via OAuthConnectionFactory.
      */
-    /* default */ SpringSocialOAuth1Connection(SpewOAuth1Application application) {
+    /* default */ SpringSocialOAuth1Connection(SpewOAuth1Application<?> application) {
         this.application = application;
 
         SpewOAuth1ConnectionFactory connectionFactory = new SpewOAuth1ConnectionFactory(application);

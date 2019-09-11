@@ -58,7 +58,7 @@ public class TweetIterator<E> extends PageTokenServiceIterator<E> {
     public static class TweetIteratorBuilder<E>
             extends PageTokenServiceIteratorBuilder<E, TweetIterator<E>, TweetIteratorBuilder<E>> {
 
-        public TweetIteratorBuilder(SpewApplication application, Class<E> elementType) {
+        public TweetIteratorBuilder(SpewApplication<?> application, Class<E> elementType) {
             super(application, elementType, new TweetIterator<>());
         }
 

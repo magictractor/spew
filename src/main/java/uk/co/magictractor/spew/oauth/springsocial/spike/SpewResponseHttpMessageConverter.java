@@ -33,9 +33,9 @@ import uk.co.magictractor.spew.api.SpewHttpResponse;
 // TODO! make consistent with whatever Boa code does
 public class SpewResponseHttpMessageConverter implements HttpMessageConverter<SpewHttpResponse> {
 
-    private final SpewApplication application;
+    private final SpewApplication<?> application;
 
-    public SpewResponseHttpMessageConverter(SpewApplication application) {
+    public SpewResponseHttpMessageConverter(SpewApplication<?> application) {
         this.application = application;
     }
 

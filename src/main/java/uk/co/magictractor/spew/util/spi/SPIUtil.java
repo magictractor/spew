@@ -188,9 +188,10 @@ public final class SPIUtil {
         return ExceptionUtil.call(() -> loadSystemPropertyImplementation0(implementationClassName));
     }
 
+    @SuppressWarnings("unchecked")
     private static <T> T loadSystemPropertyImplementation0(String implementationClassName)
             throws ReflectiveOperationException {
-        return (T) Class.forName(implementationClassName).newInstance();
+        return (T) Class.forName(implementationClassName).getDeclaredConstructor().newInstance();
     }
 
     @SuppressWarnings("unchecked")

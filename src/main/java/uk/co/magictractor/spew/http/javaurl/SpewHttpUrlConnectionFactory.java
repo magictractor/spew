@@ -22,7 +22,7 @@ import uk.co.magictractor.spew.api.connection.SpewConnectionFactory;
 public class SpewHttpUrlConnectionFactory implements SpewConnectionFactory {
 
     @Override
-    public SpewConnection createConnection(SpewApplication application) {
+    public SpewConnection createConnection(SpewApplication<?> application) {
         return null;
     }
 

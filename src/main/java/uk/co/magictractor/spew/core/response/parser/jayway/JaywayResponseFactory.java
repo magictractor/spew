@@ -27,7 +27,7 @@ import uk.co.magictractor.spew.util.ContentTypeUtil;
 public class JaywayResponseFactory implements SpewParsedResponseFactory {
 
     @Override
-    public SpewParsedResponse instanceFor(SpewApplication application, SpewHttpResponse response) {
+    public SpewParsedResponse instanceFor(SpewApplication<?> application, SpewHttpResponse response) {
         if (ContentTypeUtil.isJson(application.getContentType(response))) {
             return new JaywayResponse(application, response);
         }

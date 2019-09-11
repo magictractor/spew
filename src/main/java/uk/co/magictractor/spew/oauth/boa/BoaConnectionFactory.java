@@ -27,12 +27,12 @@ import uk.co.magictractor.spew.api.connection.SpewConnectionFactory;
 public class BoaConnectionFactory implements SpewConnectionFactory {
 
     @Override
-    public SpewConnection createConnection(SpewApplication application) {
+    public SpewConnection createConnection(SpewApplication<?> application) {
         if (application instanceof SpewOAuth1Application) {
-            return new BoaOAuth1Connection<>((SpewOAuth1Application) application);
+            return new BoaOAuth1Connection<>((SpewOAuth1Application<?>) application);
         }
         else if (application instanceof SpewOAuth2Application) {
-            return new BoaOAuth2Connection<>((SpewOAuth2Application) application);
+            return new BoaOAuth2Connection<>((SpewOAuth2Application<?>) application);
         }
         else {
             return null;

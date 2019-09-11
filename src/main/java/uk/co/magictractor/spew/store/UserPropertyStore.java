@@ -31,6 +31,6 @@ public interface UserPropertyStore {
      * application every time.
      * </p>
      */
-    EditableProperty getProperty(SpewApplication application, String propertyName);
+    EditableProperty getProperty(SpewApplication<?> application, String propertyName);
 
 }

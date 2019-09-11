@@ -28,7 +28,7 @@ public class UserPreferencePropertyStore implements UserPropertyStore {
     private final Map<String, PreferencesProperty> propertyMap = new HashMap<>();
 
     @Override
-    public EditableProperty getProperty(SpewApplication application, String propertyName) {
+    public EditableProperty getProperty(SpewApplication<?> application, String propertyName) {
         String key = application.getClass().getName() + ":" + propertyName;
         return propertyMap.computeIfAbsent(key, k -> new PreferencesProperty(application, propertyName));
     }

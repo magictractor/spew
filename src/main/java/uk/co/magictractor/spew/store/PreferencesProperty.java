@@ -19,7 +19,7 @@ public class PreferencesProperty implements EditableProperty {
      * SPIUtil.
      * </p>
      */
-    /* default */ PreferencesProperty(SpewApplication application, String key) {
+    /* default */ PreferencesProperty(SpewApplication<?> application, String key) {
         // Hmm. regedit shows slashes before capital letters
         // See
         // https://stackoverflow.com/questions/23001152/in-java-why-does-windowspreferences-use-slashes-for-capital-letters

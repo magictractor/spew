@@ -31,6 +31,6 @@ public interface SpewParsedResponseFactory {
      *        be found
      * @return flag indicating whether this parser
      */
-    SpewParsedResponse instanceFor(SpewApplication application, SpewHttpResponse response);
+    SpewParsedResponse instanceFor(SpewApplication<?> application, SpewHttpResponse response);
 
 }

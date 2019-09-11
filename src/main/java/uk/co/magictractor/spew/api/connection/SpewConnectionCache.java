@@ -13,6 +13,7 @@ import uk.co.magictractor.spew.util.spi.SPIUtil;
 
 public class SpewConnectionCache {
 
+    @SuppressWarnings("rawtypes")
     private static final Map<Class<? extends SpewApplication>, SpewConnection> connections = new HashMap<>();
 
     public static SpewConnection getConnection(String connectionId) {
@@ -23,7 +24,8 @@ public class SpewConnectionCache {
                 .orElseThrow(() -> new IllegalArgumentException("Connection not found"));
     }
 
-    public static SpewConnection getOrCreateConnection(Class<? extends SpewApplication> applicationClass) {
+    public static SpewConnection getOrCreateConnection(
+            @SuppressWarnings("rawtypes") Class<? extends SpewApplication> applicationClass) {
         SpewConnection connection = connections.get(applicationClass);
         if (connection == null) {
             synchronized (applicationClass) {
@@ -38,9 +40,11 @@ public class SpewConnectionCache {
         return connection;
     }
 
-    private static SpewConnection initConnection(Class<? extends SpewApplication> applicationClass) {
+    private static SpewConnection initConnection(
+            @SuppressWarnings("rawtypes") Class<? extends SpewApplication> applicationClass) {
         checkAuthType(applicationClass);
-        SpewApplication<?> application = ExceptionUtil.call(() -> applicationClass.newInstance());
+        SpewApplication<?> application = ExceptionUtil
+                .call(() -> applicationClass.getDeclaredConstructor().newInstance());
         return SPIUtil.firstNotNull(SpewConnectionFactory.class, factory -> factory.createConnection(application))
                 .get();
         // TODO! wire in transport here??
@@ -51,7 +55,7 @@ public class SpewConnectionCache {
     /*
      * @param applicationClass
      */
-    private static void checkAuthType(Class<? extends SpewApplication> applicationClass) {
+    private static void checkAuthType(@SuppressWarnings("rawtypes") Class<? extends SpewApplication> applicationClass) {
         List<String> authTypes = new ArrayList<>();
         Class<?>[] ifaces = applicationClass.getInterfaces();
         for (Class<?> iface : ifaces) {

@@ -28,7 +28,7 @@ public class SpewApacheHttpClientConnectionFactory implements SpewConnectionFact
     }
 
     @Override
-    public SpewConnection createConnection(SpewApplication application) {
+    public SpewConnection createConnection(SpewApplication<?> application) {
         return null;
     }
 

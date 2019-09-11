@@ -19,6 +19,6 @@ import uk.co.magictractor.spew.api.SpewApplication;
 
 public interface ApplicationPropertyStore {
 
-    String getProperty(SpewApplication application, String propertyName);
+    String getProperty(SpewApplication<?> application, String propertyName);
 
 }

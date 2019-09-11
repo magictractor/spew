@@ -38,7 +38,7 @@ public class PasteVerificationCodeHandler extends AbstractAuthorizationHandler {
     }
 
     @Override
-    public void postOpenAuthorizationInBrowser(SpewApplication application) {
+    public void postOpenAuthorizationInBrowser(SpewApplication<?> application) {
         IOUtil.acceptThenClose(new Scanner(System.in), this::verify);
     }
 

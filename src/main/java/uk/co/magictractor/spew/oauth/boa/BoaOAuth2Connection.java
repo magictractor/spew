@@ -78,7 +78,7 @@ public class BoaOAuth2Connection<SP extends SpewOAuth2ServiceProvider>
 
     // https://developers.google.com/photos/library/guides/authentication-authorization
     private void authorize() {
-        SpewOAuth2Application application = getApplication();
+        SpewOAuth2Application<?> application = getApplication();
 
         OutgoingHttpRequest request = application.createGetRequest(getServiceProvider().getAuthorizationUri());
 
@@ -130,7 +130,7 @@ public class BoaOAuth2Connection<SP extends SpewOAuth2ServiceProvider>
     }
 
     private void fetchAccessAndRefreshToken(String code, String callback) {
-        SpewOAuth2Application application = getApplication();
+        SpewOAuth2Application<?> application = getApplication();
 
         // ah! needed to be POST else 404 (Google)
         OutgoingHttpRequest request = application.createPostRequest(getServiceProvider().getTokenUri());
