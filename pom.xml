@@ -126,6 +126,13 @@
 		</dependency>
 
 		<!-- test dependencies -->
+		<!-- Ah! not picked up in Eclipse - perhaps because spew is a Gradle project? -->
+		<!-- <dependency>
+			<groupId>uk.co.magictractor</groupId>
+			<artifactId>jura</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+			<scope>test</scope>
+		</dependency> -->
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
 			<artifactId>junit-jupiter-api</artifactId>
