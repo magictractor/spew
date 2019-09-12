@@ -1,0 +1,9 @@
+//rootProject.buildFileName = "${rootProject.name}.gradle.kts"
+rootProject.buildFileName = "${rootProject.name}.gradle"
+
+// Perhaps use a marker file as suggested in
+// https://proandroiddev.com/saying-goodbye-to-snapshots-with-gradles-composite-builds-bc98751392f6
+// Also see https://github.com/gradle/gradle/issues/1792
+//if( file(".marker").exists() ) {
+    includeBuild("../jura")
+//}

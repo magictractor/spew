@@ -1,0 +1,101 @@
+//version = "0.0.1-SNAPSHOT"
+//group = "uk.co.magictractor"
+
+plugins {
+    id "java-library"
+
+//    `java-library`
+//    `jacoco`
+//    
+//    // TODO! restore checkstyle plugin with config copied from JUnit5
+//    //`checkstyle`
+//    
+//    // See https://docs.gradle.org/current/userguide/publishing_maven.html
+//    `maven-publish`
+}
+
+repositories {
+    mavenCentral()
+    // For Spring Social 2.0 milstones, remove this once it is released
+    //maven(url("https://repo.spring.io/milestone"))
+    maven { url "https://repo.spring.io/libs-milestone" }
+}
+
+dependencies {
+    implementation("org.slf4j:slf4j-api:1.7.26")
+    
+    // For JSON parsing
+    implementation("com.jayway.jsonpath:json-path:2.3.0")
+    implementation("com.google.code.gson:gson:2.8.5")
+    
+    // Provide one of these if a transort only (no auth) connection is required
+    // Boa authorisation is layered on top of a transport only connection
+    // Spring social dynamically determines the transport depending on available classes.
+    compileOnly("org.apache.httpcomponents:httpclient:4.5.9")
+
+    // Provide one of these to use a third-party OAuth implementation (not Boa)
+    compileOnly("org.springframework.social:spring-social-core:2.0.0.M4")
+            
+    // For reading metadata from local photo files
+    implementation("com.drewnoakes:metadata-extractor:2.11.0")
+    
+    // Provide one of these if using a callback server
+    compileOnly("io.netty:netty-all:4.1.38.Final")
+    compileOnly("io.undertow:undertow-core:2.0.25.Final")
+			
+    // These may be provided for determining content types
+    compileOnly("javax.activation:activation:1.1.1")
+    compileOnly("org.apache.tika:tika-core:1.22")
+			
+    // MoreObjects is used for toString() implementations
+    // also Iterator concatenation and filtering
+    implementation("com.google.guava:guava:27.0.1-jre")
+    
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.4.2")
+    testImplementation("org.junit.jupiter:junit-jupiter-engine:5.4.2")
+    testImplementation("org.junit.platform:junit-platform-launcher:1.4.2")
+    testImplementation("org.assertj:assertj-core:3.11.1")
+    
+    // testImplementation("org.junit.platform:junit-platform-suite-api:1.4.2")
+    compileOnly("ch.qos.logback:logback-classic:1.2.3")
+
+}
+
+
+// This I why I switched from Kotlin to Groovy
+// See
+// https://discuss.gradle.org/t/compileonly-dependencies-are-not-available-in-tests/15366/7
+// the sourceSets suggestion omits dependencies such as xnio for undertow
+// https://github.com/gradle/gradle/issues/10502
+configurations {
+    // runtimeOnly (rather than testImplementation) for use with main() methods
+    // from Eclipse as well as unit tests
+    runtimeOnly.extendsFrom compileOnly
+}
+
+// See https://docs.gradle.org/current/userguide/build_environment.html
+//tasks.withType<JavaCompile>().configureEach {
+//tasks.withType<JavaCompile> {
+//    options.compilerArgs = listOf("-Xdoclint:none", "-Xlint:none", "-nowarn")
+//}
+
+//tasks.withType<Test> {
+//    useJUnitPlatform() {
+//        filter {
+//            excludeTags("within-suite")
+//        }
+//    }
+//    finalizedBy("jacocoTestReport")
+//}
+
+//publishing {
+//    publications {
+//        create<MavenPublication>("${rootProject.name}") {
+//            from(components["java"])
+//        }
+//    }
+//
+//    repositories {
+//        mavenLocal()
+//    }
+//}
