@@ -66,7 +66,8 @@ public interface SpewParsedResponse {
         String headerContentType = response.getHeader(ContentTypeUtil.CONTENT_TYPE_HEADER_NAME);
         BufferedReader bodyReader = HttpMessageUtil.createBodyReader(response);
         StringBuilder messageBuilder = new StringBuilder()
-                .append("Unable to parse response\nContent-Type: ")
+                // TODO! link to a help page
+                .append("There are no available parsers for \nContent-Type: ")
                 .append(headerContentType);
         bodyReader.lines().forEach(line -> {
             messageBuilder.append('\n').append(line);

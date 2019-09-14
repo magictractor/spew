@@ -18,14 +18,8 @@ package uk.co.magictractor.spew.http.apache;
 import uk.co.magictractor.spew.api.SpewApplication;
 import uk.co.magictractor.spew.api.SpewConnection;
 import uk.co.magictractor.spew.api.connection.SpewConnectionFactory;
-import uk.co.magictractor.spew.util.spi.ClassDependentAvailability;
 
-public class SpewApacheHttpClientConnectionFactory implements SpewConnectionFactory, ClassDependentAvailability {
-
-    @Override
-    public String requiresClassName() {
-        return "org.apache.http.client.methods.HttpUriRequest";
-    }
+public class SpewApacheHttpClientConnectionFactory implements SpewConnectionFactory {
 
     @Override
     public SpewConnection createConnection(SpewApplication<?> application) {

@@ -22,24 +22,18 @@ import uk.co.magictractor.spew.server.CallbackServer;
 import uk.co.magictractor.spew.server.RequestHandler;
 import uk.co.magictractor.spew.server.SpewHttpRequest;
 import uk.co.magictractor.spew.util.ExceptionUtil;
-import uk.co.magictractor.spew.util.spi.ClassDependentAvailability;
 
 /**
  * Server for receiving OAuth authorization callbacks. Based on example in
  * https://netty.io/wiki/user-guide-for-4.x.html.
  */
 
-public class NettyCallbackServer implements CallbackServer, ClassDependentAvailability {
+public class NettyCallbackServer implements CallbackServer {
 
     private NioEventLoopGroup bossGroup;
     private NioEventLoopGroup workerGroup;
 
     private ChannelFuture f;
-
-    @Override
-    public String requiresClassName() {
-        return "io.netty.bootstrap.ServerBootstrap";
-    }
 
     @Override
     public void run(List<RequestHandler> requestHandlers, int port) {

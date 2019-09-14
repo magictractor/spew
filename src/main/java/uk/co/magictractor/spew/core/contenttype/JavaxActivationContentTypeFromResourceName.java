@@ -17,19 +17,10 @@ package uk.co.magictractor.spew.core.contenttype;
 
 import javax.activation.MimetypesFileTypeMap;
 
-import uk.co.magictractor.spew.util.spi.ClassDependentAvailability;
-import uk.co.magictractor.spew.util.spi.Init;
-
 public class JavaxActivationContentTypeFromResourceName
-        implements ContentTypeFromResourceName, ClassDependentAvailability, Init {
+        implements ContentTypeFromResourceName {
 
-    // TODO! SPIUtil to support an Init method else this could blow up before availability is checked?
-    private MimetypesFileTypeMap map;
-
-    @Override
-    public void init() {
-        map = new MimetypesFileTypeMap();
-    }
+    private MimetypesFileTypeMap map = new MimetypesFileTypeMap();
 
     @Override
     public String determineContentType(String resourceName) {
@@ -48,11 +39,6 @@ public class JavaxActivationContentTypeFromResourceName
 
     private boolean isReallyOctetStream(String resourceName) {
         return resourceName.endsWith(".bin") || resourceName.endsWith(".octet-stream");
-    }
-
-    @Override
-    public String requiresClassName() {
-        return "javax.activation.MimetypesFileTypeMap";
     }
 
 }

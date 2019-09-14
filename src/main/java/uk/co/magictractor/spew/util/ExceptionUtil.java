@@ -2,6 +2,7 @@ package uk.co.magictractor.spew.util;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.Callable;
 
 public final class ExceptionUtil {
@@ -24,15 +25,32 @@ public final class ExceptionUtil {
         try {
             return callable.call();
         }
-        catch (RuntimeException e) {
-            throw e;
-        }
-        catch (IOException e) {
-            throw new UncheckedIOException(e);
+        catch (InvocationTargetException e) {
+            throw unwrap(e);
         }
         catch (Exception e) {
-            throw new IllegalStateException(e);
+            throw asRuntimeException(e);
         }
+    }
+
+    private static RuntimeException unwrap(Throwable e) {
+        if (e instanceof InvocationTargetException) {
+            return (unwrap(e.getCause()));
+        }
+        return asRuntimeException(e);
+    }
+
+    private static RuntimeException asRuntimeException(Throwable e) {
+        if (e instanceof RuntimeException) {
+            return (RuntimeException) e;
+        }
+        else if (e instanceof IOException) {
+            return new UncheckedIOException((IOException) e);
+        }
+        else if (e instanceof Error) {
+            throw (Error) e;
+        }
+        return new IllegalStateException(e);
     }
 
     @FunctionalInterface

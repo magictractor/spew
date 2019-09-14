@@ -17,27 +17,14 @@ package uk.co.magictractor.spew.core.contenttype;
 
 import org.apache.tika.Tika;
 
-import uk.co.magictractor.spew.util.spi.ClassDependentAvailability;
-import uk.co.magictractor.spew.util.spi.Init;
-
 public class ApacheTikaContentTypeFromResourceName
-        implements ContentTypeFromResourceName, ClassDependentAvailability, Init {
+        implements ContentTypeFromResourceName {
 
-    private Tika tika;
-
-    @Override
-    public void init() {
-        tika = new Tika();
-    }
+    private final Tika tika = new Tika();
 
     @Override
     public String determineContentType(String resourceName) {
         return tika.detect(resourceName);
-    }
-
-    @Override
-    public String requiresClassName() {
-        return "org.apache.tika.Tika";
     }
 
 }

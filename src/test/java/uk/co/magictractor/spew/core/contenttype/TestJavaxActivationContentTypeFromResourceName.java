@@ -18,8 +18,6 @@ package uk.co.magictractor.spew.core.contenttype;
 import java.util.Arrays;
 import java.util.Collection;
 
-import org.junit.jupiter.api.BeforeAll;
-
 // TODO! check whether this is a subset of UrlConnection, and perhaps bin it (plus dependency)
 public class TestJavaxActivationContentTypeFromResourceName extends AbstractTestContentTypeFromResourceName {
 
@@ -27,11 +25,6 @@ public class TestJavaxActivationContentTypeFromResourceName extends AbstractTest
         "css", "js", "mp3", "doc", "pdf", "xml", "ico", "ttf", "zip", "7z", "oga", "fits");
 
     private static JavaxActivationContentTypeFromResourceName TESTEE = new JavaxActivationContentTypeFromResourceName();
-
-    @BeforeAll
-    public static void init() {
-        TESTEE.init();
-    }
 
     @Override
     protected String determineContentType(String resourceName) {

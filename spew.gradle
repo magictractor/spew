@@ -57,7 +57,7 @@ dependencies {
     testImplementation("org.assertj:assertj-core:3.11.1")
     
     // testImplementation("org.junit.platform:junit-platform-suite-api:1.4.2")
-    compileOnly("ch.qos.logback:logback-classic:1.2.3")
+    runtimeOnly("ch.qos.logback:logback-classic:1.2.3")
 
 }
 

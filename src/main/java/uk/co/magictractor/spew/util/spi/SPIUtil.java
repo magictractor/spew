@@ -28,6 +28,9 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import uk.co.magictractor.spew.api.connection.SpewConnectionFactory;
 import uk.co.magictractor.spew.core.contenttype.ApacheTikaContentTypeFromResourceName;
 import uk.co.magictractor.spew.core.contenttype.ContentTypeFromResourceName;
@@ -56,46 +59,48 @@ import uk.co.magictractor.spew.util.ExceptionUtil;
  */
 public final class SPIUtil {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(SPIUtil.class);
+
     @SuppressWarnings("rawtypes")
-    private static final Map<Class, List> DEFAULT_IMPLEMENTATIONS = new HashMap<>();
+    private static final Map<Class, List> DEFAULT_IMPLEMENTATION_TYPES = new HashMap<>();
 
     @SuppressWarnings("rawtypes")
     private static final Map<Class, List> AVAILABLE_IMPLEMENTATIONS = new HashMap<>();
 
     static {
-        addDefault(ApplicationPropertyStore.class, new ResourceFileApplicationPropertyStore());
+        addDefault(ApplicationPropertyStore.class, ResourceFileApplicationPropertyStore.class);
 
-        addDefault(UserPropertyStore.class, new UserPreferencePropertyStore());
+        addDefault(UserPropertyStore.class, UserPreferencePropertyStore.class);
 
-        addDefault(SpewConnectionFactory.class, new BoaConnectionFactory());
-        addDefault(SpewConnectionFactory.class, new SpringSocialConnectionFactory());
+        addDefault(SpewConnectionFactory.class, BoaConnectionFactory.class);
+        addDefault(SpewConnectionFactory.class, SpringSocialConnectionFactory.class);
         // No auth connections. Boa connections wrap the first available one of these.
-        addDefault(SpewConnectionFactory.class, new SpewApacheHttpClientConnectionFactory());
-        addDefault(SpewConnectionFactory.class, new SpewHttpUrlConnectionFactory());
+        addDefault(SpewConnectionFactory.class, SpewApacheHttpClientConnectionFactory.class);
+        addDefault(SpewConnectionFactory.class, SpewHttpUrlConnectionFactory.class);
 
-        addDefault(SpewParsedResponseFactory.class, new JaywayResponseFactory());
+        addDefault(SpewParsedResponseFactory.class, JaywayResponseFactory.class);
 
         // Could have a Wiremock implementation too
-        addDefault(CallbackServer.class, new UndertowCallbackServer());
-        addDefault(CallbackServer.class, new NettyCallbackServer());
+        addDefault(CallbackServer.class, UndertowCallbackServer.class);
+        addDefault(CallbackServer.class, NettyCallbackServer.class);
 
-        addDefault(ContentTypeFromResourceName.class, new HardCodedContentTypeFromResourceName());
-        addDefault(ContentTypeFromResourceName.class, new ApacheTikaContentTypeFromResourceName());
+        addDefault(ContentTypeFromResourceName.class, HardCodedContentTypeFromResourceName.class);
+        addDefault(ContentTypeFromResourceName.class, ApacheTikaContentTypeFromResourceName.class);
         // Fallback to "application/octet-stream", only hit if Tika is not available.
-        addDefault(ContentTypeFromResourceName.class, new FallbackOctetStreamContentTypeFromResourceName());
+        addDefault(ContentTypeFromResourceName.class, FallbackOctetStreamContentTypeFromResourceName.class);
 
-        addDefault(TagLoader.class, new IndentedFileTagLoader());
-        addDefault(TagLoader.class, new HardCodedTagLoader());
+        addDefault(TagLoader.class, IndentedFileTagLoader.class);
+        addDefault(TagLoader.class, HardCodedTagLoader.class);
     }
 
-    private static <T> void addDefault(Class<T> apiClass, T implementation) {
+    private static <T> void addDefault(Class<T> apiClass, Class<? extends T> implementationType) {
         @SuppressWarnings("unchecked")
-        List<T> implementations = DEFAULT_IMPLEMENTATIONS.get(apiClass);
-        if (implementations == null) {
-            implementations = new ArrayList<>();
-            DEFAULT_IMPLEMENTATIONS.put(apiClass, implementations);
+        List<Class> implementationTypes = DEFAULT_IMPLEMENTATION_TYPES.get(apiClass);
+        if (implementationTypes == null) {
+            implementationTypes = new ArrayList<>();
+            DEFAULT_IMPLEMENTATION_TYPES.put(apiClass, implementationTypes);
         }
-        implementations.add(implementation);
+        implementationTypes.add(implementationType);
     }
 
     private SPIUtil() {
@@ -126,7 +131,6 @@ public final class SPIUtil {
                 available = AVAILABLE_IMPLEMENTATIONS.get(apiClass);
                 if (available == null) {
                     available = findAvailable(apiClass);
-                    init(available);
                     AVAILABLE_IMPLEMENTATIONS.put(apiClass, available);
                 }
             }
@@ -135,18 +139,10 @@ public final class SPIUtil {
         return available.stream();
     }
 
-    private static <T> void init(List<T> implementations) {
-        for (Object implementation : implementations) {
-            if (implementation instanceof Init) {
-                ((Init) implementation).init();
-            }
-        }
-    }
-
     private static <T> List<T> findAvailable(Class<T> apiClass) {
         String sysImpl = System.getProperty(apiClass.getName());
         if (sysImpl != null) {
-            T impl = loadAvailableSystemPropertyImplementation(sysImpl);
+            T impl = loadSystemPropertyImplementation(sysImpl);
             return Collections.singletonList(impl);
         }
 
@@ -159,29 +155,7 @@ public final class SPIUtil {
             candidates = defaultImplementations(apiClass);
         }
 
-        return candidates
-                .stream()
-                .filter(SPIUtil::isImplementationAvailable)
-                .collect(Collectors.toList());
-    }
-
-    private static boolean isImplementationAvailable(Object implementation) {
-        if (implementation instanceof Availability) {
-            if (!((Availability) implementation).isAvailable()) {
-                // Not available, perhaps due to a dependency on a third party library.
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private static <T> T loadAvailableSystemPropertyImplementation(String implementationClassName) {
-        T implementation = loadSystemPropertyImplementation(implementationClassName);
-        if (!isImplementationAvailable(implementation)) {
-            throw new IllegalArgumentException(implementationClassName + ".isAvailable() returns false");
-        }
-
-        return implementation;
+        return candidates;
     }
 
     private static <T> T loadSystemPropertyImplementation(String implementationClassName) {
@@ -196,12 +170,45 @@ public final class SPIUtil {
 
     @SuppressWarnings("unchecked")
     private static <T> List<T> defaultImplementations(Class<T> apiClass) {
-        if (!DEFAULT_IMPLEMENTATIONS.containsKey(apiClass)) {
+        List<Class<T>> defaultImplementationTypes = DEFAULT_IMPLEMENTATION_TYPES.get(apiClass);
+        if (defaultImplementationTypes == null) {
             throw new IllegalStateException(
                 "There are no SPI definitions or hard coded defaults for implementations of " + apiClass.getName());
         }
 
-        return DEFAULT_IMPLEMENTATIONS.get(apiClass);
+        ArrayList<T> defaultImplementations = new ArrayList<T>();
+        for (Class<T> defaultImplementationType : defaultImplementationTypes) {
+            T impl = newInstance(defaultImplementationType);
+            if (impl != null) {
+                defaultImplementations.add(impl);
+            }
+        }
+
+        return defaultImplementations;
+    }
+
+    private static <T> T newInstance(Class<T> implClass) {
+        try {
+            // This unwraps InvocationTargetException;
+            return ExceptionUtil.call(() -> newInstance0(implClass));
+        }
+        catch (NoClassDefFoundError e) {
+            // Some default implementation are optional and only used if a dependency is provided.
+            // To avoid seeing these message, provide SPI files stating which implementations are to be used.
+            LOGGER.info(
+                implClass.getName() + " is not available because it requires optional dependency "
+                        + e.getMessage().replace('/', '.'));
+            return null;
+        }
+        catch (RuntimeException e) {
+            LOGGER.error(implClass.getName() + " is not available because there was an exception during construction",
+                e);
+            return null;
+        }
+    }
+
+    private static <T> T newInstance0(Class<T> implClass) throws ReflectiveOperationException {
+        return implClass.getDeclaredConstructor().newInstance();
     }
 
 }

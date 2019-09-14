@@ -15,17 +15,11 @@
  */
 package uk.co.magictractor.spew.core.contenttype;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 public class TestApacheTikaContentTypeFromResourceName extends AbstractTestContentTypeFromResourceName {
 
     private static ApacheTikaContentTypeFromResourceName TESTEE = new ApacheTikaContentTypeFromResourceName();
-
-    @BeforeAll
-    public static void init() {
-        TESTEE.init();
-    }
 
     @Override
     protected String determineContentType(String resourceName) {
