@@ -51,14 +51,10 @@ dependencies {
     // also Iterator concatenation and filtering
     implementation("com.google.guava:guava:27.0.1-jre")
     
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.4.2")
-    testImplementation("org.junit.jupiter:junit-jupiter-engine:5.4.2")
-    testImplementation("org.junit.platform:junit-platform-launcher:1.4.2")
-    testImplementation("org.assertj:assertj-core:3.11.1")
+    testImplementation("uk.co.magictractor:jura:0.0.1-SNAPSHOT")
     
-    // testImplementation("org.junit.platform:junit-platform-suite-api:1.4.2")
+    // Logger implementation for unit tests and main() methods.
     runtimeOnly("ch.qos.logback:logback-classic:1.2.3")
-
 }
 
 
