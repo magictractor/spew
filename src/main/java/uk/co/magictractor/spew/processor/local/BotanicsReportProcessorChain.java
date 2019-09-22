@@ -39,6 +39,7 @@ public class BotanicsReportProcessorChain extends ProcessorChain<Photo, Photo, S
     public static void main(String[] args) {
         LocalDirectoryDatesStrategy s = new DefaultLocalDirectoryDatesStrategy();
 
+        // TODO! introduce a LocalImageLibrary
         PathIterator pathIterator = new PathIterator(Paths.get("C:\\Users\\Ken\\Pictures"));
         pathIterator.setFileFilter(LocalPhoto::isPhoto);
         pathIterator.setDirectoryFilter((path) -> s.test(path, defaultReportDateRange(Clock.systemDefaultZone())));
