@@ -106,6 +106,14 @@ public final class SPIUtil {
     private SPIUtil() {
     }
 
+    /**
+     * Resets the SPIUtil caches. For use with unit tests, which should
+     * generally modify available implementations via SPIUtilExtension.
+     */
+    /* default */ static void reset() {
+        AVAILABLE_IMPLEMENTATIONS.clear();
+    }
+
     public static <T> T firstAvailable(Class<T> apiClass) {
         return available(apiClass)
                 .findFirst()
