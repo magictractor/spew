@@ -36,6 +36,8 @@ import uk.co.magictractor.spew.core.contenttype.ApacheTikaContentTypeFromResourc
 import uk.co.magictractor.spew.core.contenttype.ContentTypeFromResourceName;
 import uk.co.magictractor.spew.core.contenttype.FallbackOctetStreamContentTypeFromResourceName;
 import uk.co.magictractor.spew.core.contenttype.HardCodedContentTypeFromResourceName;
+import uk.co.magictractor.spew.core.response.parser.DefaultParsedResponsePojoConverter;
+import uk.co.magictractor.spew.core.response.parser.ParsedResponsePojoConverter;
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponseFactory;
 import uk.co.magictractor.spew.core.response.parser.jayway.JaywayResponseFactory;
 import uk.co.magictractor.spew.http.apache.SpewApacheHttpClientConnectionFactory;
@@ -79,6 +81,8 @@ public final class SPIUtil {
         addDefault(SpewConnectionFactory.class, SpewHttpUrlConnectionFactory.class);
 
         addDefault(SpewParsedResponseFactory.class, JaywayResponseFactory.class);
+
+        addDefault(ParsedResponsePojoConverter.class, DefaultParsedResponsePojoConverter.class);
 
         // Could have a Wiremock implementation too
         addDefault(CallbackServer.class, UndertowCallbackServer.class);

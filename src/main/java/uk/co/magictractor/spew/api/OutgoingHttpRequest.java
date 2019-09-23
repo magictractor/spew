@@ -196,7 +196,13 @@ public final class OutgoingHttpRequest implements SpewHttpRequest {
         prepareToSend();
 
         SpewConnection connection = SpewConnectionCache.getOrCreateConnection(application.getClass());
+
+        System.err.println("sending request: " + this);
+
         SpewHttpResponse response = connection.request(this);
+
+        System.err.println("received response: " + response);
+
         sent = true;
 
         SpewParsedResponse parsedResponse = SpewParsedResponse.parse(application, response);

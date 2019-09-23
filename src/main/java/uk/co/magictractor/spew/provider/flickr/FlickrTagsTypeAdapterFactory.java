@@ -5,6 +5,7 @@ import com.google.gson.TypeAdapter;
 import com.google.gson.TypeAdapterFactory;
 import com.google.gson.reflect.TypeToken;
 
+// bin?
 public class FlickrTagsTypeAdapterFactory implements TypeAdapterFactory {
 
     @Override

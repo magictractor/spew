@@ -65,12 +65,12 @@ public class KeyValuePairsResponse
     }
 
     @Override
-    public <T> List<T> getList(String path, Class<T> type) {
+    public <T> List<T> getList(String path, Class<?> type) {
         throw new UnsupportedOperationException("This response type does not support conversion to POJOs");
     }
 
     @Override
-    public <T> T getObject(String path, Class<T> type) {
+    public <T> T getObject(String path, Class<?> type) {
         throw new UnsupportedOperationException("This response type does not support conversion to POJOs");
     }
 
