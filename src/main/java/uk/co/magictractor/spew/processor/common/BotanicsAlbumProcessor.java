@@ -20,12 +20,12 @@ import java.time.LocalDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import uk.co.magictractor.spew.photo.Photo;
+import uk.co.magictractor.spew.photo.Image;
 import uk.co.magictractor.spew.photo.Tag;
 import uk.co.magictractor.spew.photo.TagType;
 import uk.co.magictractor.spew.processor.Processor;
 
-public class BotanicsAlbumProcessor implements Processor<Photo, MutablePhoto, PhotoProcessorContext> {
+public class BotanicsAlbumProcessor implements Processor<Image, MutablePhoto, PhotoProcessorContext> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BotanicsAlbumProcessor.class);
 

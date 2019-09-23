@@ -1,6 +1,6 @@
 package uk.co.magictractor.spew.processor.common;
 
-import uk.co.magictractor.spew.photo.Photo;
+import uk.co.magictractor.spew.photo.Image;
 import uk.co.magictractor.spew.photo.Tag;
 import uk.co.magictractor.spew.photo.TagComparator;
 import uk.co.magictractor.spew.photo.TagSet;
@@ -16,7 +16,7 @@ import uk.co.magictractor.spew.processor.Processor;
  * Also ensure tags are correctly ordered.
  * </p>
  */
-public class TagHierarchyProcessor implements Processor<Photo, MutablePhoto, PhotoProcessorContext> {
+public class TagHierarchyProcessor implements Processor<Image, MutablePhoto, PhotoProcessorContext> {
 
     @Override
     public void process(MutablePhoto photoChanges, PhotoProcessorContext context) {

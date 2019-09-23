@@ -1,6 +1,6 @@
 package uk.co.magictractor.spew.photo.filter;
 
-import uk.co.magictractor.spew.photo.Photo;
+import uk.co.magictractor.spew.photo.Image;
 import uk.co.magictractor.spew.photo.local.dates.DateRange;
 
 public class DateUploadedPhotoFilter extends DateRangePhotoFilter {
@@ -10,8 +10,8 @@ public class DateUploadedPhotoFilter extends DateRangePhotoFilter {
     }
 
     @Override
-    public boolean test(Photo photo) {
-        return getDateRange().contains(photo.getDateUpload());
+    public boolean test(Image image) {
+        return getDateRange().contains(image.getDateUpload());
     }
 
 }

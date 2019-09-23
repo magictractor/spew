@@ -7,7 +7,7 @@ import java.util.Iterator;
 
 import com.google.common.collect.Iterators;
 
-import uk.co.magictractor.spew.photo.Photo;
+import uk.co.magictractor.spew.photo.Image;
 import uk.co.magictractor.spew.photo.local.LocalPhoto;
 import uk.co.magictractor.spew.photo.local.dates.DateRange;
 import uk.co.magictractor.spew.photo.local.dates.DefaultLocalDirectoryDatesStrategy;
@@ -17,7 +17,7 @@ import uk.co.magictractor.spew.processor.ProcessorChain;
 import uk.co.magictractor.spew.processor.SimpleProcessorContext;
 
 // Tidies tags, descriptions etc for photos already uploaded to Flickr.
-public class BotanicsReportProcessorChain extends ProcessorChain<Photo, Photo, SimpleProcessorContext<Photo>> {
+public class BotanicsReportProcessorChain extends ProcessorChain<Image, Image, SimpleProcessorContext<Image>> {
 
     public BotanicsReportProcessorChain() {
         addProcessor(new BotanicsReportProcessor());

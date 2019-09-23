@@ -5,14 +5,14 @@ import java.util.Objects;
 
 import com.google.common.base.MoreObjects.ToStringHelper;
 
-import uk.co.magictractor.spew.photo.Photo;
+import uk.co.magictractor.spew.photo.Image;
 import uk.co.magictractor.spew.photo.TagSet;
 
 /**
  * It is expected that all other Photo implementations will be immutable and any
  * changes made to images or sidecars will be done via this class.
  */
-public class MutablePhoto implements Photo {
+public class MutablePhoto implements Image {
 
     // private final Photo photo;
     //	private final String photoId;
@@ -21,13 +21,13 @@ public class MutablePhoto implements Photo {
     //	public final LocalDate originalDateTaken;
     //	private final Instant originalDateTimeUpload;
     //	private final TagSet originalTagSet;
-    private final Photo originalPhoto;
+    private final Image originalPhoto;
 
     private String title;
     // private Instant dateTimeUpload;
     private TagSet tagSet;
 
-    public MutablePhoto(Photo photo) {
+    public MutablePhoto(Image photo) {
         originalPhoto = photo;
         //		photoId = photo.getServiceProviderId();
         //		originalTitle = photo.getTitle();
@@ -104,7 +104,7 @@ public class MutablePhoto implements Photo {
     }
 
     public String toString() {
-        ToStringHelper toStringHelper = Photo.toStringHelper(this);
+        ToStringHelper toStringHelper = Image.toStringHelper(this);
         // TODO! would rather add underlying photo type first but that's not supported by ToStringHelper
         toStringHelper.add("originalPhoto.class", originalPhoto.getClass().getSimpleName());
         toStringHelper.add("isTitleChanged", isTitleChanged());

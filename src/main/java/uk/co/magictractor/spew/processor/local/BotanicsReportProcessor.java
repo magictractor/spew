@@ -1,6 +1,6 @@
 package uk.co.magictractor.spew.processor.local;
 
-import uk.co.magictractor.spew.photo.Photo;
+import uk.co.magictractor.spew.photo.Image;
 import uk.co.magictractor.spew.processor.Processor;
 import uk.co.magictractor.spew.processor.SimpleProcessorContext;
 
@@ -9,12 +9,12 @@ import uk.co.magictractor.spew.processor.SimpleProcessorContext;
  * appropriate iterator is expected to be used with the processor chain to
  * restrict processed photos to a single month.
  */
-public class BotanicsReportProcessor implements Processor<Photo, Photo, SimpleProcessorContext<Photo>> {
+public class BotanicsReportProcessor implements Processor<Image, Image, SimpleProcessorContext<Image>> {
 
     @Override
-    public void process(Photo photo, SimpleProcessorContext<Photo> context) {
-        System.err.println("photo: " + photo.getFileName());
-        photo.getTagSet();
+    public void process(Image image, SimpleProcessorContext<Image> context) {
+        System.err.println("image: " + image.getFileName());
+        image.getTagSet();
     }
 
 }

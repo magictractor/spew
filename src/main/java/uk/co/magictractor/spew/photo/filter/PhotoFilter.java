@@ -2,7 +2,7 @@ package uk.co.magictractor.spew.photo.filter;
 
 import java.util.function.Predicate;
 
-import uk.co.magictractor.spew.photo.Photo;
+import uk.co.magictractor.spew.photo.Image;
 
 /**
  * PhotoFilter implementations can be used by some {@link PagedServiceInterator}
@@ -12,6 +12,6 @@ import uk.co.magictractor.spew.photo.Photo;
  * results returned from the service. TODO! should be used to build filtered
  * page service calls.
  */
-public interface PhotoFilter extends Predicate<Photo> {
+public interface PhotoFilter extends Predicate<Image> {
 
 }

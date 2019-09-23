@@ -8,14 +8,14 @@ import java.nio.file.Paths;
 
 import org.junit.jupiter.api.Test;
 
-import uk.co.magictractor.spew.photo.Photo;
+import uk.co.magictractor.spew.photo.Image;
 import uk.co.magictractor.spew.util.ExceptionUtil;
 
 public class LocalPhotoTest {
 
     @Test
     public void testDpp4() {
-        Photo photo = readPhoto("dpp4.CR2");
+        Image photo = readPhoto("dpp4.CR2");
 
         assertThat(photo.getRating()).isEqualTo(4);
         // DPP allows ratings to be modified, but not title and description.
@@ -23,7 +23,7 @@ public class LocalPhotoTest {
         assertThat(photo.getDescription()).isNull();
     }
 
-    private Photo readPhoto(String resourceName) {
+    private Image readPhoto(String resourceName) {
         URL resourceUrl = getClass().getResource(resourceName);
         URI resourceUri = ExceptionUtil.call(() -> resourceUrl.toURI());
         return new LocalPhoto(Paths.get(resourceUri));

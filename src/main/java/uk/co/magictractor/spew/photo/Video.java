@@ -18,22 +18,8 @@ package uk.co.magictractor.spew.photo;
 /**
  *
  */
-public interface Photo extends Image {
+public interface Video extends Image {
 
-    default String getShutterSpeed() {
-        return null;
-    }
-
-    default String getAperture() {
-        return null;
-    }
-
-    default Integer getIso() {
-        return null;
-    }
-
-    // exposure comp
-
-    // focal length (and ff equiv?)
+    int durationMillis();
 
 }

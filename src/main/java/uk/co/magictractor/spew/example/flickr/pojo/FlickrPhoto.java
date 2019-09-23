@@ -4,12 +4,12 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
-import uk.co.magictractor.spew.photo.Photo;
+import uk.co.magictractor.spew.photo.Image;
 import uk.co.magictractor.spew.photo.TagSet;
 
 //  "page": 1, "pages": 17, "perpage": 10, "total": "165"
 
-public class FlickrPhoto implements Photo {
+public class FlickrPhoto implements Image {
 
     private String id;
     private String owner;

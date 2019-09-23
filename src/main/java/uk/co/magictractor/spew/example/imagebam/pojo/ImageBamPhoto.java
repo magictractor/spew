@@ -2,10 +2,10 @@ package uk.co.magictractor.spew.example.imagebam.pojo;
 
 import java.time.Instant;
 
-import uk.co.magictractor.spew.photo.Photo;
+import uk.co.magictractor.spew.photo.Image;
 import uk.co.magictractor.spew.photo.TagSet;
 
-public class ImageBamPhoto implements Photo {
+public class ImageBamPhoto implements Image {
 
     @Override
     public String getServiceProviderId() {

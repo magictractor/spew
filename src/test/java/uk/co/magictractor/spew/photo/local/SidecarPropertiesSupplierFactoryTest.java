@@ -11,8 +11,6 @@ import java.time.ZonedDateTime;
 import org.junit.jupiter.api.Test;
 
 import uk.co.magictractor.spew.photo.Photo;
-import uk.co.magictractor.spew.photo.local.PropertySuppliedPhoto;
-import uk.co.magictractor.spew.photo.local.SidecarPropertiesSupplierFactory;
 import uk.co.magictractor.spew.util.ExceptionUtil;
 
 public class SidecarPropertiesSupplierFactoryTest {
