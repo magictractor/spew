@@ -2,6 +2,7 @@ package uk.co.magictractor.spew.photo.local.dates;
 
 import java.time.LocalDate;
 
+// TODO! change package - this is also used in filters
 public class DateRange {
 
     private LocalDate from;
