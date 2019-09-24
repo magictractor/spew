@@ -3,6 +3,8 @@ package uk.co.magictractor.spew.provider.google;
 import java.util.Arrays;
 import java.util.List;
 
+import com.google.common.base.MoreObjects;
+
 import uk.co.magictractor.spew.photo.local.dates.DateRange;
 
 /**
@@ -17,4 +19,12 @@ public class GoogleDateFilter {
     public GoogleDateFilter(DateRange dateRange) {
         ranges = Arrays.asList(new GoogleDateRange(dateRange));
     }
+
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this)
+                .add("ranges", ranges)
+                .toString();
+    }
+
 }

@@ -1,5 +1,7 @@
 package uk.co.magictractor.spew.provider.google;
 
+import com.google.common.base.MoreObjects;
+
 import uk.co.magictractor.spew.photo.local.dates.DateRange;
 
 /**
@@ -13,4 +15,12 @@ public class GoogleFilters {
     public GoogleFilters(DateRange dateRange) {
         dateFilter = new GoogleDateFilter(dateRange);
     }
+
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this)
+                .add("dateFilter", dateFilter)
+                .toString();
+    }
+
 }

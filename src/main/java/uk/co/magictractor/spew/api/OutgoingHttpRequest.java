@@ -251,6 +251,9 @@ public final class OutgoingHttpRequest implements SpewHttpRequest {
     @Override
     public String toString() {
         ToStringHelper helper = HttpMessageUtil.toStringHelper(this);
+        if (!queryStringParams.isEmpty()) {
+            helper.add("queryStringParams", queryStringParams);
+        }
         if (!bodyParams.isEmpty()) {
             helper.add("bodyParams", bodyParams);
         }

@@ -1,5 +1,7 @@
 package uk.co.magictractor.spew.provider.google;
 
+import com.google.common.base.MoreObjects;
+
 import uk.co.magictractor.spew.photo.local.dates.DateRange;
 
 /**
@@ -14,6 +16,14 @@ public class GoogleDateRange {
     public GoogleDateRange(DateRange dateRange) {
         this.startDate = new GoogleDate(dateRange.getFrom());
         this.endDate = new GoogleDate(dateRange.getTo());
+    }
+
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this)
+                .add("startDate", startDate)
+                .add("endDate", endDate)
+                .toString();
     }
 
 }
