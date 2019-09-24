@@ -195,6 +195,11 @@ public abstract class PageServiceIterator<E> extends AbstractIterator<E> {
             }
         }
 
+        @SuppressWarnings("unchecked")
+        public <T extends E> Iterator<T> buildForSubType(Class<E> subType) {
+            return (Iterator<T>) Iterators.filter(build(), (e) -> subType.isInstance(e));
+        }
+
         public List<E> buildList() {
             return Lists.newArrayList(build());
         }

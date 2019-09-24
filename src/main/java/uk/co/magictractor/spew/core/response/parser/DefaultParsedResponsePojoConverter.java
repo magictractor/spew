@@ -24,12 +24,12 @@ public class DefaultParsedResponsePojoConverter implements ParsedResponsePojoCon
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T> T convert(Object pojo) {
-        if (pojo instanceof Supplier) {
-            return ((Supplier<T>) pojo).get();
+    public <T> T subType(T element) {
+        if (element instanceof Supplier) {
+            return ((Supplier<T>) element).get();
         }
 
-        return (T) pojo;
+        return element;
     }
 
 }

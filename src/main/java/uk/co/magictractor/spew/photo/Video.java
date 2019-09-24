@@ -20,6 +20,11 @@ package uk.co.magictractor.spew.photo;
  */
 public interface Video extends Image {
 
-    int durationMillis();
+    /**
+     * @return duration of the video in milliseconds, null if not known
+     */
+    Integer durationMillis();
+
+    Integer framesPerSecond();
 
 }

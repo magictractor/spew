@@ -44,24 +44,22 @@ public abstract class AbstractSpewParsedResponse implements SpewParsedResponse {
         return response.getHeaders();
     }
 
-    @SuppressWarnings("unchecked")
-    protected <T> T convert(Object pojo) {
-        if (pojo == null) {
+    protected <T> T subType(T element) {
+        if (element == null) {
             return null;
         }
-        
-        return SPIUtil.firstNotNull(ParsedResponsePojoConverter.class, converter -> (T) converter.convert(pojo))
-                .orElseThrow(() -> new IllegalArgumentException("Unable to convert " + pojo.getClass().getName()));
+
+        return SPIUtil.firstNotNull(ParsedResponsePojoConverter.class, converter -> converter.subType(element))
+                .orElseThrow(() -> new IllegalArgumentException("Unable to convert " + element.getClass().getName()));
     }
 
-    @SuppressWarnings("unchecked")
-    protected <T> List<T> convertAll(Collection<?> pojos) {
-        if (pojos == null) {
+    protected <T> List<T> subTypes(Collection<T> elements) {
+        if (elements == null) {
             return null;
         }
 
-        return (List<T>) pojos.stream()
-                .map(pojo -> this.convert(pojo))
+        return elements.stream()
+                .map(element -> this.subType(element))
                 .collect(Collectors.toList());
     }
 

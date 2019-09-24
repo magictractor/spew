@@ -96,4 +96,13 @@ public class TagSet {
     public String toString() {
         return MoreObjects.toStringHelper(this).add("tags", tags).toString();
     }
+
+    public static Tag getDeepestTag(TagSet tagSet, TagType tagType) {
+        return tagSet == null ? null : tagSet.getDeepestTag(tagType);
+    }
+
+    public static Tag getDeepestTag(TagSet tagSet, String tagTypeName) {
+        return tagSet == null ? null : tagSet.getDeepestTag(tagTypeName);
+    }
+
 }

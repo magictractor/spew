@@ -76,7 +76,7 @@ public class TitleProcessor implements Processor<Image, MutablePhoto, PhotoProce
     }
 
     private Tag getTitleTag(Image photo) {
-        return photo.getTagSet().getDeepestTag(titleTagType);
+        return TagSet.getDeepestTag(photo.getTagSet(), titleTagType);
     }
 
     // TODO! this is very specific to "common name (scientific name)"
@@ -99,6 +99,10 @@ public class TitleProcessor implements Processor<Image, MutablePhoto, PhotoProce
 
     public static boolean hasConsecutiveDigits(Image photo, int digitCount) {
         String title = photo.getTitle();
+        if (title == null) {
+            return false;
+        }
+
         int consecutiveDigits = 0;
         for (int i = 0; i < title.length(); i++) {
             if (Character.isDigit(title.charAt(i))) {

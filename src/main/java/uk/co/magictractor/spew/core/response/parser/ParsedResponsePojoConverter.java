@@ -28,6 +28,6 @@ package uk.co.magictractor.spew.core.response.parser;
  */
 public interface ParsedResponsePojoConverter {
 
-    <T> T convert(Object pojo);
+    <T> T subType(T element);
 
 }

@@ -51,9 +51,9 @@ public interface SpewParsedResponse {
 
     Object getObject(String key);
 
-    <T> T getObject(String path, Class<?> type);
+    <T> T getObject(String path, Class<T> type);
 
-    <T> List<T> getList(String path, Class<?> type);
+    <T> List<T> getList(String path, Class<T> type);
 
     static SpewParsedResponse parse(SpewApplication<?> application, SpewHttpResponse response) {
 

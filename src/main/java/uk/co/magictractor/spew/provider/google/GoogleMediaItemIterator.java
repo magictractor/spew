@@ -7,7 +7,8 @@ import uk.co.magictractor.spew.api.OutgoingHttpRequest;
 import uk.co.magictractor.spew.api.SpewApplication;
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
 import uk.co.magictractor.spew.example.google.MyGooglePhotosApp;
-import uk.co.magictractor.spew.example.google.pojo.GoogleMediaItem;
+import uk.co.magictractor.spew.example.google.pojo.GoogleImage;
+import uk.co.magictractor.spew.photo.Image;
 import uk.co.magictractor.spew.photo.filter.DateTakenPhotoFilter;
 import uk.co.magictractor.spew.photo.local.dates.DateRange;
 
@@ -52,13 +53,13 @@ public class GoogleMediaItemIterator<E> extends GoogleServiceIterator<E> {
     }
 
     public static void main(String[] args) {
-        Iterator<GoogleMediaItem> iterator = new GoogleMediaItemIteratorBuilder<>(new MyGooglePhotosApp(),
-            GoogleMediaItem.class)
+        Iterator<GoogleImage> iterator = new GoogleMediaItemIteratorBuilder<>(new MyGooglePhotosApp(),
+            GoogleImage.class)
                     .withFilter(new DateTakenPhotoFilter(DateRange.forDay(2018, 11, 21)))
                     .build();
         while (iterator.hasNext()) {
-            GoogleMediaItem photo = iterator.next();
-            System.err.println(photo.getFileName() + "  " + photo.getDateTimeTaken());
+            Image image = iterator.next();
+            System.err.println(image.getFileName() + "  " + image.getDateTimeTaken());
         }
     }
 

@@ -3,9 +3,12 @@ package uk.co.magictractor.spew.example.google.pojo;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.function.Supplier;
 
+import uk.co.magictractor.spew.photo.Image;
 import uk.co.magictractor.spew.photo.Photo;
 import uk.co.magictractor.spew.photo.TagSet;
+import uk.co.magictractor.spew.photo.Video;
 
 //{
 //    "id": "AO6co5uaPax0_68QU28KxDL3ZySSl-znViY5GJpRQrS3b1mE__i0xoZBYjalUiXj5GNcR_9WTquqF_L5RpQae-eWxcBIANY7mg",
@@ -26,7 +29,7 @@ import uk.co.magictractor.spew.photo.TagSet;
 //    },
 //    "filename": "IMG_1763.JPG"
 //  }
-public class GoogleMediaItem implements Photo {
+public class GoogleImage implements Image, Supplier<GoogleImage> {
 
     private String id;
     private String description;
@@ -34,6 +37,52 @@ public class GoogleMediaItem implements Photo {
     private String baseUrl;
     private GoogleMediaMetadata mediaMetadata;
     private String filename;
+    private String mimeType;
+
+    @Override
+    public GoogleImage get() {
+        if (mediaMetadata.photo != null) {
+            return new GooglePhoto().copyFrom(this);
+        }
+        else if (mediaMetadata.video != null) {
+            return new GoogleVideo().copyFrom(this);
+        }
+        throw new IllegalStateException(getClass().getSimpleName() + " contains neither photo nor video metadata");
+    }
+
+    /* default */ GoogleImage copyFrom(GoogleImage other) {
+        id = other.id;
+        description = other.description;
+        productUrl = other.productUrl;
+        baseUrl = other.baseUrl;
+        mediaMetadata = other.mediaMetadata;
+        filename = other.filename;
+
+        return this;
+    }
+
+    public static final class GoogleMediaMetadata {
+        // Google does have zone information "2018-11-20T15:09:42Z" => instant here?
+        private LocalDateTime creationTime;
+        private int width;
+        private int height;
+        private GooglePhotoMetadata photo;
+        private GoogleVideoMetadata video;
+    }
+
+    public static final class GooglePhotoMetadata {
+        private String cameraMake;
+        private String cameraModel;
+        private String focalLength;
+        private String apertureFNumber;
+        private Integer isoEquivalent;
+    }
+
+    public static final class GoogleVideoMetadata {
+        private String cameraMake;
+        private String cameraModel;
+        private Integer fps;
+    }
 
     @Override
     public String getServiceProviderId() {
@@ -70,39 +119,6 @@ public class GoogleMediaItem implements Photo {
     }
 
     @Override
-    public String getShutterSpeed() {
-        // Curiously, this isn't returned although aperture, focal length etc are
-        return null;
-    }
-
-    @Override
-    public String getAperture() {
-        return mediaMetadata.photo.apertureFNumber;
-    }
-
-    @Override
-    public Integer getIso() {
-        return mediaMetadata.photo.isoEquivalent;
-    }
-
-    public class GoogleMediaMetadata {
-        // Google does have zone information "2018-11-20T15:09:42Z" => instant here?
-        private LocalDateTime creationTime;
-        private int width;
-        private int height;
-        private GooglePhoto photo;
-    }
-
-    // TODO! change name of this or Photo - looks like this should implement Photo??
-    public class GooglePhoto {
-        private String cameraMake;
-        private String cameraModel;
-        private String focalLength;
-        private String apertureFNumber;
-        private Integer isoEquivalent;
-    }
-
-    @Override
     public TagSet getTagSet() {
         // TODO Google does not support tags
         // probably mimic by adding tags in description "Kingfisher [kingfisher bird
@@ -119,6 +135,44 @@ public class GoogleMediaItem implements Photo {
     @Override
     public Integer getHeight() {
         return mediaMetadata.height;
+    }
+
+    //// Photo
+
+    public String getShutterSpeed() {
+        // Curiously, this isn't returned although aperture, focal length etc are
+        return null;
+    }
+
+    public String getAperture() {
+        return mediaMetadata.photo.apertureFNumber;
+    }
+
+    public Integer getIso() {
+        return mediaMetadata.photo.isoEquivalent;
+    }
+
+    //// Video
+
+    public Integer durationMillis() {
+        return null;
+    }
+
+    public Integer framesPerSecond() {
+        return mediaMetadata.video.fps;
+    }
+
+    public static class GooglePhoto extends GoogleImage implements Photo {
+    }
+
+    //    "video": {
+    //        "cameraMake": "MAKE_OF_THE_CAMERA",
+    //        "cameraModel": "MODEL_OF_THE_CAMERA",
+    //        "fps": "FRAME_RATE_OF_THE_VIDEO",
+    //        "status": "READY"
+    //       }
+    // https://developers.google.com/photos/library/guides/access-media-items
+    public static class GoogleVideo extends GoogleImage implements Video {
     }
 
 }

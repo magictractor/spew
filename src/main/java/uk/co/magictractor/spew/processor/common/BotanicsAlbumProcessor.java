@@ -22,6 +22,7 @@ import org.slf4j.LoggerFactory;
 
 import uk.co.magictractor.spew.photo.Image;
 import uk.co.magictractor.spew.photo.Tag;
+import uk.co.magictractor.spew.photo.TagSet;
 import uk.co.magictractor.spew.photo.TagType;
 import uk.co.magictractor.spew.processor.Processor;
 
@@ -34,7 +35,7 @@ public class BotanicsAlbumProcessor implements Processor<Image, MutablePhoto, Ph
 
     @Override
     public void process(MutablePhoto photo, PhotoProcessorContext context) {
-        Tag locationTag = photo.getTagSet().getDeepestTag(LOCATION_TAG_TYPE);
+        Tag locationTag = TagSet.getDeepestTag(photo.getTagSet(), LOCATION_TAG_TYPE);
         if (BOTANICS_TAG.equals(locationTag)) {
             addToBotanicsAlbum(photo, context);
         }

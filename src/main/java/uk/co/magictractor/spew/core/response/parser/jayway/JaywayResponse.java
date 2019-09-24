@@ -54,14 +54,14 @@ public class JaywayResponse
     }
 
     @Override
-    public <T> T getObject(String key, Class<?> type) {
-        Object pojo = ctx.read(key, type);
-        return convert(pojo);
+    public <T> T getObject(String key, Class<T> type) {
+        T element = ctx.read(key, type);
+        return subType(element);
     }
 
     @Override
-    public <T> List<T> getList(String key, Class<?> elementType) {
-        List<?> pojoList = ctx.read(key, new TypeRef<List<?>>() {
+    public <T> List<T> getList(String key, Class<T> elementType) {
+        List<T> pojoList = ctx.read(key, new TypeRef<List<T>>() {
             @Override
             public Type getType() {
                 return new ParameterizedType() {
@@ -84,7 +84,7 @@ public class JaywayResponse
             }
         });
 
-        return convertAll(pojoList);
+        return subTypes(pojoList);
     }
 
     @Override
