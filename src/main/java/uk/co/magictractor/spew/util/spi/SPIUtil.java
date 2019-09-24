@@ -90,7 +90,7 @@ public final class SPIUtil {
 
         addDefault(ContentTypeFromResourceName.class, HardCodedContentTypeFromResourceName.class);
         addDefault(ContentTypeFromResourceName.class, ApacheTikaContentTypeFromResourceName.class);
-        // Fallback to "application/octet-stream", only hit if Tika is not available.
+        // Fallback to "application/octet-stream", only hit if Tika is not available. Tika has the same fallback behaviour.
         addDefault(ContentTypeFromResourceName.class, FallbackOctetStreamContentTypeFromResourceName.class);
 
         addDefault(TagLoader.class, IndentedFileTagLoader.class);
