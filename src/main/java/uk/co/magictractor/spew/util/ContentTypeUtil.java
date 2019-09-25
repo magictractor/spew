@@ -62,12 +62,24 @@ public class ContentTypeUtil {
     }
 
     public static boolean isJson(String contentType) {
+        // TODO! beware appended ";charset=..."
         return JSON_MIME_TYPES.contains(contentType);
     }
 
     public static boolean isHtml(String contentType) {
         // TODO! beware appended ";charset=..."
         return HTML_MIME_TYPES.contains(contentType);
+    }
+
+    public static boolean isBinary(String contentType) {
+        // TODO! beware appended ";charset=..."
+        if (contentType.startsWith("text/")) {
+            return false;
+        }
+        if (contentType.endsWith("/json")) {
+            return false;
+        }
+        return true;
     }
 
     public static String fromHeader(SpewHttpMessage httpMessage) {
