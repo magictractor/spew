@@ -29,3 +29,8 @@ so that integration tests do auth.
 * Build static website from local photos with appropriate tags/ratings. Probably need to build thumbnails (ImageMagick?).
 Lots of options for website: template or from scratch? Will want JavaScript. Hosting would need sorted too.
 
+* Processor to check that photos timestamps match the folder they are in.
+Perhaps automatically correct problems, could use this to move files from memory cards?
+
+* Extract messages from error responses
+
