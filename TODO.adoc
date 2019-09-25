@@ -20,7 +20,7 @@ Just Boa? What do Spring Social and Google do?
 
 * Make auth requests using Spring Social (currently only works if key and secret are already in store)
 
-* Connection impl using Google.
+* Connection impl using Google OAuth client lib.
 
 * Integration tests. These would be useful to me locally but could not be run from a build server because they require
 application keys and secrets which must not be committed. Probably use in memory store for user keys and secrets,
@@ -29,3 +29,9 @@ so that integration tests do auth.
 * Build static website from local photos with appropriate tags/ratings. Probably need to build thumbnails (ImageMagick?).
 Lots of options for website: template or from scratch? Will want JavaScript. Hosting would need sorted too.
 
+* Processor to check that photos timestamps match the folder they are in.
+Perhaps automatically correct problems, could use this to move files from memory cards?
+
+* Extract messages from error responses
+
+* Revisit date handling for most service providers

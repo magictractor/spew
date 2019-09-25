@@ -20,6 +20,8 @@ If you're having trouble connecting to one of the services which Spew interacts 
 having a look at the code here might be helpful, but this code is not production-ready.
 TODO! more pointers.
 
+The lightweight servers which can be fired up to receive OAuth callbacks might be of interest. There are implementations here based on Netty and Undertow.
+
 
 == Why Spew?
 
@@ -33,15 +35,20 @@ was extrapolated from that.
 
 Boa stands for Bad OAuth.
 
-This is a hand-rolled implementation of OAuth1 and OAuth2 client code. This will
+This is a hand-rolled implementation of OAuth1 and OAuth2 client code. This will (maybe and eventually)
 be split into a separate project, with alternative OAuth implementations wrapping
 Google and/or Spring's OAuth code being added to Spew.
+
+This is currently the default used by Spew, because the behaviour for authorisation being required is currently
+tied into the Boa code.
 
 
 == History
 
-This project started with a hand-rolled OAuth client to help manage photographs hosted on Flickr. Hand-rolling OAuth was an exercise to understand OAuth better, it is almost certainly a worse choice 
+This project started with a hand-rolled OAuth client to help manage photographs hosted on Flickr.
+Hand-rolling OAuth was an exercise to understand OAuth better, it is almost certainly a worse choice 
 
-The decision to hand-roll to OAuth client was an exercise to help the developer understand the nuances of OAuth.
+The decision to hand-roll an OAuth client was an exercise to help the developer understand the nuances of OAuth.
 
-The code evolved as experiments were made with other service providers, mostly for hosting photographs elsewhere, with a foray into getting metrics from Twitter.
+The code evolved as experiments were made with other service providers, mostly for hosting photographs elsewhere,
+with a foray into getting metrics from Twitter.
