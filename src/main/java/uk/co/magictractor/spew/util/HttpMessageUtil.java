@@ -84,6 +84,14 @@ public final class HttpMessageUtil {
         return ByteBuffer.wrap(bodyBytes);
     }
 
+    public static String createBodyString(SpewHttpMessage httpMessage) {
+        Charset charset = ContentTypeUtil.charsetFromHeader(httpMessage);
+        if (charset == null) {
+            charset = StandardCharsets.UTF_8;
+        }
+        return new String(httpMessage.getBodyBytes(), charset);
+    }
+
     public static BufferedReader createBodyReader(SpewHttpMessage httpMessage) {
         byte[] bodyBytes = httpMessage.getBodyBytes();
         if (bodyBytes == null || bodyBytes.length == 0) {
@@ -93,7 +101,7 @@ public final class HttpMessageUtil {
         return createBodyReader(httpMessage, bodyBytes);
     }
 
-    // meh...
+    // meh... this public variant with bytes passed in is inelegant
     public static BufferedReader createBodyReader(SpewHttpMessage httpMessage, byte[] bodyBytes) {
         Charset charset = ContentTypeUtil.charsetFromHeader(httpMessage);
         if (charset == null) {
@@ -115,6 +123,12 @@ public final class HttpMessageUtil {
     public static ToStringHelper toStringHelper(SpewHttpResponse response) {
         ToStringHelper helper = MoreObjects.toStringHelper(response)
                 .add("status", response.getStatus());
+
+        String contentType = ContentTypeUtil.fromHeader(response);
+        if (!ContentTypeUtil.isBinary(contentType)) {
+            // TODO! perhaps truncate if large
+            helper.add("body", createBodyString(response));
+        }
 
         return helper;
     }

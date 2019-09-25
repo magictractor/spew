@@ -26,6 +26,7 @@ import uk.co.magictractor.spew.api.SpewHeader;
 import uk.co.magictractor.spew.api.SpewHttpResponse;
 import uk.co.magictractor.spew.core.message.AbstractInputStreamMessage;
 import uk.co.magictractor.spew.util.ExceptionUtil;
+import uk.co.magictractor.spew.util.HttpMessageUtil;
 
 /**
  *
@@ -79,4 +80,8 @@ public class IncomingHttpUrlConnectionResponse extends AbstractInputStreamMessag
         return headers;
     }
 
+    @Override
+    public String toString() {
+        return HttpMessageUtil.toStringHelper(this).toString();
+    }
 }
