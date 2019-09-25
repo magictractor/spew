@@ -1,0 +1,31 @@
+= TODO
+
+My TODO list. In no particular order. Some of these may never happen.
+
+* LocalLibrary and a mechanism to find the original local copy of a photo found on Flickr, Google Photos etc.
+Finding the local copy will be based on the DateTaken if it is available.
+
+* Restore check for expiry date if it present and reauthorize, using refresh_token if it is available.
+Just Boa? What do Spring Social and Google do?
+
+* Handle 401 failures, and reauthorize (just once).
+
+* Handle 5xx failures with wait and retry (repeated retries with increasing waits, see Google API doc)
+
+* tags for "uncertain" and "doubtful" (or similar) to correspond to "?" and "??" in titles
+
+* Connection impl for unit tests which returns responses from resource files
+
+* Connection impl using Spring Social for OAuth2 (currently only OAuth1 supported)
+
+* Make auth requests using Spring Social (currently only works if key and secret are already in store)
+
+* Connection impl using Google.
+
+* Integration tests. These would be useful to me locally but could not be run from a build server because they require
+application keys and secrets which must not be committed. Probably use in memory store for user keys and secrets,
+so that integration tests do auth.
+
+* Build static website from local photos with appropriate tags/ratings. Probably need to build thumbnails (ImageMagick?).
+Lots of options for website: template or from scratch? Will want JavaScript. Hosting would need sorted too.
+
