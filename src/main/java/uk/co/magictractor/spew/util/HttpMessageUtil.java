@@ -85,10 +85,7 @@ public final class HttpMessageUtil {
     }
 
     public static String createBodyString(SpewHttpMessage httpMessage) {
-        Charset charset = ContentTypeUtil.charsetFromHeader(httpMessage);
-        if (charset == null) {
-            charset = StandardCharsets.UTF_8;
-        }
+        Charset charset = ContentTypeUtil.charsetFromHeader(httpMessage).orElse(StandardCharsets.UTF_8);
         return new String(httpMessage.getBodyBytes(), charset);
     }
 
@@ -103,10 +100,7 @@ public final class HttpMessageUtil {
 
     // meh... this public variant with bytes passed in is inelegant
     public static BufferedReader createBodyReader(SpewHttpMessage httpMessage, byte[] bodyBytes) {
-        Charset charset = ContentTypeUtil.charsetFromHeader(httpMessage);
-        if (charset == null) {
-            charset = StandardCharsets.UTF_8;
-        }
+        Charset charset = ContentTypeUtil.charsetFromHeader(httpMessage).orElse(StandardCharsets.UTF_8);
         return new BufferedReader(new InputStreamReader(new ByteArrayInputStream(bodyBytes), charset));
     }
 

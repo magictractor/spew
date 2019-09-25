@@ -22,6 +22,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 import com.jayway.jsonpath.Configuration;
 
@@ -124,7 +125,7 @@ public class ContentTypeUtil {
                 });
     }
 
-    public static Charset charsetFromHeader(SpewHttpMessage httpMessage) {
+    public static Optional<Charset> charsetFromHeader(SpewHttpMessage httpMessage) {
         String header = httpMessage.getHeader(CONTENT_TYPE_HEADER_NAME);
         Charset charset = null;
         if (header != null) {
@@ -138,7 +139,7 @@ public class ContentTypeUtil {
             }
         }
 
-        return charset;
+        return Optional.ofNullable(charset);
     }
 
     public static byte[] bodyBytes(OutgoingHttpRequest request, Configuration jsonConfiguration) {
