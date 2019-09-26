@@ -18,7 +18,7 @@ package uk.co.magictractor.spew.photo;
 /**
  *
  */
-public interface Video extends Image {
+public interface Video extends Media {
 
     /**
      * @return duration of the video in milliseconds, null if not known

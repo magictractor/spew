@@ -18,7 +18,7 @@ package uk.co.magictractor.spew.photo;
 /**
  *
  */
-public interface Photo extends Image {
+public interface Photo extends Media {
 
     default String getShutterSpeed() {
         return null;

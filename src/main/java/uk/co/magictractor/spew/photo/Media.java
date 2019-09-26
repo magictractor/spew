@@ -9,7 +9,7 @@ import java.time.ZoneId;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
 
-public interface Image {
+public interface Media {
 
     /**
      * The id used by the service provider (Flickr etc) to identify the image.
@@ -80,7 +80,7 @@ public interface Image {
 
     Integer getHeight();
 
-    public static ToStringHelper toStringHelper(Image photo) {
+    public static ToStringHelper toStringHelper(Media photo) {
         ToStringHelper toStringHelper = MoreObjects.toStringHelper(photo);
         if (photo.getServiceProviderId() != null) {
             toStringHelper.add("serviceProviderId", photo.getServiceProviderId());

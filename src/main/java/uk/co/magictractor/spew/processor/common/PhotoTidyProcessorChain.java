@@ -1,10 +1,10 @@
 package uk.co.magictractor.spew.processor.common;
 
-import uk.co.magictractor.spew.photo.Image;
+import uk.co.magictractor.spew.photo.Media;
 import uk.co.magictractor.spew.processor.ProcessorChain;
 
 // Tidies tags, descriptions etc for photos already uploaded to Flickr.
-public class PhotoTidyProcessorChain extends ProcessorChain<Image, MutablePhoto, PhotoProcessorContext> {
+public class PhotoTidyProcessorChain extends ProcessorChain<Media, MutablePhoto, PhotoProcessorContext> {
 
     public PhotoTidyProcessorChain(PhotoUpdateProcessor persistProcessor) {
         //addProcessor(new TagFixProcessor("location", null));

@@ -14,7 +14,7 @@ import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
 import uk.co.magictractor.spew.example.flickr.MyFlickrApp;
 import uk.co.magictractor.spew.example.flickr.pojo.FlickrPhoto;
 import uk.co.magictractor.spew.example.flickr.pojo.FlickrPhotoset;
-import uk.co.magictractor.spew.photo.Image;
+import uk.co.magictractor.spew.photo.Media;
 import uk.co.magictractor.spew.photo.PhotoComparator;
 import uk.co.magictractor.spew.photo.Tag;
 import uk.co.magictractor.spew.photo.TagSet;
@@ -163,7 +163,7 @@ public class FlickrPhotoUpdateProcessor extends PhotoUpdateProcessor {
         List<String> targetPhotoIds = album.getPhotos()
                 .stream()
                 .sorted(PhotoComparator.DATE_TIME_ASC)
-                .map(Image::getServiceProviderId)
+                .map(Media::getServiceProviderId)
                 .collect(Collectors.toList());
 
         List<String> photoIdsToBeAdded = new ArrayList<>(targetPhotoIds);
@@ -193,7 +193,7 @@ public class FlickrPhotoUpdateProcessor extends PhotoUpdateProcessor {
         return new FlickrPhotosetPhotosIteratorBuilder<FlickrPhoto>(application, FlickrPhoto.class,
             album.getServiceProviderId())
                     .buildStream()
-                    .map(Image::getServiceProviderId)
+                    .map(Media::getServiceProviderId)
                     .collect(Collectors.toList());
     }
 

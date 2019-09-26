@@ -3,7 +3,7 @@ package uk.co.magictractor.spew.processor.common;
 import java.util.HashSet;
 import java.util.Set;
 
-import uk.co.magictractor.spew.photo.Image;
+import uk.co.magictractor.spew.photo.Media;
 import uk.co.magictractor.spew.photo.Tag;
 import uk.co.magictractor.spew.photo.TagComparator;
 import uk.co.magictractor.spew.photo.TagSet;
@@ -14,7 +14,7 @@ import uk.co.magictractor.spew.processor.Processor;
  * Check that tags are known, and that there is a terminal tag (such as "red
  * admiral" rather than just "butterfly").
  */
-public class TagCheckProcessor implements Processor<Image, MutablePhoto, PhotoProcessorContext> {
+public class TagCheckProcessor implements Processor<Media, MutablePhoto, PhotoProcessorContext> {
 
     private Set<Tag> unknownTags = new HashSet<>();
 

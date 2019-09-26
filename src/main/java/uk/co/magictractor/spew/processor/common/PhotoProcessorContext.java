@@ -3,15 +3,15 @@ package uk.co.magictractor.spew.processor.common;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 
-import uk.co.magictractor.spew.photo.Image;
+import uk.co.magictractor.spew.photo.Media;
 import uk.co.magictractor.spew.processor.ProcessorContext;
 
-public class PhotoProcessorContext implements ProcessorContext<Image, MutablePhoto> {
+public class PhotoProcessorContext implements ProcessorContext<Media, MutablePhoto> {
 
     private LinkedHashMap<String, MutableAlbum> albums = new LinkedHashMap<>();
 
     @Override
-    public MutablePhoto beforeElement(Image photo) {
+    public MutablePhoto beforeElement(Media photo) {
         return new MutablePhoto(photo);
     }
 

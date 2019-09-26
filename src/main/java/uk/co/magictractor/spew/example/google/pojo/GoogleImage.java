@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.function.Supplier;
 
-import uk.co.magictractor.spew.photo.Image;
+import uk.co.magictractor.spew.photo.Media;
 import uk.co.magictractor.spew.photo.Photo;
 import uk.co.magictractor.spew.photo.TagSet;
 import uk.co.magictractor.spew.photo.Video;
@@ -29,7 +29,7 @@ import uk.co.magictractor.spew.photo.Video;
 //    },
 //    "filename": "IMG_1763.JPG"
 //  }
-public class GoogleImage implements Image, Supplier<GoogleImage> {
+public class GoogleImage implements Media, Supplier<GoogleImage> {
 
     private String id;
     private String description;

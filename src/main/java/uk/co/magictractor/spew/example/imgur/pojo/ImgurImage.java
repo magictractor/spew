@@ -2,10 +2,10 @@ package uk.co.magictractor.spew.example.imgur.pojo;
 
 import java.time.Instant;
 
-import uk.co.magictractor.spew.photo.Image;
+import uk.co.magictractor.spew.photo.Media;
 import uk.co.magictractor.spew.photo.TagSet;
 
-public class ImgurImage implements Image {
+public class ImgurImage implements Media {
 
     private String id;
     // Imgur uses this identifier (rather than id) when deleting images.

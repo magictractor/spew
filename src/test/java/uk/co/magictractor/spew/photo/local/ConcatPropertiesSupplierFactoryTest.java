@@ -6,7 +6,7 @@ import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Test;
 
-import uk.co.magictractor.spew.photo.Image;
+import uk.co.magictractor.spew.photo.Media;
 import uk.co.magictractor.spew.photo.local.ConcatPropertiesSupplierFactory;
 import uk.co.magictractor.spew.photo.local.PhotoPropertiesSupplier;
 import uk.co.magictractor.spew.photo.local.PhotoPropertiesSupplierFactory;
@@ -33,7 +33,7 @@ public class ConcatPropertiesSupplierFactoryTest {
     @Test
     public void t() {
         ConcatPropertiesSupplierFactory ab = new ConcatPropertiesSupplierFactory(A, B);
-        Image image = PropertySuppliedPhoto.forFactory(ab);
+        Media image = PropertySuppliedPhoto.forFactory(ab);
         assertThat(image.getTitle()).isEqualTo("Title A");
     }
 
