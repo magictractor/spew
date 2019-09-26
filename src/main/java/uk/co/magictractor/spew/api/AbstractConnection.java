@@ -9,6 +9,7 @@ public abstract class AbstractConnection<APP extends SpewApplication<SP>, SP ext
         this.application = application;
     }
 
+    @Override
     public APP getApplication() {
         return application;
     }

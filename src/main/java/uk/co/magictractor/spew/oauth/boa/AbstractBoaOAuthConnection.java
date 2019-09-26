@@ -49,14 +49,25 @@ public abstract class AbstractBoaOAuthConnection<APP extends SpewApplication<SP>
             initConnection.accept(request);
         }
 
+        SpewHttpResponse response;
         try {
-            return transport.request(request);
+            response = transport.request(request);
         }
-        catch (Exception e) {
+        catch (RuntimeException e) {
             System.err.println("broken request: " + request);
             throw e;
         }
 
+        // TODO! reauthorize (for 401? and retry for 5xx after a pause)
+        // and do so for all connections...
+        if (response.getStatus() != 200) {
+            String message = "request returned status " + response.getStatus();
+            System.err.println(message + ": " + request);
+            System.err.println(response);
+            throw new IllegalStateException(message);
+        }
+
+        return response;
     }
 
 }
