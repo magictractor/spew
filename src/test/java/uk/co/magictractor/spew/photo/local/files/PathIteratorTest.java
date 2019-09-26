@@ -57,23 +57,25 @@ public class PathIteratorTest {
             "a1.txt");
     }
 
+    // TODO! test multiple filters
+    
     @Test
     public void testWithFileNameFilter() {
         // Note that this is not appied to directory names.
-        pathIterator.setFileFilter((p) -> p.getFileName().toString().contains("2"));
+        pathIterator.addFileFilter((p) -> p.getFileName().toString().contains("2"));
         assertThat(readActualFileNames()).containsExactlyInAnyOrder("a2.csv", "b2a.txt", "b21a.txt");
     }
 
     @Test
     public void testWithDirectoryNameFilter() {
-        pathIterator.setDirectoryFilter((p) -> p.getFileName().toString().equals("alpha"));
+        pathIterator.addDirectoryFilter((p) -> p.getFileName().toString().equals("alpha"));
         assertThat(readActualFileNames()).containsExactlyInAnyOrder("a1.txt", "a2.csv", "a3");
     }
 
     @Test
     public void testWithDirectoryNameAndFileNameFilter() {
-        pathIterator.setDirectoryFilter((p) -> p.getFileName().toString().equals("alpha"));
-        pathIterator.setFileFilter((p) -> p.getFileName().toString().endsWith(".txt"));
+        pathIterator.addDirectoryFilter((p) -> p.getFileName().toString().equals("alpha"));
+        pathIterator.addFileFilter((p) -> p.getFileName().toString().endsWith(".txt"));
         assertThat(readActualFileNames()).containsExactlyInAnyOrder("a1.txt");
     }
 

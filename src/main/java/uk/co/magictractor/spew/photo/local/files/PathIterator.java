@@ -5,6 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.Deque;
 import java.util.Iterator;
@@ -23,7 +24,7 @@ public class PathIterator extends AbstractIterator<Path> {
 
     private boolean hasStarted;
 
-    private List<Path> roots = new ArrayList<>();
+    private final List<Path> roots = new ArrayList<>();
     private Predicate<Path> fileFilter;
     private Predicate<Path> directoryFilter;
     private Comparator<Path> order;
@@ -43,22 +44,36 @@ public class PathIterator extends AbstractIterator<Path> {
     private final Deque<DirectoryNode> directoryStack = new ArrayDeque<>();
 
     public PathIterator(Path root) {
-        roots.add(root);
+        this.roots.add(root);
+    }
+
+    public PathIterator(Collection<Path> roots) {
+        this.roots.addAll(roots);
     }
 
     public void addRoot(Path root) {
         checkNotStarted();
-        roots.add(root);
+        this.roots.add(root);
     }
 
-    public void setFileFilter(Predicate<Path> fileFilter) {
+    public void addFileFilter(Predicate<Path> fileFilter) {
         checkNotStarted();
-        this.fileFilter = fileFilter;
+        if (this.fileFilter == null) {
+            this.fileFilter = fileFilter;
+        }
+        else {
+            this.fileFilter = this.fileFilter.and(fileFilter);
+        }
     }
 
-    public void setDirectoryFilter(Predicate<Path> directoryFilter) {
+    public void addDirectoryFilter(Predicate<Path> directoryFilter) {
         checkNotStarted();
-        this.directoryFilter = directoryFilter;
+        if (this.directoryFilter == null) {
+            this.directoryFilter = directoryFilter;
+        }
+        else {
+            this.directoryFilter = this.directoryFilter.and(directoryFilter);
+        }
     }
 
     private Predicate<Path> filter() {

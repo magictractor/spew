@@ -1,13 +1,19 @@
 package uk.co.magictractor.spew.photo.local.dates;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class DefaultLocalDirectoryDatesStrategy implements LocalDirectoryDatesStrategy {
 
-    // 4 digits exactly assumed to be year, such as 2019
-    // 6 digits assumed to be year and zero padded month such as 2019
-    // 8 digits assumed to be year, zero passed month and zero padded day, such as
-    // 20190123
-    // hmm - 2018 has files like "190_1712" and "190_1812_rgbe" - perhaps rename
-    // these??
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultLocalDirectoryDatesStrategy.class);
+
+    /**
+     * <ul>
+     * <li>4 digits exactly assumed to be year, such as 2019</li>
+     * <li>6 digits assumed to be year and zero padded month such as 201907</li>
+     * <li>8 digits assumed to be year, zero padded month and zero padded day,
+     * such as 20190123</li>
+     */
     @Override
     public DateRange getDateRange(String directoryName) {
         String dateString = getDateString(directoryName);
@@ -19,7 +25,7 @@ public class DefaultLocalDirectoryDatesStrategy implements LocalDirectoryDatesSt
             case 4:
                 return yearRange(dateString);
             default:
-                System.err.println("Cannot determine date range for directory: " + directoryName);
+                LOGGER.debug("Cannot determine date range for directory: {}", directoryName);
                 return null;
         }
     }

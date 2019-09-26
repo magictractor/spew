@@ -47,6 +47,10 @@ import uk.co.magictractor.spew.oauth.springsocial.spike.SpringSocialConnectionFa
 import uk.co.magictractor.spew.photo.HardCodedTagLoader;
 import uk.co.magictractor.spew.photo.IndentedFileTagLoader;
 import uk.co.magictractor.spew.photo.TagLoader;
+import uk.co.magictractor.spew.photo.local.DefaultLocalLibraryPathFinder;
+import uk.co.magictractor.spew.photo.local.LocalLibraryPathFinder;
+import uk.co.magictractor.spew.photo.local.dates.DefaultLocalDirectoryDatesStrategy;
+import uk.co.magictractor.spew.photo.local.dates.LocalDirectoryDatesStrategy;
 import uk.co.magictractor.spew.server.CallbackServer;
 import uk.co.magictractor.spew.server.netty.NettyCallbackServer;
 import uk.co.magictractor.spew.server.undertow.UndertowCallbackServer;
@@ -95,6 +99,10 @@ public final class SPIUtil {
 
         addDefault(TagLoader.class, IndentedFileTagLoader.class);
         addDefault(TagLoader.class, HardCodedTagLoader.class);
+
+        addDefault(LocalLibraryPathFinder.class, DefaultLocalLibraryPathFinder.class);
+
+        addDefault(LocalDirectoryDatesStrategy.class, DefaultLocalDirectoryDatesStrategy.class);
     }
 
     private static <T> void addDefault(Class<T> apiClass, Class<? extends T> implementationType) {
@@ -118,6 +126,7 @@ public final class SPIUtil {
         AVAILABLE_IMPLEMENTATIONS.clear();
     }
 
+    // TODO! change this to onlyAvailable()? Log warnings (once?) and ignore others if they exist?
     public static <T> T firstAvailable(Class<T> apiClass) {
         return available(apiClass)
                 .findFirst()

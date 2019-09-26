@@ -1,6 +1,5 @@
 package uk.co.magictractor.spew.processor.local;
 
-import java.nio.file.Paths;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.util.Iterator;
@@ -8,6 +7,7 @@ import java.util.Iterator;
 import com.google.common.collect.Iterators;
 
 import uk.co.magictractor.spew.photo.Image;
+import uk.co.magictractor.spew.photo.local.LocalLibrary;
 import uk.co.magictractor.spew.photo.local.LocalPhoto;
 import uk.co.magictractor.spew.photo.local.dates.DateRange;
 import uk.co.magictractor.spew.photo.local.dates.DefaultLocalDirectoryDatesStrategy;
@@ -31,18 +31,18 @@ public class BotanicsReportProcessorChain extends ProcessorChain<Image, Image, S
         LocalDate today = LocalDate.now(clock);
         LocalDate dateInRange = today.plusDays(1).minusMonths(1);
 
-        // TODO! temp
-        // return DateRange.forMonth(dateInRange.getYear(), dateInRange.getMonthValue());
-        return DateRange.forDay(dateInRange.getYear(), dateInRange.getMonthValue(), 2);
+        return DateRange.forMonth(dateInRange.getYear(), dateInRange.getMonthValue());
+        //return DateRange.forDay(dateInRange.getYear(), dateInRange.getMonthValue(), 2);
     }
 
     public static void main(String[] args) {
         LocalDirectoryDatesStrategy s = new DefaultLocalDirectoryDatesStrategy();
 
         // TODO! introduce a LocalImageLibrary
-        PathIterator pathIterator = new PathIterator(Paths.get("C:\\Users\\Ken\\Pictures"));
-        pathIterator.setFileFilter(LocalPhoto::isPhoto);
-        pathIterator.setDirectoryFilter((path) -> s.test(path, defaultReportDateRange(Clock.systemDefaultZone())));
+        //PathIterator pathIterator = new PathIterator(Paths.get("C:\\Users\\Ken\\Pictures"));
+        PathIterator pathIterator = LocalLibrary.get().iterator(defaultReportDateRange(Clock.systemDefaultZone()));
+        pathIterator.addFileFilter(LocalPhoto::isPhoto);
+        //pathIterator.setDirectoryFilter((path) -> s.test(path, defaultReportDateRange(Clock.systemDefaultZone())));
 
         Iterator<LocalPhoto> photoIterator = Iterators.transform(pathIterator, LocalPhoto::new);
 
