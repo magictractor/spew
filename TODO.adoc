@@ -3,7 +3,7 @@
 My TODO list. In no particular order. Some of these may never happen.
 
 * LocalLibrary and a mechanism to find the original local copy of a photo found on Flickr, Google Photos etc.
-Finding the local copy will be based on the DateTaken if it is available.
+Finding the local copy will be based on the DateTaken if it is available. Perhaps put local file name into a tag on the photo.
 
 * Restore check for expiry date if it present and reauthorize, using refresh_token if it is available.
 Just Boa? What do Spring Social and Google do?
@@ -32,6 +32,21 @@ Lots of options for website: template or from scratch? Will want JavaScript. Hos
 * Processor to check that photos timestamps match the folder they are in.
 Perhaps automatically correct problems, could use this to move files from memory cards?
 
-* Extract messages from error responses
+* Extract messages from error responses.
 
-* Revisit date handling for most service providers
+* Revisit date handling for most service providers. Consider use of java.time.Clock.
+
+* Add ability to write to sidecar files.
+
+* [depends on previous] processor to synchronise descriptions (and perhaps other metadata).
+Many useful descriptions have been written on Flickr, which should be written back to the sidecar.
+If it's not clear which description is newer, then a problem should be reported and resolved manually.
+
+* Allow open ended date ranges.
+
+* Support for XML messages. Currently only JSON supported. Some service providers support both, including Flickr.
+Not currently aware of any which are XML only.
+
+* New ImageIterator which wraps PathIterator but returns only single element for raw+jpg+sidecar, raw+sidecar, raw+jpg, raw+jpg1+jpg2 etc.
+
+* SPI for "is file content binary" and "is file content camera raw"
