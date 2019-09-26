@@ -107,6 +107,20 @@ public class HardCodedContentTypeFromResourceName
         map.put("3g2", "video/3gpp2");
         map.put("7z", "application/x-7z-compressed");
 
+        // Camera raw extensions from https://en.wikipedia.org/wiki/Raw_image_format.
+        // Pattern x-raw-manufacturer observed with Apache Tika.
+        map.put("crw", "image/x-raw-canon");
+        map.put("cr2", "image/x-raw-canon");
+        map.put("cr3", "image/x-raw-canon");
+        map.put("nef", "image/x-raw-nikon");
+        map.put("nrw", "image/x-raw-nikon");
+        map.put("rw2", "image/x-raw-panasonic");
+        map.put("arw", "image/x-raw-sony");
+        map.put("raf", "image/x-raw-fuji");
+
+        // Hmm. IANA list says "application/mp4", "video/mp4" agrees with Tika.
+        map.put("mp4", "video/mp4");
+
         // Additional values selected from IANA list.
         map.put("octet-stream", "application/octet-stream");
     }

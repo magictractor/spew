@@ -15,25 +15,22 @@
  */
 package uk.co.magictractor.spew.core.contenttype;
 
-import java.util.Arrays;
-import java.util.Collection;
+import org.junit.jupiter.api.BeforeAll;
 
 // TODO! check whether this is a subset of UrlConnection, and perhaps bin it (plus dependency)
 public class TestJavaxActivationContentTypeFromResourceName extends AbstractTestContentTypeFromResourceName {
 
-    private static final Collection<String> UNSUPPORTED = Arrays.asList(
-        "css", "js", "mp3", "doc", "pdf", "xml", "ico", "ttf", "zip", "7z", "oga", "fits");
-
     private static JavaxActivationContentTypeFromResourceName TESTEE = new JavaxActivationContentTypeFromResourceName();
+
+    @BeforeAll
+    public static void setUpUnsupported() {
+        unsupported("css", "js", "mp3", "doc", "pdf", "xml", "ico", "mp4", "ttf", "zip", "7z", "oga", "fits");
+        unsupportedRaw();
+    }
 
     @Override
     protected String determineContentType(String resourceName) {
         return TESTEE.determineContentType(resourceName);
-    }
-
-    @Override
-    protected boolean isSupportedExtension(String extension) {
-        return !UNSUPPORTED.contains(extension);
     }
 
 }

@@ -15,15 +15,17 @@
  */
 package uk.co.magictractor.spew.core.contenttype;
 
-import java.util.Arrays;
-import java.util.Collection;
+import org.junit.jupiter.api.BeforeAll;
 
 public class TestUrlConnectionContentTypeFromResourceName extends AbstractTestContentTypeFromResourceName {
 
-    private static final Collection<String> UNSUPPORTED = Arrays.asList(
-        "css", "js", "doc", "ico", "ttf", "7z", "fits", "octet-stream");
-
     private static URLConnectionContentTypeFromResourceName TESTEE = new URLConnectionContentTypeFromResourceName();
+
+    @BeforeAll
+    public static void setUpUnsupported() {
+        unsupported("css", "js", "doc", "ico", "ttf", "7z", "fits", "octet-stream");
+        unsupportedRaw();
+    }
 
     @Override
     protected String determineContentType(String resourceName) {
@@ -33,11 +35,6 @@ public class TestUrlConnectionContentTypeFromResourceName extends AbstractTestCo
     @Override
     protected String unknownContentType() {
         return null;
-    }
-
-    @Override
-    protected boolean isSupportedExtension(String extension) {
-        return !UNSUPPORTED.contains(extension);
     }
 
 }

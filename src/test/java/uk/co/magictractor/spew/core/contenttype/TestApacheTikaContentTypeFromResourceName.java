@@ -15,11 +15,18 @@
  */
 package uk.co.magictractor.spew.core.contenttype;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 public class TestApacheTikaContentTypeFromResourceName extends AbstractTestContentTypeFromResourceName {
 
     private static ApacheTikaContentTypeFromResourceName TESTEE = new ApacheTikaContentTypeFromResourceName();
+
+    @BeforeAll
+    public static void setUpUnsupported() {
+        // Likely to be supported with a future release of Tika.
+        unsupported("cr3");
+    }
 
     @Override
     protected String determineContentType(String resourceName) {

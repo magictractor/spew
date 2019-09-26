@@ -15,16 +15,18 @@
  */
 package uk.co.magictractor.spew.core.contenttype;
 
-import java.util.Arrays;
-import java.util.Collection;
+import org.junit.jupiter.api.BeforeAll;
 
 public class TestHardCodedContentTypeFromResourceName extends AbstractTestContentTypeFromResourceName {
 
-    private static final Collection<String> UNSUPPORTED = Arrays.asList(
-        // Very obscure content type - reasonable that many implementations won't support it.
-        "fits");
-
     private static HardCodedContentTypeFromResourceName TESTEE = new HardCodedContentTypeFromResourceName();
+
+    @BeforeAll
+    public static void setUpUnsupported() {
+        unsupported(
+            // Very obscure content type - reasonable that many implementations won't support it.
+            "fits");
+    }
 
     @Override
     protected String determineContentType(String resourceName) {
@@ -34,11 +36,6 @@ public class TestHardCodedContentTypeFromResourceName extends AbstractTestConten
     @Override
     protected String unknownContentType() {
         return null;
-    }
-
-    @Override
-    protected boolean isSupportedExtension(String extension) {
-        return !UNSUPPORTED.contains(extension);
     }
 
 }

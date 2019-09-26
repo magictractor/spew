@@ -17,14 +17,38 @@ package uk.co.magictractor.spew.core.contenttype;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
 
 public abstract class AbstractTestContentTypeFromResourceName {
 
+    private static final List<String> RAW_EXTENSIONS = Arrays.asList("crw", "cr2", "cr3", "nef", "nrw", "rw2", "arw",
+        "raf");
+    private static List<String> UNSUPPORTED_EXTENSIONS = new ArrayList<>();
+
     protected abstract String determineContentType(String resourceName);
 
+    @AfterAll
+    public static void tearDownUnsupported() {
+        UNSUPPORTED_EXTENSIONS.clear();
+    }
+
+    protected static void unsupported(String... extensions) {
+        for (String extension : extensions) {
+            UNSUPPORTED_EXTENSIONS.add(extension);
+        }
+    }
+
+    protected static void unsupportedRaw() {
+        UNSUPPORTED_EXTENSIONS.addAll(RAW_EXTENSIONS);
+    }
+
     protected boolean isSupportedExtension(String extension) {
-        return true;
+        return !UNSUPPORTED_EXTENSIONS.contains(extension);
     }
 
     protected String unknownContentType() {
@@ -74,6 +98,51 @@ public abstract class AbstractTestContentTypeFromResourceName {
     @Test
     public void testJpeg() {
         check("picture.jpeg", "image/jpeg");
+    }
+
+    @Test
+    public void testCrw() {
+        check("photo.crw", "image/x-raw-canon");
+    }
+
+    @Test
+    public void testCr2() {
+        check("photo.cr2", "image/x-raw-canon");
+    }
+
+    @Test
+    public void testCr3() {
+        check("photo.cr3", "image/x-raw-canon");
+    }
+
+    @Test
+    public void testNef() {
+        check("photo.nef", "image/x-raw-nikon");
+    }
+
+    @Test
+    public void testNrw() {
+        check("photo.nrw", "image/x-raw-nikon");
+    }
+
+    @Test
+    public void testRw2() {
+        check("photo.rw2", "image/x-raw-panasonic");
+    }
+
+    @Test
+    public void testArw() {
+        check("photo.arw", "image/x-raw-sony");
+    }
+
+    @Test
+    public void testRaf() {
+        check("photo.raf", "image/x-raw-fuji");
+    }
+
+    @Test
+    public void testMp4() {
+        check("video.mp4", "video/mp4");
     }
 
     @Test

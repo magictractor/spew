@@ -15,8 +15,6 @@
  */
 package uk.co.magictractor.spew.core.contenttype;
 
-import org.junit.jupiter.api.Test;
-
 import uk.co.magictractor.spew.util.ContentTypeUtil;
 
 public class TestContentTypeUtilFromResourceName extends AbstractTestContentTypeFromResourceName {
@@ -24,12 +22,6 @@ public class TestContentTypeUtilFromResourceName extends AbstractTestContentType
     @Override
     protected String determineContentType(String resourceName) {
         return ContentTypeUtil.fromResourceName(resourceName);
-    }
-
-    @Override
-    @Test
-    public void testUnknown() {
-        check("obscure.mcwomble", "application/octet-stream");
     }
 
 }
