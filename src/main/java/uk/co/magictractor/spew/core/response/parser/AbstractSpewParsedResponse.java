@@ -36,7 +36,7 @@ public abstract class AbstractSpewParsedResponse implements SpewParsedResponse {
 
     @Override
     public String getHeader(String headerName) {
-        return response.getHeader(headerName);
+        return response.getHeaderValue(headerName);
     }
 
     @Override

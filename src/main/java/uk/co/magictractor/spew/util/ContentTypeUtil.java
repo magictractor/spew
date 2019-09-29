@@ -85,8 +85,8 @@ public class ContentTypeUtil {
 
     public static String fromHeader(SpewHttpMessage httpMessage) {
         // TODO! simplify here and test case sensitivity in unit tests
-        String upper = httpMessage.getHeader("Content-Type");
-        String lower = httpMessage.getHeader("content-type");
+        String upper = httpMessage.getHeaderValue("Content-Type");
+        String lower = httpMessage.getHeaderValue("content-type");
         if (!Objects.deepEquals(upper, lower)) {
             // hmm, why doesn't this blow up? there was a workaround for this before...
             throw new IllegalStateException("getHeader() should be case insensitive");
@@ -126,7 +126,7 @@ public class ContentTypeUtil {
     }
 
     public static Optional<Charset> charsetFromHeader(SpewHttpMessage httpMessage) {
-        String header = httpMessage.getHeader(CONTENT_TYPE_HEADER_NAME);
+        String header = httpMessage.getHeaderValue(CONTENT_TYPE_HEADER_NAME);
         Charset charset = null;
         if (header != null) {
             int index = header.indexOf(";charset=");

@@ -176,16 +176,40 @@ public final class OutgoingHttpRequest implements SpewHttpRequest {
     }
 
     public void addHeader(String headerName, String headerValue) {
-        // TODO! reinstate check and provide method for adding another header with the same name
-        //        if (headers.containsKey(headerName)) {
-        //            throw new IllegalArgumentException(
-        //                "Header already has a value assigned " + headerName + ": " + headers.get(headerName));
-        //        }
         headers.add(new SpewHeader(headerName, headerValue));
     }
 
     public void addHeader(String headerName, long headerValue) {
         addHeader(headerName, Long.toString(headerValue));
+    }
+
+    public void setHeader(String headerName, String headerValue) {
+        //headers.add(new SpewHeader(headerName, headerValue));
+        int existingIndex = -1;
+        int i = -1;
+        for (SpewHeader header : headers) {
+            i++;
+            if (header.getName().equalsIgnoreCase(headerName)) {
+                if (existingIndex == -1) {
+                    existingIndex = i;
+                }
+                else {
+                    throw new IllegalStateException("There are multiple existing headers with name " + headerName);
+                }
+            }
+        }
+
+        SpewHeader header = new SpewHeader(headerName, headerValue);
+        if (existingIndex == -1) {
+            headers.add(header);
+        }
+        else {
+            headers.set(existingIndex, header);
+        }
+    }
+
+    public void setHeader(String headerName, long headerValue) {
+        setHeader(headerName, Long.toString(headerValue));
     }
 
     public SpewParsedResponse sendRequest() {
@@ -234,12 +258,12 @@ public final class OutgoingHttpRequest implements SpewHttpRequest {
             if (!getBodyParams().isEmpty()) {
                 // TODO! allow body to have been set explicitly
                 bodyBytes = ContentTypeUtil.bodyBytes(this, JaywayConfigurationCache.getConfiguration(application));
-                addHeader(ContentTypeUtil.CONTENT_TYPE_HEADER_NAME, getContentType());
-                addHeader(ContentTypeUtil.CONTENT_LENGTH_HEADER_NAME, bodyBytes.length);
+                setHeader(ContentTypeUtil.CONTENT_TYPE_HEADER_NAME, getContentType());
+                setHeader(ContentTypeUtil.CONTENT_LENGTH_HEADER_NAME, bodyBytes.length);
             }
             else {
                 // Prevent 411 Content Length Required
-                addHeader(ContentTypeUtil.CONTENT_LENGTH_HEADER_NAME, 0);
+                setHeader(ContentTypeUtil.CONTENT_LENGTH_HEADER_NAME, 0);
             }
         }
         else if (!getBodyParams().isEmpty()) {
@@ -251,9 +275,6 @@ public final class OutgoingHttpRequest implements SpewHttpRequest {
     @Override
     public String toString() {
         ToStringHelper helper = HttpMessageUtil.toStringHelper(this);
-        if (!queryStringParams.isEmpty()) {
-            helper.add("queryStringParams", queryStringParams);
-        }
         if (!bodyParams.isEmpty()) {
             helper.add("bodyParams", bodyParams);
         }

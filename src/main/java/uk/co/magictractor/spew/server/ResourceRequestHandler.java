@@ -57,7 +57,7 @@ public class ResourceRequestHandler implements RequestHandler {
                         .map(h -> h.getName() + "=" + h.getValue())
                         .collect(Collectors.toList()));
 
-        String ifModifiedSince = request.getHeader("If-Modified-Since");
+        String ifModifiedSince = request.getHeaderValue("If-Modified-Since");
         OutgoingResponse response;
         if (ifModifiedSince != null) {
             PathUtil.getLastModified(bodyPath);

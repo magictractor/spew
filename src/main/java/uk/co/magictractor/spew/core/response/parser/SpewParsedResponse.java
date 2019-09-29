@@ -63,7 +63,7 @@ public interface SpewParsedResponse {
             return instance.get();
         }
 
-        String headerContentType = response.getHeader(ContentTypeUtil.CONTENT_TYPE_HEADER_NAME);
+        String headerContentType = response.getHeaderValue(ContentTypeUtil.CONTENT_TYPE_HEADER_NAME);
         BufferedReader bodyReader = HttpMessageUtil.createBodyReader(response);
         StringBuilder messageBuilder = new StringBuilder()
                 // TODO! link to a help page

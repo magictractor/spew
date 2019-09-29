@@ -15,9 +15,43 @@
  */
 package uk.co.magictractor.spew.api;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public interface SpewHttpMessage {
+
+    default List<String> getHeaderValues(String headerName) {
+        return getHeaders(headerName).stream()
+                .map(SpewHeader::getValue)
+                .collect(Collectors.toList());
+    }
+
+    default String getHeaderValue(String headerName) {
+        SpewHeader header = getHeader(headerName);
+        return header == null ? null : header.getValue();
+    }
+
+    default List<SpewHeader> getHeaders(String headerName) {
+        List<SpewHeader> headers = new ArrayList<>();
+        for (SpewHeader candidate : getHeaders()) {
+            if (candidate.getName().equalsIgnoreCase(headerName)) {
+                headers.add(candidate);
+            }
+        }
+        return headers;
+    }
+
+    default SpewHeader getHeader(String headerName) {
+        List<SpewHeader> headers = getHeaders(headerName);
+        if (headers.isEmpty()) {
+            return null;
+        }
+        else if (headers.size() == 1) {
+            return headers.get(0);
+        }
+        throw new IllegalStateException("There are multiple headers with name " + headerName);
+    }
 
     /**
      * <p>
@@ -30,15 +64,6 @@ public interface SpewHttpMessage {
      * @return
      * @see https://stackoverflow.com/questions/5258977/are-http-headers-case-sensitive
      */
-    default String getHeader(String headerName) {
-        for (SpewHeader candidate : getHeaders()) {
-            if (candidate.getName().equalsIgnoreCase(headerName)) {
-                return candidate.getValue();
-            }
-        }
-        return null;
-    }
-
     List<SpewHeader> getHeaders();
 
     /**

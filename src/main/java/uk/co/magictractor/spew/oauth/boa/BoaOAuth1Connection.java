@@ -16,6 +16,7 @@ import uk.co.magictractor.spew.api.SpewConnection;
 import uk.co.magictractor.spew.api.SpewHttpResponse;
 import uk.co.magictractor.spew.api.SpewOAuth1Application;
 import uk.co.magictractor.spew.api.SpewOAuth1ServiceProvider;
+import uk.co.magictractor.spew.api.connection.AbstractAuthorizationDecoratorConnection;
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
 import uk.co.magictractor.spew.core.response.parser.text.KeyValuePairsResponse;
 import uk.co.magictractor.spew.core.verification.AuthorizationHandler;
@@ -30,7 +31,7 @@ import uk.co.magictractor.spew.util.spi.SPIUtil;
 
 // TODO! common interface for OAuth1 and OAuth2 connections (and no auth? / other auth?)
 public final class BoaOAuth1Connection<SP extends SpewOAuth1ServiceProvider>
-        extends AbstractBoaOAuthConnection<SpewOAuth1Application<SP>, SP> {
+        extends AbstractAuthorizationDecoratorConnection<SpewOAuth1Application<SP>, SP> {
 
     // unit tests can call setSeed() on this
     private final Random nonceGenerator = new Random();
@@ -54,29 +55,19 @@ public final class BoaOAuth1Connection<SP extends SpewOAuth1ServiceProvider>
     }
 
     @Override
-    public SpewHttpResponse request(OutgoingHttpRequest apiRequest) {
-        // TODO! (optionally?) verify existing tokens? - and need similar for spring social
-        if (userToken.getValue() == null) {
-            authorizeUser();
-        }
+    protected boolean hasExistingAuthorization() {
+        return userToken.getValue() != null;
+        // TODO! check expiry
+    }
 
+    @Override
+    protected void addAuthorization(OutgoingHttpRequest apiRequest) {
         forAll(apiRequest);
         forApi(apiRequest);
-        return ExceptionUtil.call(() -> request0(apiRequest, this::addOAuthSignature));
     }
 
-    private void addOAuthSignature(OutgoingHttpRequest request) {
-        request.setQueryStringParam("oauth_signature", getSignature(request));
-    }
-
-    private SpewParsedResponse authRequest(OutgoingHttpRequest apiRequest) {
-        forAll(apiRequest);
-        SpewHttpResponse response = ExceptionUtil.call(() -> request0(apiRequest, this::addOAuthSignature));
-
-        return new KeyValuePairsResponse(response);
-    }
-
-    private void authorizeUser() {
+    @Override
+    public void obtainAuthorization() {
         AuthorizationHandler authorizationHandler = getApplication()
                 .getAuthorizationHandler(BoaOAuth1VerificationFunction::new);
         authorizationHandler.preOpenAuthorizationInBrowser(getApplication());
@@ -122,6 +113,14 @@ public final class BoaOAuth1Connection<SP extends SpewOAuth1ServiceProvider>
         String authUri = authUriBuilder.toString();
 
         BrowserUtil.openBrowserTab(authUri);
+    }
+
+    private SpewParsedResponse authRequest(OutgoingHttpRequest apiRequest) {
+        forAll(apiRequest);
+        apiRequest.setQueryStringParam("oauth_signature", getSignature(apiRequest));
+        SpewHttpResponse response = sendRequest(apiRequest);
+
+        return new KeyValuePairsResponse(response);
     }
 
     private boolean verifyAuthentication(VerificationInfo verificationInfo) {

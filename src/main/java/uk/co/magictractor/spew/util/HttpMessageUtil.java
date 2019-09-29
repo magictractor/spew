@@ -108,7 +108,7 @@ public final class HttpMessageUtil {
         ToStringHelper helper = MoreObjects.toStringHelper(request)
                 .add("path", request.getPath());
         if (!request.getQueryStringParams().isEmpty()) {
-            helper.add("queryParams", request.getQueryStringParams());
+            helper.add("queryStringParams", request.getQueryStringParams());
         }
 
         return helper;

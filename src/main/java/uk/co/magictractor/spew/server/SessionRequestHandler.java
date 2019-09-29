@@ -25,7 +25,7 @@ public class SessionRequestHandler implements RequestHandler {
 
     @Override
     public void handleRequest(SpewHttpRequest request, OutgoingResponseBuilder responseBuilder) {
-        String cookies = request.getHeader("Cookie");
+        String cookies = request.getHeaderValue("Cookie");
         System.err.println("cookies: " + cookies + " (" + request.getPath() + ")");
 
         if (cookies == null) {

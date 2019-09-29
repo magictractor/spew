@@ -16,6 +16,7 @@ import uk.co.magictractor.spew.api.SpewConnection;
 import uk.co.magictractor.spew.api.SpewHttpResponse;
 import uk.co.magictractor.spew.api.SpewOAuth2Application;
 import uk.co.magictractor.spew.api.SpewOAuth2ServiceProvider;
+import uk.co.magictractor.spew.api.connection.AbstractAuthorizationDecoratorConnection;
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
 import uk.co.magictractor.spew.core.verification.AuthorizationHandler;
 import uk.co.magictractor.spew.core.verification.VerificationFunction;
@@ -24,13 +25,12 @@ import uk.co.magictractor.spew.store.EditableProperty;
 import uk.co.magictractor.spew.store.UserPropertyStore;
 import uk.co.magictractor.spew.util.BrowserUtil;
 import uk.co.magictractor.spew.util.ContentTypeUtil;
-import uk.co.magictractor.spew.util.ExceptionUtil;
 import uk.co.magictractor.spew.util.spi.SPIUtil;
 
 // https://tools.ietf.org/html/rfc6749
 // https://developers.google.com/identity/protocols/OAuth2
 public class BoaOAuth2Connection<SP extends SpewOAuth2ServiceProvider>
-        extends AbstractBoaOAuthConnection<SpewOAuth2Application<SP>, SP> {
+        extends AbstractAuthorizationDecoratorConnection<SpewOAuth2Application<SP>, SP> {
 
     /*
      * milliseconds to remove from expiry to ensure that we refresh if getting
@@ -58,32 +58,24 @@ public class BoaOAuth2Connection<SP extends SpewOAuth2ServiceProvider>
     }
 
     @Override
-    public SpewHttpResponse request(OutgoingHttpRequest apiRequest) {
-
-        if (accessToken.getValue() == null) {
-            // authenticateUser();
-            authorize();
-        }
-        // TODO! restore this - see comments about refresh tokens, perhaps related
-        //        else if (isAccessTokenExpired()) {
-        //            fetchRefreshedAccessToken();
-        //        }
-
-        return ExceptionUtil.call(() -> request0(apiRequest, this::setAuthHeader));
+    protected boolean hasExistingAuthorization() {
+        return accessToken.getValue() != null;
     }
 
-    private void setAuthHeader(OutgoingHttpRequest request) {
-        request.addHeader("Authorization", "Bearer " + accessToken.getValue());
+    @Override
+    protected void addAuthorization(OutgoingHttpRequest request) {
+        request.setHeader("Authorization", "Bearer " + accessToken.getValue());
     }
 
     // https://developers.google.com/photos/library/guides/authentication-authorization
-    private void authorize() {
+    @Override
+    public void obtainAuthorization() {
         SpewOAuth2Application<?> application = getApplication();
 
         OutgoingHttpRequest request = application.createGetRequest(getServiceProvider().getAuthorizationUri());
 
         // GitHub returns application/x-www-form-urlencoded content type by default
-        request.addHeader(ContentTypeUtil.ACCEPT_HEADER_NAME, ContentTypeUtil.JSON_MIME_TYPES.get(0));
+        request.setHeader(ContentTypeUtil.ACCEPT_HEADER_NAME, ContentTypeUtil.JSON_MIME_TYPES.get(0));
 
         // A bit mucky. The callback value comes from the handler but is also used in the verification function.
         AuthorizationHandler[] authHandlerHolder = new AuthorizationHandler[1];
@@ -136,7 +128,7 @@ public class BoaOAuth2Connection<SP extends SpewOAuth2ServiceProvider>
         OutgoingHttpRequest request = application.createPostRequest(getServiceProvider().getTokenUri());
 
         // GitHub returns application/x-www-form-urlencoded content type by default
-        request.addHeader(ContentTypeUtil.ACCEPT_HEADER_NAME, ContentTypeUtil.JSON_MIME_TYPES.get(0));
+        request.setHeader(ContentTypeUtil.ACCEPT_HEADER_NAME, ContentTypeUtil.JSON_MIME_TYPES.get(0));
 
         request.setContentType(ContentTypeUtil.FORM_MIME_TYPE);
 
@@ -263,7 +255,7 @@ public class BoaOAuth2Connection<SP extends SpewOAuth2ServiceProvider>
         // TODO! more elegant way to prep the request rather than repeating this here?
         apiRequest.prepareToSend();
 
-        SpewHttpResponse response = ExceptionUtil.call(() -> request0(apiRequest));
+        SpewHttpResponse response = sendRequest(apiRequest);
         return SpewParsedResponse.parse(getApplication(), response);
     }
 
