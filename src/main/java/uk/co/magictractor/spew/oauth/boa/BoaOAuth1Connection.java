@@ -52,6 +52,8 @@ public final class BoaOAuth1Connection<SP extends SpewOAuth1ServiceProvider>
 
         this.userToken = SPIUtil.firstAvailable(UserPropertyStore.class).getProperty(application, "user_token");
         this.userSecret = SPIUtil.firstAvailable(UserPropertyStore.class).getProperty(application, "user_secret");
+
+        super.addBeforeSendRequestCallback(this::addOAuthSignature);
     }
 
     @Override
@@ -115,12 +117,16 @@ public final class BoaOAuth1Connection<SP extends SpewOAuth1ServiceProvider>
         BrowserUtil.openBrowserTab(authUri);
     }
 
-    private SpewParsedResponse authRequest(OutgoingHttpRequest apiRequest) {
-        forAll(apiRequest);
-        apiRequest.setQueryStringParam("oauth_signature", getSignature(apiRequest));
-        SpewHttpResponse response = sendRequest(apiRequest);
+    private SpewParsedResponse authRequest(OutgoingHttpRequest request) {
+        forAll(request);
+        addOAuthSignature(request);
+        SpewHttpResponse response = sendRequest(request);
 
         return new KeyValuePairsResponse(response);
+    }
+
+    private void addOAuthSignature(OutgoingHttpRequest request) {
+        request.setQueryStringParam("oauth_signature", getSignature(request));
     }
 
     private boolean verifyAuthentication(VerificationInfo verificationInfo) {
