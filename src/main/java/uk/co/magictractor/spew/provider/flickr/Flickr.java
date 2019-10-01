@@ -58,13 +58,19 @@ public class Flickr implements SpewOAuth1ServiceProvider {
             TagSetTypeAdapter.getInstance());
     }
 
-    // {"stat":"fail","code":1,"message":"User not found"}
+    // {"stat":"fail","code":98,"message":"Invalid auth token"}}
+    //
+    // <rsp stat="ok">
+    // <rsp stat="fail">
+    // <err code="98" msg="Invalid auth token" />
+    // </rsp>
     @Override
     public void verifyResponse(SpewParsedResponse response) {
-        String status = response.getString("$.stat");
+
+        String status = response.getString("stat");
         if (!"ok".equals(status)) {
-            String errorCode = response.getString("$.code");
-            String errorMessage = response.getString("$.message");
+            String errorCode = response.getString("code");
+            String errorMessage = response.getString("message");
             throw new BadResponseException(status, errorCode, errorMessage);
         }
     }

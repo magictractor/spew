@@ -1,5 +1,9 @@
 package uk.co.magictractor.spew.util;
 
+/**
+ * Other String utility methods are available in
+ * {@link com.google.common.base.Strings}.
+ */
 public final class StringUtil {
 
     private StringUtil() {

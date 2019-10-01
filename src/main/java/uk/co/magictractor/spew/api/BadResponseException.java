@@ -15,6 +15,8 @@
  */
 package uk.co.magictractor.spew.api;
 
+import com.google.common.base.Strings;
+
 /**
  *
  */
@@ -24,6 +26,9 @@ public class BadResponseException extends RuntimeException {
 
     public BadResponseException(String status, String errorCode, String errorMessage) {
         super(status + ": " + errorCode + " \"" + errorMessage + "\"");
+        if (Strings.isNullOrEmpty(status)) {
+            throw new IllegalArgumentException("status must not be null or empty");
+        }
     }
 
 }

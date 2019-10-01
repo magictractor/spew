@@ -48,6 +48,7 @@ public class ContentTypeUtil {
     // TODO! private
     // TODO! Dropbox auth uses text/javascript in the token response. Tolerate here for now, but perhaps move to an override in the app?
     public static final List<String> JSON_MIME_TYPES = Arrays.asList("application/json", "text/javascript");
+    public static final List<String> XML_MIME_TYPES = Arrays.asList("application/xml", "text/xml");
     public static final List<String> HTML_MIME_TYPES = Arrays.asList("text/html");
     private static final List<String> CSS_MIME_TYPES = Arrays.asList("text/css");
     private static final List<String> JPEG_MIME_TYPES = Arrays.asList("image/jpeg");
@@ -65,6 +66,11 @@ public class ContentTypeUtil {
     public static boolean isJson(String contentType) {
         // TODO! beware appended ";charset=..."
         return JSON_MIME_TYPES.contains(contentType);
+    }
+
+    public static boolean isXml(String contentType) {
+        // TODO! beware appended ";charset=..."
+        return XML_MIME_TYPES.contains(contentType);
     }
 
     public static boolean isHtml(String contentType) {

@@ -19,6 +19,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import uk.co.magictractor.spew.api.SpewHeader;
 import uk.co.magictractor.spew.api.SpewHttpResponse;
 import uk.co.magictractor.spew.util.spi.SPIUtil;
@@ -27,6 +30,8 @@ import uk.co.magictractor.spew.util.spi.SPIUtil;
  *
  */
 public abstract class AbstractSpewParsedResponse implements SpewParsedResponse {
+
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     private final SpewHttpResponse response;
 
@@ -61,6 +66,10 @@ public abstract class AbstractSpewParsedResponse implements SpewParsedResponse {
         return elements.stream()
                 .map(element -> this.subType(element))
                 .collect(Collectors.toList());
+    }
+
+    public final Logger getLogger() {
+        return logger;
     }
 
 }
