@@ -81,8 +81,8 @@ public class HardCodedTagLoader implements TagLoader {
         //        Tag thrush = init(bird, "Thrush");
         //        init(thrush, "Mistle thrush", "Song thrush");
 
-        Tag wagtail = init(bird, "Wagtail");
-        init(wagtail, "Grey wagtail", "Pied wagtail");
+        //Tag wagtail = init(bird, "Wagtail");
+        //init(wagtail, "Grey wagtail", "Pied wagtail");
 
         // Tag warbler = init(bird, "Warbler");
         // init(warbler, "Chiffchaff", "Willow warbler");
