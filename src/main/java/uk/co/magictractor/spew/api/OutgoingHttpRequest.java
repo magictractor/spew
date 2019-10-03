@@ -13,6 +13,7 @@ import com.google.common.base.MoreObjects.ToStringHelper;
 
 import uk.co.magictractor.spew.api.connection.SpewConnectionCache;
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
+import uk.co.magictractor.spew.core.response.parser.SpewParsedResponseBuilder;
 import uk.co.magictractor.spew.core.response.parser.jayway.JaywayConfigurationCache;
 import uk.co.magictractor.spew.server.SpewHttpRequest;
 import uk.co.magictractor.spew.util.ContentTypeUtil;
@@ -227,13 +228,19 @@ public final class OutgoingHttpRequest implements SpewHttpRequest {
 
         System.err.println("received response: " + response);
 
+        SpewParsedResponseBuilder parsedResponseBuilder = new SpewParsedResponseBuilder(application, response);
+
+        // TODO! move error handling here? or move where parsing is done??
+
         sent = true;
 
-        SpewParsedResponse parsedResponse = SpewParsedResponse.parse(application, response);
+        //SpewHttpMessageBodyReader parsedResponse = SpewHttpMessageBodyReader.parse(application, response);
+        //application.getServiceProvider().verifyResponse(parsedResponse);
 
-        application.getServiceProvider().verifyResponse(parsedResponse);
+        // TODO! retry/reauthenticate AFTER building
+        application.getServiceProvider().buildParsedResponse(parsedResponseBuilder);
 
-        return parsedResponse;
+        return parsedResponseBuilder.build();
     }
 
     public void beforeSend(Consumer<OutgoingHttpRequest> beforeSendConsumer) {

@@ -15,16 +15,9 @@
  */
 package uk.co.magictractor.spew.core.response.parser;
 
-import java.io.BufferedReader;
 import java.util.List;
-import java.util.Optional;
 
-import uk.co.magictractor.spew.api.SpewApplication;
-import uk.co.magictractor.spew.api.SpewHeader;
 import uk.co.magictractor.spew.api.SpewHttpResponse;
-import uk.co.magictractor.spew.util.ContentTypeUtil;
-import uk.co.magictractor.spew.util.HttpMessageUtil;
-import uk.co.magictractor.spew.util.spi.SPIUtil;
 
 /**
  * <p>
@@ -35,11 +28,13 @@ import uk.co.magictractor.spew.util.spi.SPIUtil;
  * ObjectCentricSpewParsedResponse or StringCentricSpewParsedResponse.
  * </p>
  */
-public interface SpewParsedResponse {
+public interface SpewParsedResponse extends SpewHttpResponse {
 
-    String getHeader(String headerName);
-
-    List<SpewHeader> getHeaders();
+    //    int getStatus();
+    //
+    //    String getHeaderValue(String headerName);
+    //
+    //    List<SpewHeader> getHeaders();
 
     String getString(String key);
 
@@ -54,26 +49,5 @@ public interface SpewParsedResponse {
     <T> T getObject(String path, Class<T> type);
 
     <T> List<T> getList(String path, Class<T> type);
-
-    static SpewParsedResponse parse(SpewApplication<?> application, SpewHttpResponse response) {
-
-        Optional<SpewParsedResponse> instance = SPIUtil.firstNotNull(SpewParsedResponseFactory.class,
-            factory -> factory.instanceFor(application, response));
-        if (instance.isPresent()) {
-            return instance.get();
-        }
-
-        String headerContentType = response.getHeaderValue(ContentTypeUtil.CONTENT_TYPE_HEADER_NAME);
-        BufferedReader bodyReader = HttpMessageUtil.createBodyReader(response);
-        StringBuilder messageBuilder = new StringBuilder()
-                // TODO! link to a help page
-                .append("There are no available parsers for \nContent-Type: ")
-                .append(headerContentType);
-        bodyReader.lines().forEach(line -> {
-            messageBuilder.append('\n').append(line);
-        });
-
-        throw new IllegalStateException(messageBuilder.toString());
-    }
 
 }

@@ -38,7 +38,7 @@ import uk.co.magictractor.spew.core.contenttype.FallbackOctetStreamContentTypeFr
 import uk.co.magictractor.spew.core.contenttype.HardCodedContentTypeFromResourceName;
 import uk.co.magictractor.spew.core.response.parser.DefaultParsedResponsePojoConverter;
 import uk.co.magictractor.spew.core.response.parser.ParsedResponsePojoConverter;
-import uk.co.magictractor.spew.core.response.parser.SpewParsedResponseFactory;
+import uk.co.magictractor.spew.core.response.parser.SpewHttpMessageBodyReaderFactory;
 import uk.co.magictractor.spew.core.response.parser.jayway.JaywayResponseFactory;
 import uk.co.magictractor.spew.core.response.parser.xpath.JavaXPathResponseFactory;
 import uk.co.magictractor.spew.http.apache.SpewApacheHttpClientConnectionFactory;
@@ -85,8 +85,8 @@ public final class SPIUtil {
         addDefault(SpewConnectionFactory.class, SpewApacheHttpClientConnectionFactory.class);
         addDefault(SpewConnectionFactory.class, SpewHttpUrlConnectionFactory.class);
 
-        addDefault(SpewParsedResponseFactory.class, JaywayResponseFactory.class);
-        addDefault(SpewParsedResponseFactory.class, JavaXPathResponseFactory.class);
+        addDefault(SpewHttpMessageBodyReaderFactory.class, JaywayResponseFactory.class);
+        addDefault(SpewHttpMessageBodyReaderFactory.class, JavaXPathResponseFactory.class);
 
         addDefault(ParsedResponsePojoConverter.class, DefaultParsedResponsePojoConverter.class);
 

@@ -21,16 +21,22 @@ import uk.co.magictractor.spew.api.SpewHttpResponse;
 /**
  *
  */
-public interface SpewParsedResponseFactory {
+public interface SpewHttpMessageBodyReaderFactory {
 
     /**
+     * <p>
      * Generally, the first parser from SPI or (if no SPI) the default list
-     * which returns a non-null .
+     * which returns a non-null.
+     * </p>
+     * <p>
+     * Implementations of {@link SpewApplication} may explicity define which
+     * body reader implementation is to be used. See TODO.
+     * </p>
      *
      * @param response response from service provider for which a parser is to
      *        be found
      * @return flag indicating whether this parser
      */
-    SpewParsedResponse instanceFor(SpewApplication<?> application, SpewHttpResponse response);
+    SpewHttpMessageBodyReader instanceFor(SpewApplication<?> application, SpewHttpResponse response);
 
 }

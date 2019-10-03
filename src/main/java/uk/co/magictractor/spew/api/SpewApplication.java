@@ -3,6 +3,7 @@ package uk.co.magictractor.spew.api;
 import java.util.function.Supplier;
 
 import uk.co.magictractor.spew.api.connection.SpewConnectionCache;
+import uk.co.magictractor.spew.core.response.parser.SpewParsedResponseBuilder;
 import uk.co.magictractor.spew.core.verification.AuthorizationHandler;
 import uk.co.magictractor.spew.core.verification.VerificationFunction;
 import uk.co.magictractor.spew.util.StringUtil;
@@ -32,8 +33,12 @@ public interface SpewApplication<SP extends SpewServiceProvider> {
         getServiceProvider().prepareRequest(request);
     }
 
-    default String getContentType(SpewHttpResponse response) {
-        return getServiceProvider().getContentType(response);
+    //    default String getContentType(SpewHttpResponse response) {
+    //        return getServiceProvider().getContentType(response);
+    //    }
+
+    default void buildParsedResponse(SpewParsedResponseBuilder parsedResponseBuilder) {
+        getServiceProvider().buildParsedResponse(parsedResponseBuilder);
     }
 
     default OutgoingHttpRequest createGetRequest(String url) {

@@ -18,7 +18,8 @@ import uk.co.magictractor.spew.api.SpewOAuth1Application;
 import uk.co.magictractor.spew.api.SpewOAuth1ServiceProvider;
 import uk.co.magictractor.spew.api.connection.AbstractAuthorizationDecoratorConnection;
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
-import uk.co.magictractor.spew.core.response.parser.text.KeyValuePairsResponse;
+import uk.co.magictractor.spew.core.response.parser.SpewParsedResponseBuilder;
+import uk.co.magictractor.spew.core.response.parser.text.KeyValuePairsHttpMessageBodyReader;
 import uk.co.magictractor.spew.core.verification.AuthorizationHandler;
 import uk.co.magictractor.spew.core.verification.VerificationFunction;
 import uk.co.magictractor.spew.core.verification.VerificationInfo;
@@ -122,7 +123,9 @@ public final class BoaOAuth1Connection<SP extends SpewOAuth1ServiceProvider>
         addOAuthSignature(request);
         SpewHttpResponse response = sendRequest(request);
 
-        return new KeyValuePairsResponse(response);
+        return new SpewParsedResponseBuilder(getApplication(), response)
+                .withBodyReader(KeyValuePairsHttpMessageBodyReader.class)
+                .build();
     }
 
     private void addOAuthSignature(OutgoingHttpRequest request) {

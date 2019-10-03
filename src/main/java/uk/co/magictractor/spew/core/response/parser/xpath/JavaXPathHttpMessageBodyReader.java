@@ -15,7 +15,6 @@
  */
 package uk.co.magictractor.spew.core.response.parser.xpath;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.List;
 
@@ -27,35 +26,35 @@ import javax.xml.xpath.XPathFactory;
 
 import com.google.common.base.MoreObjects;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 import uk.co.magictractor.spew.api.SpewApplication;
 import uk.co.magictractor.spew.api.SpewHttpResponse;
-import uk.co.magictractor.spew.core.response.parser.AbstractSpewParsedResponse;
-import uk.co.magictractor.spew.core.response.parser.ObjectCentricSpewParsedResponse;
+import uk.co.magictractor.spew.core.response.parser.ObjectCentricHttpMessageBodyReader;
 import uk.co.magictractor.spew.util.ExceptionUtil;
 import uk.co.magictractor.spew.util.HttpMessageUtil;
 
 /**
  *
  */
-public class JavaXPathResponse
-        extends AbstractSpewParsedResponse
-        implements ObjectCentricSpewParsedResponse {
+public class JavaXPathHttpMessageBodyReader
+        // extends AbstractSpewParsedResponse
+        implements ObjectCentricHttpMessageBodyReader {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(JavaXPathHttpMessageBodyReader.class);
 
     private final XPath xpath;
-    // private final InputSource xml;
     private final Document xml;
 
     /**
      * Default visibility because instances should only be created via
      * JaywayResponseParserInit.
      */
-    JavaXPathResponse(SpewApplication<?> application, SpewHttpResponse response) {
-        super(response);
+    JavaXPathHttpMessageBodyReader(SpewApplication<?> application, SpewHttpResponse response) {
 
-        BufferedReader bodyReader = HttpMessageUtil.createBodyReader(response);
         xpath = XPathFactory.newInstance().newXPath();
         //String expression = "/widgets/widget";
 
@@ -72,37 +71,37 @@ public class JavaXPathResponse
     }
 
     @Override
-    public <T> T getObject(String key, Class<T> type) {
-        return ExceptionUtil.call(() -> xpath.evaluateExpression(mapKey(key), xml, type));
+    public <T> T getObject(String expr, Class<T> type) {
+        return ExceptionUtil.call(() -> xpath.evaluateExpression(expr, xml, type));
         // throw ExceptionUtil.notYetImplemented();
     }
 
     @Override
-    public <T> List<T> getList(String key, Class<T> elementType) {
+    public <T> List<T> getList(String expr, Class<T> elementType) {
         throw ExceptionUtil.notYetImplemented();
     }
 
     // map key from JsonPath to XPath
     // https://goessner.net/articles/JsonPath/
-    private String mapKey(String key) {
+    private String mapExpr(String expr) {
         String mapped;
-        if (key.startsWith("$.")) {
-            mapped = "/" + key.substring(2).replace(".", "/");
+        if (expr.startsWith("$.")) {
+            mapped = "/" + expr.substring(2).replace(".", "/");
         }
-        else if (!key.contains("/")) {
+        else if (!expr.contains("/")) {
             // mapped = "//rsp/@" + key; // gets stat, not err & msg
             // mapped = "/rsp/@" + key; // gets stat, not err & msg
-            mapped = "/rsp/@" + key;
+            mapped = "/rsp/@" + expr;
         }
         // temp, while I play...
-        else if (key.startsWith("/")) {
-            mapped = key;
+        else if (expr.startsWith("/")) {
+            mapped = expr;
         }
         else {
-            throw new IllegalArgumentException("Code needs modified to map key " + key);
+            throw new IllegalArgumentException("Code needs modified to map key " + expr);
         }
 
-        getLogger().info("JsonPath mapped to XPath: {} -> {}", key, mapped);
+        LOGGER.info("JsonPath mapped to XPath: {} -> {}", expr, mapped);
 
         return mapped;
     }

@@ -49,6 +49,7 @@ public abstract class AbstractAuthorizationConnection<APP extends SpewApplicatio
         // TODO! add retry logic
         SpewHttpResponse response = super.request(request);
 
+        // aah... parse first to let Flickr etc modify status codes... !!!!
         if (response.getStatus() == 401) {
             getLogger().info("Existing authorization failed, obtaining fresh authorization");
             obtainAuthorization();

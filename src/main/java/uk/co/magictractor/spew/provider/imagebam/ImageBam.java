@@ -2,15 +2,10 @@ package uk.co.magictractor.spew.provider.imagebam;
 
 import java.util.function.Supplier;
 
-import uk.co.magictractor.spew.api.BadResponseException;
-import uk.co.magictractor.spew.api.SpewHttpResponse;
 import uk.co.magictractor.spew.api.SpewOAuth1ServiceProvider;
-import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
 import uk.co.magictractor.spew.core.verification.AuthorizationHandler;
 import uk.co.magictractor.spew.core.verification.PasteVerificationCodeHandler;
 import uk.co.magictractor.spew.core.verification.VerificationFunction;
-import uk.co.magictractor.spew.util.ContentTypeUtil;
-import uk.co.magictractor.spew.util.HttpMessageUtil;
 
 /**
  * <p>
@@ -34,16 +29,17 @@ public class ImageBam implements SpewOAuth1ServiceProvider {
     private ImageBam() {
     }
 
-    @Override
-    public String getContentType(SpewHttpResponse response) {
-        // Workaround for header reporting "text/hmtl" for JSON
-        String contentType = ContentTypeUtil.fromHeader(response);
-        if ("text/html".contentEquals(contentType) && HttpMessageUtil.bodyStartsWith(response, "{")) {
-            contentType = ContentTypeUtil.JSON_MIME_TYPES.get(0);
-        }
-
-        return contentType;
-    }
+    // TODO! move this to new build() method
+    //    @Override
+    //    public String getContentType(SpewHttpResponse response) {
+    //        // Workaround for header reporting "text/hmtl" for JSON
+    //        String contentType = ContentTypeUtil.fromHeader(response);
+    //        if ("text/html".contentEquals(contentType) && HttpMessageUtil.bodyStartsWith(response, "{")) {
+    //            contentType = ContentTypeUtil.JSON_MIME_TYPES.get(0);
+    //        }
+    //
+    //        return contentType;
+    //    }
 
     @Override
     public String getTemporaryCredentialRequestUri() {
@@ -66,15 +62,16 @@ public class ImageBam implements SpewOAuth1ServiceProvider {
     }
 
     // {"rsp":{"status":"fail","error_code":108,"error_message":"permission denied: gallery_id"}}
-    @Override
-    public void verifyResponse(SpewParsedResponse response) {
-        String status = response.getString("$.rsp.status");
-        if (!"ok".equals(status)) {
-            String errorCode = response.getString("$.rsp.error_code");
-            String errorMessage = response.getString("$.rsp.error_message");
-            throw new BadResponseException(status, errorCode, errorMessage);
-        }
-    }
+    // TODO! move to new build method
+    //    @Override
+    //    public void verifyResponse(SpewHttpMessageBodyReader response) {
+    //        String status = response.getBodyString("$.rsp.status");
+    //        if (!"ok".equals(status)) {
+    //            String errorCode = response.getBodyString("$.rsp.error_code");
+    //            String errorMessage = response.getBodyString("$.rsp.error_message");
+    //            throw new BadResponseException(status, errorCode, errorMessage);
+    //        }
+    //    }
 
     @Override
     public AuthorizationHandler getDefaultAuthorizationHandler(

@@ -33,7 +33,7 @@ public class GitHubIterator<E> extends PageCountServiceIterator<E> {
 
         System.err.println(response);
 
-        String linkHeader = response.getHeader("Link");
+        String linkHeader = response.getHeaderValue("Link");
         System.err.println("link: " + linkHeader);
         if (linkHeader != null) {
             Iterable<String> links = Splitter.on(',').trimResults().split(linkHeader);

@@ -18,6 +18,7 @@ import uk.co.magictractor.spew.api.SpewOAuth2Application;
 import uk.co.magictractor.spew.api.SpewOAuth2ServiceProvider;
 import uk.co.magictractor.spew.api.connection.AbstractAuthorizationDecoratorConnection;
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
+import uk.co.magictractor.spew.core.response.parser.SpewParsedResponseBuilder;
 import uk.co.magictractor.spew.core.verification.AuthorizationHandler;
 import uk.co.magictractor.spew.core.verification.VerificationFunction;
 import uk.co.magictractor.spew.core.verification.VerificationInfo;
@@ -256,7 +257,7 @@ public class BoaOAuth2Connection<SP extends SpewOAuth2ServiceProvider>
         apiRequest.prepareToSend();
 
         SpewHttpResponse response = sendRequest(apiRequest);
-        return SpewParsedResponse.parse(getApplication(), response);
+        return new SpewParsedResponseBuilder(getApplication(), response).build();
     }
 
     private class BoaOAuth2VerificationFunction implements VerificationFunction {

@@ -4,12 +4,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Supplier;
 
-import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
+import uk.co.magictractor.spew.core.response.parser.SpewParsedResponseBuilder;
 import uk.co.magictractor.spew.core.typeadapter.SpewTypeAdapter;
 import uk.co.magictractor.spew.core.verification.AuthorizationHandler;
 import uk.co.magictractor.spew.core.verification.VerificationFunction;
 import uk.co.magictractor.spew.server.LocalServerAuthorizationHandler;
-import uk.co.magictractor.spew.util.ContentTypeUtil;
 
 // Base interface for OAuth1 and OAuth2. Some methods likely to move here from OAuth1 when (and if) OAuth2 support is added.
 // https://stackoverflow.com/questions/4113934/how-is-oauth-2-different-from-oauth-1
@@ -45,9 +44,9 @@ public interface SpewServiceProvider {
      * the HTTP header.
      * </p>
      */
-    default String getContentType(SpewHttpResponse response) {
-        return ContentTypeUtil.fromHeader(response);
-    }
+    //default String getContentType(SpewHttpResponse response) {
+    //    return ContentTypeUtil.fromHeader(response);
+    //}
 
     default List<SpewTypeAdapter<?>> getTypeAdapters() {
         return Collections.emptyList();
@@ -65,7 +64,11 @@ public interface SpewServiceProvider {
     // void verifyResponse(SpewResponse response);
 
     // TODO! after response parsers are added ensure verifyResponse is still called
-    default void verifyResponse(SpewParsedResponse response) {
+    //default void verifyResponse(SpewHttpMessageBodyReader response) {
+    //}
+
+    // TODO! no default, every service provider should have a non-empty impl of this method
+    default void buildParsedResponse(SpewParsedResponseBuilder parsedResponseBuilder) {
     }
 
     default AuthorizationHandler getDefaultAuthorizationHandler(

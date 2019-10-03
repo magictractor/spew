@@ -15,7 +15,9 @@
  */
 package uk.co.magictractor.spew.core.response.parser;
 
-public interface StringCentricSpewParsedResponse extends SpewParsedResponse {
+public interface StringCentricHttpMessageBodyReader extends /*
+                                                             * SpewParsedResponse,
+                                                             */ SpewHttpMessageBodyReader {
 
     @Override
     public default int getInt(String key) {
@@ -27,7 +29,7 @@ public interface StringCentricSpewParsedResponse extends SpewParsedResponse {
         return Long.parseLong(getString(key));
     }
 
-    // TODO! make more strict, and throw and error rather than false for dodgy values.
+    // TODO! make more strict, and throw an error rather than false for dodgy values.
     @Override
     public default boolean getBoolean(String key) {
         return Boolean.parseBoolean(getString(key));

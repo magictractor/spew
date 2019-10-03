@@ -15,31 +15,31 @@
  */
 package uk.co.magictractor.spew.core.response.parser;
 
-public interface ObjectCentricSpewParsedResponse extends SpewParsedResponse {
+public interface ObjectCentricHttpMessageBodyReader extends SpewHttpMessageBodyReader {
 
     @Override
-    public default String getString(String key) {
-        return getObject(key, String.class);
+    public default String getString(String expr) {
+        return getObject(expr, String.class);
     }
 
     @Override
-    public default int getInt(String key) {
-        return getObject(key, Integer.class);
+    public default int getInt(String expr) {
+        return getObject(expr, Integer.class);
     }
 
     @Override
-    public default long getLong(String key) {
-        return getObject(key, Long.class);
+    public default long getLong(String expr) {
+        return getObject(expr, Long.class);
     }
 
     @Override
-    public default boolean getBoolean(String key) {
-        return getObject(key, Boolean.class);
+    public default boolean getBoolean(String expr) {
+        return getObject(expr, Boolean.class);
     }
 
     @Override
-    public default Object getObject(String key) {
-        return getObject(key, Object.class);
+    public default Object getObject(String expr) {
+        return getObject(expr, Object.class);
     }
 
 }
