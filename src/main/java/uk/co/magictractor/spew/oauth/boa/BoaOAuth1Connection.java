@@ -77,7 +77,9 @@ public final class BoaOAuth1Connection<SP extends SpewOAuth1ServiceProvider>
     @Override
     protected void addAuthorization(OutgoingHttpRequest apiRequest) {
         forAll(apiRequest);
-        forApi(apiRequest);
+        apiRequest.setQueryStringParam("api_key", getApplication().getConsumerKey());
+        apiRequest.setQueryStringParam("oauth_token", userToken.getValue());
+        addOAuthSignature(apiRequest);
     }
 
     @Override
@@ -281,11 +283,6 @@ public final class BoaOAuth1Connection<SP extends SpewOAuth1ServiceProvider>
         // TODO! something more efficient?
         String urlEncoded = ExceptionUtil.call(() -> URLEncoder.encode(string, "UTF-8"));
         return urlEncoded.replace("+", "%20").replace("*", "%2A").replace("%7E", "~");
-    }
-
-    private void forApi(OutgoingHttpRequest request) {
-        request.setQueryStringParam("api_key", getApplication().getConsumerKey());
-        request.setQueryStringParam("oauth_token", userToken.getValue());
     }
 
     private void forAll(OutgoingHttpRequest request) {
