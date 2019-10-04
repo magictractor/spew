@@ -138,6 +138,7 @@ public final class BoaOAuth1Connection<SP extends SpewOAuth1ServiceProvider>
 
         return new SpewParsedResponseBuilder(getApplication(), response)
                 .withBodyReader(KeyValuePairsHttpMessageBodyReader.class)
+                .withoutVerification()
                 .build();
     }
 

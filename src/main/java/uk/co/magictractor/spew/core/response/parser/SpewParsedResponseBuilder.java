@@ -76,21 +76,24 @@ public class SpewParsedResponseBuilder {
         return this;
     }
 
-    public void withoutVerification() {
+    public SpewParsedResponseBuilder withoutVerification() {
         this.verification = null;
+        return this;
     }
 
-    public void withVerification(Consumer<SpewParsedResponse> verification) {
+    public SpewParsedResponseBuilder withVerification(Consumer<SpewParsedResponse> verification) {
         this.verification = verification;
+        return this;
     }
 
-    public void withVerifiedStatuses(Integer... verifiedStatuses) {
+    public SpewParsedResponseBuilder withVerifiedStatuses(Integer... verifiedStatuses) {
         this.verifiedStatuses = Arrays.asList(verifiedStatuses);
+        return this;
     }
 
     private void defaultVerification(SpewParsedResponse parsedResponse) {
         LOGGER.warn(
-            "There is no verifier for {} responses. Either implement one or call withoutVerification() to remove this warning",
+            "There is no verifier for {} responses, either implement one or call withoutVerification() to remove this warning",
             application.getServiceProvider().getClass().getSimpleName());
     }
 
