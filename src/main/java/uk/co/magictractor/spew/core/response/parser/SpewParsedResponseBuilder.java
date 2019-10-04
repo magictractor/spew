@@ -92,6 +92,7 @@ public class SpewParsedResponseBuilder {
     }
 
     private void defaultVerification(SpewParsedResponse parsedResponse) {
+        // TODO! only warn once
         LOGGER.warn(
             "There is no verifier for {} responses, either implement one or call withoutVerification() to remove this warning",
             application.getServiceProvider().getClass().getSimpleName());
