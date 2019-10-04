@@ -15,6 +15,8 @@
  */
 package uk.co.magictractor.spew.http.apache;
 
+import static uk.co.magictractor.spew.api.HttpHeaderNames.CONTENT_LENGTH;
+
 import org.apache.http.client.config.CookieSpecs;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -24,12 +26,12 @@ import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 
+import uk.co.magictractor.spew.api.HttpHeaderNames;
 import uk.co.magictractor.spew.api.OutgoingHttpRequest;
 import uk.co.magictractor.spew.api.SpewApplication;
 import uk.co.magictractor.spew.api.SpewConnection;
 import uk.co.magictractor.spew.api.SpewHeader;
 import uk.co.magictractor.spew.api.SpewHttpResponse;
-import uk.co.magictractor.spew.util.ContentTypeUtil;
 import uk.co.magictractor.spew.util.ExceptionUtil;
 
 public class SpewApacheHttpClientConnection implements SpewConnection {
@@ -64,7 +66,7 @@ public class SpewApacheHttpClientConnection implements SpewConnection {
         }
 
         for (SpewHeader header : apiRequest.getHeaders()) {
-            if (hasBody && ContentTypeUtil.CONTENT_LENGTH_HEADER_NAME.equalsIgnoreCase(header.getName())) {
+            if (hasBody && CONTENT_LENGTH.equalsIgnoreCase(header.getName())) {
                 // Content length is derived from the HttpEntity (body), don't repeat it.
                 continue;
             }

@@ -1,5 +1,8 @@
 package uk.co.magictractor.spew.api;
 
+import static uk.co.magictractor.spew.api.HttpHeaderNames.CONTENT_LENGTH;
+import static uk.co.magictractor.spew.api.HttpHeaderNames.CONTENT_TYPE;
+
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -221,12 +224,12 @@ public final class ApplicationRequest {
             if (!getBodyParams().isEmpty()) {
                 // TODO! allow body to have been set explicitly
                 bodyBytes = ContentTypeUtil.bodyBytes(this, JaywayConfigurationCache.getConfiguration(application));
-                setHeader(ContentTypeUtil.CONTENT_TYPE_HEADER_NAME, getContentType());
-                setHeader(ContentTypeUtil.CONTENT_LENGTH_HEADER_NAME, bodyBytes.length);
+                setHeader(CONTENT_TYPE, getContentType());
+                setHeader(CONTENT_LENGTH, bodyBytes.length);
             }
             else {
                 // Prevent 411 Content Length Required
-                setHeader(ContentTypeUtil.CONTENT_LENGTH_HEADER_NAME, 0);
+                setHeader(CONTENT_LENGTH, 0);
             }
         }
         else if (!getBodyParams().isEmpty()) {

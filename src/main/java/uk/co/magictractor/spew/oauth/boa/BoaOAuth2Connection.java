@@ -1,5 +1,9 @@
 package uk.co.magictractor.spew.oauth.boa;
 
+import static uk.co.magictractor.spew.api.HttpHeaderNames.ACCEPT;
+import static uk.co.magictractor.spew.api.HttpHeaderNames.AUTHORIZATION;
+import static uk.co.magictractor.spew.api.HttpHeaderNames.CONTENT_TYPE;
+
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.Date;
@@ -16,6 +20,7 @@ import com.google.common.collect.Iterables;
 import io.netty.buffer.ByteBuf;
 import io.netty.handler.codec.http.FullHttpMessage;
 import io.netty.handler.codec.http.QueryStringDecoder;
+import uk.co.magictractor.spew.api.HttpHeaderNames;
 import uk.co.magictractor.spew.api.OutgoingHttpRequest;
 import uk.co.magictractor.spew.api.SpewConnection;
 import uk.co.magictractor.spew.api.SpewHttpResponse;
@@ -70,7 +75,7 @@ public class BoaOAuth2Connection<SP extends SpewOAuth2ServiceProvider>
 
     @Override
     protected void addAuthorization(OutgoingHttpRequest request) {
-        request.addHeader("Authorization", "Bearer " + accessToken.getValue());
+        request.addHeader(AUTHORIZATION, "Bearer " + accessToken.getValue());
     }
 
     @Override
@@ -109,7 +114,7 @@ public class BoaOAuth2Connection<SP extends SpewOAuth2ServiceProvider>
         OutgoingHttpRequest request = new OutgoingHttpRequest("GET", getServiceProvider().getAuthorizationUri());
 
         // GitHub returns application/x-www-form-urlencoded content type by default
-        request.addHeader(ContentTypeUtil.ACCEPT_HEADER_NAME, ContentTypeUtil.JSON_MIME_TYPES.get(0));
+        request.addHeader(ACCEPT, ContentTypeUtil.JSON_MIME_TYPES.get(0));
 
         // A bit mucky. The callback value comes from the handler but is also used in the verification function.
         AuthorizationHandler[] authHandlerHolder = new AuthorizationHandler[1];
@@ -162,7 +167,7 @@ public class BoaOAuth2Connection<SP extends SpewOAuth2ServiceProvider>
         OutgoingHttpRequest request = new OutgoingHttpRequest("POST", getServiceProvider().getTokenUri());
 
         // GitHub returns application/x-www-form-urlencoded content type by default
-        request.addHeader(ContentTypeUtil.ACCEPT_HEADER_NAME, ContentTypeUtil.JSON_MIME_TYPES.get(0));
+        request.addHeader(ACCEPT, ContentTypeUtil.JSON_MIME_TYPES.get(0));
 
         HashMap<String, String> bodyData = new HashMap<>();
         bodyData.put("code", code);
@@ -254,7 +259,7 @@ public class BoaOAuth2Connection<SP extends SpewOAuth2ServiceProvider>
     //      }
 
     private SpewParsedResponse authRequest(OutgoingHttpRequest request, HashMap<String, String> bodyData) {
-        request.addHeader(ContentTypeUtil.CONTENT_TYPE_HEADER_NAME, ContentTypeUtil.FORM_MIME_TYPE);
+        request.addHeader(CONTENT_TYPE, ContentTypeUtil.FORM_MIME_TYPE);
 
         String body = Joiner.on('&').withKeyValueSeparator('=').join(bodyData);
         request.setBody(body.getBytes(StandardCharsets.UTF_8));

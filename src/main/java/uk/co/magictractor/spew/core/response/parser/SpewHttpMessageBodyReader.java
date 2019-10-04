@@ -15,15 +15,17 @@
  */
 package uk.co.magictractor.spew.core.response.parser;
 
+import static uk.co.magictractor.spew.api.HttpHeaderNames.CONTENT_TYPE;
+
 import java.io.BufferedReader;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import uk.co.magictractor.spew.api.HttpHeaderNames;
 import uk.co.magictractor.spew.api.SpewApplication;
 import uk.co.magictractor.spew.api.SpewHttpMessage;
-import uk.co.magictractor.spew.util.ContentTypeUtil;
 import uk.co.magictractor.spew.util.HttpMessageUtil;
 import uk.co.magictractor.spew.util.spi.SPIUtil;
 
@@ -79,7 +81,7 @@ public interface SpewHttpMessageBodyReader {
             return instance.get();
         }
 
-        String headerContentType = response.getHeaderValue(ContentTypeUtil.CONTENT_TYPE_HEADER_NAME);
+        String headerContentType = response.getHeaderValue(CONTENT_TYPE);
         BufferedReader bodyReader = HttpMessageUtil.createBodyReader(response);
         StringBuilder messageBuilder = new StringBuilder()
                 // TODO! link to a help page

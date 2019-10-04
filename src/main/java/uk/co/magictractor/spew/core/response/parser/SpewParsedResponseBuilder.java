@@ -15,6 +15,8 @@
  */
 package uk.co.magictractor.spew.core.response.parser;
 
+import static uk.co.magictractor.spew.api.HttpHeaderNames.CONTENT_TYPE;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -102,7 +104,7 @@ public class SpewParsedResponseBuilder implements SpewHttpMessage {
      * </p>
      */
     public SpewParsedResponseBuilder withContentType(String contentType) {
-        String originalHeaderValue = getHeaderValue(ContentTypeUtil.CONTENT_TYPE_HEADER_NAME);
+        String originalHeaderValue = getHeaderValue(CONTENT_TYPE);
         String newHeaderValue;
         int semiColonIndex = originalHeaderValue.indexOf(";");
         if (semiColonIndex == -1) {
@@ -112,7 +114,7 @@ public class SpewParsedResponseBuilder implements SpewHttpMessage {
             // Preserve charset etc.
             newHeaderValue = contentType + originalHeaderValue.substring(semiColonIndex);
         }
-        return withHeader(ContentTypeUtil.CONTENT_TYPE_HEADER_NAME, newHeaderValue);
+        return withHeader(CONTENT_TYPE, newHeaderValue);
     }
 
     public SpewParsedResponseBuilder withBodyReader(SpewHttpMessageBodyReader bodyReader) {

@@ -15,7 +15,11 @@
  */
 package uk.co.magictractor.spew.server;
 
+import static uk.co.magictractor.spew.api.HttpHeaderNames.SET_COOKIE;
+
 import java.util.Random;
+
+import uk.co.magictractor.spew.api.HttpHeaderNames;
 
 // incomplete and unused
 public class SessionRequestHandler implements RequestHandler {
@@ -29,7 +33,7 @@ public class SessionRequestHandler implements RequestHandler {
         System.err.println("cookies: " + cookies + " (" + request.getPath() + ")");
 
         if (cookies == null) {
-            responseBuilder.withHeader("Set-Cookie", "JSESSIONID=" + sessionId);
+            responseBuilder.withHeader(SET_COOKIE, "JSESSIONID=" + sessionId);
         }
 
     }

@@ -15,9 +15,14 @@
  */
 package uk.co.magictractor.spew.server;
 
+import static uk.co.magictractor.spew.api.HttpHeaderNames.CACHE_CONTROL;
+import static uk.co.magictractor.spew.api.HttpHeaderNames.CONTENT_TYPE;
+import static uk.co.magictractor.spew.api.HttpHeaderNames.LAST_MODIFIED;
+
 import java.nio.file.Path;
 import java.time.Instant;
 
+import uk.co.magictractor.spew.api.HttpHeaderNames;
 import uk.co.magictractor.spew.util.ContentTypeUtil;
 import uk.co.magictractor.spew.util.HttpMessageUtil;
 import uk.co.magictractor.spew.util.PathUtil;
@@ -38,13 +43,13 @@ public class OutgoingStaticResponse extends OutgoingResponse {
         }
         this.bodyPath = bodyPath;
         Instant lastModified = PathUtil.getLastModified(bodyPath);
-        addHeader("Cache-Control", "public,max-age=1000");
+        addHeader(CACHE_CONTROL, "public,max-age=1000");
         //addHeader("Cache-Control", "public, must-revalidate, max-age=10000");
         //addHeader("Cache-Control", "public, max-age=0");
-        addHeader("Last-Modified", lastModified);
+        addHeader(LAST_MODIFIED, lastModified);
         // addHeader("Expires", Instant.ofEpochMilli(10000 + System.currentTimeMillis()));
 
-        addHeader("Content-Type", ContentTypeUtil.fromResourceName(bodyPath.getFileName().toString()));
+        addHeader(CONTENT_TYPE, ContentTypeUtil.fromResourceName(bodyPath.getFileName().toString()));
     }
 
     // bin??

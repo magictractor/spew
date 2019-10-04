@@ -15,11 +15,14 @@
  */
 package uk.co.magictractor.spew.server;
 
+import static uk.co.magictractor.spew.api.HttpHeaderNames.DATE;
+
 import java.nio.file.Path;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
+import uk.co.magictractor.spew.api.HttpHeaderNames;
 import uk.co.magictractor.spew.api.SpewHeader;
 import uk.co.magictractor.spew.api.SpewHttpResponse;
 import uk.co.magictractor.spew.core.message.AbstractByteArrayMessage;
@@ -41,7 +44,7 @@ public abstract class OutgoingResponse extends AbstractByteArrayMessage implemen
 
     protected OutgoingResponse(Path bodyPath) {
         super(bodyPath);
-        addHeader("Date", Instant.ofEpochMilli(System.currentTimeMillis()));
+        addHeader(DATE, Instant.ofEpochMilli(System.currentTimeMillis()));
         // add Server header?
     }
 

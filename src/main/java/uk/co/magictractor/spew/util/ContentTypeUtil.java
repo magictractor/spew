@@ -15,6 +15,8 @@
  */
 package uk.co.magictractor.spew.util;
 
+import static uk.co.magictractor.spew.api.HttpHeaderNames.CONTENT_TYPE;
+
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -40,11 +42,6 @@ import uk.co.magictractor.spew.util.spi.SPIUtil;
 public class ContentTypeUtil {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ContentTypeUtil.class);
-
-    // TODO! move these to HasHttpHeaders? or a distinct file?
-    public static final String CONTENT_TYPE_HEADER_NAME = "Content-Type";
-    public static final String CONTENT_LENGTH_HEADER_NAME = "Content-Length";
-    public static final String ACCEPT_HEADER_NAME = "Accept";
 
     // TODO! private
     // TODO! Dropbox auth uses text/javascript in the token response. Tolerate here for now, but perhaps move to an override in the app?
@@ -91,7 +88,7 @@ public class ContentTypeUtil {
     }
 
     public static String fromHeader(HasHttpHeaders hasHeaders) {
-        String contentType = hasHeaders.getHeaderValue("Content-Type");
+        String contentType = hasHeaders.getHeaderValue(CONTENT_TYPE);
 
         if (contentType == null) {
             throw new IllegalStateException("Response does not contain a Content-Type header");
@@ -126,7 +123,7 @@ public class ContentTypeUtil {
     }
 
     public static Optional<Charset> charsetFromHeader(SpewHttpMessage httpMessage) {
-        String header = httpMessage.getHeaderValue(CONTENT_TYPE_HEADER_NAME);
+        String header = httpMessage.getHeaderValue(CONTENT_TYPE);
         Charset charset = null;
         if (header != null) {
             int index = header.indexOf(";charset=");
