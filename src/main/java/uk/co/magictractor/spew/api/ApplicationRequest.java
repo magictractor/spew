@@ -130,28 +130,7 @@ public final class ApplicationRequest {
     }
 
     public void setHeader(String headerName, String headerValue) {
-        //headers.add(new SpewHeader(headerName, headerValue));
-        int existingIndex = -1;
-        int i = -1;
-        for (SpewHeader header : headers) {
-            i++;
-            if (header.getName().equalsIgnoreCase(headerName)) {
-                if (existingIndex == -1) {
-                    existingIndex = i;
-                }
-                else {
-                    throw new IllegalStateException("There are multiple existing headers with name " + headerName);
-                }
-            }
-        }
-
-        SpewHeader header = new SpewHeader(headerName, headerValue);
-        if (existingIndex == -1) {
-            headers.add(header);
-        }
-        else {
-            headers.set(existingIndex, header);
-        }
+        HasHttpHeaders.setHeader(headers, headerName, headerValue);
     }
 
     public void setHeader(String headerName, long headerValue) {

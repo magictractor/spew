@@ -16,7 +16,7 @@
 package uk.co.magictractor.spew.core.response.parser.xpath;
 
 import uk.co.magictractor.spew.api.SpewApplication;
-import uk.co.magictractor.spew.api.SpewHttpResponse;
+import uk.co.magictractor.spew.api.SpewHttpMessage;
 import uk.co.magictractor.spew.core.response.parser.SpewHttpMessageBodyReader;
 import uk.co.magictractor.spew.core.response.parser.SpewHttpMessageBodyReaderFactory;
 import uk.co.magictractor.spew.util.ContentTypeUtil;
@@ -27,9 +27,9 @@ import uk.co.magictractor.spew.util.ContentTypeUtil;
 public class JavaXPathResponseFactory implements SpewHttpMessageBodyReaderFactory {
 
     @Override
-    public SpewHttpMessageBodyReader instanceFor(SpewApplication<?> application, SpewHttpResponse response) {
-        if (ContentTypeUtil.isXml(ContentTypeUtil.fromHeader(response))) {
-            return new JavaXPathHttpMessageBodyReader(application, response);
+    public SpewHttpMessageBodyReader instanceFor(SpewApplication<?> application, SpewHttpMessage httpMessage) {
+        if (ContentTypeUtil.isXml(ContentTypeUtil.fromHeader(httpMessage))) {
+            return new JavaXPathHttpMessageBodyReader(application, httpMessage);
         }
         return null;
     }

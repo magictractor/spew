@@ -32,7 +32,7 @@ import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 import uk.co.magictractor.spew.api.SpewApplication;
-import uk.co.magictractor.spew.api.SpewHttpResponse;
+import uk.co.magictractor.spew.api.SpewHttpMessage;
 import uk.co.magictractor.spew.core.response.parser.ObjectCentricHttpMessageBodyReader;
 import uk.co.magictractor.spew.util.ExceptionUtil;
 import uk.co.magictractor.spew.util.HttpMessageUtil;
@@ -53,21 +53,22 @@ public class JavaXPathHttpMessageBodyReader
      * Default visibility because instances should only be created via
      * JaywayResponseParserInit.
      */
-    JavaXPathHttpMessageBodyReader(SpewApplication<?> application, SpewHttpResponse response) {
+    JavaXPathHttpMessageBodyReader(SpewApplication<?> application, SpewHttpMessage httpMessage) {
 
         xpath = XPathFactory.newInstance().newXPath();
         //String expression = "/widgets/widget";
 
         //xml = new InputSource(bodyReader);
 
-        xml = ExceptionUtil.call(() -> readXml(response));
+        xml = ExceptionUtil.call(() -> readXml(httpMessage));
 
         //NodeList nodes = (NodeList) xpath.evaluate(expression, inputSource, XPathConstants.NODESET);
     }
 
-    private Document readXml(SpewHttpResponse response) throws ParserConfigurationException, IOException, SAXException {
+    private Document readXml(SpewHttpMessage httpMessage)
+            throws ParserConfigurationException, IOException, SAXException {
         DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-        return builder.parse(HttpMessageUtil.createBodyInputStream(response));
+        return builder.parse(HttpMessageUtil.createBodyInputStream(httpMessage));
     }
 
     @Override

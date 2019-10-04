@@ -16,7 +16,7 @@
 package uk.co.magictractor.spew.core.response.parser.jayway;
 
 import uk.co.magictractor.spew.api.SpewApplication;
-import uk.co.magictractor.spew.api.SpewHttpResponse;
+import uk.co.magictractor.spew.api.SpewHttpMessage;
 import uk.co.magictractor.spew.core.response.parser.SpewHttpMessageBodyReader;
 import uk.co.magictractor.spew.core.response.parser.SpewHttpMessageBodyReaderFactory;
 import uk.co.magictractor.spew.util.ContentTypeUtil;
@@ -27,9 +27,9 @@ import uk.co.magictractor.spew.util.ContentTypeUtil;
 public class JaywayResponseFactory implements SpewHttpMessageBodyReaderFactory {
 
     @Override
-    public SpewHttpMessageBodyReader instanceFor(SpewApplication<?> application, SpewHttpResponse response) {
-        if (ContentTypeUtil.isJson(ContentTypeUtil.fromHeader(response))) {
-            return new JaywayHttpMessageBodyReader(application, response);
+    public SpewHttpMessageBodyReader instanceFor(SpewApplication<?> application, SpewHttpMessage httpMessage) {
+        if (ContentTypeUtil.isJson(ContentTypeUtil.fromHeader(httpMessage))) {
+            return new JaywayHttpMessageBodyReader(application, httpMessage);
         }
         return null;
     }

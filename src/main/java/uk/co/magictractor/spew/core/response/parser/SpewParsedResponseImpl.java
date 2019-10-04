@@ -27,11 +27,14 @@ import uk.co.magictractor.spew.util.HttpMessageUtil;
 public class SpewParsedResponseImpl implements SpewParsedResponse {
 
     private final int status;
+    private List<SpewHeader> headers;
     private final SpewHttpResponse response;
     private final SpewHttpMessageBodyReader bodyReader;
 
-    public SpewParsedResponseImpl(int status, SpewHttpResponse response, SpewHttpMessageBodyReader bodyReader) {
+    public SpewParsedResponseImpl(int status, List<SpewHeader> headers, SpewHttpResponse response,
+            SpewHttpMessageBodyReader bodyReader) {
         this.status = status;
+        this.headers = headers;
         this.response = response;
         this.bodyReader = bodyReader;
     }
@@ -41,16 +44,9 @@ public class SpewParsedResponseImpl implements SpewParsedResponse {
         return status;
     }
 
-    // TODO! HttpHeaders interface for other getHeader() methods
-
-    @Override
-    public String getHeaderValue(String headerName) {
-        return response.getHeaderValue(headerName);
-    }
-
     @Override
     public List<SpewHeader> getHeaders() {
-        return response.getHeaders();
+        return headers;
     }
 
     @Override

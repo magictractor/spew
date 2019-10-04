@@ -15,22 +15,28 @@
  */
 package uk.co.magictractor.spew.core.response.parser;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.function.Consumer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import uk.co.magictractor.spew.api.HasHttpHeaders;
 import uk.co.magictractor.spew.api.SpewApplication;
+import uk.co.magictractor.spew.api.SpewHeader;
+import uk.co.magictractor.spew.api.SpewHttpMessage;
 import uk.co.magictractor.spew.api.SpewHttpResponse;
+import uk.co.magictractor.spew.util.ContentTypeUtil;
 import uk.co.magictractor.spew.util.ExceptionUtil;
 
 /**
  *
  */
-public class SpewParsedResponseBuilder {
+public class SpewParsedResponseBuilder implements SpewHttpMessage {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SpewParsedResponseBuilder.class);
 
@@ -38,6 +44,7 @@ public class SpewParsedResponseBuilder {
     private final SpewHttpResponse response;
 
     private Integer status;
+    private List<SpewHeader> headers;
     private SpewHttpMessageBodyReader bodyReader;
     private Collection<Integer> verifiedStatuses = Collections.singleton(200);
     private Consumer<SpewParsedResponse> verification = this::defaultVerification;
@@ -46,6 +53,12 @@ public class SpewParsedResponseBuilder {
         this.application = application;
         this.response = response;
         this.status = response.getStatus();
+        this.headers = new ArrayList<>(response.getHeaders());
+    }
+
+    @Override
+    public byte[] getBodyBytes() {
+        return response.getBodyBytes();
     }
 
     /**
@@ -63,6 +76,43 @@ public class SpewParsedResponseBuilder {
     public SpewParsedResponseBuilder withStatus(int status) {
         this.status = status;
         return this;
+    }
+
+    @Override
+    public List<SpewHeader> getHeaders() {
+        return headers;
+    }
+
+    public SpewParsedResponseBuilder withHeader(String headerName, String headerValue) {
+        HasHttpHeaders.setHeader(headers, headerName, headerValue);
+        return this;
+    }
+
+    public String getContentType() {
+        return ContentTypeUtil.fromHeader(this);
+    }
+
+    /**
+     * <p>
+     * Typically used to fix the content type in the response when the service
+     * uses an inappropriate Content-Type.
+     * <p>
+     * <p>
+     * For example, ImageBam reports "text/hmtl" for Json responses.
+     * </p>
+     */
+    public SpewParsedResponseBuilder withContentType(String contentType) {
+        String originalHeaderValue = getHeaderValue(ContentTypeUtil.CONTENT_TYPE_HEADER_NAME);
+        String newHeaderValue;
+        int semiColonIndex = originalHeaderValue.indexOf(";");
+        if (semiColonIndex == -1) {
+            newHeaderValue = contentType;
+        }
+        else {
+            // Preserve charset etc.
+            newHeaderValue = contentType + originalHeaderValue.substring(semiColonIndex);
+        }
+        return withHeader(ContentTypeUtil.CONTENT_TYPE_HEADER_NAME, newHeaderValue);
     }
 
     public SpewParsedResponseBuilder withBodyReader(SpewHttpMessageBodyReader bodyReader) {
@@ -100,13 +150,13 @@ public class SpewParsedResponseBuilder {
 
     public SpewHttpMessageBodyReader getBodyReader() {
         if (bodyReader == null) {
-            bodyReader = SpewHttpMessageBodyReader.instanceFor(application, response);
+            bodyReader = SpewHttpMessageBodyReader.instanceFor(application, this);
         }
         return bodyReader;
     }
 
     public SpewParsedResponse build() {
-        SpewParsedResponse parsedResponse = new SpewParsedResponseImpl(status, response, getBodyReader());
+        SpewParsedResponse parsedResponse = new SpewParsedResponseImpl(status, headers, response, getBodyReader());
 
         if (verification != null && verifiedStatuses.contains(parsedResponse.getStatus())) {
             verification.accept(parsedResponse);

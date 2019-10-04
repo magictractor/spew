@@ -3,9 +3,12 @@ package uk.co.magictractor.spew.provider.imagebam;
 import java.util.function.Supplier;
 
 import uk.co.magictractor.spew.api.SpewOAuth1ServiceProvider;
+import uk.co.magictractor.spew.core.response.parser.SpewParsedResponseBuilder;
 import uk.co.magictractor.spew.core.verification.AuthorizationHandler;
 import uk.co.magictractor.spew.core.verification.PasteVerificationCodeHandler;
 import uk.co.magictractor.spew.core.verification.VerificationFunction;
+import uk.co.magictractor.spew.util.ContentTypeUtil;
+import uk.co.magictractor.spew.util.HttpMessageUtil;
 
 /**
  * <p>
@@ -29,17 +32,15 @@ public class ImageBam implements SpewOAuth1ServiceProvider {
     private ImageBam() {
     }
 
-    // TODO! move this to new build() method
-    //    @Override
-    //    public String getContentType(SpewHttpResponse response) {
-    //        // Workaround for header reporting "text/hmtl" for JSON
-    //        String contentType = ContentTypeUtil.fromHeader(response);
-    //        if ("text/html".contentEquals(contentType) && HttpMessageUtil.bodyStartsWith(response, "{")) {
-    //            contentType = ContentTypeUtil.JSON_MIME_TYPES.get(0);
-    //        }
-    //
-    //        return contentType;
-    //    }
+    @Override
+    public void buildParsedResponse(SpewParsedResponseBuilder parsedResponseBuilder) {
+
+        // Workaround for header containing "text/hmtl" for Json payloads
+        String contentType = parsedResponseBuilder.getContentType();
+        if ("text/html".contentEquals(contentType) && HttpMessageUtil.bodyStartsWith(parsedResponseBuilder, "{")) {
+            parsedResponseBuilder.withContentType(ContentTypeUtil.JSON_MIME_TYPES.get(0));
+        }
+    }
 
     @Override
     public String getTemporaryCredentialRequestUri() {
@@ -87,3 +88,6 @@ public class ImageBam implements SpewOAuth1ServiceProvider {
     }
 
 }
+// {"rsp":{"status":"ok","galleries":[]}}
+// Incorrect URL gives an HTML 404 with HTML body
+// Invalid token gives form data IncomingApacheHttpClientResponse{status=401, body=oauth_problem=token_rejected}

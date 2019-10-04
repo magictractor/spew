@@ -21,7 +21,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 
 import com.jayway.jsonpath.Configuration;
@@ -30,6 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import uk.co.magictractor.spew.api.ApplicationRequest;
+import uk.co.magictractor.spew.api.HasHttpHeaders;
 import uk.co.magictractor.spew.api.SpewHttpMessage;
 import uk.co.magictractor.spew.core.contenttype.ContentTypeFromResourceName;
 import uk.co.magictractor.spew.util.spi.SPIUtil;
@@ -41,6 +41,7 @@ public class ContentTypeUtil {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ContentTypeUtil.class);
 
+    // TODO! move these to HasHttpHeaders? or a distinct file?
     public static final String CONTENT_TYPE_HEADER_NAME = "Content-Type";
     public static final String CONTENT_LENGTH_HEADER_NAME = "Content-Length";
     public static final String ACCEPT_HEADER_NAME = "Accept";
@@ -89,27 +90,20 @@ public class ContentTypeUtil {
         return true;
     }
 
-    public static String fromHeader(SpewHttpMessage httpMessage) {
-        // TODO! simplify here and test case sensitivity in unit tests
-        String upper = httpMessage.getHeaderValue("Content-Type");
-        String lower = httpMessage.getHeaderValue("content-type");
-        if (!Objects.deepEquals(upper, lower)) {
-            // hmm, why doesn't this blow up? there was a workaround for this before...
-            throw new IllegalStateException("getHeader() should be case insensitive");
-        }
+    public static String fromHeader(HasHttpHeaders hasHeaders) {
+        String contentType = hasHeaders.getHeaderValue("Content-Type");
 
-        String value = upper != null ? upper : lower;
-        if (value == null) {
+        if (contentType == null) {
             throw new IllegalStateException("Response does not contain a Content-Type header");
         }
 
         // Strip out "charset=" etc
-        int semiColonIndex = value.indexOf(";");
+        int semiColonIndex = contentType.indexOf(";");
         if (semiColonIndex != -1) {
-            value = value.substring(0, semiColonIndex).trim();
+            contentType = contentType.substring(0, semiColonIndex).trim();
         }
 
-        return value;
+        return contentType;
     }
 
     /**

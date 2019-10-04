@@ -33,6 +33,7 @@ import java.time.temporal.ChronoField;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
 
+import uk.co.magictractor.spew.api.HasHttpBody;
 import uk.co.magictractor.spew.api.SpewHttpMessage;
 import uk.co.magictractor.spew.api.SpewHttpResponse;
 import uk.co.magictractor.spew.server.SpewHttpRequest;
@@ -66,7 +67,7 @@ public final class HttpMessageUtil {
     private HttpMessageUtil() {
     }
 
-    public static InputStream createBodyInputStream(SpewHttpMessage httpMessage) {
+    public static InputStream createBodyInputStream(HasHttpBody httpMessage) {
         byte[] bodyBytes = httpMessage.getBodyBytes();
         if (bodyBytes == null || bodyBytes.length == 0) {
             return null;
@@ -75,7 +76,7 @@ public final class HttpMessageUtil {
         return new ByteArrayInputStream(bodyBytes);
     }
 
-    public static ByteBuffer createBodyByteBuffer(SpewHttpMessage httpMessage) {
+    public static ByteBuffer createBodyByteBuffer(HasHttpBody httpMessage) {
         byte[] bodyBytes = httpMessage.getBodyBytes();
         if (bodyBytes == null || bodyBytes.length == 0) {
             return EMPTY_BODY_BYTE_BUFFER;
@@ -141,7 +142,7 @@ public final class HttpMessageUtil {
      * Assumes String is ASCII, characters in the String are cast to bytes
      * rather than being encoded via a Charset.
      */
-    public static boolean bodyStartsWith(SpewHttpMessage message, String str) {
+    public static boolean bodyStartsWith(HasHttpBody message, String str) {
         byte[] bodyBytes = message.getBodyBytes();
         if (bodyBytes == null) {
             return false;
