@@ -64,7 +64,11 @@ public class SpewResponseHttpMessageConverter implements HttpMessageConverter<Sp
     public SpewHttpResponse read(Class<? extends SpewHttpResponse> clazz, HttpInputMessage inputMessage)
             throws IOException, HttpMessageNotReadableException {
 
-        return new IncomingSpringSocialResponse((ClientHttpResponse) inputMessage);
+        IncomingSpringSocialResponse response = new IncomingSpringSocialResponse((ClientHttpResponse) inputMessage);
+        // Read body immediately, otherwise the stream will be closed when the body is first accessed.
+        response.getBodyBytes();
+
+        return response;
     }
 
     @Override
