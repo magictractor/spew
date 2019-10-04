@@ -2,6 +2,7 @@ package uk.co.magictractor.spew.oauth.boa;
 
 import java.net.URLEncoder;
 import java.security.MessageDigest;
+import java.time.Instant;
 import java.util.Map;
 import java.util.Random;
 import java.util.TreeMap;
@@ -59,6 +60,18 @@ public final class BoaOAuth1Connection<SP extends SpewOAuth1ServiceProvider>
     protected boolean hasExistingAuthorization() {
         return userToken.getValue() != null;
         // TODO! check expiry
+    }
+
+    @Override
+    protected Instant authorizationExpiry() {
+        // Yet to find OAuth1 access tokens which expire
+        return null;
+    }
+
+    @Override
+    protected boolean refreshAuthorization() {
+        // Should never be called because authorizationExpiry() returns null.
+        throw new UnsupportedOperationException("OAuth1 access tokens do not expire");
     }
 
     @Override
@@ -120,6 +133,8 @@ public final class BoaOAuth1Connection<SP extends SpewOAuth1ServiceProvider>
         forAll(request);
         addOAuthSignature(request);
         SpewHttpResponse response = request(request);
+
+        System.err.println("auth response: " + response);
 
         return new SpewParsedResponseBuilder(getApplication(), response)
                 .withBodyReader(KeyValuePairsHttpMessageBodyReader.class)

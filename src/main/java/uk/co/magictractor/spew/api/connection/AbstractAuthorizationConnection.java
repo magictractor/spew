@@ -15,6 +15,8 @@
  */
 package uk.co.magictractor.spew.api.connection;
 
+import java.time.Instant;
+
 import uk.co.magictractor.spew.api.OutgoingHttpRequest;
 import uk.co.magictractor.spew.api.SpewApplication;
 import uk.co.magictractor.spew.api.SpewServiceProvider;
@@ -38,12 +40,32 @@ public abstract class AbstractAuthorizationConnection<APP extends SpewApplicatio
         if (!hasExistingAuthorization()) {
             obtainAuthorization();
         }
+        else {
+            Instant expiry = authorizationExpiry();
+            if (expiry != null) {
+                if (Instant.now().isAfter(expiry)) {
+                    getLogger().info("Authentication expired at {}", expiry);
+                    boolean refreshed = refreshAuthorization();
+                    if (!refreshed) {
+                        obtainAuthorization();
+                    }
+                } else {
+                    getLogger().debug("Authentication expires at {}", expiry);
+                }
+            } else {
+                getLogger().debug("Authentication does not expire");
+            }
+        }
         addAuthorization(request);
     }
 
     protected abstract boolean hasExistingAuthorization();
 
+    protected abstract Instant authorizationExpiry();
+
     protected abstract void obtainAuthorization();
+
+    protected abstract boolean refreshAuthorization();
 
     protected abstract void addAuthorization(OutgoingHttpRequest request);
 

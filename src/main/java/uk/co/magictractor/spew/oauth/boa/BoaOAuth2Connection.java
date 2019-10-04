@@ -1,12 +1,16 @@
 package uk.co.magictractor.spew.oauth.boa;
 
 import java.nio.charset.StandardCharsets;
+import java.time.Instant;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
 import com.google.common.base.Charsets;
+import com.google.common.base.Joiner;
 import com.google.common.collect.Iterables;
 
 import io.netty.buffer.ByteBuf;
@@ -67,6 +71,34 @@ public class BoaOAuth2Connection<SP extends SpewOAuth2ServiceProvider>
     @Override
     protected void addAuthorization(OutgoingHttpRequest request) {
         request.addHeader("Authorization", "Bearer " + accessToken.getValue());
+    }
+
+    @Override
+    protected Instant authorizationExpiry() {
+        String expiry = accessTokenExpiry.getValue();
+        if (expiry == null) {
+            return null;
+        }
+
+        long expiryMillis = Long.parseLong(expiry);
+        //  return Instant.ofEpochSecond(expirySeconds);
+        return Instant.ofEpochMilli(expiryMillis);
+    }
+
+    @Override
+    protected boolean refreshAuthorization() {
+        boolean hasRefreshToken = refreshToken.getValue() != null;
+        if (!hasRefreshToken) {
+            return false;
+        }
+
+        SpewParsedResponse response = fetchRefreshedAccessToken();
+        boolean refreshed = response.getStatus() == 200;
+        if (!refreshed) {
+            getLogger().warn("Failed to refresh the access token: {}", response);
+        }
+
+        return refreshed;
     }
 
     // https://developers.google.com/photos/library/guides/authentication-authorization
@@ -132,36 +164,16 @@ public class BoaOAuth2Connection<SP extends SpewOAuth2ServiceProvider>
         // GitHub returns application/x-www-form-urlencoded content type by default
         request.addHeader(ContentTypeUtil.ACCEPT_HEADER_NAME, ContentTypeUtil.JSON_MIME_TYPES.get(0));
 
-        request.addHeader(ContentTypeUtil.CONTENT_TYPE_HEADER_NAME, ContentTypeUtil.FORM_MIME_TYPE);
-
-        StringBuilder bodyBuilder = new StringBuilder();
-        bodyBuilder.append("code=");
-        bodyBuilder.append(code);
-        bodyBuilder.append('&');
-
-        bodyBuilder.append("client_id=");
-        bodyBuilder.append(application.getClientId());
-        bodyBuilder.append('&');
-
-        bodyBuilder.append("client_secret=");
-        bodyBuilder.append(application.getClientSecret());
-        bodyBuilder.append('&');
-
-        bodyBuilder.append("grant_type=authorization_code&");
-
-        // A 400 results if this does not match the original redirect URI.
-        bodyBuilder.append("redirect_uri=");
-        bodyBuilder.append(callback);
-
-        // TODO! refactor auth body creation - see ContentTypeUtil.bodyFormBytes
-        request.setBody(bodyBuilder.toString().getBytes(StandardCharsets.UTF_8));
+        HashMap<String, String> bodyData = new HashMap<>();
+        bodyData.put("code", code);
+        bodyData.put("client_id", application.getClientId());
+        bodyData.put("client_secret", application.getClientSecret());
+        bodyData.put("grant_type", "authorization_code");
+        bodyData.put("redirect_uri", callback);
 
         application.modifyTokenRequest(request);
 
-        System.err.println("request: " + request);
-
-        SpewParsedResponse response = authRequest(request);
-        System.err.println("response: " + response);
+        SpewParsedResponse response = authRequest(request, bodyData);
 
         // TODO! only get a refresh_token if auth request included access_type=offline
         // add that or not? perhaps make it configurable in application
@@ -177,26 +189,24 @@ public class BoaOAuth2Connection<SP extends SpewOAuth2ServiceProvider>
 
     // TODO! handle invalid/expired refresh tokens
     // https://developers.google.com/identity/protocols/OAuth2InstalledApp#offline
-    private void fetchRefreshedAccessToken() {
+    private SpewParsedResponse fetchRefreshedAccessToken() {
         OutgoingHttpRequest request = new OutgoingHttpRequest("POST", getServiceProvider().getTokenUri());
 
-        throw new UnsupportedOperationException("code broken, and wasn't being called");
+        HashMap<String, String> bodyData = new LinkedHashMap<>();
+        bodyData.put("refresh_token", refreshToken.getValue());
+        bodyData.put("client_id", getApplication().getClientId());
+        bodyData.put("client_secret", getApplication().getClientSecret());
+        bodyData.put("grant_type", "refresh_token");
 
-        //        request.setBodyParam("refresh_token", refreshToken.getValue());
-        //        request.setBodyParam("client_id", getApplication().getClientId());
-        //        request.setBodyParam("client_secret", getApplication().getClientSecret());
-        //
-        //        request.setBodyParam("grant_type", "refresh_token");
-        //        SpewParsedResponse response = authRequest(request);
-        //
-        //        setAccessToken((key) -> response.getString(key));
+        SpewParsedResponse response = authRequest(request, bodyData);
+
+        System.err.println("fetchRefreshedAccessToken(): " + response);
+
+        setAccessToken((key) -> response.getString(key));
+
+        return response;
     }
 
-    //  private void setAccessToken(OAuthResponse response) {
-    //      setAccessToken(response.getString("access_token"), response.getString("expires_in"));
-    //  }
-
-    //
     private void setAccessToken(FullHttpMessage httpMessage) {
         ByteBuf content = httpMessage.content();
         // new QueryStringDecoder()
@@ -218,12 +228,12 @@ public class BoaOAuth2Connection<SP extends SpewOAuth2ServiceProvider>
         String expiresInSecondsString = valueMap.apply("expires_in");
         if (expiresInSecondsString != null) {
             int expiresInSeconds = Integer.parseInt(valueMap.apply("expires_in"));
+            // TODO! store seconds not millis
             long expiresInMilliseconds = expiresInSeconds * 1000;
             long expiry = System.currentTimeMillis() + expiresInMilliseconds - EXPIRY_BUFFER;
             accessTokenExpiry.setValue(Long.toString(expiry));
 
             long diff = expiry - new Date().getTime();
-            System.err.println("diff: " + diff);
         }
 
         // some service providers update the refresh token, others do not
@@ -235,17 +245,6 @@ public class BoaOAuth2Connection<SP extends SpewOAuth2ServiceProvider>
         System.err.println("accessToken set: " + accessToken.getValue() + " expires " + accessTokenExpiry.getValue());
     }
 
-    private boolean isAccessTokenExpired() {
-        long expiry = Long.parseLong(accessTokenExpiry.getValue());
-        boolean isExpired = System.currentTimeMillis() - expiry > 0;
-
-        if (isExpired) {
-            System.err.println("accessToken has expired");
-        }
-
-        return isExpired;
-    }
-
     //  {
     //        "access_token": "ya29.GltcBrSQ1GX2N6sN57ktc1smgmocYpP1MKgn_wPkJRpu0KcTxgDNW7r4UBg3w3rK0J6B3tQI-OjIgFuHDXBmY3a4--7Jj3qy6saDIYbrdYobv3jVxrMA4B3hEdGn",
     //        "expires_in": 3600,
@@ -254,7 +253,12 @@ public class BoaOAuth2Connection<SP extends SpewOAuth2ServiceProvider>
     //        "token_type": "Bearer"
     //      }
 
-    private SpewParsedResponse authRequest(OutgoingHttpRequest request) {
+    private SpewParsedResponse authRequest(OutgoingHttpRequest request, HashMap<String, String> bodyData) {
+        request.addHeader(ContentTypeUtil.CONTENT_TYPE_HEADER_NAME, ContentTypeUtil.FORM_MIME_TYPE);
+
+        String body = Joiner.on('&').withKeyValueSeparator('=').join(bodyData);
+        request.setBody(body.getBytes(StandardCharsets.UTF_8));
+
         SpewHttpResponse response = request(request);
         return new SpewParsedResponseBuilder(getApplication(), response).build();
     }
