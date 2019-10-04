@@ -1,5 +1,6 @@
 package uk.co.magictractor.spew.oauth.boa;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -65,7 +66,7 @@ public class BoaOAuth2Connection<SP extends SpewOAuth2ServiceProvider>
 
     @Override
     protected void addAuthorization(OutgoingHttpRequest request) {
-        request.setHeader("Authorization", "Bearer " + accessToken.getValue());
+        request.addHeader("Authorization", "Bearer " + accessToken.getValue());
     }
 
     // https://developers.google.com/photos/library/guides/authentication-authorization
@@ -73,10 +74,10 @@ public class BoaOAuth2Connection<SP extends SpewOAuth2ServiceProvider>
     public void obtainAuthorization() {
         SpewOAuth2Application<?> application = getApplication();
 
-        OutgoingHttpRequest request = application.createGetRequest(getServiceProvider().getAuthorizationUri());
+        OutgoingHttpRequest request = new OutgoingHttpRequest("GET", getServiceProvider().getAuthorizationUri());
 
         // GitHub returns application/x-www-form-urlencoded content type by default
-        request.setHeader(ContentTypeUtil.ACCEPT_HEADER_NAME, ContentTypeUtil.JSON_MIME_TYPES.get(0));
+        request.addHeader(ContentTypeUtil.ACCEPT_HEADER_NAME, ContentTypeUtil.JSON_MIME_TYPES.get(0));
 
         // A bit mucky. The callback value comes from the handler but is also used in the verification function.
         AuthorizationHandler[] authHandlerHolder = new AuthorizationHandler[1];
@@ -126,30 +127,34 @@ public class BoaOAuth2Connection<SP extends SpewOAuth2ServiceProvider>
         SpewOAuth2Application<?> application = getApplication();
 
         // ah! needed to be POST else 404 (Google)
-        OutgoingHttpRequest request = application.createPostRequest(getServiceProvider().getTokenUri());
+        OutgoingHttpRequest request = new OutgoingHttpRequest("POST", getServiceProvider().getTokenUri());
 
         // GitHub returns application/x-www-form-urlencoded content type by default
-        request.setHeader(ContentTypeUtil.ACCEPT_HEADER_NAME, ContentTypeUtil.JSON_MIME_TYPES.get(0));
+        request.addHeader(ContentTypeUtil.ACCEPT_HEADER_NAME, ContentTypeUtil.JSON_MIME_TYPES.get(0));
 
-        request.setContentType(ContentTypeUtil.FORM_MIME_TYPE);
+        request.addHeader(ContentTypeUtil.CONTENT_TYPE_HEADER_NAME, ContentTypeUtil.FORM_MIME_TYPE);
 
-        request.setBodyParam("code", code);
-        //request.setBodyParam("pin", code); // Imgur with "pin"
-        request.setBodyParam("client_id", application.getClientId());
-        request.setBodyParam("client_secret", application.getClientSecret());
+        StringBuilder bodyBuilder = new StringBuilder();
+        bodyBuilder.append("code=");
+        bodyBuilder.append(code);
+        bodyBuilder.append('&');
 
-        request.setBodyParam("grant_type", "authorization_code");
-        //request.setBodyParam("grant_type", "pin"); // Imgur with "pin"
+        bodyBuilder.append("client_id=");
+        bodyBuilder.append(application.getClientId());
+        bodyBuilder.append('&');
 
-        // request.setParam("redirect_uri",
-        // "https://www.googleapis.com/auth/photoslibrary");
-        // request.setParam("redirect_uri", "https://magictractor.co.uk");
+        bodyBuilder.append("client_secret=");
+        bodyBuilder.append(application.getClientSecret());
+        bodyBuilder.append('&');
+
+        bodyBuilder.append("grant_type=authorization_code&");
 
         // A 400 results if this does not match the original redirect URI.
-        //request.setBodyParam("redirect_uri", "http://127.0.0.1:8080");
-        // application.host() -> no could be OOB
-        request.setBodyParam("redirect_uri", callback);
-        // request.setParam("scope", "");
+        bodyBuilder.append("redirect_uri=");
+        bodyBuilder.append(callback);
+
+        // TODO! refactor auth body creation - see ContentTypeUtil.bodyFormBytes
+        request.setBody(bodyBuilder.toString().getBytes(StandardCharsets.UTF_8));
 
         application.modifyTokenRequest(request);
 
@@ -173,19 +178,18 @@ public class BoaOAuth2Connection<SP extends SpewOAuth2ServiceProvider>
     // TODO! handle invalid/expired refresh tokens
     // https://developers.google.com/identity/protocols/OAuth2InstalledApp#offline
     private void fetchRefreshedAccessToken() {
-        OutgoingHttpRequest request = getApplication().createPostRequest(getServiceProvider().getTokenUri());
+        OutgoingHttpRequest request = new OutgoingHttpRequest("POST", getServiceProvider().getTokenUri());
 
-        request.setBodyParam("refresh_token", refreshToken.getValue());
-        request.setBodyParam("client_id", getApplication().getClientId());
-        request.setBodyParam("client_secret", getApplication().getClientSecret());
+        throw new UnsupportedOperationException("code broken, and wasn't being called");
 
-        request.setBodyParam("grant_type", "refresh_token");
-        SpewParsedResponse response = authRequest(request);
-
-        // accessToken.setValue(response.getString("access_token"));
-        // System.err.println("accessToken refreshed to " + accessToken.getValue());
-
-        setAccessToken((key) -> response.getString(key));
+        //        request.setBodyParam("refresh_token", refreshToken.getValue());
+        //        request.setBodyParam("client_id", getApplication().getClientId());
+        //        request.setBodyParam("client_secret", getApplication().getClientSecret());
+        //
+        //        request.setBodyParam("grant_type", "refresh_token");
+        //        SpewParsedResponse response = authRequest(request);
+        //
+        //        setAccessToken((key) -> response.getString(key));
     }
 
     //  private void setAccessToken(OAuthResponse response) {
@@ -250,13 +254,8 @@ public class BoaOAuth2Connection<SP extends SpewOAuth2ServiceProvider>
     //        "token_type": "Bearer"
     //      }
 
-    private SpewParsedResponse authRequest(OutgoingHttpRequest apiRequest) {
-        // forAll(apiRequest);
-
-        // TODO! more elegant way to prep the request rather than repeating this here?
-        apiRequest.prepareToSend();
-
-        SpewHttpResponse response = sendRequest(apiRequest);
+    private SpewParsedResponse authRequest(OutgoingHttpRequest request) {
+        SpewHttpResponse response = request(request);
         return new SpewParsedResponseBuilder(getApplication(), response).build();
     }
 

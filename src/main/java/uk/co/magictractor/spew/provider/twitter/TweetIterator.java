@@ -2,7 +2,7 @@ package uk.co.magictractor.spew.provider.twitter;
 
 import java.util.List;
 
-import uk.co.magictractor.spew.api.OutgoingHttpRequest;
+import uk.co.magictractor.spew.api.ApplicationRequest;
 import uk.co.magictractor.spew.api.PageTokenServiceIterator;
 import uk.co.magictractor.spew.api.SpewApplication;
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
@@ -18,7 +18,7 @@ public class TweetIterator<E> extends PageTokenServiceIterator<E> {
 
     @Override
     protected PageAndNextToken<E> fetchPage(String pageToken) {
-        OutgoingHttpRequest request = createGetRequest("https://api.twitter.com/1.1/statuses/user_timeline.json");
+        ApplicationRequest request = createGetRequest("https://api.twitter.com/1.1/statuses/user_timeline.json");
 
         getLogger().debug("set max_id={}", pageToken);
         request.setQueryStringParam("max_id", pageToken);

@@ -48,13 +48,15 @@ public class Imgur implements SpewOAuth2ServiceProvider {
     @Override
     public void modifyTokenRequest(OutgoingHttpRequest request) {
         System.err.println("modifyTokenRequest: " + request);
-        Map<String, Object> bodyParams = request.getBodyParams();
-        if (bodyParams.get("redirect_uri").equals(getOutOfBandUri())) {
-            // Imgur uses "pin" response_type rather than "urn:ietf:wg:oauth:2.0:oob"
-            bodyParams.put("grant_type", "pin");
-            Object code = bodyParams.remove("code");
-            bodyParams.put("pin", code);
-        }
+        // Aaah... now dealing with OutgoingHttpRequest rather than ApplicationRequest, so no longer have the body params...
+        throw new UnsupportedOperationException("broken by outgoing request rework");
+        //        Map<String, Object> bodyParams = request.getBodyParams();
+        //        if (bodyParams.get("redirect_uri").equals(getOutOfBandUri())) {
+        //            // Imgur uses "pin" response_type rather than "urn:ietf:wg:oauth:2.0:oob"
+        //            bodyParams.put("grant_type", "pin");
+        //            Object code = bodyParams.remove("code");
+        //            bodyParams.put("pin", code);
+        //        }
     }
 
     @Override
@@ -64,3 +66,4 @@ public class Imgur implements SpewOAuth2ServiceProvider {
     }
 
 }
+// body={"data":[],"success":true,"status":200}

@@ -22,14 +22,14 @@ public interface SpewApplication<SP extends SpewServiceProvider> {
         return SpewConnectionCache.getOrCreateConnection(getClass());
     }
 
-    default OutgoingHttpRequest createRequest(String httpMethod, String url) {
-        OutgoingHttpRequest request = new OutgoingHttpRequest(this, httpMethod, url);
+    default ApplicationRequest createRequest(String httpMethod, String url) {
+        ApplicationRequest request = new ApplicationRequest(this, httpMethod, url);
         // TODO! skip prep during auth
         prepareRequest(request);
         return request;
     }
 
-    default void prepareRequest(OutgoingHttpRequest request) {
+    default void prepareRequest(ApplicationRequest request) {
         getServiceProvider().prepareRequest(request);
     }
 
@@ -41,15 +41,15 @@ public interface SpewApplication<SP extends SpewServiceProvider> {
         getServiceProvider().buildParsedResponse(parsedResponseBuilder);
     }
 
-    default OutgoingHttpRequest createGetRequest(String url) {
+    default ApplicationRequest createGetRequest(String url) {
         return createRequest("GET", url);
     }
 
-    default OutgoingHttpRequest createPostRequest(String url) {
+    default ApplicationRequest createPostRequest(String url) {
         return createRequest("POST", url);
     }
 
-    default OutgoingHttpRequest createDelRequest(String url) {
+    default ApplicationRequest createDelRequest(String url) {
         return createRequest("DEL", url);
     }
 

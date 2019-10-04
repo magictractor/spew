@@ -7,7 +7,7 @@ import java.util.Optional;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Streams;
 
-import uk.co.magictractor.spew.api.OutgoingHttpRequest;
+import uk.co.magictractor.spew.api.ApplicationRequest;
 import uk.co.magictractor.spew.api.PageCountServiceIterator;
 import uk.co.magictractor.spew.api.SpewApplication;
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
@@ -23,7 +23,7 @@ public class GitHubIterator<E> extends PageCountServiceIterator<E> {
 
     @Override
     protected List<E> fetchPage(int pageNumber) {
-        OutgoingHttpRequest request = createGetRequest("https://api.github.com/user/repos");
+        ApplicationRequest request = createGetRequest("https://api.github.com/user/repos");
 
         request.setQueryStringParam("page", pageNumber);
         // Default 30, max 100

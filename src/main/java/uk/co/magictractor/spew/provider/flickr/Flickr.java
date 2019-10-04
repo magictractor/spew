@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import uk.co.magictractor.spew.api.BadResponseException;
-import uk.co.magictractor.spew.api.OutgoingHttpRequest;
+import uk.co.magictractor.spew.api.ApplicationRequest;
 import uk.co.magictractor.spew.api.SpewOAuth1ServiceProvider;
 import uk.co.magictractor.spew.core.response.parser.SpewHttpMessageBodyReader;
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponseBuilder;
@@ -24,7 +24,7 @@ public class Flickr implements SpewOAuth1ServiceProvider {
 
     // TODO! stop these being added to auth calls
     @Override
-    public void prepareRequest(OutgoingHttpRequest request) {
+    public void prepareRequest(ApplicationRequest request) {
         request.setQueryStringParam("format", "json");
         request.setQueryStringParam("nojsoncallback", "1");
     }

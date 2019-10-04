@@ -3,7 +3,7 @@ package uk.co.magictractor.spew.provider.imagebam;
 import java.util.Iterator;
 import java.util.List;
 
-import uk.co.magictractor.spew.api.OutgoingHttpRequest;
+import uk.co.magictractor.spew.api.ApplicationRequest;
 import uk.co.magictractor.spew.api.SingleCallServiceIterator;
 import uk.co.magictractor.spew.api.SpewApplication;
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
@@ -22,7 +22,7 @@ public class ImageBamPhotoIterator<E> extends SingleCallServiceIterator<E> {
 
     @Override
     protected List<E> fetchPage() {
-        OutgoingHttpRequest request = createPostRequest(ImageBam.REST_ENDPOINT + "get_gallery_images");
+        ApplicationRequest request = createPostRequest(ImageBam.REST_ENDPOINT + "get_gallery_images");
 
         // TODO! set gallery id
 

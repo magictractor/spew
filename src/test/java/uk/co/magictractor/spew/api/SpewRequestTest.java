@@ -8,7 +8,7 @@ public class SpewRequestTest {
 
     @Test
     void testPath() {
-        OutgoingHttpRequest request = setUpExampleRequest();
+        ApplicationRequest request = setUpExampleRequest();
         // TODO! this is wrong for the path?!
         assertThat(request.getPath()).isEqualTo("https://api.flickr.com/services/rest/request_token");
     }
@@ -32,8 +32,8 @@ public class SpewRequestTest {
     /**
      * Set up example from https://www.flickr.com/services/api/auth.oauth.html
      */
-    private OutgoingHttpRequest setUpExampleRequest() {
-        OutgoingHttpRequest request = new OutgoingHttpRequest(null, "GET",
+    private ApplicationRequest setUpExampleRequest() {
+        ApplicationRequest request = new ApplicationRequest(null, "GET",
             "https://api.flickr.com/services/rest/request_token");
 
         // request.removeParam("format");

@@ -29,7 +29,7 @@ import com.jayway.jsonpath.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import uk.co.magictractor.spew.api.OutgoingHttpRequest;
+import uk.co.magictractor.spew.api.ApplicationRequest;
 import uk.co.magictractor.spew.api.SpewHttpMessage;
 import uk.co.magictractor.spew.core.contenttype.ContentTypeFromResourceName;
 import uk.co.magictractor.spew.util.spi.SPIUtil;
@@ -148,7 +148,7 @@ public class ContentTypeUtil {
         return Optional.ofNullable(charset);
     }
 
-    public static byte[] bodyBytes(OutgoingHttpRequest request, Configuration jsonConfiguration) {
+    public static byte[] bodyBytes(ApplicationRequest request, Configuration jsonConfiguration) {
         String contentType = request.getContentType();
         if (isJson(contentType)) {
             return bodyJsonBytes(request, jsonConfiguration);
@@ -163,14 +163,14 @@ public class ContentTypeUtil {
         throw new IllegalArgumentException("Code need modified to write request body for content type " + contentType);
     }
 
-    private static byte[] bodyJsonBytes(OutgoingHttpRequest request, Configuration jsonConfiguration) {
+    private static byte[] bodyJsonBytes(ApplicationRequest request, Configuration jsonConfiguration) {
         String requestBody = jsonConfiguration.jsonProvider().toJson(request.getBodyParams());
         //logger.trace("request body: " + requestBody);
         // TODO! encoding
         return requestBody.getBytes();
     }
 
-    private static byte[] bodyFormBytes(OutgoingHttpRequest request) {
+    private static byte[] bodyFormBytes(ApplicationRequest request) {
         StringBuilder bodyBuilder = new StringBuilder();
         boolean first = true;
         for (Map.Entry<String, Object> entry : request.getBodyParams().entrySet()) {

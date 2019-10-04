@@ -17,7 +17,6 @@ package uk.co.magictractor.spew.api.connection;
 
 import uk.co.magictractor.spew.api.OutgoingHttpRequest;
 import uk.co.magictractor.spew.api.SpewApplication;
-import uk.co.magictractor.spew.api.SpewHttpResponse;
 import uk.co.magictractor.spew.api.SpewServiceProvider;
 
 /**
@@ -28,7 +27,11 @@ public abstract class AbstractAuthorizationConnection<APP extends SpewApplicatio
 
     public AbstractAuthorizationConnection(APP application) {
         super(application);
-        addBeforeSendRequestCallback(this::ensureAuthorized);
+    }
+
+    @Override
+    public void prepareApplicationRequest(OutgoingHttpRequest request) {
+        ensureAuthorized(request);
     }
 
     private void ensureAuthorized(OutgoingHttpRequest request) {
@@ -43,31 +46,5 @@ public abstract class AbstractAuthorizationConnection<APP extends SpewApplicatio
     protected abstract void obtainAuthorization();
 
     protected abstract void addAuthorization(OutgoingHttpRequest request);
-
-    @Override
-    public SpewHttpResponse request(OutgoingHttpRequest request) {
-        // TODO! add retry logic
-        SpewHttpResponse response = super.request(request);
-
-        // aah... parse first to let Flickr etc modify status codes... !!!!
-        if (response.getStatus() == 401) {
-            getLogger().info("Existing authorization failed, obtaining fresh authorization");
-            obtainAuthorization();
-            response = super.request(request);
-        }
-
-        // TODO! reauthorize (for 401? and retry for 5xx after a pause)
-        // and do so for all connections...
-        // Flickr has 200 status with error code 98 in body (could treat like 401 status)
-        // and Flickr error code 105 could be treated like 5xx
-        if (response.getStatus() != 200) {
-            String message = "request returned status " + response.getStatus();
-            System.err.println(message + ": " + request);
-            System.err.println(response);
-            throw new IllegalStateException(message);
-        }
-
-        return response;
-    }
 
 }

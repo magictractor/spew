@@ -24,9 +24,13 @@ repositories {
 dependencies {
     implementation("org.slf4j:slf4j-api:1.7.26")
     
-    // For JSON parsing
+    // For JSON parsing with Boa
     implementation("com.jayway.jsonpath:json-path:2.3.0")
     implementation("com.google.code.gson:gson:2.8.5")
+    
+    // For creating Json bodies in Boa OAuth2 auth requests
+    // No! auth requests use form data, not Json
+    //implementation("javax.json:javax.json-api:1.1.4")
     
     // Provide one of these if a transort only (no auth) connection is required
     // Boa authorisation is layered on top of a transport only connection
@@ -35,6 +39,8 @@ dependencies {
 
     // Provide one of these to use a third-party OAuth implementation (not Boa)
     compileOnly("org.springframework.social:spring-social-core:2.0.0.M4")
+    // Spring Social uses Jackson for converting Json
+    compileOnly("com.fasterxml.jackson.core:jackson-databind:2.10.0")
             
     // For reading metadata from local photo files
     implementation("com.drewnoakes:metadata-extractor:2.11.0")

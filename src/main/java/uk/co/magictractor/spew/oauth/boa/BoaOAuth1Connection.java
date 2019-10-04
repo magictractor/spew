@@ -53,8 +53,6 @@ public final class BoaOAuth1Connection<SP extends SpewOAuth1ServiceProvider>
 
         this.userToken = SPIUtil.firstAvailable(UserPropertyStore.class).getProperty(application, "user_token");
         this.userSecret = SPIUtil.firstAvailable(UserPropertyStore.class).getProperty(application, "user_secret");
-
-        super.addBeforeSendRequestCallback(this::addOAuthSignature);
     }
 
     @Override
@@ -82,8 +80,8 @@ public final class BoaOAuth1Connection<SP extends SpewOAuth1ServiceProvider>
 
     private void openAuthorizationUriInBrowser(String callback) {
         // TODO! POST?
-        OutgoingHttpRequest request = getApplication()
-                .createGetRequest(getServiceProvider().getTemporaryCredentialRequestUri());
+        OutgoingHttpRequest request = new OutgoingHttpRequest("GET",
+            getServiceProvider().getTemporaryCredentialRequestUri());
 
         request.setQueryStringParam("oauth_callback", callback);
 
@@ -121,7 +119,7 @@ public final class BoaOAuth1Connection<SP extends SpewOAuth1ServiceProvider>
     private SpewParsedResponse authRequest(OutgoingHttpRequest request) {
         forAll(request);
         addOAuthSignature(request);
-        SpewHttpResponse response = sendRequest(request);
+        SpewHttpResponse response = request(request);
 
         return new SpewParsedResponseBuilder(getApplication(), response)
                 .withBodyReader(KeyValuePairsHttpMessageBodyReader.class)
@@ -151,7 +149,7 @@ public final class BoaOAuth1Connection<SP extends SpewOAuth1ServiceProvider>
 
     private void fetchToken(String authToken, String verificationCode) {
         // TODO! POST? - imagebam allows get or post
-        OutgoingHttpRequest request = getApplication().createGetRequest(getServiceProvider().getTokenRequestUri());
+        OutgoingHttpRequest request = new OutgoingHttpRequest("GET", getServiceProvider().getTokenRequestUri());
         request.setQueryStringParam("oauth_token", authToken);
         request.setQueryStringParam("oauth_verifier", verificationCode);
         SpewParsedResponse response = authRequest(request);

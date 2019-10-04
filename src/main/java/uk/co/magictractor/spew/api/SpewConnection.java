@@ -20,7 +20,13 @@ public interface SpewConnection {
         return Integer.toString(System.identityHashCode(this));
     }
 
+    // TODO! remove this?? (connection layer should not be aware of the application layer)
     SpewApplication<?> getApplication();
+
+    // Typically used to add authorization information to the request.
+    // This is no called for requests which fetch authoentication tokens etc.
+    default void prepareApplicationRequest(OutgoingHttpRequest request) {
+    }
 
     /**
      * <p>

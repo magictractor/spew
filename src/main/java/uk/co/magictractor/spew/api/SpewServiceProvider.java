@@ -34,7 +34,7 @@ public interface SpewServiceProvider {
      * Default implementation does nothing.
      * </p>
      */
-    default void prepareRequest(OutgoingHttpRequest request) {
+    default void prepareRequest(ApplicationRequest request) {
         // Do nothing
     }
 

@@ -3,7 +3,7 @@ package uk.co.magictractor.spew.provider.imgur;
 import java.util.Iterator;
 import java.util.List;
 
-import uk.co.magictractor.spew.api.OutgoingHttpRequest;
+import uk.co.magictractor.spew.api.ApplicationRequest;
 import uk.co.magictractor.spew.api.PageCountServiceIterator;
 import uk.co.magictractor.spew.api.SpewApplication;
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
@@ -212,7 +212,7 @@ public class ImgurPhotoIterator<E> extends PageCountServiceIterator<E> {
     // Get images https://apidocs.imgur.com/#2e45daca-bd44-47f8-84b0-b3f2aa861735
     @Override
     protected List<E> fetchPage(int pageNumber) {
-        OutgoingHttpRequest request = createGetRequest(Imgur.REST_ENDPOINT + "account/me/images/" + (pageNumber - 1));
+        ApplicationRequest request = createGetRequest(Imgur.REST_ENDPOINT + "account/me/images/" + (pageNumber - 1));
 
         // request.setParam("method", "account/me/images/page/" + (pageNumber - 1));
 

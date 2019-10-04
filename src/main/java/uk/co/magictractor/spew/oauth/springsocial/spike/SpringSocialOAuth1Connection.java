@@ -22,7 +22,6 @@ import java.util.Arrays;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.client.ClientHttpRequest;
-import org.springframework.social.connect.Connection;
 import org.springframework.social.oauth1.OAuthToken;
 import org.springframework.web.client.HttpMessageConverterExtractor;
 import org.springframework.web.client.RequestCallback;
@@ -47,7 +46,7 @@ public class SpringSocialOAuth1Connection implements SpewConnection {
     private EditableProperty userToken;
     private EditableProperty userSecret;
 
-    private Connection<RestOperations> springConnection;
+    private RestOperations springOps;
 
     /**
      * Default visibility, applications should obtain instances via
@@ -63,7 +62,7 @@ public class SpringSocialOAuth1Connection implements SpewConnection {
         this.userSecret = SPIUtil.firstAvailable(UserPropertyStore.class).getProperty(application, "user_secret");
 
         OAuthToken token = new OAuthToken(userToken.getValue(), userSecret.getValue());
-        springConnection = connectionFactory.createConnection(token);
+        springOps = connectionFactory.createConnection(token).getApi();
     }
 
     @Override
@@ -77,7 +76,7 @@ public class SpringSocialOAuth1Connection implements SpewConnection {
         HttpMessageConverterExtractor<SpewHttpResponse> responseExtractor = new HttpMessageConverterExtractor<>(
             String.class, Arrays.asList(converter));
 
-        return springConnection.getApi().execute(uri, method, requestCallback, responseExtractor);
+        return springOps.execute(uri, method, requestCallback, responseExtractor);
     }
 
     private void populateHttpRequest(ClientHttpRequest httpRequest, OutgoingHttpRequest apiRequest) throws IOException {

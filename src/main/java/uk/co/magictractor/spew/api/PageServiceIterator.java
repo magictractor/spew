@@ -23,7 +23,7 @@ public abstract class PageServiceIterator<E> extends AbstractIterator<E> {
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
     private SpewApplication<?> application;
-    private List<Consumer<OutgoingHttpRequest>> beforeSendConsumers;
+    private List<Consumer<ApplicationRequest>> requestBuildConsumers;
     private Class<E> elementType;
 
     /**
@@ -91,24 +91,20 @@ public abstract class PageServiceIterator<E> extends AbstractIterator<E> {
 
     protected abstract List<? extends E> nextPage();
 
-    protected OutgoingHttpRequest createGetRequest(String url) {
+    protected ApplicationRequest createGetRequest(String url) {
         return createRequest("GET", url);
     }
 
-    protected OutgoingHttpRequest createPostRequest(String url) {
+    protected ApplicationRequest createPostRequest(String url) {
         return createRequest("POST", url);
     }
 
-    protected OutgoingHttpRequest createRequest(String httpMethod, String url) {
-        OutgoingHttpRequest request = application.createRequest(httpMethod, url);
-        request.beforeSend(r -> beforeSend(r));
-        return request;
-    }
-
-    private void beforeSend(OutgoingHttpRequest request) {
-        if (beforeSendConsumers != null) {
-            beforeSendConsumers.forEach(rc -> rc.accept(request));
+    protected ApplicationRequest createRequest(String httpMethod, String url) {
+        ApplicationRequest requestBuilder = application.createRequest(httpMethod, url);
+        if (requestBuildConsumers != null) {
+            requestBuildConsumers.forEach(rc -> rc.accept(requestBuilder));
         }
+        return requestBuilder;
     }
 
     /**
@@ -174,11 +170,11 @@ public abstract class PageServiceIterator<E> extends AbstractIterator<E> {
          * implementors flexibility to use all options provided by the API.
          * </p>
          */
-        public B withBeforeSendConsumer(Consumer<OutgoingHttpRequest> beforeSendConsumer) {
-            if (iter.beforeSendConsumers == null) {
-                iter.beforeSendConsumers = new ArrayList<>();
+        public B withRequestBuildConsumer(Consumer<ApplicationRequest> requestBuildConsumers) {
+            if (iter.requestBuildConsumers == null) {
+                iter.requestBuildConsumers = new ArrayList<>();
             }
-            iter.beforeSendConsumers.add(beforeSendConsumer);
+            iter.requestBuildConsumers.add(requestBuildConsumers);
             return (B) this;
         }
 

@@ -18,7 +18,7 @@ package uk.co.magictractor.spew.provider.dropbox;
 import java.util.Iterator;
 import java.util.List;
 
-import uk.co.magictractor.spew.api.OutgoingHttpRequest;
+import uk.co.magictractor.spew.api.ApplicationRequest;
 import uk.co.magictractor.spew.api.PageTokenServiceIterator;
 import uk.co.magictractor.spew.api.SpewApplication;
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
@@ -41,7 +41,7 @@ public class DropboxIterator<E> extends PageTokenServiceIterator<E> {
         }
 
         // https://www.dropbox.com/developers/documentation/http/documentation#sharing-list_folders
-        OutgoingHttpRequest request = createPostRequest(url);
+        ApplicationRequest request = createPostRequest(url);
 
         if (pageToken != null) {
             request.setBodyParam("cursor", pageToken);

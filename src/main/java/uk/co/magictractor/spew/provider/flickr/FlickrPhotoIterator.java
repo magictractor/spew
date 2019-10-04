@@ -4,7 +4,7 @@ import java.time.LocalDate;
 import java.util.Iterator;
 import java.util.List;
 
-import uk.co.magictractor.spew.api.OutgoingHttpRequest;
+import uk.co.magictractor.spew.api.ApplicationRequest;
 import uk.co.magictractor.spew.api.PageCountServiceIterator;
 import uk.co.magictractor.spew.api.SpewApplication;
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
@@ -41,7 +41,7 @@ public class FlickrPhotoIterator<E> extends PageCountServiceIterator<E> {
 
     @Override
     protected List<E> fetchPage(int pageNumber) {
-        OutgoingHttpRequest request = createPostRequest(Flickr.REST_ENDPOINT);
+        ApplicationRequest request = createPostRequest(Flickr.REST_ENDPOINT);
 
         request.setQueryStringParam("method", "flickr.photos.search");
 

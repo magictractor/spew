@@ -2,7 +2,7 @@ package uk.co.magictractor.spew.provider.google;
 
 import java.util.List;
 
-import uk.co.magictractor.spew.api.OutgoingHttpRequest;
+import uk.co.magictractor.spew.api.ApplicationRequest;
 import uk.co.magictractor.spew.api.PageTokenServiceIterator;
 import uk.co.magictractor.spew.api.SpewApplication;
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
@@ -14,7 +14,7 @@ public abstract class GoogleServiceIterator<E> extends PageTokenServiceIterator<
 
     @Override
     protected final PageAndNextToken<E> fetchPage(String pageToken) {
-        OutgoingHttpRequest request = createPageRequest();
+        ApplicationRequest request = createPageRequest();
 
         request.setQueryStringParam("pageToken", pageToken);
 
@@ -26,7 +26,7 @@ public abstract class GoogleServiceIterator<E> extends PageTokenServiceIterator<
         return new PageAndNextToken<>(page, nextToken);
     }
 
-    protected abstract OutgoingHttpRequest createPageRequest();
+    protected abstract ApplicationRequest createPageRequest();
 
     protected abstract List<? extends E> parsePageResponse(SpewParsedResponse response);
 

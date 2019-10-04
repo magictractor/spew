@@ -26,13 +26,8 @@ public abstract class AbstractAuthorizationDecoratorConnection<APP extends SpewA
     }
 
     @Override
-    protected SpewHttpResponse sendRequest0(OutgoingHttpRequest apiRequest) {
-        /*
-         * Uses request() rather than sendRequest(), but there should should be
-         * no additional callbacks on the transport connection, so that isn't a
-         * problem.
-         */
-        return transport.request(apiRequest);
+    public SpewHttpResponse request(OutgoingHttpRequest request) {
+        return transport.request(request);
     }
 
 }
