@@ -3,8 +3,8 @@ package uk.co.magictractor.spew.provider.flickr;
 import java.util.Arrays;
 import java.util.List;
 
-import uk.co.magictractor.spew.api.BadResponseException;
 import uk.co.magictractor.spew.api.ApplicationRequest;
+import uk.co.magictractor.spew.api.BadResponseException;
 import uk.co.magictractor.spew.api.SpewOAuth1ServiceProvider;
 import uk.co.magictractor.spew.core.response.parser.SpewHttpMessageBodyReader;
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponseBuilder;
@@ -87,7 +87,7 @@ public class Flickr implements SpewOAuth1ServiceProvider {
             }
         }
 
-        // Verification has just been done, so need verifier.
+        // Verification has just been done, so do not need verifier.
         parsedResponseBuilder.withoutVerification();
     }
 
