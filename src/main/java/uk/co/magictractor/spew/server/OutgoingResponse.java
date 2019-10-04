@@ -22,7 +22,7 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
-import uk.co.magictractor.spew.api.HttpHeaderNames;
+import uk.co.magictractor.spew.api.HasHttpHeaders;
 import uk.co.magictractor.spew.api.SpewHeader;
 import uk.co.magictractor.spew.api.SpewHttpResponse;
 import uk.co.magictractor.spew.core.message.AbstractByteArrayMessage;
@@ -74,9 +74,12 @@ public abstract class OutgoingResponse extends AbstractByteArrayMessage implemen
         addHeader(name, HttpMessageUtil.asHeaderString(value));
     }
 
-    // default visibility so the builder may access it, but the OutgoingResponse is otherwise immutable
-    /* default */ void addHeaders(List<SpewHeader> addHeaders) {
-        headers.addAll(addHeaders);
+    protected void setHeader(String name, String value) {
+        HasHttpHeaders.setHeader(headers, name, value);
+    }
+
+    protected void setHeader(String name, Instant value) {
+        HasHttpHeaders.setHeader(headers, name, HttpMessageUtil.asHeaderString(value));
     }
 
     @Override

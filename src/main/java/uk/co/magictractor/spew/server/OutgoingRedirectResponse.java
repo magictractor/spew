@@ -17,7 +17,6 @@ package uk.co.magictractor.spew.server;
 
 import static uk.co.magictractor.spew.api.HttpHeaderNames.LOCATION;
 
-import uk.co.magictractor.spew.api.HttpHeaderNames;
 import uk.co.magictractor.spew.util.HttpMessageUtil;
 
 /**
@@ -29,7 +28,7 @@ public class OutgoingRedirectResponse extends OutgoingResponse {
     public OutgoingRedirectResponse(String location) {
         super(HttpMessageUtil.emptyBodyBytes());
         setHttpStatus(303);
-        addHeader(LOCATION, location);
+        setHeader(LOCATION, location);
     }
 
 }

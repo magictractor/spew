@@ -9,7 +9,7 @@ import uk.co.magictractor.spew.server.ConnectionValuesRequestHandler;
 import uk.co.magictractor.spew.server.OAuth2VerificationRequestHandler;
 import uk.co.magictractor.spew.server.RequestHandler;
 import uk.co.magictractor.spew.server.ResourceRequestHandler;
-import uk.co.magictractor.spew.server.ShutdownOnceVerifiedRequestHandler;
+import uk.co.magictractor.spew.server.ShutdownRequestHandler;
 import uk.co.magictractor.spew.server.TemplateRequestHandler;
 import uk.co.magictractor.spew.store.ApplicationPropertyStore;
 import uk.co.magictractor.spew.util.spi.SPIUtil;
@@ -60,7 +60,7 @@ public interface SpewOAuth2Application<SP extends SpewOAuth2ServiceProvider>
         return Arrays.asList(
             new ConnectionValuesRequestHandler(),
             new OAuth2VerificationRequestHandler(verificationFunctionSupplier),
-            new ShutdownOnceVerifiedRequestHandler(),
+            new ShutdownRequestHandler("/js/shutdownNow.js"),
             new TemplateRequestHandler(serverResourcesRelativeToClass()),
             new ResourceRequestHandler(serverResourcesRelativeToClass()));
     }

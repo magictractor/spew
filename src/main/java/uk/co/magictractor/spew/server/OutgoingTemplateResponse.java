@@ -25,7 +25,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.function.Function;
 
-import uk.co.magictractor.spew.api.HttpHeaderNames;
 import uk.co.magictractor.spew.util.ExceptionUtil;
 import uk.co.magictractor.spew.util.HttpMessageUtil;
 import uk.co.magictractor.spew.util.PathUtil;
@@ -73,7 +72,7 @@ public class OutgoingTemplateResponse extends OutgoingResponse {
                 "getSubstitutionValue() must be overridden if a value function is not provided");
         };
 
-        addHeader(CACHE_CONTROL, "no-cache, must-revalidate, max-age=0");
+        setHeader(CACHE_CONTROL, "no-cache, must-revalidate, max-age=0");
     }
 
     public OutgoingTemplateResponse(Path bodyPath, Function<String, String> valueFunction) {

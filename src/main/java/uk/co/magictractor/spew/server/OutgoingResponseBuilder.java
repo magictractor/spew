@@ -38,7 +38,11 @@ public class OutgoingResponseBuilder {
         }
 
         if (headers != null) {
-            response.addHeaders(headers);
+            for (SpewHeader header : headers) {
+                // setHeader() rather than addHeader() so that defaults may be overridden,
+                // uses included changing the Cache-Control value.
+                response.setHeader(header.getName(), header.getValue());
+            }
         }
 
         return response;

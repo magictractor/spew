@@ -15,16 +15,24 @@
  */
 package uk.co.magictractor.spew.server;
 
-public class ShutdownOnceVerifiedRequestHandler implements RequestHandler {
+import static uk.co.magictractor.spew.api.HttpHeaderNames.CACHE_CONTROL;
 
-    // TODO! common constants for success and failure URLS
+public class ShutdownRequestHandler implements RequestHandler {
+
+    private final String shutdownPath;
+
+    public ShutdownRequestHandler(String shutdownPath) {
+        this.shutdownPath = shutdownPath;
+    }
+
     @Override
     public void handleRequest(SpewHttpRequest request, OutgoingResponseBuilder responseBuilder) {
         String path = request.getPath();
-        if ("/verificationSuccessful.html".equals(path)
-                || "/verificationFailure.html".equals(path)) {
+        if (path.equals(shutdownPath)) {
             responseBuilder.withShutdown();
         }
+        // Make sure it isn't cached, see also Cache-Control for templates
+        responseBuilder.withHeader(CACHE_CONTROL, "no-cache, must-revalidate, max-age=0");
     }
 
 }

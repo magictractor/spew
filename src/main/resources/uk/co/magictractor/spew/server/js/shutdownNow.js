@@ -1,0 +1,1 @@
+/* empty script, but the server will shutdown when this is requested */
