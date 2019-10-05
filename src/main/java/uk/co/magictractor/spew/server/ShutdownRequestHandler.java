@@ -17,6 +17,11 @@ package uk.co.magictractor.spew.server;
 
 import static uk.co.magictractor.spew.api.HttpHeaderNames.CACHE_CONTROL;
 
+import java.util.Optional;
+
+import uk.co.magictractor.spew.api.SpewConnection;
+import uk.co.magictractor.spew.api.connection.SpewConnectionCache;
+
 public class ShutdownRequestHandler implements RequestHandler {
 
     private final String shutdownPath;
@@ -29,7 +34,13 @@ public class ShutdownRequestHandler implements RequestHandler {
     public void handleRequest(SpewHttpRequest request, OutgoingResponseBuilder responseBuilder) {
         String path = request.getPath();
         if (path.equals(shutdownPath)) {
-            responseBuilder.withShutdown();
+            Optional<String> connectionId = request.getQueryStringParam("connection");
+            if (connectionId.isPresent()) {
+                Optional<SpewConnection> connection = SpewConnectionCache.getConnection(connectionId.get());
+                if (connection.isPresent()) {
+                    responseBuilder.withShutdown();
+                }
+            }
         }
         // Make sure it isn't cached, see also Cache-Control for templates
         responseBuilder.withHeader(CACHE_CONTROL, "no-cache, must-revalidate, max-age=0");

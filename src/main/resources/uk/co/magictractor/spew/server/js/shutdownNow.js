@@ -1,1 +1,1 @@
-/* empty script, but the server will shutdown when this is requested */
+/* empty script, but the server may shutdown when this is requested */

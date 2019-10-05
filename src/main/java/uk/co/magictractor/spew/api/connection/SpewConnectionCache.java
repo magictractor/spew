@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import uk.co.magictractor.spew.api.SpewApplication;
 import uk.co.magictractor.spew.api.SpewAuthType;
@@ -16,12 +17,11 @@ public class SpewConnectionCache {
     @SuppressWarnings("rawtypes")
     private static final Map<Class<? extends SpewApplication>, SpewConnection> connections = new HashMap<>();
 
-    public static SpewConnection getConnection(String connectionId) {
+    public static Optional<SpewConnection> getConnection(String connectionId) {
         return connections.values()
                 .stream()
                 .filter(conn -> connectionId.equals(conn.getId()))
-                .findAny()
-                .orElseThrow(() -> new IllegalArgumentException("Connection not found"));
+                .findAny();
     }
 
     public static SpewConnection getOrCreateConnection(

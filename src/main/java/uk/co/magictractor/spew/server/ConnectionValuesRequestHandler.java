@@ -30,9 +30,11 @@ public class ConnectionValuesRequestHandler implements RequestHandler {
             return;
         }
 
-        SpewConnection connection = SpewConnectionCache.getConnection(connectionId.get());
+        Optional<SpewConnection> connection = SpewConnectionCache.getConnection(connectionId.get());
 
-        responseBuilder.withValueFunction(new ConnectionValueFunction(connection));
+        if (connection.isPresent()) {
+            responseBuilder.withValueFunction(new ConnectionValueFunction(connection.get()));
+        }
     }
 
     private final class ConnectionValueFunction implements Function<String, String> {
