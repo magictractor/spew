@@ -20,9 +20,12 @@ import static uk.co.magictractor.spew.api.HttpHeaderNames.CACHE_CONTROL;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
+import java.util.Map;
 import java.util.function.Function;
 
 import uk.co.magictractor.spew.util.ExceptionUtil;
@@ -37,7 +40,7 @@ public class OutgoingTemplateResponse extends OutgoingResponse {
 
     private static String suffix = ".template";
 
-    private final Function<String, String> valueFunction;
+    private final Function<String, Object> valueFunction;
 
     private String keyStart = "${";
     private String keyEnd = "}";
@@ -46,7 +49,7 @@ public class OutgoingTemplateResponse extends OutgoingResponse {
 
     // bin this? static equivalent was removed when if-modified-since was added
     public static OutgoingResponse ifExists(Class<?> relativeToClass, String resourceName,
-            Function<String, String> valueFunction) {
+            Function<String, Object> valueFunction) {
         Path bodyPath = PathUtil.ifExistsRegularFile(relativeToClass, resourceName + suffix);
 
         if (bodyPath != null) {
@@ -75,7 +78,7 @@ public class OutgoingTemplateResponse extends OutgoingResponse {
         setHeader(CACHE_CONTROL, "no-cache, must-revalidate, max-age=0");
     }
 
-    public OutgoingTemplateResponse(Path bodyPath, Function<String, String> valueFunction) {
+    public OutgoingTemplateResponse(Path bodyPath, Function<String, Object> valueFunction) {
 
         super(bodyPath);
 
@@ -96,61 +99,108 @@ public class OutgoingTemplateResponse extends OutgoingResponse {
 
         BufferedReader templateReader = HttpMessageUtil.createBodyReader(this, super.getBodyBytes());
 
-        ByteArrayOutputStream pageBuilder = new ByteArrayOutputStream();
+        ByteArrayOutputStream pageStream = new ByteArrayOutputStream();
+        Writer pageWriter = new OutputStreamWriter(pageStream, charset);
 
         String line = templateReader.readLine();
         while (line != null) {
-            if (line.contains(keyStart)) {
-                line = performSubstitutions(line);
-            }
-
-            pageBuilder.write(line.getBytes(charset));
-            pageBuilder.write('\n');
+            renderLine(pageWriter, line);
+            pageWriter.write('\n');
 
             line = templateReader.readLine();
         }
 
-        return pageBuilder.toByteArray();
+        pageWriter.close();
+        // and pageStream.close(); ?
+        return pageStream.toByteArray();
     }
 
-    private String performSubstitutions(String line) {
-        StringBuilder substitutionBuilder = new StringBuilder();
+    private void renderLine(Writer out, String line) throws IOException {
         int fromIndex = 0;
         while (fromIndex != -1) {
-            fromIndex = performSubstitutions(substitutionBuilder, line, fromIndex);
+            fromIndex = renderLineFrom(out, line, fromIndex);
         }
-
-        return substitutionBuilder.toString();
     }
 
-    private int performSubstitutions(StringBuilder substitutionBuilder, String line, int fromIndex) {
+    private int renderLineFrom(Writer out, String line, int fromIndex) throws IOException {
         int startIndex = line.indexOf(keyStart, fromIndex);
         if (startIndex == -1) {
-            substitutionBuilder.append(line.substring(fromIndex));
+            out.write(line.substring(fromIndex));
             return -1;
         }
 
         int endIndex = line.indexOf(keyEnd, startIndex + keyStart.length());
         if (endIndex == -1) {
-            substitutionBuilder.append(line.substring(fromIndex));
+            out.append(line.substring(fromIndex));
             return -1;
         }
 
+        out.append(line.substring(fromIndex, startIndex));
         String key = line.substring(startIndex + keyStart.length(), endIndex - keyEnd.length() + 1);
-        String substitution = getSubstitutionValue(key);
-        if (substitution == null) {
-            System.err.println("no substitution value found for " + key);
-            substitutionBuilder.append(line.substring(fromIndex, endIndex + 1));
-            return endIndex + 1;
+
+        boolean substituted = renderSubstitutionValue(out, key);
+        if (!substituted) {
+            // TODO! log line and column
+            getLogger().warn("No substitution value found for " + key);
+            out.append(line.substring(startIndex, endIndex + 1));
         }
 
-        substitutionBuilder.append(line.substring(fromIndex, startIndex));
-        substitutionBuilder.append(substitution);
         return endIndex + 1;
     }
 
-    protected String getSubstitutionValue(String key) {
-        return valueFunction.apply(key);
+    /**
+     * @return value indicating whether a value for the key was found
+     */
+    protected boolean renderSubstitutionValue(Writer out, String key) throws IOException {
+        String valueKey;
+        String renderHint = null;
+        int colonIndex = key.indexOf(":");
+        if (colonIndex == -1) {
+            valueKey = key;
+        }
+        else {
+            valueKey = key.substring(0, colonIndex);
+            renderHint = key.substring(colonIndex + 1);
+        }
+
+        Object value = getSubstitutionValue(valueKey);
+        if (value == null) {
+            return false;
+        }
+
+        render(out, value);
+
+        return true;
+    }
+
+    // May be overridden.
+    protected Object getSubstitutionValue(String valueKey) {
+        return valueFunction.apply(valueKey);
+    }
+
+    protected void render(Writer out, Object value) throws IOException {
+        // TODO! SPI
+        if (value instanceof Map) {
+            renderMap(out, (Map) value);
+        }
+        else {
+            out.write(value.toString());
+        }
+    }
+
+    private void renderMap(Writer out, Map<?, ?> map) throws IOException {
+        out.write("<div class=\"table\">");
+        for (Map.Entry<?, ?> entry : map.entrySet()) {
+            out.write("<div class=\"row\">");
+            out.write("<span class=\"cell\">");
+            render(out, entry.getKey());
+            out.write("</span>");
+            out.write("<span class=\"cell\">");
+            render(out, entry.getValue());
+            out.write("</span>");
+            out.write("</div>");
+        }
+        out.write("</div>");
     }
 
 }

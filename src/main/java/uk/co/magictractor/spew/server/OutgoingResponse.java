@@ -22,6 +22,9 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import uk.co.magictractor.spew.api.HasHttpHeaders;
 import uk.co.magictractor.spew.api.SpewHeader;
 import uk.co.magictractor.spew.api.SpewHttpResponse;
@@ -38,6 +41,8 @@ import uk.co.magictractor.spew.util.HttpMessageUtil;
  * </p>
  */
 public abstract class OutgoingResponse extends AbstractByteArrayMessage implements SpewHttpResponse {
+
+    private Logger logger = LoggerFactory.getLogger(getClass());
 
     private int httpStatus = 200;
     private List<SpewHeader> headers = new ArrayList<>();
@@ -80,6 +85,10 @@ public abstract class OutgoingResponse extends AbstractByteArrayMessage implemen
 
     protected void setHeader(String name, Instant value) {
         HasHttpHeaders.setHeader(headers, name, HttpMessageUtil.asHeaderString(value));
+    }
+
+    protected Logger getLogger() {
+        return logger;
     }
 
     @Override

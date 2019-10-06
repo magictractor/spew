@@ -39,4 +39,9 @@ public class MyDropboxApp implements SpewOAuth2Application<Dropbox> {
         return new LocalServerAuthorizationHandler(application);
     }
 
+    @Override
+    public String toString() {
+        return SpewApplication.toStringHelper(this).toString();
+    }
+
 }

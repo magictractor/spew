@@ -30,7 +30,7 @@ public class OutgoingResponseBuilder {
     private boolean isDone;
     private boolean shutdown;
     private List<SpewHeader> headers;
-    private List<Function<String, String>> valueFunctions;
+    private List<Function<String, Object>> valueFunctions;
 
     public OutgoingResponse build() {
         if (response == null && !shutdown) {
@@ -83,7 +83,7 @@ public class OutgoingResponseBuilder {
         return this;
     }
 
-    public OutgoingResponseBuilder withValueFunction(Function<String, String> valueFunction) {
+    public OutgoingResponseBuilder withValueFunction(Function<String, Object> valueFunction) {
         if (valueFunctions == null) {
             valueFunctions = new ArrayList<>();
         }
@@ -105,10 +105,10 @@ public class OutgoingResponseBuilder {
         return isDone;
     }
 
-    private String getValue(String key) {
+    private Object getValue(String key) {
         if (valueFunctions != null) {
-            for (Function<String, String> valueFunction : valueFunctions) {
-                String value = valueFunction.apply(key);
+            for (Function<String, Object> valueFunction : valueFunctions) {
+                Object value = valueFunction.apply(key);
                 if (value != null) {
                     return value;
                 }

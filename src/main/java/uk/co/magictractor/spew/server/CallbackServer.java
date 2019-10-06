@@ -18,6 +18,11 @@ package uk.co.magictractor.spew.server;
 import java.util.List;
 
 import uk.co.magictractor.spew.api.SpewHttpResponse;
+import uk.co.magictractor.spew.example.flickr.MyFlickrApp;
+import uk.co.magictractor.spew.example.google.MyGooglePhotosApp;
+import uk.co.magictractor.spew.example.imgur.MyImgurApp;
+import uk.co.magictractor.spew.example.twitter.MyTwitterApp;
+import uk.co.magictractor.spew.util.spi.SPIUtil;
 
 /**
  * Common interface for NettyCallbackServer and any alternative implementations.
@@ -54,6 +59,21 @@ public interface CallbackServer {
         }
 
         return responseBuilder.build();
+    }
+
+    // DO NOT COMMIT
+    // temp for testing static pages
+    public static void main(String[] args) {
+        // Get a few so that they are listed on the /applications.html page
+        MyGooglePhotosApp.get();
+        MyImgurApp.get();
+        MyTwitterApp.get();
+        MyFlickrApp application = MyFlickrApp.get();
+
+        CallbackServer server = SPIUtil.firstAvailable(CallbackServer.class);
+        server.run(application.getServerRequestHandlers(), application.port());
+
+        // server.join();
     }
 
 }

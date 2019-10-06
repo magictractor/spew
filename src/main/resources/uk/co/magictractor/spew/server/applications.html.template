@@ -5,9 +5,9 @@
 <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgo=">
 </head>
 <body>
-<div class="summary">Verification failed.</div>
+<div class="summary">Applications</div>
 <div class="info">
-  ${app.props}
+  ${apps}
 </div>
 <script src="/js/shutdownOnLoad.js"></script>
 </body>

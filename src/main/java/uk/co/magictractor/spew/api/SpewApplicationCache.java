@@ -16,11 +16,10 @@
 package uk.co.magictractor.spew.api;
 
 import java.lang.reflect.Constructor;
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -57,6 +56,10 @@ public final class SpewApplicationCache {
         return CACHE.get(applicationId);
     }
 
+    public static Collection<SpewApplication<?>> all() {
+        return CACHE.values();
+    }
+
     public static <APP extends SpewApplication<?>> APP add(Class<APP> applicationClass) {
         SpewApplication<?> application;
 
@@ -77,7 +80,8 @@ public final class SpewApplicationCache {
     }
 
     private static SpewApplication<?> createApplication(Class<? extends SpewApplication<?>> applicationClass) {
-        checkAuthType(applicationClass);
+        // Goes boom if there is no auth type
+        SpewAuthTypeUtil.getAuthType(applicationClass);
         return ExceptionUtil.call(() -> newInstance(applicationClass));
     }
 
@@ -87,30 +91,6 @@ public final class SpewApplicationCache {
         constructor.setAccessible(true);
         SpewApplication<?> newInstance = constructor.newInstance();
         return newInstance;
-    }
-
-    /*
-     * @param applicationClass
-     */
-    private static void checkAuthType(Class<? extends SpewApplication<?>> applicationClass) {
-        List<String> authTypes = new ArrayList<>();
-        Class<?>[] ifaces = applicationClass.getInterfaces();
-        // TODO! check super interfaces too.
-        for (Class<?> iface : ifaces) {
-            if (iface.isAnnotationPresent(SpewAuthType.class)) {
-                authTypes.add(iface.getSimpleName());
-            }
-        }
-
-        if (authTypes.isEmpty()) {
-            throw new IllegalArgumentException(
-                applicationClass.getName() + " does not implement any interfaces indicating the auth type");
-        }
-
-        if (authTypes.size() > 1) {
-            throw new IllegalArgumentException(applicationClass.getName()
-                    + " should implement a single interfaces indicating the auth type, but implements " + authTypes);
-        }
     }
 
     public static void addVerificationPending(Predicate<SpewHttpRequest> predicate, SpewApplication<?> application) {

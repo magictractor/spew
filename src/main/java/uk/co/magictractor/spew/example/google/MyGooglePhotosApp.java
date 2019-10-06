@@ -1,5 +1,6 @@
 package uk.co.magictractor.spew.example.google;
 
+import uk.co.magictractor.spew.api.SpewApplication;
 import uk.co.magictractor.spew.api.SpewApplicationCache;
 import uk.co.magictractor.spew.api.SpewOAuth2Application;
 import uk.co.magictractor.spew.provider.google.Google;
@@ -26,6 +27,11 @@ public class MyGooglePhotosApp implements SpewOAuth2Application<Google> {
 
         // just sharing results in permission denied when listing albums
         // return "https://www.googleapis.com/auth/photoslibrary.sharing";
+    }
+
+    @Override
+    public String toString() {
+        return SpewApplication.toStringHelper(this).toString();
     }
 
 }

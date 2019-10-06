@@ -18,9 +18,10 @@ package uk.co.magictractor.spew.api;
 import java.util.Arrays;
 import java.util.List;
 
+import uk.co.magictractor.spew.server.ApplicationValuesRequestHandler;
 import uk.co.magictractor.spew.server.AuthVerificationRequestHandler;
 import uk.co.magictractor.spew.server.CallbackServer;
-import uk.co.magictractor.spew.server.ApplicationValuesRequestHandler;
+import uk.co.magictractor.spew.server.GlobalValuesRequestHandler;
 import uk.co.magictractor.spew.server.RequestHandler;
 import uk.co.magictractor.spew.server.ResourceRequestHandler;
 import uk.co.magictractor.spew.server.ShutdownRequestHandler;
@@ -39,6 +40,7 @@ public interface HasCallbackServer {
      */
     default List<RequestHandler> getServerRequestHandlers() {
         return Arrays.asList(
+            new GlobalValuesRequestHandler(),
             new ApplicationValuesRequestHandler(),
             new AuthVerificationRequestHandler(),
             new ShutdownRequestHandler("/js/shutdownNow.js"),

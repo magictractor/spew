@@ -5,10 +5,9 @@
 <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgo=">
 </head>
 <body>
-<p>Verification was successful.</p>
+<div class="summary">Verification was successful.</div>
 <div class="info">
-<div class="app-name">${app.name}</div>
-<div class="sp-name">${sp.name}</div>
+  ${app.props}
 </div>
 <script src="/js/shutdownOnLoad.js"></script>
 </body>

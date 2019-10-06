@@ -90,10 +90,7 @@ public interface SpewApplication<SP extends SpewServiceProvider> {
         HashMap<String, Object> properties = new LinkedHashMap<>();
         properties.put("Application name", getName());
         properties.put("Service provider name", getServiceProvider().getName());
-        SpewAuthType annotation = getClass().getAnnotation(SpewAuthType.class);
-        if (annotation != null) {
-            properties.put("Authorization type", annotation.value());
-        }
+        properties.put("Authorization type", SpewAuthTypeUtil.getAuthType(getClass()));
 
         properties.putAll(getConnection().getProperties());
 
@@ -102,6 +99,7 @@ public interface SpewApplication<SP extends SpewServiceProvider> {
 
     public static ToStringHelper toStringHelper(SpewApplication<?> application) {
         ToStringHelper helper = MoreObjects.toStringHelper(application)
+                .add("id", application.getId())
                 .add("name", application.getName());
 
         return helper;

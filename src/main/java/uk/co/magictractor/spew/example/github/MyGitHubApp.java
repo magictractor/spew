@@ -15,6 +15,7 @@
  */
 package uk.co.magictractor.spew.example.github;
 
+import uk.co.magictractor.spew.api.SpewApplication;
 import uk.co.magictractor.spew.api.SpewApplicationCache;
 import uk.co.magictractor.spew.api.SpewOAuth2Application;
 import uk.co.magictractor.spew.provider.github.GitHub;
@@ -37,6 +38,11 @@ public class MyGitHubApp implements SpewOAuth2Application<GitHub> {
     @Override
     public String getScope() {
         return null;
+    }
+
+    @Override
+    public String toString() {
+        return SpewApplication.toStringHelper(this).toString();
     }
 
 }

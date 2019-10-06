@@ -34,25 +34,27 @@ public class ApplicationValuesRequestHandler implements RequestHandler {
         SpewApplication<?> application = SpewApplicationCache.get(applicationId.get());
 
         if (application != null) {
-            responseBuilder.withValueFunction(new ConnectionValueFunction(application));
+            responseBuilder.withValueFunction(new ApplicationValueFunction(application));
         }
+
+        //temp
+        responseBuilder.withValueFunction((x) -> "t".equals(x) ? "ttt" : null);
     }
 
-    private final class ConnectionValueFunction implements Function<String, String> {
+    private final class ApplicationValueFunction implements Function<String, Object> {
 
         private final SpewApplication<?> application;
 
-        public ConnectionValueFunction(SpewApplication<?> application) {
+        public ApplicationValueFunction(SpewApplication<?> application) {
             this.application = application;
         }
 
         @Override
-        public String apply(String key) {
-            if ("app.name".equals(key)) {
-                return application.getName();
-            }
-            else if ("sp.name".equals(key)) {
-                return application.getServiceProvider().getName();
+        public Object apply(String key) {
+            // Hmm... in future the key could contain hints how how to render it,
+            // e.g. regular table vs div/div/span grid
+            if ("app.props".equals(key)) {
+                return application.getProperties();
             }
             return null;
         }

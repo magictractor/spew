@@ -18,7 +18,6 @@ package uk.co.magictractor.spew.server;
 import uk.co.magictractor.spew.api.HasCallbackServer;
 import uk.co.magictractor.spew.api.SpewApplication;
 import uk.co.magictractor.spew.core.verification.AuthorizationHandler;
-import uk.co.magictractor.spew.example.flickr.MyFlickrApp;
 import uk.co.magictractor.spew.util.spi.SPIUtil;
 
 /**
@@ -54,13 +53,6 @@ public class LocalServerAuthorizationHandler implements AuthorizationHandler {
         // Wait until the server shuts down, hopefully after it has served a successful verification page.
         // TODO! how to ensure the server gets shutdown... maybe add postValidation() too
         server.join();
-    }
-
-    // DO NOT COMMIT
-    // temp for testing static pages
-    public static void main(String[] args) {
-        LocalServerAuthorizationHandler handler = new LocalServerAuthorizationHandler(MyFlickrApp.get());
-        handler.preOpenAuthorizationInBrowser();
     }
 
 }
