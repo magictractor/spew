@@ -6,7 +6,6 @@ import static uk.co.magictractor.spew.api.HttpHeaderNames.CONTENT_TYPE;
 
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -45,14 +44,14 @@ public class BoaOAuth2Connection<SP extends SpewOAuth2ServiceProvider>
     // TODO! avoid negative random numbers - move to util?
     private static final Random RNG = new Random();
 
-    /*
-     * milliseconds to remove from expiry to ensure that we refresh if getting
-     * close to the server's expiry time
+    /**
+     * Seconds to remove from expiry to ensure that we refresh if getting close
+     * to the server's expiry time
      */
-    private static final int EXPIRY_BUFFER = 60 * 1000;
+    private static final int EXPIRY_BUFFER = 60;
 
     private final EditableProperty accessToken;
-    // milliseconds since start of epoch
+    // seconds since start of epoch
     private final EditableProperty accessTokenExpiry;
     private final EditableProperty refreshToken;
 
@@ -87,9 +86,8 @@ public class BoaOAuth2Connection<SP extends SpewOAuth2ServiceProvider>
             return null;
         }
 
-        long expiryMillis = Long.parseLong(expiry);
-        //  return Instant.ofEpochSecond(expirySeconds);
-        return Instant.ofEpochMilli(expiryMillis);
+        long expirySeconds = Long.parseLong(expiry);
+        return Instant.ofEpochSecond(expirySeconds);
     }
 
     @Override
@@ -140,7 +138,8 @@ public class BoaOAuth2Connection<SP extends SpewOAuth2ServiceProvider>
         String state = hashCode() + "-" + RNG.nextLong();
         request.setQueryStringParam("state", state);
 
-        SpewApplicationCache.addVerificationPending(req -> state.equals(req.getQueryStringParam("state").orElse(null)), application);
+        SpewApplicationCache.addVerificationPending(req -> state.equals(req.getQueryStringParam("state").orElse(null)),
+            application);
 
         application.modifyAuthorizationRequest(request);
 
@@ -245,15 +244,12 @@ public class BoaOAuth2Connection<SP extends SpewOAuth2ServiceProvider>
         accessToken.setValue(valueMap.apply("access_token"));
 
         // typically 3600 for one hour
-        String expiresInSecondsString = valueMap.apply("expires_in");
-        if (expiresInSecondsString != null) {
-            int expiresInSeconds = Integer.parseInt(valueMap.apply("expires_in"));
-            // TODO! store seconds not millis
-            long expiresInMilliseconds = expiresInSeconds * 1000;
-            long expiry = System.currentTimeMillis() + expiresInMilliseconds - EXPIRY_BUFFER;
+        String expiresInString = valueMap.apply("expires_in");
+        if (expiresInString != null) {
+            int expiresIn = Integer.parseInt(valueMap.apply("expires_in"));
+            long now = System.currentTimeMillis() / 1000;
+            long expiry = now + expiresIn - EXPIRY_BUFFER;
             accessTokenExpiry.setValue(Long.toString(expiry));
-
-            long diff = expiry - new Date().getTime();
         }
 
         // some service providers update the refresh token, others do not
