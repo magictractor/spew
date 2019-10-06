@@ -43,6 +43,7 @@ public class SpringSocialOAuth1Connection implements SpewConnection {
 
     private final SpewOAuth1Application<?> application;
 
+    // hmm... repeated in other OAuth1 impls
     private EditableProperty userToken;
     private EditableProperty userSecret;
 

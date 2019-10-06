@@ -95,6 +95,7 @@ public final class SpewApplicationCache {
     private static void checkAuthType(Class<? extends SpewApplication<?>> applicationClass) {
         List<String> authTypes = new ArrayList<>();
         Class<?>[] ifaces = applicationClass.getInterfaces();
+        // TODO! check super interfaces too.
         for (Class<?> iface : ifaces) {
             if (iface.isAnnotationPresent(SpewAuthType.class)) {
                 authTypes.add(iface.getSimpleName());

@@ -15,21 +15,21 @@
  */
 package uk.co.magictractor.spew.api;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Inherited;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+/**
+ *
+ */
+// TODO! move the annotation here?
+// @SpewAuthType("OAuth1")
+public interface SpewOAuth1Configuration {
 
-@Documented
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-// Note that @Inherited works only on classes, not if it is on an interface.
-// However, SpewApplicationCache will traverse interfaces looking for instances of this annotation.
-@Inherited
-public @interface SpewAuthType {
+    String getConsumerKey();
 
-    String value();
+    String getConsumerSecret();
+
+    String getTemporaryCredentialRequestUri();
+
+    String getResourceOwnerAuthorizationUri();
+
+    String getTokenRequestUri();
 
 }

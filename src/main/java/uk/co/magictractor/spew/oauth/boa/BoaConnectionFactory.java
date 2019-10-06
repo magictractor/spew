@@ -18,6 +18,7 @@ package uk.co.magictractor.spew.oauth.boa;
 import uk.co.magictractor.spew.api.SpewApplication;
 import uk.co.magictractor.spew.api.SpewConnection;
 import uk.co.magictractor.spew.api.SpewOAuth1Application;
+import uk.co.magictractor.spew.api.SpewOAuth1Configuration;
 import uk.co.magictractor.spew.api.SpewOAuth2Application;
 import uk.co.magictractor.spew.api.connection.SpewConnectionFactory;
 
@@ -29,7 +30,8 @@ public class BoaConnectionFactory implements SpewConnectionFactory {
     @Override
     public SpewConnection createConnection(SpewApplication<?> application) {
         if (application instanceof SpewOAuth1Application) {
-            return new BoaOAuth1Connection<>((SpewOAuth1Application<?>) application);
+            return new BoaOAuth1Connection<>((SpewOAuth1Application<?>) application,
+                (SpewOAuth1Configuration) application);
         }
         else if (application instanceof SpewOAuth2Application) {
             return new BoaOAuth2Connection<>((SpewOAuth2Application<?>) application);

@@ -19,10 +19,12 @@ public abstract class AbstractConnection<APP extends SpewApplication<SP>, SP ext
     }
 
     @Override
+    @Deprecated(forRemoval = true)
     public APP getApplication() {
         return application;
     }
 
+    @Deprecated(forRemoval = true)
     public SP getServiceProvider() {
         return application.getServiceProvider();
     }

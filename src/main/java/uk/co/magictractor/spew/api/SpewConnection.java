@@ -9,6 +9,7 @@ import java.util.Map;
 public interface SpewConnection {
 
     // TODO! remove this?? (connection layer should not be aware of the application layer)
+    @Deprecated(forRemoval = true)
     SpewApplication<?> getApplication();
 
     // Typically used to add authorization information to the request.
