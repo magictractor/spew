@@ -141,7 +141,7 @@ public class TweetProcessor implements SimpleProcessor<Tweet> {
     public static void main(String[] args) {
         ProcessorChain processorChain = ProcessorChain.of(new TweetProcessor());
 
-        Iterator<Tweet> iterator = new TweetIteratorBuilder<>(new MyTwitterApp(), Tweet.class).build();
+        Iterator<Tweet> iterator = new TweetIteratorBuilder<>(MyTwitterApp.get(), Tweet.class).build();
 
         processorChain.execute(iterator, new SimpleProcessorContext<>());
     }

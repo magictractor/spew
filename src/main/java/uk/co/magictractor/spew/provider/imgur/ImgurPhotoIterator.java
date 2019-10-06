@@ -238,7 +238,7 @@ public class ImgurPhotoIterator<E> extends PageCountServiceIterator<E> {
     }
 
     public static void main(String[] args) {
-        Iterator<ImgurImage> iter = new ImgurPhotoIteratorBuilder<>(new MyImgurApp(), ImgurImage.class)
+        Iterator<ImgurImage> iter = new ImgurPhotoIteratorBuilder<>(MyImgurApp.get(), ImgurImage.class)
                 .build();
         while (iter.hasNext()) {
             ImgurImage photo = iter.next();

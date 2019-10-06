@@ -81,7 +81,7 @@ public class DropboxIterator<E> extends PageTokenServiceIterator<E> {
     }
 
     public static void main(String[] args) {
-        Iterator<DropboxFileOrFolder> iterator = new DropboxIteratorBuilder<>(new MyDropboxApp(),
+        Iterator<DropboxFileOrFolder> iterator = new DropboxIteratorBuilder<>(MyDropboxApp.get(),
             DropboxFileOrFolder.class)
                     .build();
         while (iterator.hasNext()) {

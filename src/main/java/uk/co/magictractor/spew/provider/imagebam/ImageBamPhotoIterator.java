@@ -42,7 +42,7 @@ public class ImageBamPhotoIterator<E> extends SingleCallServiceIterator<E> {
     }
 
     public static void main(String[] args) {
-        Iterator<ImageBamPhoto> iterator = new ImageBamPhotoIteratorBuilder<>(new MyImageBamApp(), ImageBamPhoto.class)
+        Iterator<ImageBamPhoto> iterator = new ImageBamPhotoIteratorBuilder<>(MyImageBamApp.get(), ImageBamPhoto.class)
                 .build();
         while (iterator.hasNext()) {
             ImageBamPhoto photo = iterator.next();

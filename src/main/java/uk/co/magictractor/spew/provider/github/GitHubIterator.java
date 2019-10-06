@@ -58,7 +58,7 @@ public class GitHubIterator<E> extends PageCountServiceIterator<E> {
     }
 
     public static void main(String[] args) {
-        Iterator<GitHubRepository> iter = new GitHubIteratorBuilder<>(new MyGitHubApp(), GitHubRepository.class)
+        Iterator<GitHubRepository> iter = new GitHubIteratorBuilder<>(MyGitHubApp.get(), GitHubRepository.class)
                 .build();
         while (iter.hasNext()) {
             GitHubRepository repo = iter.next();
