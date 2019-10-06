@@ -18,7 +18,7 @@ public class FlickrResponseTest {
 
     @Test
     void t() {
-        SpewParsedResponse response = ResourceUtil.readResponse(new MyFlickrApp(), getClass(), "getPhotos.json");
+        SpewParsedResponse response = ResourceUtil.readResponse(MyFlickrApp.get(), getClass(), "getPhotos.json");
 
         System.err.println(response);
         Object photos = response.getObject("photos");

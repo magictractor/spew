@@ -53,7 +53,7 @@ public class GoogleMediaItemIterator<E> extends GoogleServiceIterator<E> {
     }
 
     public static void main(String[] args) {
-        Iterator<GoogleImage> iterator = new GoogleMediaItemIteratorBuilder<>(new MyGooglePhotosApp(),
+        Iterator<GoogleImage> iterator = new GoogleMediaItemIteratorBuilder<>(MyGooglePhotosApp.get(),
             GoogleImage.class)
                     .withFilter(new DateTakenPhotoFilter(DateRange.forDay(2018, 11, 21)))
                     .build();

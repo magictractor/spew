@@ -25,8 +25,9 @@ import org.apache.http.client.methods.RequestBuilder;
 import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import uk.co.magictractor.spew.api.HttpHeaderNames;
 import uk.co.magictractor.spew.api.OutgoingHttpRequest;
 import uk.co.magictractor.spew.api.SpewApplication;
 import uk.co.magictractor.spew.api.SpewConnection;
@@ -36,8 +37,10 @@ import uk.co.magictractor.spew.util.ExceptionUtil;
 
 public class SpewApacheHttpClientConnection implements SpewConnection {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(SpewApacheHttpClientConnection.class);
+
     @Override
-    public SpewHttpResponse request(OutgoingHttpRequest apiRequest) {
+    public SpewHttpResponse request(OutgoingHttpRequest request) {
         /**
          * Some providers (including Twitter) log a warning related to the
          * format of the expiry date in cookies when the request config is not
@@ -48,36 +51,41 @@ public class SpewApacheHttpClientConnection implements SpewConnection {
          * <li>https://issues.apache.org/jira/browse/HTTPCLIENT-1763</li>
          * </ul>
          */
-        RequestConfig requestConfig = RequestConfig.custom()
+        RequestConfig apacheRequestConfig = RequestConfig.custom()
                 .setCookieSpec(CookieSpecs.IGNORE_COOKIES)
                 .build();
         CloseableHttpClient httpClient = HttpClients.custom()
-                .setDefaultRequestConfig(requestConfig)
+                .setDefaultRequestConfig(apacheRequestConfig)
                 .build();
 
-        RequestBuilder requestBuilder = RequestBuilder
-                .create(apiRequest.getHttpMethod())
-                .setUri(apiRequest.getUrl());
+        RequestBuilder apacheRequestBuilder = RequestBuilder
+                .create(request.getHttpMethod())
+                .setUri(request.getUrl());
 
-        byte[] body = apiRequest.getBodyBytes();
+        byte[] body = request.getBodyBytes();
         boolean hasBody = body != null;
         if (hasBody) {
-            requestBuilder.setEntity(new ByteArrayEntity(body));
+            apacheRequestBuilder.setEntity(new ByteArrayEntity(body));
         }
 
-        for (SpewHeader header : apiRequest.getHeaders()) {
+        for (SpewHeader header : request.getHeaders()) {
             if (hasBody && CONTENT_LENGTH.equalsIgnoreCase(header.getName())) {
                 // Content length is derived from the HttpEntity (body), don't repeat it.
                 continue;
             }
-            requestBuilder.addHeader(header.getName(), header.getValue());
+            apacheRequestBuilder.addHeader(header.getName(), header.getValue());
         }
 
-        HttpUriRequest request = requestBuilder.build();
+        HttpUriRequest apacheRequest = apacheRequestBuilder.build();
 
-        CloseableHttpResponse response = ExceptionUtil.call(() -> httpClient.execute(request));
+        CloseableHttpResponse apacheResponse = ExceptionUtil.call(() -> httpClient.execute(apacheRequest));
 
-        return new IncomingApacheHttpClientResponse(response);
+        IncomingApacheHttpClientResponse response = new IncomingApacheHttpClientResponse(apacheResponse);
+
+        LOGGER.debug("request sent: {}", request);
+        LOGGER.debug("response received: {}", response);
+
+        return response;
     }
 
     @Override

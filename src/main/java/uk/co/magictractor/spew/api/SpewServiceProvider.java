@@ -2,12 +2,10 @@ package uk.co.magictractor.spew.api;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.function.Supplier;
 
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponseBuilder;
 import uk.co.magictractor.spew.core.typeadapter.SpewTypeAdapter;
 import uk.co.magictractor.spew.core.verification.AuthorizationHandler;
-import uk.co.magictractor.spew.core.verification.VerificationFunction;
 import uk.co.magictractor.spew.server.LocalServerAuthorizationHandler;
 
 // Base interface for OAuth1 and OAuth2. Some methods likely to move here from OAuth1 when (and if) OAuth2 support is added.
@@ -71,18 +69,10 @@ public interface SpewServiceProvider {
     default void buildParsedResponse(SpewParsedResponseBuilder parsedResponseBuilder) {
     }
 
-    default AuthorizationHandler getDefaultAuthorizationHandler(
-            Supplier<VerificationFunction> verificationFunctionSupplier) {
-        return new LocalServerAuthorizationHandler(verificationFunctionSupplier);
-        //return new PasteVerificationCodeHandler(verificationFunctionSupplier);
+    default AuthorizationHandler createDefaultAuthorizationHandler(SpewApplication<?> application) {
+        return new LocalServerAuthorizationHandler(application);
+        //return new PasteVerificationCodeHandler(application);
     }
-
-    /**
-     * The out-of-band URI (sometimes referred to as "oob") is a special value
-     * used in the redirect_url to tell the server to display a verification
-     * code rather than perform a callback.
-     */
-    String getOutOfBandUri();
 
     default String appManagementUrl() {
         throw new UnsupportedOperationException("Not recorded for this site");

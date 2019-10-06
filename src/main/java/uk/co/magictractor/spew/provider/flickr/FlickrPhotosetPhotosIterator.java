@@ -60,7 +60,7 @@ public class FlickrPhotosetPhotosIterator<E> extends PageCountServiceIterator<E>
     }
 
     public static void main(String[] args) {
-        Iterator<FlickrPhotoset> iter = new FlickrPhotosetIteratorBuilder<>(new MyFlickrApp(), FlickrPhotoset.class)
+        Iterator<FlickrPhotoset> iter = new FlickrPhotosetIteratorBuilder<>(MyFlickrApp.get(), FlickrPhotoset.class)
                 .build();
         while (iter.hasNext()) {
             FlickrPhotoset photoset = iter.next();

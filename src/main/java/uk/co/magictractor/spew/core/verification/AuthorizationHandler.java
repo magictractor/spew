@@ -15,10 +15,6 @@
  */
 package uk.co.magictractor.spew.core.verification;
 
-import java.util.function.Supplier;
-
-import uk.co.magictractor.spew.api.SpewApplication;
-
 /**
  * <p>
  * Interface for capturing verification codes when a user permits the
@@ -46,12 +42,9 @@ public interface AuthorizationHandler {
      */
     public static final String VERIFICATION_TYPE_PASTE_CONSOLE = "PasteConsole";
 
-    // VerificationFunction verificationFunction();
-    Supplier<VerificationFunction> verificationFunctionSupplier();
+    void preOpenAuthorizationInBrowser();
 
-    void preOpenAuthorizationInBrowser(SpewApplication<?> application);
-
-    void postOpenAuthorizationInBrowser(SpewApplication<?> application);
+    void postOpenAuthorizationInBrowser();
 
     /**
      * <p>
@@ -66,6 +59,6 @@ public interface AuthorizationHandler {
      * requested from the server.
      * </p>
      */
-    String getCallbackValue();
+    String getRedirectUri();
 
 }

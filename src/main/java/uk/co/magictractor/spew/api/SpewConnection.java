@@ -1,24 +1,12 @@
 package uk.co.magictractor.spew.api;
 
+import java.util.Collections;
+import java.util.Map;
+
 /**
  * Application code should not need to interact with SpewConnection instances.
  */
 public interface SpewConnection {
-
-    /**
-     * <p>
-     * Unique id which permits web request handlers to fetch a connection from
-     * the cache using an id.
-     * </p>
-     * <p>
-     * That permits information about the connection, such as application and
-     * service provider names, to be displayed when verification succeeds or
-     * fails.
-     * </p>
-     */
-    default String getId() {
-        return Integer.toString(System.identityHashCode(this));
-    }
 
     // TODO! remove this?? (connection layer should not be aware of the application layer)
     SpewApplication<?> getApplication();
@@ -38,5 +26,12 @@ public interface SpewConnection {
      * </p>
      */
     SpewHttpResponse request(OutgoingHttpRequest apiRequest);
+
+    /**
+     * A summary of the state of the connection, displayed after authorization.
+     */
+    default Map<String, Object> getProperties() {
+        return Collections.emptyMap();
+    }
 
 }

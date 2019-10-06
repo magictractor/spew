@@ -1,20 +1,10 @@
 package uk.co.magictractor.spew.api;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.function.Supplier;
-
-import uk.co.magictractor.spew.core.verification.VerificationFunction;
-import uk.co.magictractor.spew.server.ConnectionValuesRequestHandler;
-import uk.co.magictractor.spew.server.OAuth2VerificationRequestHandler;
-import uk.co.magictractor.spew.server.RequestHandler;
-import uk.co.magictractor.spew.server.ResourceRequestHandler;
-import uk.co.magictractor.spew.server.ShutdownRequestHandler;
-import uk.co.magictractor.spew.server.TemplateRequestHandler;
 import uk.co.magictractor.spew.store.ApplicationPropertyStore;
 import uk.co.magictractor.spew.util.spi.SPIUtil;
 
-@SpewAuthType
+// OAuth2 specification https://tools.ietf.org/html/rfc6749
+@SpewAuthType("OAuth2")
 public interface SpewOAuth2Application<SP extends SpewOAuth2ServiceProvider>
         extends SpewApplication<SP>, HasCallbackServer {
 
@@ -56,13 +46,10 @@ public interface SpewOAuth2Application<SP extends SpewOAuth2ServiceProvider>
     }
 
     @Override
-    default List<RequestHandler> getServerRequestHandlers(Supplier<VerificationFunction> verificationFunctionSupplier) {
-        return Arrays.asList(
-            new ConnectionValuesRequestHandler(),
-            new OAuth2VerificationRequestHandler(verificationFunctionSupplier),
-            new ShutdownRequestHandler("/js/shutdownNow.js"),
-            new TemplateRequestHandler(serverResourcesRelativeToClass()),
-            new ResourceRequestHandler(serverResourcesRelativeToClass()));
+    default String getOutOfBandUri() {
+        // out-of-band isn't in the spec, but is supported by Google and other
+        // https://mailarchive.ietf.org/arch/msg/oauth/OCeJLZCEtNb170Xy-C3uTVDIYjM
+        return "urn:ietf:wg:oauth:2.0:oob";
     }
 
 }

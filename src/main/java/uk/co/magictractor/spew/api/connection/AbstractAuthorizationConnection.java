@@ -16,16 +16,19 @@
 package uk.co.magictractor.spew.api.connection;
 
 import java.time.Instant;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import uk.co.magictractor.spew.api.OutgoingHttpRequest;
 import uk.co.magictractor.spew.api.SpewApplication;
+import uk.co.magictractor.spew.api.SpewAuthorizationVerifiedConnection;
 import uk.co.magictractor.spew.api.SpewServiceProvider;
 
 /**
  *
  */
 public abstract class AbstractAuthorizationConnection<APP extends SpewApplication<SP>, SP extends SpewServiceProvider>
-        extends AbstractConnection<APP, SP> {
+        extends AbstractConnection<APP, SP> implements SpewAuthorizationVerifiedConnection {
 
     public AbstractAuthorizationConnection(APP application) {
         super(application);
@@ -49,10 +52,12 @@ public abstract class AbstractAuthorizationConnection<APP extends SpewApplicatio
                     if (!refreshed) {
                         obtainAuthorization();
                     }
-                } else {
+                }
+                else {
                     getLogger().debug("Authentication expires at {}", expiry);
                 }
-            } else {
+            }
+            else {
                 getLogger().debug("Authentication does not expire");
             }
         }
@@ -68,5 +73,18 @@ public abstract class AbstractAuthorizationConnection<APP extends SpewApplicatio
     protected abstract boolean refreshAuthorization();
 
     protected abstract void addAuthorization(OutgoingHttpRequest request);
+
+    @Override
+    public Map<String, Object> getProperties() {
+        LinkedHashMap<String, Object> properties = new LinkedHashMap<>();
+        Instant expiry = authorizationExpiry();
+        properties.put("Authorization expires", expiry != null);
+        if (expiry != null) {
+            properties.put("Authorization expiry", expiry);
+        }
+        // TODO! and "Has refresh token"
+
+        return properties;
+    }
 
 }

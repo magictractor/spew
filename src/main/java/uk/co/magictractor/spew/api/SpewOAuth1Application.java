@@ -1,20 +1,10 @@
 package uk.co.magictractor.spew.api;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.function.Supplier;
-
-import uk.co.magictractor.spew.core.verification.VerificationFunction;
-import uk.co.magictractor.spew.server.ConnectionValuesRequestHandler;
-import uk.co.magictractor.spew.server.OAuth1VerificationRequestHandler;
-import uk.co.magictractor.spew.server.RequestHandler;
-import uk.co.magictractor.spew.server.ResourceRequestHandler;
-import uk.co.magictractor.spew.server.ShutdownRequestHandler;
-import uk.co.magictractor.spew.server.TemplateRequestHandler;
 import uk.co.magictractor.spew.store.ApplicationPropertyStore;
 import uk.co.magictractor.spew.util.spi.SPIUtil;
 
-@SpewAuthType
+// OAuth1 specification https://tools.ietf.org/html/rfc5849
+@SpewAuthType("OAuth1")
 public interface SpewOAuth1Application<SP extends SpewOAuth1ServiceProvider>
         extends SpewApplication<SP>, HasCallbackServer {
 
@@ -27,13 +17,8 @@ public interface SpewOAuth1Application<SP extends SpewOAuth1ServiceProvider>
     }
 
     @Override
-    default List<RequestHandler> getServerRequestHandlers(Supplier<VerificationFunction> verificationFunctionSupplier) {
-        return Arrays.asList(
-            new ConnectionValuesRequestHandler(),
-            new OAuth1VerificationRequestHandler(verificationFunctionSupplier),
-            new ShutdownRequestHandler("/js/shutdownNow.js"),
-            new TemplateRequestHandler(serverResourcesRelativeToClass()),
-            new ResourceRequestHandler(serverResourcesRelativeToClass()));
+    default String getOutOfBandUri() {
+        return "oob";
     }
 
 }

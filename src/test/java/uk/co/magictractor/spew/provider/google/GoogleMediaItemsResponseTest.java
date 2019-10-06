@@ -17,7 +17,8 @@ public class GoogleMediaItemsResponseTest {
 
     @Test
     void t() {
-        SpewParsedResponse response = ResourceUtil.readResponse(new MyGooglePhotosApp(), getClass(), "mediaItems.json");
+        SpewParsedResponse response = ResourceUtil.readResponse(MyGooglePhotosApp.get(), getClass(),
+            "mediaItems.json");
 
         System.err.println(response);
         Object photos = response.getObject("mediaItems");

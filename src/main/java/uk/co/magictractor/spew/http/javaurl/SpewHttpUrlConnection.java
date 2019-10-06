@@ -19,6 +19,9 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import uk.co.magictractor.spew.api.OutgoingHttpRequest;
 import uk.co.magictractor.spew.api.SpewApplication;
 import uk.co.magictractor.spew.api.SpewConnection;
@@ -30,6 +33,8 @@ import uk.co.magictractor.spew.util.ExceptionUtil;
  *
  */
 public class SpewHttpUrlConnection implements SpewConnection {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(SpewHttpUrlConnection.class);
 
     @Override
     public SpewHttpResponse request(OutgoingHttpRequest request) {
@@ -52,7 +57,12 @@ public class SpewHttpUrlConnection implements SpewConnection {
             connection.getOutputStream().write(body);
         }
 
-        return new IncomingHttpUrlConnectionResponse(connection);
+        IncomingHttpUrlConnectionResponse response = new IncomingHttpUrlConnectionResponse(connection);
+
+        LOGGER.debug("request sent: {}", request);
+        LOGGER.debug("response received: {}", response);
+
+        return response;
     }
 
     @Override

@@ -13,7 +13,7 @@ import javax.crypto.spec.SecretKeySpec;
 import com.google.common.io.BaseEncoding;
 
 import uk.co.magictractor.spew.api.OutgoingHttpRequest;
-import uk.co.magictractor.spew.api.SpewConnection;
+import uk.co.magictractor.spew.api.SpewApplicationCache;
 import uk.co.magictractor.spew.api.SpewHttpResponse;
 import uk.co.magictractor.spew.api.SpewOAuth1Application;
 import uk.co.magictractor.spew.api.SpewOAuth1ServiceProvider;
@@ -22,9 +22,8 @@ import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponseBuilder;
 import uk.co.magictractor.spew.core.response.parser.text.KeyValuePairsHttpMessageBodyReader;
 import uk.co.magictractor.spew.core.verification.AuthorizationHandler;
-import uk.co.magictractor.spew.core.verification.VerificationFunction;
-import uk.co.magictractor.spew.core.verification.VerificationInfo;
 import uk.co.magictractor.spew.provider.imagebam.ImageBam;
+import uk.co.magictractor.spew.server.SpewHttpRequest;
 import uk.co.magictractor.spew.store.EditableProperty;
 import uk.co.magictractor.spew.store.UserPropertyStore;
 import uk.co.magictractor.spew.util.BrowserUtil;
@@ -84,15 +83,15 @@ public final class BoaOAuth1Connection<SP extends SpewOAuth1ServiceProvider>
 
     @Override
     public void obtainAuthorization() {
-        AuthorizationHandler authorizationHandler = getApplication()
-                .getAuthorizationHandler(BoaOAuth1VerificationFunction::new);
-        authorizationHandler.preOpenAuthorizationInBrowser(getApplication());
+        AuthorizationHandler authorizationHandler = getApplication().createAuthorizationHandler(getApplication());
+        authorizationHandler.preOpenAuthorizationInBrowser();
 
-        openAuthorizationUriInBrowser(authorizationHandler.getCallbackValue());
+        openAuthorizationUriInBrowser(authorizationHandler.getRedirectUri());
 
-        authorizationHandler.postOpenAuthorizationInBrowser(getApplication());
+        authorizationHandler.postOpenAuthorizationInBrowser();
     }
 
+    // TODO! split this into two methods
     private void openAuthorizationUriInBrowser(String callback) {
         // TODO! POST?
         OutgoingHttpRequest request = new OutgoingHttpRequest("GET",
@@ -114,6 +113,7 @@ public final class BoaOAuth1Connection<SP extends SpewOAuth1ServiceProvider>
         userToken.setUnpersistedValue(authToken);
         userSecret.setUnpersistedValue(authSecret);
 
+        // TODO! use OutgoingHttpRequest to build the Uri
         String authUriBase = getServiceProvider().getResourceOwnerAuthorizationUri();
         StringBuilder authUriBuilder = new StringBuilder();
         authUriBuilder.append(authUriBase);
@@ -127,6 +127,10 @@ public final class BoaOAuth1Connection<SP extends SpewOAuth1ServiceProvider>
         authUriBuilder.append("oauth_token=");
         authUriBuilder.append(authToken);
         String authUri = authUriBuilder.toString();
+
+        // AARGH! want connection to not have a reference to the application...
+        SpewApplicationCache.addVerificationPending(req -> authToken.equals(req.getQueryStringParam("oauth_token").orElse(null)),
+            getApplication());
 
         BrowserUtil.openBrowserTab(authUri);
     }
@@ -148,15 +152,22 @@ public final class BoaOAuth1Connection<SP extends SpewOAuth1ServiceProvider>
         request.setQueryStringParam("oauth_signature", getSignature(request));
     }
 
-    private boolean verifyAuthentication(VerificationInfo verificationInfo) {
-        String verificationAuthToken = verificationInfo.getAuthToken();
-        if (verificationAuthToken == null) {
-            // Could assert for oob here? Should only happen when pasting values.
-            verificationAuthToken = userToken.getValue();
-        }
+    @Override
+    public boolean verifyAuthorization(SpewHttpRequest request) {
+        String authToken = request.getQueryStringParam("oauth_token").get();
+        String verificationCode = request.getQueryStringParam("oauth_verifier").get();
 
+        return verifyAuthorization(authToken, verificationCode);
+    }
+
+    @Override
+    public boolean verifyAuthorization(String verificationCode) {
+        return verifyAuthorization(userToken.getValue(), verificationCode);
+    }
+
+    private boolean verifyAuthorization(String authToken, String verificationCode) {
         try {
-            fetchToken(verificationAuthToken, verificationInfo.getVerificationCode());
+            fetchToken(authToken, verificationCode);
             return true;
         }
         catch (Exception e) {
@@ -170,6 +181,7 @@ public final class BoaOAuth1Connection<SP extends SpewOAuth1ServiceProvider>
         OutgoingHttpRequest request = new OutgoingHttpRequest("GET", getServiceProvider().getTokenRequestUri());
         request.setQueryStringParam("oauth_token", authToken);
         request.setQueryStringParam("oauth_verifier", verificationCode);
+
         SpewParsedResponse response = authRequest(request);
 
         String newAuthToken = response.getString("oauth_token");
@@ -298,19 +310,6 @@ public final class BoaOAuth1Connection<SP extends SpewOAuth1ServiceProvider>
 
         request.setQueryStringParam("oauth_version", "1.0");
         request.setQueryStringParam("oauth_signature_method", getServiceProvider().getRequestSignatureMethod());
-    }
-
-    private class BoaOAuth1VerificationFunction implements VerificationFunction {
-
-        @Override
-        public Boolean apply(VerificationInfo info) {
-            return BoaOAuth1Connection.this.verifyAuthentication(info);
-        }
-
-        @Override
-        public SpewConnection getConnection() {
-            return BoaOAuth1Connection.this;
-        }
     }
 
 }

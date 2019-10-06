@@ -15,6 +15,7 @@
  */
 package uk.co.magictractor.spew.example.facebook;
 
+import uk.co.magictractor.spew.api.SpewApplicationCache;
 import uk.co.magictractor.spew.api.SpewOAuth2Application;
 import uk.co.magictractor.spew.provider.facebook.Facebook;
 
@@ -22,5 +23,14 @@ import uk.co.magictractor.spew.provider.facebook.Facebook;
  *
  */
 public class MyFacebookApp implements SpewOAuth2Application<Facebook> {
+
+    private static final MyFacebookApp INSTANCE = SpewApplicationCache.add(MyFacebookApp.class);
+
+    public static MyFacebookApp get() {
+        return INSTANCE;
+    }
+
+    private MyFacebookApp() {
+    }
 
 }

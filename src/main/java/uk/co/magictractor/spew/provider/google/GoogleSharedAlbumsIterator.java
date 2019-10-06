@@ -41,7 +41,7 @@ public class GoogleSharedAlbumsIterator<E> extends GoogleServiceIterator<E> {
 
     // https://developers.google.com/photos/library/reference/rest/v1/albums#Album
     public static void main(String[] args) {
-        Iterator<GoogleAlbum> iter = new GoogleSharedAlbumsIteratorBuilder<>(new MyGooglePhotosApp(), GoogleAlbum.class)
+        Iterator<GoogleAlbum> iter = new GoogleSharedAlbumsIteratorBuilder<>(MyGooglePhotosApp.get(), GoogleAlbum.class)
                 .build();
         while (iter.hasNext()) {
             Album album = iter.next();

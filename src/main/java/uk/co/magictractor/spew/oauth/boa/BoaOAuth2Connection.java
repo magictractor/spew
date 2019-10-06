@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.function.Function;
 
 import com.google.common.base.Charsets;
@@ -20,9 +21,8 @@ import com.google.common.collect.Iterables;
 import io.netty.buffer.ByteBuf;
 import io.netty.handler.codec.http.FullHttpMessage;
 import io.netty.handler.codec.http.QueryStringDecoder;
-import uk.co.magictractor.spew.api.HttpHeaderNames;
 import uk.co.magictractor.spew.api.OutgoingHttpRequest;
-import uk.co.magictractor.spew.api.SpewConnection;
+import uk.co.magictractor.spew.api.SpewApplicationCache;
 import uk.co.magictractor.spew.api.SpewHttpResponse;
 import uk.co.magictractor.spew.api.SpewOAuth2Application;
 import uk.co.magictractor.spew.api.SpewOAuth2ServiceProvider;
@@ -30,8 +30,7 @@ import uk.co.magictractor.spew.api.connection.AbstractAuthorizationDecoratorConn
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponseBuilder;
 import uk.co.magictractor.spew.core.verification.AuthorizationHandler;
-import uk.co.magictractor.spew.core.verification.VerificationFunction;
-import uk.co.magictractor.spew.core.verification.VerificationInfo;
+import uk.co.magictractor.spew.server.SpewHttpRequest;
 import uk.co.magictractor.spew.store.EditableProperty;
 import uk.co.magictractor.spew.store.UserPropertyStore;
 import uk.co.magictractor.spew.util.BrowserUtil;
@@ -42,6 +41,9 @@ import uk.co.magictractor.spew.util.spi.SPIUtil;
 // https://developers.google.com/identity/protocols/OAuth2
 public class BoaOAuth2Connection<SP extends SpewOAuth2ServiceProvider>
         extends AbstractAuthorizationDecoratorConnection<SpewOAuth2Application<SP>, SP> {
+
+    // TODO! avoid negative random numbers - move to util?
+    private static final Random RNG = new Random();
 
     /*
      * milliseconds to remove from expiry to ensure that we refresh if getting
@@ -116,18 +118,16 @@ public class BoaOAuth2Connection<SP extends SpewOAuth2ServiceProvider>
         // GitHub returns application/x-www-form-urlencoded content type by default
         request.addHeader(ACCEPT, ContentTypeUtil.JSON_MIME_TYPES.get(0));
 
-        // A bit mucky. The callback value comes from the handler but is also used in the verification function.
-        AuthorizationHandler[] authHandlerHolder = new AuthorizationHandler[1];
-        AuthorizationHandler authHandler = application
-                .getAuthorizationHandler(
-                    () -> new BoaOAuth2VerificationFunction(authHandlerHolder[0].getCallbackValue()));
-        authHandlerHolder[0] = authHandler;
+        // Mucky. The callback value comes from the handler but is also used in the verification function.
+        //AuthorizationHandler[] authHandlerHolder = new AuthorizationHandler[1];
+        AuthorizationHandler authHandler = application.createAuthorizationHandler(application);
+        //authHandlerHolder[0] = authHandler;
 
-        authHandler.preOpenAuthorizationInBrowser(application);
+        authHandler.preOpenAuthorizationInBrowser();
 
         request.setQueryStringParam("client_id", application.getClientId());
         // Omit for Imgur with "pin"
-        request.setQueryStringParam("redirect_uri", authHandler.getCallbackValue());
+        request.setQueryStringParam("redirect_uri", authHandler.getRedirectUri());
 
         // Always "code".
         // "token" type is more appropriate for client-side OAuth.
@@ -136,19 +136,33 @@ public class BoaOAuth2Connection<SP extends SpewOAuth2ServiceProvider>
 
         request.setQueryStringParam("scope", application.getScope());
 
+        // This gets passed back to the verifier
+        String state = hashCode() + "-" + RNG.nextLong();
+        request.setQueryStringParam("state", state);
+
+        SpewApplicationCache.addVerificationPending(req -> state.equals(req.getQueryStringParam("state").orElse(null)), application);
+
         application.modifyAuthorizationRequest(request);
 
         String authUri = request.getUrl();
         BrowserUtil.openBrowserTab(authUri);
 
-        authHandler.postOpenAuthorizationInBrowser(application);
+        authHandler.postOpenAuthorizationInBrowser();
     }
 
-    // TODO! set and check randomised "state" value : https://developers.google.com/identity/protocols/OpenIDConnect#server-flow
-    private boolean verify(VerificationInfo verificationInfo, String callback) {
+    @Override
+    public boolean verifyAuthorization(SpewHttpRequest request) {
+        String verificationCode = request.getQueryStringParam("code").get();
+
+        return verifyAuthorization(verificationCode);
+    }
+
+    @Override
+    public boolean verifyAuthorization(String verificationCode) {
+
         boolean verified = false;
         try {
-            fetchAccessAndRefreshToken(verificationInfo.getVerificationCode(), callback);
+            fetchAccessAndRefreshToken(verificationCode);
             verified = true;
         }
         catch (Exception e) {
@@ -160,8 +174,9 @@ public class BoaOAuth2Connection<SP extends SpewOAuth2ServiceProvider>
         return verified;
     }
 
-    private void fetchAccessAndRefreshToken(String code, String callback) {
+    private void fetchAccessAndRefreshToken(String code) {
         SpewOAuth2Application<?> application = getApplication();
+        String redirectUri = getApplication().createAuthorizationHandler(getApplication()).getRedirectUri();
 
         // ah! needed to be POST else 404 (Google)
         OutgoingHttpRequest request = new OutgoingHttpRequest("POST", getServiceProvider().getTokenUri());
@@ -174,7 +189,7 @@ public class BoaOAuth2Connection<SP extends SpewOAuth2ServiceProvider>
         bodyData.put("client_id", application.getClientId());
         bodyData.put("client_secret", application.getClientSecret());
         bodyData.put("grant_type", "authorization_code");
-        bodyData.put("redirect_uri", callback);
+        bodyData.put("redirect_uri", redirectUri);
 
         application.modifyTokenRequest(request);
 
@@ -266,25 +281,6 @@ public class BoaOAuth2Connection<SP extends SpewOAuth2ServiceProvider>
 
         SpewHttpResponse response = request(request);
         return new SpewParsedResponseBuilder(getApplication(), response).build();
-    }
-
-    private class BoaOAuth2VerificationFunction implements VerificationFunction {
-
-        private final String callback;
-
-        public BoaOAuth2VerificationFunction(String callback) {
-            this.callback = callback;
-        }
-
-        @Override
-        public Boolean apply(VerificationInfo info) {
-            return BoaOAuth2Connection.this.verify(info, callback);
-        }
-
-        @Override
-        public SpewConnection getConnection() {
-            return BoaOAuth2Connection.this;
-        }
     }
 
 }

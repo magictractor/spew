@@ -105,7 +105,7 @@ public class FlickrPhotoIterator<E> extends PageCountServiceIterator<E> {
     }
 
     public static void main(String[] args) {
-        Iterator<FlickrPhoto> iter = new FlickrPhotoIteratorBuilder<>(new MyFlickrApp(), FlickrPhoto.class)
+        Iterator<FlickrPhoto> iter = new FlickrPhotoIteratorBuilder<>(MyFlickrApp.get(), FlickrPhoto.class)
                 .withFilter(new DateTakenPhotoFilter(DateRange.forMonth(2019, 2)))
                 .build();
         while (iter.hasNext()) {

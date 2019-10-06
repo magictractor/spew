@@ -18,40 +18,41 @@ package uk.co.magictractor.spew.server;
 import java.util.Optional;
 import java.util.function.Function;
 
-import uk.co.magictractor.spew.api.SpewConnection;
-import uk.co.magictractor.spew.api.connection.SpewConnectionCache;
+import uk.co.magictractor.spew.api.SpewApplication;
+import uk.co.magictractor.spew.api.SpewApplicationCache;
 
-public class ConnectionValuesRequestHandler implements RequestHandler {
+public class ApplicationValuesRequestHandler implements RequestHandler {
 
     @Override
     public void handleRequest(SpewHttpRequest request, OutgoingResponseBuilder responseBuilder) {
-        Optional<String> connectionId = request.getQueryStringParam("connection");
-        if (!connectionId.isPresent()) {
+
+        Optional<String> applicationId = request.getQueryStringParam("app");
+        if (!applicationId.isPresent()) {
             return;
         }
 
-        Optional<SpewConnection> connection = SpewConnectionCache.getConnection(connectionId.get());
+        SpewApplication<?> application = SpewApplicationCache.get(applicationId.get());
 
-        if (connection.isPresent()) {
-            responseBuilder.withValueFunction(new ConnectionValueFunction(connection.get()));
+        if (application != null) {
+            responseBuilder.withValueFunction(new ConnectionValueFunction(application));
         }
     }
 
     private final class ConnectionValueFunction implements Function<String, String> {
 
-        private final SpewConnection connection;
+        private final SpewApplication<?> application;
 
-        public ConnectionValueFunction(SpewConnection connection) {
-            this.connection = connection;
+        public ConnectionValueFunction(SpewApplication<?> application) {
+            this.application = application;
         }
 
         @Override
         public String apply(String key) {
             if ("app.name".equals(key)) {
-                return connection.getApplication().getName();
+                return application.getName();
             }
             else if ("sp.name".equals(key)) {
-                return connection.getApplication().getServiceProvider().getName();
+                return application.getServiceProvider().getName();
             }
             return null;
         }

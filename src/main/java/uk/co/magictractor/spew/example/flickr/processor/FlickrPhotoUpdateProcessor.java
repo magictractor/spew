@@ -236,9 +236,9 @@ public class FlickrPhotoUpdateProcessor extends PhotoUpdateProcessor {
 
     public static void main(String[] args) {
         PhotoTidyProcessorChain processorChain = new PhotoTidyProcessorChain(
-            new FlickrPhotoUpdateProcessor(new MyFlickrApp()));
+            new FlickrPhotoUpdateProcessor(MyFlickrApp.get()));
         LocalDate since = LocalDate.now().minusMonths(1).withDayOfMonth(1);
-        Iterator<FlickrPhoto> iterator = new FlickrPhotoIteratorBuilder<>(new MyFlickrApp(), FlickrPhoto.class)
+        Iterator<FlickrPhoto> iterator = new FlickrPhotoIteratorBuilder<>(MyFlickrApp.get(), FlickrPhoto.class)
                 .withFilter(new DateTakenPhotoFilter(DateRange.uptoToday(since)))
                 .build();
         processorChain.execute(iterator, new PhotoProcessorContext());

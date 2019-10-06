@@ -13,19 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.co.magictractor.spew.core.verification;
+package uk.co.magictractor.spew.api;
 
-import java.util.function.Function;
-
-import uk.co.magictractor.spew.api.SpewConnection;
+import uk.co.magictractor.spew.server.SpewHttpRequest;
 
 /**
- * Function used to complete authorization using the verification code from the
- * service provider's website.
+ *
  */
-//@FunctionalInterface
-public interface VerificationFunction extends Function<VerificationInfo, Boolean> {
+public interface SpewAuthorizationVerifiedConnection extends SpewConnection {
 
-    SpewConnection getConnection();
+    /** Verify using request received by a callback server. */
+    boolean verifyAuthorization(SpewHttpRequest request);
+
+    /** Verify using code copied and pasted. */
+    boolean verifyAuthorization(String verificationCode);
 
 }

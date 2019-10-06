@@ -15,21 +15,21 @@
  */
 package uk.co.magictractor.spew.server;
 
-import java.util.function.Supplier;
+import java.util.Optional;
 
-import uk.co.magictractor.spew.core.verification.VerificationFunction;
-import uk.co.magictractor.spew.core.verification.VerificationInfo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import uk.co.magictractor.spew.api.SpewApplication;
+import uk.co.magictractor.spew.api.SpewApplicationCache;
+import uk.co.magictractor.spew.api.SpewAuthorizationVerifiedConnection;
 
 /**
  *
  */
-public class OAuth2VerificationRequestHandler implements RequestHandler {
+public class AuthVerificationRequestHandler implements RequestHandler {
 
-    private final Supplier<VerificationFunction> verificationFunctionSupplier;
-
-    public OAuth2VerificationRequestHandler(Supplier<VerificationFunction> verificationFunctionSupplier) {
-        this.verificationFunctionSupplier = verificationFunctionSupplier;
-    }
+    private static final Logger LOGGER = LoggerFactory.getLogger(AuthVerificationRequestHandler.class);
 
     @Override
     public void handleRequest(SpewHttpRequest request, OutgoingResponseBuilder responseBuilder) {
@@ -38,16 +38,17 @@ public class OAuth2VerificationRequestHandler implements RequestHandler {
             return;
         }
 
-        System.err.println("request: " + request);
+        Optional<SpewApplication<?>> applicationOpt = SpewApplicationCache.removeVerificationPending(request);
 
-        String code = request.getQueryStringParam("code")
-                .orElseThrow(() -> new IllegalArgumentException("Expected code in the authorization response"));
+        if (applicationOpt.isEmpty()) {
+            LOGGER.warn("Missing application pending verification for request {}", request);
+            return;
+        }
 
-        System.err.println("code: " + code);
-
-        VerificationInfo verificationInfo = new VerificationInfo(code);
-        VerificationFunction verificationFunction = verificationFunctionSupplier.get();
-        boolean verified = verificationFunctionSupplier.get().apply(verificationInfo);
+        SpewApplication<?> application = applicationOpt.get();
+        SpewAuthorizationVerifiedConnection connection = (SpewAuthorizationVerifiedConnection) application
+                .getConnection();
+        boolean verified = connection.verifyAuthorization(request);
 
         StringBuilder urlBuilder = new StringBuilder();
         if (verified) {
@@ -56,8 +57,8 @@ public class OAuth2VerificationRequestHandler implements RequestHandler {
         else {
             urlBuilder.append("/verificationFailed.html");
         }
-        urlBuilder.append("?connection=");
-        urlBuilder.append(verificationFunction.getConnection().getId());
+        urlBuilder.append("?app=");
+        urlBuilder.append(application.getId());
 
         responseBuilder.withRedirect(urlBuilder.toString());
     }

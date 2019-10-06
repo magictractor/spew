@@ -15,6 +15,7 @@
  */
 package uk.co.magictractor.spew.example.github;
 
+import uk.co.magictractor.spew.api.SpewApplicationCache;
 import uk.co.magictractor.spew.api.SpewOAuth2Application;
 import uk.co.magictractor.spew.provider.github.GitHub;
 
@@ -22,6 +23,15 @@ import uk.co.magictractor.spew.provider.github.GitHub;
  *
  */
 public class MyGitHubApp implements SpewOAuth2Application<GitHub> {
+
+    private static final MyGitHubApp INSTANCE = SpewApplicationCache.add(MyGitHubApp.class);
+
+    public static MyGitHubApp get() {
+        return INSTANCE;
+    }
+
+    private MyGitHubApp() {
+    }
 
     // https://developer.github.com/apps/building-oauth-apps/understanding-scopes-for-oauth-apps/#available-scopes
     @Override

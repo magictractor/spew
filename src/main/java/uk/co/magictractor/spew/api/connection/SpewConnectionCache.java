@@ -1,38 +1,35 @@
 package uk.co.magictractor.spew.api.connection;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import uk.co.magictractor.spew.api.SpewApplication;
-import uk.co.magictractor.spew.api.SpewAuthType;
 import uk.co.magictractor.spew.api.SpewConnection;
-import uk.co.magictractor.spew.util.ExceptionUtil;
 import uk.co.magictractor.spew.util.spi.SPIUtil;
 
 public class SpewConnectionCache {
 
-    @SuppressWarnings("rawtypes")
-    private static final Map<Class<? extends SpewApplication>, SpewConnection> connections = new HashMap<>();
+    /**
+     * <p>
+     * Keyed by application id.
+     * </p>
+     * <p>
+     * It is intended that there only ever be a single instance of an
+     * application implementation,
+     * </p>
+     */
+    private static final Map<String, SpewConnection> connections = new HashMap<>();
 
-    public static Optional<SpewConnection> getConnection(String connectionId) {
-        return connections.values()
-                .stream()
-                .filter(conn -> connectionId.equals(conn.getId()))
-                .findAny();
-    }
-
-    public static SpewConnection getOrCreateConnection(
-            @SuppressWarnings("rawtypes") Class<? extends SpewApplication> applicationClass) {
-        SpewConnection connection = connections.get(applicationClass);
+    public static SpewConnection getOrCreateConnection(SpewApplication<?> application) {
+        String applicationId = application.getId();
+        SpewConnection connection = connections.get(applicationId);
         if (connection == null) {
-            synchronized (applicationClass) {
-                connection = connections.get(applicationClass);
+            String lock = applicationId.intern();
+            synchronized (lock) {
+                connection = connections.get(applicationId);
                 if (connection == null) {
-                    connection = initConnection(applicationClass);
-                    connections.put(applicationClass, connection);
+                    connection = initConnection(application);
+                    connections.put(applicationId, connection);
                 }
             }
         }
@@ -40,39 +37,9 @@ public class SpewConnectionCache {
         return connection;
     }
 
-    private static SpewConnection initConnection(
-            @SuppressWarnings("rawtypes") Class<? extends SpewApplication> applicationClass) {
-        checkAuthType(applicationClass);
-        SpewApplication<?> application = ExceptionUtil
-                .call(() -> applicationClass.getDeclaredConstructor().newInstance());
+    private static SpewConnection initConnection(SpewApplication<?> application) {
         return SPIUtil.firstNotNull(SpewConnectionFactory.class, factory -> factory.createConnection(application))
                 .get();
-        // TODO! wire in transport here??
-    }
-
-    // hmm... another method for the transport...?
-
-    /*
-     * @param applicationClass
-     */
-    private static void checkAuthType(@SuppressWarnings("rawtypes") Class<? extends SpewApplication> applicationClass) {
-        List<String> authTypes = new ArrayList<>();
-        Class<?>[] ifaces = applicationClass.getInterfaces();
-        for (Class<?> iface : ifaces) {
-            if (iface.isAnnotationPresent(SpewAuthType.class)) {
-                authTypes.add(iface.getSimpleName());
-            }
-        }
-
-        if (authTypes.isEmpty()) {
-            throw new IllegalArgumentException(
-                applicationClass.getName() + " does not implement any interfaces indicating the auth type");
-        }
-
-        if (authTypes.size() > 1) {
-            throw new IllegalArgumentException(applicationClass.getName()
-                    + " should implement a single interfaces indicating the auth type, but implements " + authTypes);
-        }
     }
 
 }

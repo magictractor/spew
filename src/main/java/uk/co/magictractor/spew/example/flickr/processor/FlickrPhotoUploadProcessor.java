@@ -22,7 +22,7 @@ public class FlickrPhotoUploadProcessor extends PhotoUploadProcessor {
 
     public static void main(String[] args) {
         PhotoUploadProcessorChain processorChain = new PhotoUploadProcessorChain(new FlickrPhotoUploadProcessor());
-        Iterator<FlickrPhoto> iterator = new FlickrPhotoIteratorBuilder<>(new MyFlickrApp(), FlickrPhoto.class).build();
+        Iterator<FlickrPhoto> iterator = new FlickrPhotoIteratorBuilder<>(MyFlickrApp.get(), FlickrPhoto.class).build();
         processorChain.execute(iterator, new PhotoProcessorContext());
     }
 

@@ -28,4 +28,6 @@ import java.lang.annotation.Target;
 @Inherited
 public @interface SpewAuthType {
 
+    String value();
+
 }

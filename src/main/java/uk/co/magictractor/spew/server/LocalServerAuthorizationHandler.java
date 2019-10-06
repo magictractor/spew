@@ -15,54 +15,42 @@
  */
 package uk.co.magictractor.spew.server;
 
-import java.util.function.Supplier;
-
 import uk.co.magictractor.spew.api.HasCallbackServer;
 import uk.co.magictractor.spew.api.SpewApplication;
-import uk.co.magictractor.spew.api.SpewConnection;
-import uk.co.magictractor.spew.core.verification.AbstractAuthorizationHandler;
-import uk.co.magictractor.spew.core.verification.VerificationFunction;
-import uk.co.magictractor.spew.core.verification.VerificationInfo;
+import uk.co.magictractor.spew.core.verification.AuthorizationHandler;
 import uk.co.magictractor.spew.example.flickr.MyFlickrApp;
 import uk.co.magictractor.spew.util.spi.SPIUtil;
 
 /**
  *
  */
-public class LocalServerAuthorizationHandler extends AbstractAuthorizationHandler {
+public class LocalServerAuthorizationHandler implements AuthorizationHandler {
 
+    private final HasCallbackServer applicationWithCallbackServer;
+    // TODO! server could be static, maybe not here, and could serve other applications/pages while running?
     private CallbackServer server;
-    private String callback;
 
-    public LocalServerAuthorizationHandler(Supplier<VerificationFunction> verificationFunctionSupplier) {
-        super(verificationFunctionSupplier);
-    }
-
-    @Override
-    public void preOpenAuthorizationInBrowser(SpewApplication<?> application) {
+    public LocalServerAuthorizationHandler(SpewApplication<?> application) {
         if (!HasCallbackServer.class.isInstance(application)) {
             throw new IllegalArgumentException(
                 "Application should implement HasCallbackServer if it can have authorization callbacks");
         }
-        HasCallbackServer hasCallbackServer = (HasCallbackServer) application;
-        callback = hasCallbackServer.protocol() + "://" + hasCallbackServer.host() + ":" + hasCallbackServer.port();
+        this.applicationWithCallbackServer = (HasCallbackServer) application;
+    }
 
+    @Override
+    public void preOpenAuthorizationInBrowser() {
         server = SPIUtil.firstAvailable(CallbackServer.class);
-        server.run(hasCallbackServer.getServerRequestHandlers(verificationFunctionSupplier()),
-            hasCallbackServer.port());
+        server.run(applicationWithCallbackServer.getServerRequestHandlers(), applicationWithCallbackServer.port());
     }
 
     @Override
-    public String getCallbackValue() {
-        if (callback == null) {
-            throw new IllegalStateException(
-                "preOpenAuthorizationInBrowser() should be called before getCallbackValue()");
-        }
-        return callback;
+    public String getRedirectUri() {
+        return applicationWithCallbackServer.uri();
     }
 
     @Override
-    public void postOpenAuthorizationInBrowser(SpewApplication<?> application) {
+    public void postOpenAuthorizationInBrowser() {
         // Wait until the server shuts down, hopefully after it has served a successful verification page.
         // TODO! how to ensure the server gets shutdown... maybe add postValidation() too
         server.join();
@@ -71,21 +59,8 @@ public class LocalServerAuthorizationHandler extends AbstractAuthorizationHandle
     // DO NOT COMMIT
     // temp for testing static pages
     public static void main(String[] args) {
-        LocalServerAuthorizationHandler handler = new LocalServerAuthorizationHandler(DummyVerificationFunction::new);
-        handler.preOpenAuthorizationInBrowser(new MyFlickrApp());
-    }
-
-    private static final class DummyVerificationFunction implements VerificationFunction {
-
-        @Override
-        public Boolean apply(VerificationInfo t) {
-            return true;
-        }
-
-        @Override
-        public SpewConnection getConnection() {
-            throw new UnsupportedOperationException();
-        }
+        LocalServerAuthorizationHandler handler = new LocalServerAuthorizationHandler(MyFlickrApp.get());
+        handler.preOpenAuthorizationInBrowser();
     }
 
 }

@@ -2,7 +2,6 @@ package uk.co.magictractor.spew.provider.imgur;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 import uk.co.magictractor.spew.api.OutgoingHttpRequest;
 import uk.co.magictractor.spew.api.SpewOAuth2ServiceProvider;
@@ -36,13 +35,16 @@ public class Imgur implements SpewOAuth2ServiceProvider {
 
     @Override
     public void modifyAuthorizationRequest(OutgoingHttpRequest request) {
-        System.err.println("modifyAuthorizationRequest: " + request);
-        Map<String, String> queryParams = request.getQueryStringParams();
-        if (queryParams.get("redirect_uri").equals(getOutOfBandUri())) {
-            // Imgur uses "pin" response_type rather than "urn:ietf:wg:oauth:2.0:oob"
-            queryParams.put("response_type", "pin");
-            queryParams.remove("redirect_uri");
-        }
+        // Meh - this method needs refactored anyway - then I moved the oob and completely broke it.
+        throw new UnsupportedOperationException("work in progress");
+
+        //        System.err.println("modifyAuthorizationRequest: " + request);
+        //        Map<String, String> queryParams = request.getQueryStringParams();
+        //        if (queryParams.get("redirect_uri").equals(getOutOfBandUri())) {
+        //            // Imgur uses "pin" response_type rather than "urn:ietf:wg:oauth:2.0:oob"
+        //            queryParams.put("response_type", "pin");
+        //            queryParams.remove("redirect_uri");
+        //        }
     }
 
     @Override

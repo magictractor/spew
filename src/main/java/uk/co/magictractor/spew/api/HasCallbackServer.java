@@ -15,12 +15,16 @@
  */
 package uk.co.magictractor.spew.api;
 
+import java.util.Arrays;
 import java.util.List;
-import java.util.function.Supplier;
 
-import uk.co.magictractor.spew.core.verification.VerificationFunction;
+import uk.co.magictractor.spew.server.AuthVerificationRequestHandler;
 import uk.co.magictractor.spew.server.CallbackServer;
+import uk.co.magictractor.spew.server.ApplicationValuesRequestHandler;
 import uk.co.magictractor.spew.server.RequestHandler;
+import uk.co.magictractor.spew.server.ResourceRequestHandler;
+import uk.co.magictractor.spew.server.ShutdownRequestHandler;
+import uk.co.magictractor.spew.server.TemplateRequestHandler;
 
 /**
  * Additional interface implemented by Applications which may use a callback
@@ -33,7 +37,14 @@ public interface HasCallbackServer {
      * are handled, plus perhaps static pages for redirecting to success or
      * failure messages after authorization plus supporting CSS files etc.
      */
-    List<RequestHandler> getServerRequestHandlers(Supplier<VerificationFunction> verificationFunction);
+    default List<RequestHandler> getServerRequestHandlers() {
+        return Arrays.asList(
+            new ApplicationValuesRequestHandler(),
+            new AuthVerificationRequestHandler(),
+            new ShutdownRequestHandler("/js/shutdownNow.js"),
+            new TemplateRequestHandler(serverResourcesRelativeToClass()),
+            new ResourceRequestHandler(serverResourcesRelativeToClass()));
+    }
 
     /**
      * <p>
@@ -62,6 +73,10 @@ public interface HasCallbackServer {
 
     default int port() {
         return 8080;
+    }
+
+    default String uri() {
+        return protocol() + "://" + host() + ":" + port();
     }
 
 }

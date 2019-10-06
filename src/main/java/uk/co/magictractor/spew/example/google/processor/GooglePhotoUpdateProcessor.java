@@ -27,7 +27,7 @@ public class GooglePhotoUpdateProcessor extends PhotoUpdateProcessor {
 
     public static void main(String[] args) {
         PhotoTidyProcessorChain processorChain = new PhotoTidyProcessorChain(new GooglePhotoUpdateProcessor());
-        Iterator<GoogleImage> iterator = new GoogleMediaItemIteratorBuilder<>(new MyGooglePhotosApp(),
+        Iterator<GoogleImage> iterator = new GoogleMediaItemIteratorBuilder<>(MyGooglePhotosApp.get(),
             GoogleImage.class)
                     .build();
         processorChain.execute(iterator, new PhotoProcessorContext());

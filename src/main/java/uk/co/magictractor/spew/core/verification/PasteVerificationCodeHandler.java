@@ -16,39 +16,43 @@
 package uk.co.magictractor.spew.core.verification;
 
 import java.util.Scanner;
-import java.util.function.Supplier;
 
 import uk.co.magictractor.spew.api.SpewApplication;
+import uk.co.magictractor.spew.api.SpewApplicationCache;
+import uk.co.magictractor.spew.api.SpewAuthorizationVerifiedConnection;
 import uk.co.magictractor.spew.util.IOUtil;
 
 /**
  *
  */
-public class PasteVerificationCodeHandler extends AbstractAuthorizationHandler {
+public class PasteVerificationCodeHandler implements AuthorizationHandler {
 
-    private String callback;
+    private SpewApplication<?> application;
 
-    public PasteVerificationCodeHandler(Supplier<VerificationFunction> verificationFunctionSupplier) {
-        super(verificationFunctionSupplier);
+    public PasteVerificationCodeHandler(SpewApplication<?> application) {
+        this.application = application;
     }
 
     @Override
-    public void preOpenAuthorizationInBrowser(SpewApplication<?> application) {
-        callback = application.getServiceProvider().getOutOfBandUri();
+    public void preOpenAuthorizationInBrowser() {
+        // Do nothing.
     }
 
     @Override
-    public void postOpenAuthorizationInBrowser(SpewApplication<?> application) {
+    public void postOpenAuthorizationInBrowser() {
         IOUtil.acceptThenClose(new Scanner(System.in), this::verify);
     }
 
     private void verify(Scanner scanner) {
+        SpewApplication<?> application = SpewApplicationCache.removeSingleton();
+        SpewAuthorizationVerifiedConnection connection = (SpewAuthorizationVerifiedConnection) application
+                .getConnection();
+
         System.out.println("Enter verification code:");
 
         while (true) {
             String verificationCode = scanner.nextLine().trim();
-            VerificationInfo verificationInfo = new VerificationInfo(verificationCode);
-            boolean verified = verificationFunctionSupplier().get().apply(verificationInfo);
+            boolean verified = connection.verifyAuthorization(verificationCode);
             if (verified) {
                 System.out.println("Verified successfully");
                 return;
@@ -59,8 +63,8 @@ public class PasteVerificationCodeHandler extends AbstractAuthorizationHandler {
     }
 
     @Override
-    public String getCallbackValue() {
-        return callback;
+    public String getRedirectUri() {
+        return application.getOutOfBandUri();
     }
 
 }
