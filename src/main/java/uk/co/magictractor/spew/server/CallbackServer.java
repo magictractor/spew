@@ -17,6 +17,9 @@ package uk.co.magictractor.spew.server;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import uk.co.magictractor.spew.api.SpewHttpResponse;
 import uk.co.magictractor.spew.example.flickr.MyFlickrApp;
 import uk.co.magictractor.spew.example.google.MyGooglePhotosApp;
@@ -61,10 +64,9 @@ public interface CallbackServer {
         return responseBuilder.build();
     }
 
-    // DO NOT COMMIT
-    // temp for testing static pages
     public static void main(String[] args) {
-        // Get a few so that they are listed on the /applications.html page
+        // Get a few applications so that they are listed on the /applications.html page
+        // Would be nice to get them all. Could be useful for unit tests too.
         MyGooglePhotosApp.get();
         MyImgurApp.get();
         MyTwitterApp.get();
@@ -73,7 +75,10 @@ public interface CallbackServer {
         CallbackServer server = SPIUtil.firstAvailable(CallbackServer.class);
         server.run(application.getServerRequestHandlers(), application.port());
 
-        // server.join();
+        Logger logger = LoggerFactory.getLogger(server.getClass());
+        logger.info("Server started");
+        server.join();
+        logger.info("Server shut down");
     }
 
 }

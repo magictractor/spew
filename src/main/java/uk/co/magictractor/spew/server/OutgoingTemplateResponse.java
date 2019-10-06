@@ -25,6 +25,11 @@ import java.io.Writer;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
+import java.time.Instant;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+import java.time.temporal.ChronoField;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -37,6 +42,23 @@ import uk.co.magictractor.spew.util.PathUtil;
  * in the template delimited by curly braces.
  */
 public class OutgoingTemplateResponse extends OutgoingResponse {
+
+    private static final DateTimeFormatter INSTANT_FORMATTER = new DateTimeFormatterBuilder()
+            .appendValue(ChronoField.YEAR, 4)
+            .appendLiteral('-')
+            .appendValue(ChronoField.DAY_OF_MONTH, 2)
+            .appendLiteral('-')
+            .appendValue(ChronoField.MONTH_OF_YEAR)
+            .appendLiteral(' ')
+            .appendValue(ChronoField.HOUR_OF_DAY, 2)
+            .appendLiteral(':')
+            .appendValue(ChronoField.MINUTE_OF_HOUR, 2)
+            .appendLiteral(':')
+            .appendValue(ChronoField.SECOND_OF_MINUTE, 2)
+            .appendLiteral("Z")
+            .appendOffset("+H", "")
+            .toFormatter()
+            .withZone(ZoneOffset.systemDefault());
 
     private static String suffix = ".template";
 
@@ -181,7 +203,13 @@ public class OutgoingTemplateResponse extends OutgoingResponse {
     protected void render(Writer out, Object value) throws IOException {
         // TODO! SPI
         if (value instanceof Map) {
-            renderMap(out, (Map) value);
+            renderMap(out, (Map<?, ?>) value);
+        }
+        else if (value instanceof Boolean) {
+            renderBoolean(out, (Boolean) value);
+        }
+        else if (value instanceof Instant) {
+            renderInstant(out, (Instant) value);
         }
         else {
             out.write(value.toString());
@@ -201,6 +229,25 @@ public class OutgoingTemplateResponse extends OutgoingResponse {
             out.write("</div>");
         }
         out.write("</div>");
+    }
+
+    private void renderBoolean(Writer out, Boolean value) throws IOException {
+        out.write("<span class=\"");
+        out.write(value.toString());
+        out.write("\">");
+        if (value) {
+            // Dingbats "Heavy check mark"
+            out.write("&#10004;");
+        }
+        else {
+            // Dingbats "Heavy ballot X"
+            out.write("&#10008;");
+        }
+        out.write("</span>");
+    }
+
+    private void renderInstant(Writer out, Instant value) throws IOException {
+        out.write(INSTANT_FORMATTER.format(value));
     }
 
 }

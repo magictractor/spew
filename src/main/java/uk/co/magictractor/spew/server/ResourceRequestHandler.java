@@ -16,7 +16,6 @@
 package uk.co.magictractor.spew.server;
 
 import java.nio.file.Path;
-import java.util.stream.Collectors;
 
 import uk.co.magictractor.spew.util.PathUtil;
 
@@ -50,12 +49,6 @@ public class ResourceRequestHandler implements RequestHandler {
         if (bodyPath == null) {
             return;
         }
-
-        System.err.println(request.getHttpMethod() + " " + request.getPath() + " has headers "
-                + request.getHeaders()
-                        .stream()
-                        .map(h -> h.getName() + "=" + h.getValue())
-                        .collect(Collectors.toList()));
 
         String ifModifiedSince = request.getHeaderValue("If-Modified-Since");
         OutgoingResponse response;

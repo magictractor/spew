@@ -23,10 +23,9 @@ body {
   font-family: sans-serif;
   font-size: 32px;
   color: #226688;
-  xxpadding: 50px;
   padding-top: 30px;
-  padding-left: 50px;
-  width: 700px;
+  padding-left: 30px;
+  width: 740px;
 }
 
 div {
@@ -47,3 +46,10 @@ span.cell {
   white-space: nowrap;
 }
 
+span.true {
+  color: #228822;
+}
+
+span.false {
+  color: #882222;
+}
