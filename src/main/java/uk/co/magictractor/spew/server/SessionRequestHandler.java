@@ -20,6 +20,10 @@ import static uk.co.magictractor.spew.api.HttpHeaderNames.SET_COOKIE;
 import uk.co.magictractor.spew.util.RandomUtil;
 
 // TODO! incomplete and unused
+// If no session found this could: set a cookie AND a query string parameter with the session id then redirect to the same page.
+// When session is found, if the session id is in the query string but not in a cookie, then cookies are disabled in the browser.
+// If the session id is in the query string AND the cookie, then could redirect a second time, this time without the query param.
+// Note: could redirects cause problems for OAuth callbacks?
 public class SessionRequestHandler implements RequestHandler {
 
     @Override
