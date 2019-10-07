@@ -47,7 +47,6 @@ public final class SpewApplicationCache {
     // TODO! move this cache to a different class
     // Predicate checks oauth_token (OAuth1) or random state (OAuth2)
     private static final Set<PredicateAndApplication> verificationPending = new HashSet<>();
-    // private static final Random keyGenerator = new Random();
 
     private SpewApplicationCache() {
     }

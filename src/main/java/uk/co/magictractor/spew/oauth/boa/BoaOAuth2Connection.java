@@ -10,7 +10,6 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.function.Function;
 
 import com.google.common.base.Charsets;
@@ -34,15 +33,13 @@ import uk.co.magictractor.spew.store.EditableProperty;
 import uk.co.magictractor.spew.store.UserPropertyStore;
 import uk.co.magictractor.spew.util.BrowserUtil;
 import uk.co.magictractor.spew.util.ContentTypeUtil;
+import uk.co.magictractor.spew.util.RandomUtil;
 import uk.co.magictractor.spew.util.spi.SPIUtil;
 
 // https://tools.ietf.org/html/rfc6749
 // https://developers.google.com/identity/protocols/OAuth2
 public class BoaOAuth2Connection<SP extends SpewOAuth2ServiceProvider>
         extends AbstractAuthorizationDecoratorConnection<SpewOAuth2Application<SP>, SP> {
-
-    // TODO! avoid negative random numbers - move to util?
-    private static final Random RNG = new Random();
 
     /**
      * Seconds to remove from expiry to ensure that we refresh if getting close
@@ -135,7 +132,7 @@ public class BoaOAuth2Connection<SP extends SpewOAuth2ServiceProvider>
         request.setQueryStringParam("scope", application.getScope());
 
         // This gets passed back to the verifier
-        String state = hashCode() + "-" + RNG.nextLong();
+        String state = hashCode() + "-" + RandomUtil.nextBigPositiveLong();
         request.setQueryStringParam("state", state);
 
         SpewApplicationCache.addVerificationPending(req -> state.equals(req.getQueryStringParam("state").orElse(null)),

@@ -17,15 +17,10 @@ package uk.co.magictractor.spew.server;
 
 import static uk.co.magictractor.spew.api.HttpHeaderNames.SET_COOKIE;
 
-import java.util.Random;
+import uk.co.magictractor.spew.util.RandomUtil;
 
-import uk.co.magictractor.spew.api.HttpHeaderNames;
-
-// incomplete and unused
+// TODO! incomplete and unused
 public class SessionRequestHandler implements RequestHandler {
-
-    // TODO! id generation
-    private final String sessionId = System.currentTimeMillis() + ":" + new Random().nextLong();
 
     @Override
     public void handleRequest(SpewHttpRequest request, OutgoingResponseBuilder responseBuilder) {
@@ -33,6 +28,7 @@ public class SessionRequestHandler implements RequestHandler {
         System.err.println("cookies: " + cookies + " (" + request.getPath() + ")");
 
         if (cookies == null) {
+            String sessionId = System.currentTimeMillis() + ":" + RandomUtil.nextBigPositiveLong();
             responseBuilder.withHeader(SET_COOKIE, "JSESSIONID=" + sessionId);
         }
 
