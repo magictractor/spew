@@ -34,6 +34,16 @@ public interface SpewOAuth1Application<SP extends SpewOAuth1ServiceProvider>
     }
 
     @Override
+    default String getRequestSignatureMethod() {
+        return getServiceProvider().getRequestSignatureMethod();
+    }
+
+    @Override
+    default String getJavaSignatureMethod() {
+        return getServiceProvider().getJavaSignatureMethod();
+    }
+
+    @Override
     default String getOutOfBandUri() {
         return "oob";
     }

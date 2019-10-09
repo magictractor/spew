@@ -146,8 +146,6 @@ public final class BoaOAuth1Connection<SP extends SpewOAuth1ServiceProvider>
         addOAuthSignature(request);
         SpewHttpResponse response = request(request);
 
-        System.err.println("auth response: " + response);
-
         return new SpewParsedResponseBuilder(getApplication(), response)
                 .withBodyReader(KeyValuePairsHttpMessageBodyReader.class)
                 .withoutVerification()
@@ -214,7 +212,7 @@ public final class BoaOAuth1Connection<SP extends SpewOAuth1ServiceProvider>
         //		System.err.println("key: " + key);
 
         // TODO! Java signature name and Api not identical
-        String signatureMethod = getServiceProvider().getJavaSignatureMethod();
+        String signatureMethod = configuration.getJavaSignatureMethod();
         SecretKeySpec signingKey = new SecretKeySpec(key.getBytes(), signatureMethod);
         Mac mac = ExceptionUtil.call(() -> Mac.getInstance(signatureMethod));
         ExceptionUtil.call(() -> mac.init(signingKey));
@@ -315,7 +313,7 @@ public final class BoaOAuth1Connection<SP extends SpewOAuth1ServiceProvider>
         request.setQueryStringParam("oauth_timestamp", System.currentTimeMillis() / 1000);
 
         request.setQueryStringParam("oauth_version", "1.0");
-        request.setQueryStringParam("oauth_signature_method", getServiceProvider().getRequestSignatureMethod());
+        request.setQueryStringParam("oauth_signature_method", configuration.getRequestSignatureMethod());
     }
 
 }

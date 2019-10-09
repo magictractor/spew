@@ -32,4 +32,8 @@ public interface SpewOAuth1Configuration {
 
     String getTokenRequestUri();
 
+    String getRequestSignatureMethod();
+
+    String getJavaSignatureMethod();
+
 }
