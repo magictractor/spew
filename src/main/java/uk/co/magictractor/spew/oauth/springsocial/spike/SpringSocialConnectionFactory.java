@@ -29,7 +29,8 @@ public class SpringSocialConnectionFactory implements SpewConnectionFactory {
     public SpewConnection createConnection(SpewApplication<?> application) {
         // TODO OAuth2
         // TODO! push some code up
-        return new SpringSocialOAuth1Connection((SpewOAuth1Application<?>) application);
+        SpewOAuth1Application<?> oauth1Application = (SpewOAuth1Application<?>) application;
+        return new SpringSocialOAuth1Connection(oauth1Application.getConfiguration());
     }
 
 }

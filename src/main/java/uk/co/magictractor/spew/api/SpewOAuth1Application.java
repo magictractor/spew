@@ -1,44 +1,35 @@
 package uk.co.magictractor.spew.api;
 
-import uk.co.magictractor.spew.store.ApplicationPropertyStore;
-import uk.co.magictractor.spew.util.spi.SPIUtil;
-
 // OAuth1 specification https://tools.ietf.org/html/rfc5849
 @SpewAuthType("OAuth1")
 public interface SpewOAuth1Application<SP extends SpewOAuth1ServiceProvider>
-        extends SpewApplication<SP>, SpewOAuth1Configuration, HasCallbackServer {
+        extends SpewApplication<SP>, /* SpewOAuth1Configuration, */ HasCallbackServer {
 
-    @Override
-    default String getConsumerKey() {
-        return SPIUtil.firstAvailable(ApplicationPropertyStore.class).getProperty(this, "consumer_key");
+    default SpewOAuth1Configuration getConfiguration() {
+        return new SpewOAuth1ConfigurationBuilder().withApplication(this).build();
     }
 
-    @Override
-    default String getConsumerSecret() {
-        return SPIUtil.firstAvailable(ApplicationPropertyStore.class).getProperty(this, "consumer_secret");
-    }
-
-    @Override
+    // @Override
     default String getTemporaryCredentialRequestUri() {
         return getServiceProvider().getTemporaryCredentialRequestUri();
     }
 
-    @Override
+    //@Override
     default String getResourceOwnerAuthorizationUri() {
         return getServiceProvider().getResourceOwnerAuthorizationUri();
     }
 
-    @Override
+    //@Override
     default String getTokenRequestUri() {
         return getServiceProvider().getTokenRequestUri();
     }
 
-    @Override
+    //@Override
     default String getRequestSignatureMethod() {
         return getServiceProvider().getRequestSignatureMethod();
     }
 
-    @Override
+    //@Override
     default String getJavaSignatureMethod() {
         return getServiceProvider().getJavaSignatureMethod();
     }

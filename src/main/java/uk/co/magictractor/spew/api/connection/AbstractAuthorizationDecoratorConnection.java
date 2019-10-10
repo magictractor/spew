@@ -16,8 +16,7 @@ public abstract class AbstractAuthorizationDecoratorConnection<APP extends SpewA
 
     private final SpewConnection transport;
 
-    protected AbstractAuthorizationDecoratorConnection(APP application) {
-        super(application);
+    protected AbstractAuthorizationDecoratorConnection() {
         transport = SPIUtil
                 .firstNotNull(SpewConnectionFactory.class, SpewConnectionFactory::createConnectionWithoutAuth)
                 .orElseThrow(() -> new IllegalStateException(

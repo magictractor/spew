@@ -27,17 +27,10 @@ import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.converter.HttpMessageNotWritableException;
 
-import uk.co.magictractor.spew.api.SpewApplication;
 import uk.co.magictractor.spew.api.SpewHttpResponse;
 
 // TODO! make consistent with whatever Boa code does
 public class SpewResponseHttpMessageConverter implements HttpMessageConverter<SpewHttpResponse> {
-
-    private final SpewApplication<?> application;
-
-    public SpewResponseHttpMessageConverter(SpewApplication<?> application) {
-        this.application = application;
-    }
 
     @Override
     public boolean canRead(Class<?> clazz, MediaType mediaType) {

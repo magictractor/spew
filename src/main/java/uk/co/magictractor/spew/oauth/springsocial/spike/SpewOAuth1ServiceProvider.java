@@ -18,19 +18,19 @@ package uk.co.magictractor.spew.oauth.springsocial.spike;
 import org.springframework.social.oauth1.GenericOAuth1ServiceProvider;
 import org.springframework.social.oauth1.OAuth1Version;
 
-import uk.co.magictractor.spew.api.SpewOAuth1Application;
+import uk.co.magictractor.spew.api.SpewOAuth1Configuration;
 
 public class SpewOAuth1ServiceProvider extends GenericOAuth1ServiceProvider {
     //    extends AbstractOAuth1ServiceProvider<String> {
 
-    /* default */ SpewOAuth1ServiceProvider(SpewOAuth1Application<?> application) {
+    /* default */ SpewOAuth1ServiceProvider(SpewOAuth1Configuration configuration) {
 
-        super(application.getConsumerKey(),
-            application.getConsumerSecret(),
-            application.getServiceProvider().getTokenRequestUri(),
-            application.getServiceProvider().getResourceOwnerAuthorizationUri(),
+        super(configuration.getConsumerKey(),
+            configuration.getConsumerSecret(),
+            configuration.getTokenRequestUri(),
+            configuration.getResourceOwnerAuthorizationUri(),
             "http://localhost/spring-social-callback",
-            application.getServiceProvider().getTemporaryCredentialRequestUri(),
+            configuration.getTemporaryCredentialRequestUri(),
             OAuth1Version.CORE_10_REVISION_A);
 
         //        super(consumerKey, consumerSecret, requestTokenUrl, authorizeUrl, authenticateUrl, accessTokenUrl,

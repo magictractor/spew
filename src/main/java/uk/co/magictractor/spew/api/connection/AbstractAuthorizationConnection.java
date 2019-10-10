@@ -30,10 +30,6 @@ import uk.co.magictractor.spew.api.SpewServiceProvider;
 public abstract class AbstractAuthorizationConnection<APP extends SpewApplication<SP>, SP extends SpewServiceProvider>
         extends AbstractConnection<APP, SP> implements SpewAuthorizationVerifiedConnection {
 
-    public AbstractAuthorizationConnection(APP application) {
-        super(application);
-    }
-
     @Override
     public void prepareApplicationRequest(OutgoingHttpRequest request) {
         ensureAuthorized(request);
@@ -73,6 +69,8 @@ public abstract class AbstractAuthorizationConnection<APP extends SpewApplicatio
     protected abstract boolean refreshAuthorization();
 
     protected abstract void addAuthorization(OutgoingHttpRequest request);
+
+    // TODO! add resetUserAuthorization() and call it after 401.
 
     @Override
     public Map<String, Object> getProperties() {

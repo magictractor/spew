@@ -28,24 +28,16 @@ import org.springframework.web.client.RequestCallback;
 import org.springframework.web.client.RestOperations;
 
 import uk.co.magictractor.spew.api.OutgoingHttpRequest;
-import uk.co.magictractor.spew.api.SpewApplication;
 import uk.co.magictractor.spew.api.SpewConnection;
 import uk.co.magictractor.spew.api.SpewHeader;
 import uk.co.magictractor.spew.api.SpewHttpResponse;
-import uk.co.magictractor.spew.api.SpewOAuth1Application;
-import uk.co.magictractor.spew.store.EditableProperty;
-import uk.co.magictractor.spew.store.UserPropertyStore;
+import uk.co.magictractor.spew.api.SpewOAuth1Configuration;
 import uk.co.magictractor.spew.util.ExceptionUtil;
-import uk.co.magictractor.spew.util.spi.SPIUtil;
 
 // https://docs.spring.io/spring-social/docs/current-SNAPSHOT/reference/htmlsingle/
 public class SpringSocialOAuth1Connection implements SpewConnection {
 
-    private final SpewOAuth1Application<?> application;
-
-    // hmm... repeated in other OAuth1 impls
-    private EditableProperty userToken;
-    private EditableProperty userSecret;
+    private final SpewOAuth1Configuration configuration;
 
     private RestOperations springOps;
 
@@ -54,15 +46,13 @@ public class SpringSocialOAuth1Connection implements SpewConnection {
      * {@link SpringSocialConnectionFactory#createConnection}, usually
      * indirectly via OAuthConnectionFactory.
      */
-    /* default */ SpringSocialOAuth1Connection(SpewOAuth1Application<?> application) {
-        this.application = application;
+    /* default */ SpringSocialOAuth1Connection(SpewOAuth1Configuration configuration) {
+        this.configuration = configuration;
 
-        SpewOAuth1ConnectionFactory connectionFactory = new SpewOAuth1ConnectionFactory(application);
+        SpewOAuth1ConnectionFactory connectionFactory = new SpewOAuth1ConnectionFactory(configuration);
 
-        this.userToken = SPIUtil.firstAvailable(UserPropertyStore.class).getProperty(application, "user_token");
-        this.userSecret = SPIUtil.firstAvailable(UserPropertyStore.class).getProperty(application, "user_secret");
-
-        OAuthToken token = new OAuthToken(userToken.getValue(), userSecret.getValue());
+        OAuthToken token = new OAuthToken(
+            configuration.getUserTokenProperty().getValue(), configuration.getUserSecretProperty().getValue());
         springOps = connectionFactory.createConnection(token).getApi();
     }
 
@@ -73,7 +63,7 @@ public class SpringSocialOAuth1Connection implements SpewConnection {
         HttpMethod method = HttpMethod.valueOf(apiRequest.getHttpMethod());
         // RequestCallback requestCallback = System.err::println;
         RequestCallback requestCallback = httpRequest -> populateHttpRequest(httpRequest, apiRequest);
-        SpewResponseHttpMessageConverter converter = new SpewResponseHttpMessageConverter(application);
+        SpewResponseHttpMessageConverter converter = new SpewResponseHttpMessageConverter();
         HttpMessageConverterExtractor<SpewHttpResponse> responseExtractor = new HttpMessageConverterExtractor<>(
             String.class, Arrays.asList(converter));
 
@@ -91,11 +81,6 @@ public class SpringSocialOAuth1Connection implements SpewConnection {
         if (body != null) {
             httpRequest.getBody().write(body);
         }
-    }
-
-    @Override
-    public SpewApplication<?> getApplication() {
-        return application;
     }
 
 }

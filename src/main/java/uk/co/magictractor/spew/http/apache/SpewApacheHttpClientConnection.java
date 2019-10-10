@@ -29,7 +29,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import uk.co.magictractor.spew.api.OutgoingHttpRequest;
-import uk.co.magictractor.spew.api.SpewApplication;
 import uk.co.magictractor.spew.api.SpewConnection;
 import uk.co.magictractor.spew.api.SpewHeader;
 import uk.co.magictractor.spew.api.SpewHttpResponse;
@@ -86,11 +85,6 @@ public class SpewApacheHttpClientConnection implements SpewConnection {
         LOGGER.debug("response received: {}", response);
 
         return response;
-    }
-
-    @Override
-    public SpewApplication<?> getApplication() {
-        throw new UnsupportedOperationException("getApplication() not yet supported for transport connections");
     }
 
 }

@@ -52,13 +52,16 @@ public class BoaOAuth2Connection<SP extends SpewOAuth2ServiceProvider>
     private final EditableProperty accessTokenExpiry;
     private final EditableProperty refreshToken;
 
+    // TO BE REMOVED
+    private final SpewOAuth2Application<?> application;
+
     /**
      * Default visibility, applications should obtain instances via
      * {@link BoaConnectionFactory#createConnection}, usually indirectly via
      * OAuthConnectionFactory.
      */
     /* default */ BoaOAuth2Connection(SpewOAuth2Application<SP> application) {
-        super(application);
+        this.application = application;
 
         UserPropertyStore userPropertyStore = SPIUtil.firstAvailable(UserPropertyStore.class);
         this.accessToken = userPropertyStore.getProperty(application, "access_token");
@@ -106,9 +109,8 @@ public class BoaOAuth2Connection<SP extends SpewOAuth2ServiceProvider>
     // https://developers.google.com/photos/library/guides/authentication-authorization
     @Override
     public void obtainAuthorization() {
-        SpewOAuth2Application<?> application = getApplication();
-
-        OutgoingHttpRequest request = new OutgoingHttpRequest("GET", getServiceProvider().getAuthorizationUri());
+        OutgoingHttpRequest request = new OutgoingHttpRequest("GET",
+            application.getServiceProvider().getAuthorizationUri());
 
         // GitHub returns application/x-www-form-urlencoded content type by default
         request.addHeader(ACCEPT, ContentTypeUtil.JSON_MIME_TYPES.get(0));
@@ -171,11 +173,10 @@ public class BoaOAuth2Connection<SP extends SpewOAuth2ServiceProvider>
     }
 
     private void fetchAccessAndRefreshToken(String code) {
-        SpewOAuth2Application<?> application = getApplication();
-        String redirectUri = getApplication().createAuthorizationHandler(getApplication()).getRedirectUri();
+        String redirectUri = application.createAuthorizationHandler(application).getRedirectUri();
 
         // ah! needed to be POST else 404 (Google)
-        OutgoingHttpRequest request = new OutgoingHttpRequest("POST", getServiceProvider().getTokenUri());
+        OutgoingHttpRequest request = new OutgoingHttpRequest("POST", application.getServiceProvider().getTokenUri());
 
         // GitHub returns application/x-www-form-urlencoded content type by default
         request.addHeader(ACCEPT, ContentTypeUtil.JSON_MIME_TYPES.get(0));
@@ -206,12 +207,12 @@ public class BoaOAuth2Connection<SP extends SpewOAuth2ServiceProvider>
     // TODO! handle invalid/expired refresh tokens
     // https://developers.google.com/identity/protocols/OAuth2InstalledApp#offline
     private SpewParsedResponse fetchRefreshedAccessToken() {
-        OutgoingHttpRequest request = new OutgoingHttpRequest("POST", getServiceProvider().getTokenUri());
+        OutgoingHttpRequest request = new OutgoingHttpRequest("POST", application.getServiceProvider().getTokenUri());
 
         HashMap<String, String> bodyData = new LinkedHashMap<>();
         bodyData.put("refresh_token", refreshToken.getValue());
-        bodyData.put("client_id", getApplication().getClientId());
-        bodyData.put("client_secret", getApplication().getClientSecret());
+        bodyData.put("client_id", application.getClientId());
+        bodyData.put("client_secret", application.getClientSecret());
         bodyData.put("grant_type", "refresh_token");
 
         SpewParsedResponse response = authRequest(request, bodyData);
@@ -273,7 +274,7 @@ public class BoaOAuth2Connection<SP extends SpewOAuth2ServiceProvider>
         request.setBody(body.getBytes(StandardCharsets.UTF_8));
 
         SpewHttpResponse response = request(request);
-        return new SpewParsedResponseBuilder(getApplication(), response).build();
+        return new SpewParsedResponseBuilder(application, response).build();
     }
 
 }

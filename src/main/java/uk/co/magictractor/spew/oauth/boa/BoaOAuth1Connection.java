@@ -26,10 +26,8 @@ import uk.co.magictractor.spew.core.verification.AuthorizationHandler;
 import uk.co.magictractor.spew.provider.imagebam.ImageBam;
 import uk.co.magictractor.spew.server.SpewHttpRequest;
 import uk.co.magictractor.spew.store.EditableProperty;
-import uk.co.magictractor.spew.store.UserPropertyStore;
 import uk.co.magictractor.spew.util.BrowserUtil;
 import uk.co.magictractor.spew.util.ExceptionUtil;
-import uk.co.magictractor.spew.util.spi.SPIUtil;
 
 // TODO! common interface for OAuth1 and OAuth2 connections (and no auth? / other auth?)
 public final class BoaOAuth1Connection<SP extends SpewOAuth1ServiceProvider>
@@ -43,8 +41,12 @@ public final class BoaOAuth1Connection<SP extends SpewOAuth1ServiceProvider>
     /**
      * Temporary tokens and secrets are held in memory and not persisted.
      */
+    // TODO! just use config.userXxx() directly?
     private final EditableProperty userToken;
     private final EditableProperty userSecret;
+
+    // TO BE REMOVED
+    private final SpewOAuth1Application<?> application;
 
     /**
      * Default visibility, applications should obtain instances via
@@ -52,12 +54,10 @@ public final class BoaOAuth1Connection<SP extends SpewOAuth1ServiceProvider>
      * OAuthConnectionFactory.
      */
     /* default */ BoaOAuth1Connection(SpewOAuth1Application<SP> application, SpewOAuth1Configuration configuration) {
-        super(application);
+        this.application = application;
         this.configuration = configuration;
-
-        // hmm...
-        this.userToken = SPIUtil.firstAvailable(UserPropertyStore.class).getProperty(application, "user_token");
-        this.userSecret = SPIUtil.firstAvailable(UserPropertyStore.class).getProperty(application, "user_secret");
+        this.userToken = configuration.getUserTokenProperty();
+        this.userSecret = configuration.getUserSecretProperty();
     }
 
     @Override
@@ -88,7 +88,7 @@ public final class BoaOAuth1Connection<SP extends SpewOAuth1ServiceProvider>
 
     @Override
     public void obtainAuthorization() {
-        AuthorizationHandler authorizationHandler = getApplication().createAuthorizationHandler(getApplication());
+        AuthorizationHandler authorizationHandler = application.createAuthorizationHandler(application);
         authorizationHandler.preOpenAuthorizationInBrowser();
 
         openAuthorizationUriInBrowser(authorizationHandler.getRedirectUri());
@@ -135,8 +135,7 @@ public final class BoaOAuth1Connection<SP extends SpewOAuth1ServiceProvider>
 
         // AARGH! want connection to not have a reference to the application...
         SpewApplicationCache.addVerificationPending(
-            req -> authToken.equals(req.getQueryStringParam("oauth_token").orElse(null)),
-            getApplication());
+            req -> authToken.equals(req.getQueryStringParam("oauth_token").orElse(null)), application);
 
         BrowserUtil.openBrowserTab(authUri);
     }
@@ -146,7 +145,7 @@ public final class BoaOAuth1Connection<SP extends SpewOAuth1ServiceProvider>
         addOAuthSignature(request);
         SpewHttpResponse response = request(request);
 
-        return new SpewParsedResponseBuilder(getApplication(), response)
+        return new SpewParsedResponseBuilder(application, response)
                 .withBodyReader(KeyValuePairsHttpMessageBodyReader.class)
                 .withoutVerification()
                 .build();
@@ -220,7 +219,7 @@ public final class BoaOAuth1Connection<SP extends SpewOAuth1ServiceProvider>
         // String signature =
         // Base64.getEncoder().encodeToString(mac.doFinal(getSignatureBaseString(request).getBytes()));
         String signature;
-        if (getServiceProvider() instanceof ImageBam) {
+        if (application.getServiceProvider() instanceof ImageBam) {
             // PHP example on ImageBam wiki uses MD5() function which returns hex
             // different base string, different hashing, and different encoding
             // ah! it's md5 - not HMAC-md5?!

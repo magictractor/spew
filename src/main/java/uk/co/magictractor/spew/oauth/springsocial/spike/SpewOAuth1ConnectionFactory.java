@@ -18,7 +18,7 @@ package uk.co.magictractor.spew.oauth.springsocial.spike;
 import org.springframework.social.oauth1.GenericOAuth1ConnectionFactory;
 import org.springframework.social.oauth1.OAuth1Version;
 
-import uk.co.magictractor.spew.api.SpewOAuth1Application;
+import uk.co.magictractor.spew.api.SpewOAuth1Configuration;
 
 public class SpewOAuth1ConnectionFactory extends GenericOAuth1ConnectionFactory {
 
@@ -27,17 +27,19 @@ public class SpewOAuth1ConnectionFactory extends GenericOAuth1ConnectionFactory 
      * @param serviceProvider
      * @param apiAdapter
      */
-    public SpewOAuth1ConnectionFactory(SpewOAuth1Application<?> application) {
+    public SpewOAuth1ConnectionFactory(SpewOAuth1Configuration configuration) {
         //super(application.getClass().getSimpleName().toLowerCase(), new SpewOAuth1ServiceProvider(application), null);
         // TODO Auto-generated constructor stub
 
-        super(application.getClass().getSimpleName().toLowerCase(),
-            application.getConsumerKey(),
-            application.getConsumerSecret(),
-            application.getServiceProvider().getTemporaryCredentialRequestUri(),
-            application.getServiceProvider().getResourceOwnerAuthorizationUri(),
+        super("TODO!", /*
+                        * application.getClass().getSimpleName().toLowerCase(),
+                        */
+            configuration.getConsumerKey(),
+            configuration.getConsumerSecret(),
+            configuration.getTemporaryCredentialRequestUri(),
+            configuration.getResourceOwnerAuthorizationUri(),
             //"http://localhost/spring-social-callback",
-            application.getServiceProvider().getTokenRequestUri(),
+            configuration.getTokenRequestUri(),
             OAuth1Version.CORE_10_REVISION_A,
             null);
     }

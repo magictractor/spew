@@ -12,23 +12,6 @@ public abstract class AbstractConnection<APP extends SpewApplication<SP>, SP ext
 
     private Logger logger = LoggerFactory.getLogger(getClass());
 
-    private final APP application;
-
-    public AbstractConnection(APP application) {
-        this.application = application;
-    }
-
-    @Override
-    @Deprecated(forRemoval = true)
-    public APP getApplication() {
-        return application;
-    }
-
-    @Deprecated(forRemoval = true)
-    public SP getServiceProvider() {
-        return application.getServiceProvider();
-    }
-
     protected final Logger getLogger() {
         return logger;
     }
