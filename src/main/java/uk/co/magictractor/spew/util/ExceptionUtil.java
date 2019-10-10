@@ -64,6 +64,11 @@ public final class ExceptionUtil {
     }
 
     @FunctionalInterface
+    public static interface BiFunctionWithException<T, U, R, E extends Exception> {
+        R apply(T t, U u) throws E;
+    }
+
+    @FunctionalInterface
     public static interface ConsumerWithException<T, E extends Exception> {
         void accept(T t) throws E;
     }
