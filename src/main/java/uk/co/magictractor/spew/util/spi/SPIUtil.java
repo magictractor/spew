@@ -41,6 +41,9 @@ import uk.co.magictractor.spew.core.response.parser.ParsedResponsePojoConverter;
 import uk.co.magictractor.spew.core.response.parser.SpewHttpMessageBodyReaderFactory;
 import uk.co.magictractor.spew.core.response.parser.jayway.JaywayResponseFactory;
 import uk.co.magictractor.spew.core.response.parser.xpath.JavaXPathResponseFactory;
+import uk.co.magictractor.spew.core.signature.MacSignatureGenerator;
+import uk.co.magictractor.spew.core.signature.MessageDigestSignatureGenerator;
+import uk.co.magictractor.spew.core.signature.SignatureGenerator;
 import uk.co.magictractor.spew.http.apache.SpewApacheHttpClientConnectionFactory;
 import uk.co.magictractor.spew.http.javaurl.SpewHttpUrlConnectionFactory;
 import uk.co.magictractor.spew.oauth.boa.BoaConnectionFactory;
@@ -98,6 +101,9 @@ public final class SPIUtil {
         addDefault(ContentTypeFromResourceName.class, ApacheTikaContentTypeFromResourceName.class);
         // Fallback to "application/octet-stream", only hit if Tika is not available. Tika has the same fallback behaviour.
         addDefault(ContentTypeFromResourceName.class, FallbackOctetStreamContentTypeFromResourceName.class);
+
+        addDefault(SignatureGenerator.class, MacSignatureGenerator.class);
+        addDefault(SignatureGenerator.class, MessageDigestSignatureGenerator.class);
 
         addDefault(TagLoader.class, IndentedFileTagLoader.class);
         addDefault(TagLoader.class, HardCodedTagLoader.class);

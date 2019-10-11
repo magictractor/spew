@@ -15,9 +15,20 @@
  */
 package uk.co.magictractor.spew.api;
 
+import java.net.URLEncoder;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.function.BiFunction;
+import java.util.function.Function;
+import java.util.function.Supplier;
+
+import com.google.common.io.BaseEncoding;
+
+import uk.co.magictractor.spew.core.signature.SignatureGenerator;
 import uk.co.magictractor.spew.store.ApplicationPropertyStore;
 import uk.co.magictractor.spew.store.EditableProperty;
 import uk.co.magictractor.spew.store.UserPropertyStore;
+import uk.co.magictractor.spew.util.ExceptionUtil;
 import uk.co.magictractor.spew.util.spi.SPIUtil;
 
 /**
@@ -26,9 +37,66 @@ import uk.co.magictractor.spew.util.spi.SPIUtil;
 public class SpewOAuth1ConfigurationBuilder {
 
     private SpewOAuth1ConfigurationImpl configuration = new SpewOAuth1ConfigurationImpl();
+    private boolean done;
 
     public SpewOAuth1Configuration build() {
+        if (configuration.signatureBaseStringFunction == null) {
+            withSignatureBaseStringFunction(SpewOAuth1ConfigurationBuilder::getSignatureBaseString);
+        }
+        if (configuration.signatureEncodingFunction == null) {
+            withSignatureEncodingFunction(BaseEncoding.base64());
+        }
+
+        done = true;
+
         return configuration;
+    }
+
+    public Supplier<SpewOAuth1Configuration> nextBuild() {
+        return () -> {
+            if (!done) {
+                throw new IllegalStateException("Not built yet");
+            }
+            return configuration;
+        };
+    }
+
+    public SpewOAuth1ConfigurationBuilder withSignatureBaseStringFunction(
+            Function<OutgoingHttpRequest, String> signatureBaseStringFunction) {
+        configuration.signatureBaseStringFunction = signatureBaseStringFunction;
+        return this;
+    }
+
+    public SpewOAuth1ConfigurationBuilder withSignatureEncodingFunction(
+            Function<byte[], String> signatureEncodingFunction) {
+        configuration.signatureEncodingFunction = signatureEncodingFunction;
+        return this;
+    }
+
+    public SpewOAuth1ConfigurationBuilder withSignatureEncodingFunction(BaseEncoding encoding) {
+        return withSignatureEncodingFunction(bytes -> encoding.encode(bytes));
+    }
+
+    public SpewOAuth1ConfigurationBuilder withServiceProvider(SpewOAuth1ServiceProvider serviceProvider) {
+        if (configuration.temporaryCredentialRequestUri == null) {
+            configuration.temporaryCredentialRequestUri = serviceProvider.getTemporaryCredentialRequestUri();
+        }
+        if (configuration.resourceOwnerAuthorizationUri == null) {
+            configuration.resourceOwnerAuthorizationUri = serviceProvider.getResourceOwnerAuthorizationUri();
+        }
+        if (configuration.tokenRequestUri == null) {
+            configuration.tokenRequestUri = serviceProvider.getTokenRequestUri();
+        }
+        if (configuration.requestSignatureMethod == null) {
+            configuration.requestSignatureMethod = serviceProvider.getRequestSignatureMethod();
+        }
+        if (configuration.signatureFunction == null) {
+            configuration.signatureFunction = SPIUtil.firstNotNull(SignatureGenerator.class,
+                gen -> gen.signatureFunction(configuration.requestSignatureMethod))
+                    .orElse(null);
+        }
+
+        return this;
     }
 
     public SpewOAuth1ConfigurationBuilder withApplication(SpewOAuth1Application<?> application) {
@@ -49,23 +117,47 @@ public class SpewOAuth1ConfigurationBuilder {
                     .getProperty(application, "user_secret");
         }
 
-        if (configuration.temporaryCredentialRequestUri == null) {
-            configuration.temporaryCredentialRequestUri = application.getTemporaryCredentialRequestUri();
-        }
-        if (configuration.resourceOwnerAuthorizationUri == null) {
-            configuration.resourceOwnerAuthorizationUri = application.getResourceOwnerAuthorizationUri();
-        }
-        if (configuration.tokenRequestUri == null) {
-            configuration.tokenRequestUri = application.getTokenRequestUri();
-        }
-        if (configuration.requestSignatureMethod == null) {
-            configuration.requestSignatureMethod = application.getRequestSignatureMethod();
-        }
-        if (configuration.javaSignatureMethod == null) {
-            configuration.javaSignatureMethod = application.getJavaSignatureMethod();
+        return this;
+    }
+
+    // move this??
+    // See https://www.flickr.com/services/api/auth.oauth.html
+    private static String getSignatureBaseString(OutgoingHttpRequest request) {
+        StringBuilder signatureBaseStringBuilder = new StringBuilder();
+        signatureBaseStringBuilder.append(request.getHttpMethod());
+        signatureBaseStringBuilder.append('&');
+        signatureBaseStringBuilder.append(oauthEncode(request.getPath()));
+        signatureBaseStringBuilder.append('&');
+        signatureBaseStringBuilder.append(oauthEncode(getSignatureQueryString(request)));
+
+        return signatureBaseStringBuilder.toString();
+    }
+
+    private static String getSignatureQueryString(OutgoingHttpRequest request) {
+        // TODO! maybe ignore some params - see Flickr upload photo
+        TreeMap<String, Object> orderedParams = new TreeMap<>(request.getQueryStringParams());
+        StringBuilder stringBuilder = new StringBuilder();
+        boolean first = true;
+        for (Map.Entry<String, Object> entry : orderedParams.entrySet()) {
+            if (first) {
+                first = false;
+            }
+            else {
+                stringBuilder.append('&');
+            }
+            stringBuilder.append(entry.getKey());
+            stringBuilder.append('=');
+            stringBuilder.append(oauthEncode(entry.getValue().toString()));
         }
 
-        return this;
+        return stringBuilder.toString();
+    }
+
+    // https://stackoverflow.com/questions/5864954/java-and-rfc-3986-uri-encoding
+    private static final String oauthEncode(String string) {
+        // TODO! something more efficient?
+        String urlEncoded = ExceptionUtil.call(() -> URLEncoder.encode(string, "UTF-8"));
+        return urlEncoded.replace("+", "%20").replace("*", "%2A").replace("%7E", "~");
     }
 
     private static final class SpewOAuth1ConfigurationImpl implements SpewOAuth1Configuration {
@@ -78,7 +170,9 @@ public class SpewOAuth1ConfigurationBuilder {
         private String resourceOwnerAuthorizationUri;
         private String tokenRequestUri;
         private String requestSignatureMethod;
-        private String javaSignatureMethod;
+        private Function<OutgoingHttpRequest, String> signatureBaseStringFunction;
+        private BiFunction<byte[], byte[], byte[]> signatureFunction;
+        private Function<byte[], String> signatureEncodingFunction;
 
         @Override
         public String getConsumerKey() {
@@ -121,8 +215,18 @@ public class SpewOAuth1ConfigurationBuilder {
         }
 
         @Override
-        public String getJavaSignatureMethod() {
-            return javaSignatureMethod;
+        public Function<OutgoingHttpRequest, String> getSignatureBaseStringFunction() {
+            return signatureBaseStringFunction;
+        }
+
+        @Override
+        public BiFunction<byte[], byte[], byte[]> getSignatureFunction() {
+            return signatureFunction;
+        }
+
+        @Override
+        public Function<byte[], String> getSignatureEncodingFunction() {
+            return signatureEncodingFunction;
         }
 
     }

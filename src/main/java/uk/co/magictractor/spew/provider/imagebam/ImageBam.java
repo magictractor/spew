@@ -1,6 +1,13 @@
 package uk.co.magictractor.spew.provider.imagebam;
 
+import java.util.function.Supplier;
+
+import com.google.common.io.BaseEncoding;
+
+import uk.co.magictractor.spew.api.OutgoingHttpRequest;
 import uk.co.magictractor.spew.api.SpewApplication;
+import uk.co.magictractor.spew.api.SpewOAuth1Configuration;
+import uk.co.magictractor.spew.api.SpewOAuth1ConfigurationBuilder;
 import uk.co.magictractor.spew.api.SpewOAuth1ServiceProvider;
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponseBuilder;
 import uk.co.magictractor.spew.core.verification.AuthorizationHandler;
@@ -28,6 +35,34 @@ public class ImageBam implements SpewOAuth1ServiceProvider {
     public static final String REST_ENDPOINT = "http://www.imagebam.com/sys/API/resource/";
 
     private ImageBam() {
+    }
+
+    @Override
+    public SpewOAuth1ConfigurationBuilder getConfigurationBuilder() {
+        SpewOAuth1ConfigurationBuilder builder = new SpewOAuth1ConfigurationBuilder();
+        Supplier<SpewOAuth1Configuration> configurationSupplier = builder.nextBuild();
+        return builder
+                .withSignatureBaseStringFunction(req -> getImageBamSignatureBaseString(req, configurationSupplier))
+                .withSignatureEncodingFunction(BaseEncoding.base16().lowerCase())
+                .withServiceProvider(this);
+    }
+
+    private String getImageBamSignatureBaseString(OutgoingHttpRequest request,
+            Supplier<SpewOAuth1Configuration> configurationSupplier) {
+        SpewOAuth1Configuration configuration = configurationSupplier.get();
+
+        StringBuilder signatureBaseStringBuilder = new StringBuilder();
+
+        signatureBaseStringBuilder.append(configuration.getConsumerKey());
+        signatureBaseStringBuilder.append(configuration.getConsumerSecret());
+        signatureBaseStringBuilder.append(request.getQueryStringParam("oauth_timestamp").get());
+        signatureBaseStringBuilder.append(request.getQueryStringParam("oauth_nonce").get());
+        if (configuration.getUserTokenProperty().getValue() != null) {
+            signatureBaseStringBuilder.append(configuration.getUserTokenProperty().getValue());
+            signatureBaseStringBuilder.append(configuration.getUserSecretProperty().getValue());
+        }
+
+        return signatureBaseStringBuilder.toString();
     }
 
     @Override

@@ -15,6 +15,9 @@
  */
 package uk.co.magictractor.spew.api;
 
+import java.util.function.BiFunction;
+import java.util.function.Function;
+
 import uk.co.magictractor.spew.store.EditableProperty;
 
 /**
@@ -36,7 +39,11 @@ public interface SpewOAuth1Configuration {
 
     String getRequestSignatureMethod();
 
-    String getJavaSignatureMethod();
+    Function<OutgoingHttpRequest, String> getSignatureBaseStringFunction();
+
+    BiFunction<byte[], byte[], byte[]> getSignatureFunction();
+
+    Function<byte[], String> getSignatureEncodingFunction();
 
     EditableProperty getUserTokenProperty();
 

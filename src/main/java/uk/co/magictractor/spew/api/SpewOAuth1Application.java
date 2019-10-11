@@ -6,32 +6,10 @@ public interface SpewOAuth1Application<SP extends SpewOAuth1ServiceProvider>
         extends SpewApplication<SP>, /* SpewOAuth1Configuration, */ HasCallbackServer {
 
     default SpewOAuth1Configuration getConfiguration() {
-        return new SpewOAuth1ConfigurationBuilder().withApplication(this).build();
-    }
-
-    // @Override
-    default String getTemporaryCredentialRequestUri() {
-        return getServiceProvider().getTemporaryCredentialRequestUri();
-    }
-
-    //@Override
-    default String getResourceOwnerAuthorizationUri() {
-        return getServiceProvider().getResourceOwnerAuthorizationUri();
-    }
-
-    //@Override
-    default String getTokenRequestUri() {
-        return getServiceProvider().getTokenRequestUri();
-    }
-
-    //@Override
-    default String getRequestSignatureMethod() {
-        return getServiceProvider().getRequestSignatureMethod();
-    }
-
-    //@Override
-    default String getJavaSignatureMethod() {
-        return getServiceProvider().getJavaSignatureMethod();
+        return getServiceProvider()
+                .getConfigurationBuilder()
+                .withApplication(this)
+                .build();
     }
 
     @Override

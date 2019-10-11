@@ -1,16 +1,8 @@
 package uk.co.magictractor.spew.oauth.boa;
 
-import java.net.URLEncoder;
-import java.security.MessageDigest;
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
-import java.util.Map;
 import java.util.Random;
-import java.util.TreeMap;
-
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
-
-import com.google.common.io.BaseEncoding;
 
 import uk.co.magictractor.spew.api.OutgoingHttpRequest;
 import uk.co.magictractor.spew.api.SpewApplicationCache;
@@ -23,11 +15,9 @@ import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponseBuilder;
 import uk.co.magictractor.spew.core.response.parser.text.KeyValuePairsHttpMessageBodyReader;
 import uk.co.magictractor.spew.core.verification.AuthorizationHandler;
-import uk.co.magictractor.spew.provider.imagebam.ImageBam;
 import uk.co.magictractor.spew.server.SpewHttpRequest;
 import uk.co.magictractor.spew.store.EditableProperty;
 import uk.co.magictractor.spew.util.BrowserUtil;
-import uk.co.magictractor.spew.util.ExceptionUtil;
 
 // TODO! common interface for OAuth1 and OAuth2 connections (and no auth? / other auth?)
 public final class BoaOAuth1Connection<SP extends SpewOAuth1ServiceProvider>
@@ -193,111 +183,16 @@ public final class BoaOAuth1Connection<SP extends SpewOAuth1ServiceProvider>
         userSecret.setValue(authSecret);
     }
 
-    // See https://www.flickr.com/services/api/auth.oauth.html
-    // https://gist.github.com/ishikawa/88599/3195bdeecabeb38aa62872ab61877aefa6aef89e
     private String getSignature(OutgoingHttpRequest request) {
-        // AARGH - ImageBam refers to "key" where I have used
-        // getSignatureBaseString(request)
-        // TODO! consumer key only absent for auth
-        // TODO! different service providers have different strategies for the key?!
-        // Flickr:
         String key = configuration.getConsumerSecret() + "&" + userSecret.getValue("");
-        // ImageBam
-        // oauth_signature = MD5(API-key + API-secret + oauth_timestamp + oauth_nonce +
-        // oauth_token + oauth_token_secret)
-        //		String key = application.getAppToken() + application.getAppSecret() + request.getParam("oauth_timestamp")
-        //				+ request.getParam("oauth_nonce") + request.getParam("oauth_token")
-        //				+ request.getParam("oauth_token_secret");
-        //		System.err.println("key: " + key);
+        byte[] keyBytes = key.getBytes(StandardCharsets.UTF_8);
 
-        // TODO! Java signature name and Api not identical
-        String signatureMethod = configuration.getJavaSignatureMethod();
-        SecretKeySpec signingKey = new SecretKeySpec(key.getBytes(), signatureMethod);
-        Mac mac = ExceptionUtil.call(() -> Mac.getInstance(signatureMethod));
-        ExceptionUtil.call(() -> mac.init(signingKey));
+        String message = configuration.getSignatureBaseStringFunction().apply(request);
+        byte[] messageBytes = message.getBytes(StandardCharsets.UTF_8);
 
-        // String signature =
-        // Base64.getEncoder().encodeToString(mac.doFinal(getSignatureBaseString(request).getBytes()));
-        String signature;
-        if (application.getServiceProvider() instanceof ImageBam) {
-            // PHP example on ImageBam wiki uses MD5() function which returns hex
-            // different base string, different hashing, and different encoding
-            // ah! it's md5 - not HMAC-md5?!
-            // https://www.ietf.org/rfc/rfc2104.txt - HMAC
-            // and a different base string!
-            byte[] bytes = ExceptionUtil.call(
-                () -> MessageDigest.getInstance("MD5").digest(getImageBamSignatureBaseString(request).getBytes()));
-            // and a different encoding!
-            signature = BaseEncoding.base16().lowerCase().encode(bytes);
-        }
-        else {
-            // Flickr, Twitter
-            // TODO! get some more examples of OAuth1 before tidying this mess up??
-            // signature =
-            // Base64.getEncoder().encodeToString(mac.doFinal(getSignatureBaseString(request).getBytes()));
-            signature = BaseEncoding.base64().encode(mac.doFinal(getSignatureBaseString(request).getBytes()));
-        }
+        byte[] signature = configuration.getSignatureFunction().apply(keyBytes, messageBytes);
 
-        getLogger().trace("signature: {}", signature);
-
-        // The value in the query string params map should not be encoded.
-        // It will be encoded when the query is built.
-        // return ExceptionUtil.call(() -> URLEncoder.encode(signature, "UTF-8"));
-        return signature;
-    }
-
-    private String getImageBamSignatureBaseString(OutgoingHttpRequest request) {
-        StringBuilder signatureBaseStringBuilder = new StringBuilder();
-
-        signatureBaseStringBuilder.append(configuration.getConsumerKey());
-        signatureBaseStringBuilder.append(configuration.getConsumerSecret());
-        signatureBaseStringBuilder.append(request.getQueryStringParam("oauth_timestamp").get());
-        signatureBaseStringBuilder.append(request.getQueryStringParam("oauth_nonce").get());
-        if (userToken.getValue() != null) {
-            signatureBaseStringBuilder.append(userToken.getValue());
-            signatureBaseStringBuilder.append(userSecret.getValue());
-        }
-
-        return signatureBaseStringBuilder.toString();
-    }
-
-    // See https://www.flickr.com/services/api/auth.oauth.html
-    private String getSignatureBaseString(OutgoingHttpRequest request) {
-        StringBuilder signatureBaseStringBuilder = new StringBuilder();
-        signatureBaseStringBuilder.append(request.getHttpMethod());
-        signatureBaseStringBuilder.append('&');
-        signatureBaseStringBuilder.append(oauthEncode(request.getPath()));
-        signatureBaseStringBuilder.append('&');
-        signatureBaseStringBuilder.append(oauthEncode(getSignatureQueryString(request)));
-
-        return signatureBaseStringBuilder.toString();
-    }
-
-    private String getSignatureQueryString(OutgoingHttpRequest request) {
-        // TODO! maybe ignore some params - see Flickr upload photo
-        TreeMap<String, Object> orderedParams = new TreeMap<>(request.getQueryStringParams());
-        StringBuilder stringBuilder = new StringBuilder();
-        boolean first = true;
-        for (Map.Entry<String, Object> entry : orderedParams.entrySet()) {
-            if (first) {
-                first = false;
-            }
-            else {
-                stringBuilder.append('&');
-            }
-            stringBuilder.append(entry.getKey());
-            stringBuilder.append('=');
-            stringBuilder.append(oauthEncode(entry.getValue().toString()));
-        }
-
-        return stringBuilder.toString();
-    }
-
-    // https://stackoverflow.com/questions/5864954/java-and-rfc-3986-uri-encoding
-    private final String oauthEncode(String string) {
-        // TODO! something more efficient?
-        String urlEncoded = ExceptionUtil.call(() -> URLEncoder.encode(string, "UTF-8"));
-        return urlEncoded.replace("+", "%20").replace("*", "%2A").replace("%7E", "~");
+        return configuration.getSignatureEncodingFunction().apply(signature);
     }
 
     private void forAll(OutgoingHttpRequest request) {

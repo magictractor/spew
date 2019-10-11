@@ -26,6 +26,8 @@ import uk.co.magictractor.spew.util.ExceptionUtil;
 
 /**
  * https://docs.oracle.com/javase/9/docs/specs/security/standard-names.html#mac-algorithms
+ * https://www.flickr.com/services/api/auth.oauth.html
+ * https://gist.github.com/ishikawa/88599/3195bdeecabeb38aa62872ab61877aefa6aef89e
  */
 public class MacSignatureGenerator extends AbstractSignatureGenerator {
 
