@@ -113,7 +113,7 @@ public abstract class PageServiceIterator<E> extends AbstractIterator<E> {
      */
     public static class PageServiceIteratorBuilder<E, I extends PageServiceIterator<E>, B> {
 
-        // Same iterator twice to avoid repeated casting
+        // Same iterator twice to avoid repeated casting (TODO! smells bad)
         private final I iteratorInstance;
         private final PageServiceIterator<E> iter;
         private final Map<Class, Consumer> serverSideFilterHandlers = new HashMap<>();

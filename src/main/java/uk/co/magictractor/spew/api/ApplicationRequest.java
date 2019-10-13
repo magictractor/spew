@@ -195,9 +195,7 @@ public final class ApplicationRequest {
         // Add authentication.
         connection.prepareApplicationRequest(request);
 
-        System.err.println("sending request: " + request);
         SpewHttpResponse response = connection.request(request);
-        System.err.println("received response: " + response);
 
         SpewParsedResponseBuilder parsedResponseBuilder = new SpewParsedResponseBuilder(application, response);
 

@@ -18,7 +18,7 @@ import uk.co.magictractor.spew.photo.TagType;
 import uk.co.magictractor.spew.processor.ProcessorChain;
 import uk.co.magictractor.spew.processor.SimpleProcessor;
 import uk.co.magictractor.spew.processor.SimpleProcessorContext;
-import uk.co.magictractor.spew.provider.twitter.TweetIterator.TweetIteratorBuilder;
+import uk.co.magictractor.spew.provider.twitter.UserTimelineIterator.UserTimelineIteratorBuilder;
 
 public class TweetProcessor implements SimpleProcessor<Tweet> {
 
@@ -141,7 +141,7 @@ public class TweetProcessor implements SimpleProcessor<Tweet> {
     public static void main(String[] args) {
         ProcessorChain processorChain = ProcessorChain.of(new TweetProcessor());
 
-        Iterator<Tweet> iterator = new TweetIteratorBuilder<>(MyTwitterApp.get(), Tweet.class).build();
+        Iterator<Tweet> iterator = new UserTimelineIteratorBuilder<>(MyTwitterApp.get(), Tweet.class).build();
 
         processorChain.execute(iterator, new SimpleProcessorContext<>());
     }
