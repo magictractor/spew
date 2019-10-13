@@ -24,12 +24,12 @@ public class Imgur implements SpewOAuth2ServiceProvider {
     }
 
     @Override
-    public String getAuthorizationUri() {
+    public String oauth2AuthorizationUri() {
         return "https://api.imgur.com/oauth2/authorize";
     }
 
     @Override
-    public String getTokenUri() {
+    public String oauth2TokenUri() {
         return "https://api.imgur.com/oauth2/token";
     }
 

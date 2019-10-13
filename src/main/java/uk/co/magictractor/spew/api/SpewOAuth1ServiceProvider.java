@@ -7,12 +7,12 @@ public interface SpewOAuth1ServiceProvider extends SpewServiceProvider {
                 .withServiceProvider(this);
     }
 
-    String getTemporaryCredentialRequestUri();
+    String oauth1TemporaryCredentialRequestUri();
 
-    String getResourceOwnerAuthorizationUri();
+    String oauth1ResourceOwnerAuthorizationUri();
 
-    String getTokenRequestUri();
+    String oauth1TokenRequestUri();
 
-    String getRequestSignatureMethod();
+    String oauth1RequestSignatureMethod();
 
 }

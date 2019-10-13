@@ -7,14 +7,16 @@ public interface SpewOAuth2ServiceProvider extends SpewServiceProvider {
                 .withServiceProvider(this);
     }
 
-    String getAuthorizationUri();
+    String oauth2AuthorizationUri();
 
-    String getTokenUri();
+    String oauth2TokenUri();
 
+    // TODO! bin this, configuration builder should handle it
     default void modifyAuthorizationRequest(OutgoingHttpRequest request) {
         // Do nothing.
     }
 
+    // TODO! bin this, configuration builder should handle it
     default void modifyTokenRequest(OutgoingHttpRequest request) {
         // Do nothing.
     }

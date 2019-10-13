@@ -76,22 +76,22 @@ public class ImageBam implements SpewOAuth1ServiceProvider {
     }
 
     @Override
-    public String getTemporaryCredentialRequestUri() {
+    public String oauth1TemporaryCredentialRequestUri() {
         return "http://www.imagebam.com/sys/oauth/request_token";
     }
 
     @Override
-    public String getResourceOwnerAuthorizationUri() {
+    public String oauth1ResourceOwnerAuthorizationUri() {
         return "http://www.imagebam.com/sys/oauth/authorize_token";
     }
 
     @Override
-    public String getTokenRequestUri() {
+    public String oauth1TokenRequestUri() {
         return "http://www.imagebam.com/sys/oauth/request_access_token";
     }
 
     @Override
-    public String getRequestSignatureMethod() {
+    public String oauth1RequestSignatureMethod() {
         return "MD5";
     }
 

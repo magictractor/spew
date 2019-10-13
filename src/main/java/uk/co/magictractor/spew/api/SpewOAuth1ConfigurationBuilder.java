@@ -80,16 +80,16 @@ public class SpewOAuth1ConfigurationBuilder {
 
     public SpewOAuth1ConfigurationBuilder withServiceProvider(SpewOAuth1ServiceProvider serviceProvider) {
         if (configuration.temporaryCredentialRequestUri == null) {
-            configuration.temporaryCredentialRequestUri = serviceProvider.getTemporaryCredentialRequestUri();
+            configuration.temporaryCredentialRequestUri = serviceProvider.oauth1TemporaryCredentialRequestUri();
         }
         if (configuration.resourceOwnerAuthorizationUri == null) {
-            configuration.resourceOwnerAuthorizationUri = serviceProvider.getResourceOwnerAuthorizationUri();
+            configuration.resourceOwnerAuthorizationUri = serviceProvider.oauth1ResourceOwnerAuthorizationUri();
         }
         if (configuration.tokenRequestUri == null) {
-            configuration.tokenRequestUri = serviceProvider.getTokenRequestUri();
+            configuration.tokenRequestUri = serviceProvider.oauth1TokenRequestUri();
         }
         if (configuration.requestSignatureMethod == null) {
-            configuration.requestSignatureMethod = serviceProvider.getRequestSignatureMethod();
+            configuration.requestSignatureMethod = serviceProvider.oauth1RequestSignatureMethod();
         }
         if (configuration.signatureFunction == null) {
             configuration.signatureFunction = SPIUtil.firstNotNull(SignatureGenerator.class,

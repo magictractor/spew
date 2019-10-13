@@ -17,26 +17,26 @@ public class Twitter implements SpewOAuth1ServiceProvider {
 
     // https://developer.twitter.com/en/docs/basics/authentication/api-reference/request_token
     @Override
-    public String getTemporaryCredentialRequestUri() {
+    public String oauth1TemporaryCredentialRequestUri() {
         // TODO! should be POST
         return "https://api.twitter.com/oauth/request_token";
     }
 
     // https://developer.twitter.com/en/docs/basics/authentication/api-reference/authenticate
     @Override
-    public String getResourceOwnerAuthorizationUri() {
+    public String oauth1ResourceOwnerAuthorizationUri() {
         return "https://api.twitter.com/oauth/authenticate";
     }
 
     // https://developer.twitter.com/en/docs/basics/authentication/api-reference/access_token
     @Override
-    public String getTokenRequestUri() {
+    public String oauth1TokenRequestUri() {
         return "https://api.twitter.com/oauth/access_token";
     }
 
     // https://developer.twitter.com/en/docs/basics/authentication/guides/creating-a-signature
     @Override
-    public String getRequestSignatureMethod() {
+    public String oauth1RequestSignatureMethod() {
         return "HMAC-SHA1";
     }
 

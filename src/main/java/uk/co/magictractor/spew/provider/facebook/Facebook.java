@@ -31,12 +31,12 @@ public class Facebook implements SpewOAuth2ServiceProvider {
     }
 
     @Override
-    public String getAuthorizationUri() {
+    public String oauth2AuthorizationUri() {
         return "https://www.facebook.com/v4.0/dialog/oauth";
     }
 
     @Override
-    public String getTokenUri() {
+    public String oauth2TokenUri() {
         return "https://graph.facebook.com/v4.0/oauth/access_token";
     }
 

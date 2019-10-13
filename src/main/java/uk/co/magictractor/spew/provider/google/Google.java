@@ -23,12 +23,12 @@ public class Google implements SpewOAuth2ServiceProvider {
     }
 
     @Override
-    public String getAuthorizationUri() {
+    public String oauth2AuthorizationUri() {
         return "https://accounts.google.com/o/oauth2/v2/auth";
     }
 
     @Override
-    public String getTokenUri() {
+    public String oauth2TokenUri() {
         return "https://www.googleapis.com/oauth2/v4/token";
     }
 

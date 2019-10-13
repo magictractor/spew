@@ -31,12 +31,12 @@ public class GitHub implements SpewOAuth2ServiceProvider {
     }
 
     @Override
-    public String getAuthorizationUri() {
+    public String oauth2AuthorizationUri() {
         return "https://github.com/login/oauth/authorize";
     }
 
     @Override
-    public String getTokenUri() {
+    public String oauth2TokenUri() {
         return "https://github.com/login/oauth/access_token";
     }
 

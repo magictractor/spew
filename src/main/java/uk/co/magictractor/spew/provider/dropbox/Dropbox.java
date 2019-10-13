@@ -24,12 +24,12 @@ public class Dropbox implements SpewOAuth2ServiceProvider {
     }
 
     @Override
-    public String getAuthorizationUri() {
+    public String oauth2AuthorizationUri() {
         return "https://www.dropbox.com/oauth2/authorize";
     }
 
     @Override
-    public String getTokenUri() {
+    public String oauth2TokenUri() {
         return "https://api.dropboxapi.com/oauth2/token";
     }
 

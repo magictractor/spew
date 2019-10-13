@@ -30,23 +30,23 @@ public class Flickr implements SpewOAuth1ServiceProvider {
     }
 
     @Override
-    public String getTemporaryCredentialRequestUri() {
+    public String oauth1TemporaryCredentialRequestUri() {
         return "https://www.flickr.com/services/oauth/request_token";
     }
 
     @Override
-    public String getResourceOwnerAuthorizationUri() {
+    public String oauth1ResourceOwnerAuthorizationUri() {
         // temporaryAuthToken added
         return "https://www.flickr.com/services/oauth/authorize?perms=write";
     }
 
     @Override
-    public String getTokenRequestUri() {
+    public String oauth1TokenRequestUri() {
         return "https://www.flickr.com/services/oauth/access_token";
     }
 
     @Override
-    public String getRequestSignatureMethod() {
+    public String oauth1RequestSignatureMethod() {
         return "HMAC-SHA1";
     }
 
