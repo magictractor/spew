@@ -35,12 +35,6 @@ public class Twitter implements SpewOAuth1ServiceProvider, SpewOAuth2ServiceProv
         return "https://api.twitter.com/oauth/access_token";
     }
 
-    // https://developer.twitter.com/en/docs/basics/authentication/guides/creating-a-signature
-    @Override
-    public String oauth1RequestSignatureMethod() {
-        return "HMAC-SHA1";
-    }
-
     // https://developer.twitter.com/en/docs/basics/authentication/api-reference/token
     @Override
     public String oauth2TokenUri() {
@@ -51,6 +45,12 @@ public class Twitter implements SpewOAuth1ServiceProvider, SpewOAuth2ServiceProv
     public String oauth2AuthorizationUri() {
         throw new UnsupportedOperationException(
             "Twitter OAuth2 only supports grant_type=client_credentials, so this method should never be called");
+    }
+
+    // https://developer.twitter.com/en/docs/basics/authentication/guides/creating-a-signature
+    @Override
+    public String oauth1RequestSignatureMethod() {
+        return "HMAC-SHA1";
     }
 
     @Override
