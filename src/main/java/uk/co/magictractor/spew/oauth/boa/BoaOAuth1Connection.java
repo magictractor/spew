@@ -5,12 +5,11 @@ import java.time.Instant;
 import java.util.Random;
 
 import uk.co.magictractor.spew.api.OutgoingHttpRequest;
-import uk.co.magictractor.spew.api.SpewApplicationCache;
 import uk.co.magictractor.spew.api.SpewHttpResponse;
 import uk.co.magictractor.spew.api.SpewOAuth1Application;
 import uk.co.magictractor.spew.api.SpewOAuth1Configuration;
-import uk.co.magictractor.spew.api.SpewOAuth1ServiceProvider;
 import uk.co.magictractor.spew.api.connection.AbstractAuthorizationDecoratorConnection;
+import uk.co.magictractor.spew.api.connection.SpewConnectionVerificationPendingCache;
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponseBuilder;
 import uk.co.magictractor.spew.core.response.parser.text.KeyValuePairsHttpMessageBodyReader;
@@ -20,10 +19,7 @@ import uk.co.magictractor.spew.store.EditableProperty;
 import uk.co.magictractor.spew.util.BrowserUtil;
 
 // TODO! common interface for OAuth1 and OAuth2 connections (and no auth? / other auth?)
-public final class BoaOAuth1Connection<SP extends SpewOAuth1ServiceProvider>
-        extends AbstractAuthorizationDecoratorConnection<SpewOAuth1Application<SP>, SP> {
-
-    private final SpewOAuth1Configuration configuration;
+public final class BoaOAuth1Connection extends AbstractAuthorizationDecoratorConnection<SpewOAuth1Configuration> {
 
     // unit tests can call setSeed() on this
     private final Random nonceGenerator = new Random();
@@ -43,9 +39,9 @@ public final class BoaOAuth1Connection<SP extends SpewOAuth1ServiceProvider>
      * {@link BoaConnectionFactory#createConnection}, usually indirectly via
      * OAuthConnectionFactory.
      */
-    /* default */ BoaOAuth1Connection(SpewOAuth1Application<SP> application, SpewOAuth1Configuration configuration) {
+    /* default */ BoaOAuth1Connection(SpewOAuth1Application<?> application, SpewOAuth1Configuration configuration) {
+        super(configuration);
         this.application = application;
-        this.configuration = configuration;
         this.userToken = configuration.getUserTokenProperty();
         this.userSecret = configuration.getUserSecretProperty();
     }
@@ -71,7 +67,7 @@ public final class BoaOAuth1Connection<SP extends SpewOAuth1ServiceProvider>
     @Override
     protected void addAuthorization(OutgoingHttpRequest apiRequest) {
         forAll(apiRequest);
-        apiRequest.setQueryStringParam("api_key", configuration.getConsumerKey());
+        apiRequest.setQueryStringParam("api_key", getConfiguration().getConsumerKey());
         apiRequest.setQueryStringParam("oauth_token", userToken.getValue());
         addOAuthSignature(apiRequest);
     }
@@ -90,7 +86,7 @@ public final class BoaOAuth1Connection<SP extends SpewOAuth1ServiceProvider>
     private void openAuthorizationUriInBrowser(String callback) {
         // TODO! POST?
         OutgoingHttpRequest request = new OutgoingHttpRequest("GET",
-            configuration.getTemporaryCredentialRequestUri());
+            getConfiguration().getTemporaryCredentialRequestUri());
 
         request.setQueryStringParam("oauth_callback", callback);
 
@@ -109,7 +105,7 @@ public final class BoaOAuth1Connection<SP extends SpewOAuth1ServiceProvider>
         userSecret.setUnpersistedValue(authSecret);
 
         // TODO! use OutgoingHttpRequest to build the Uri
-        String authUriBase = configuration.getResourceOwnerAuthorizationUri();
+        String authUriBase = getConfiguration().getResourceOwnerAuthorizationUri();
         StringBuilder authUriBuilder = new StringBuilder();
         authUriBuilder.append(authUriBase);
         if (authUriBase.contains("?")) {
@@ -123,9 +119,8 @@ public final class BoaOAuth1Connection<SP extends SpewOAuth1ServiceProvider>
         authUriBuilder.append(authToken);
         String authUri = authUriBuilder.toString();
 
-        // AARGH! want connection to not have a reference to the application...
-        SpewApplicationCache.addVerificationPending(
-            req -> authToken.equals(req.getQueryStringParam("oauth_token").orElse(null)), application);
+        SpewConnectionVerificationPendingCache.addVerificationPending(
+            req -> authToken.equals(req.getQueryStringParam("oauth_token").orElse(null)), this);
 
         BrowserUtil.openBrowserTab(authUri);
     }
@@ -171,7 +166,7 @@ public final class BoaOAuth1Connection<SP extends SpewOAuth1ServiceProvider>
 
     private void fetchToken(String authToken, String verificationCode) {
         // TODO! POST? - imagebam allows get or post
-        OutgoingHttpRequest request = new OutgoingHttpRequest("GET", configuration.getTokenRequestUri());
+        OutgoingHttpRequest request = new OutgoingHttpRequest("GET", getConfiguration().getTokenRequestUri());
         request.setQueryStringParam("oauth_token", authToken);
         request.setQueryStringParam("oauth_verifier", verificationCode);
 
@@ -184,6 +179,8 @@ public final class BoaOAuth1Connection<SP extends SpewOAuth1ServiceProvider>
     }
 
     private String getSignature(OutgoingHttpRequest request) {
+        SpewOAuth1Configuration configuration = getConfiguration();
+
         String key = configuration.getConsumerSecret() + "&" + userSecret.getValue("");
         byte[] keyBytes = key.getBytes(StandardCharsets.UTF_8);
 
@@ -196,6 +193,8 @@ public final class BoaOAuth1Connection<SP extends SpewOAuth1ServiceProvider>
     }
 
     private void forAll(OutgoingHttpRequest request) {
+        SpewOAuth1Configuration configuration = getConfiguration();
+
         // hmm... same as api_key? (in forApi())
         request.setQueryStringParam("oauth_consumer_key", configuration.getConsumerKey());
 
@@ -208,6 +207,8 @@ public final class BoaOAuth1Connection<SP extends SpewOAuth1ServiceProvider>
 
         request.setQueryStringParam("oauth_version", "1.0");
         request.setQueryStringParam("oauth_signature_method", configuration.getRequestSignatureMethod());
+
+        super.getProperties();
     }
 
 }

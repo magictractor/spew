@@ -31,14 +31,11 @@ public class ApplicationValuesRequestHandler implements RequestHandler {
             return;
         }
 
-        SpewApplication<?> application = SpewApplicationCache.get(applicationId.get());
+        Optional<SpewApplication<?>> applicationOpt = SpewApplicationCache.get(applicationId.get());
 
-        if (application != null) {
-            responseBuilder.withValueFunction(new ApplicationValueFunction(application));
+        if (applicationOpt.isPresent()) {
+            responseBuilder.withValueFunction(new ApplicationValueFunction(applicationOpt.get()));
         }
-
-        //temp
-        responseBuilder.withValueFunction((x) -> "t".equals(x) ? "ttt" : null);
     }
 
     private final class ApplicationValueFunction implements Function<String, Object> {

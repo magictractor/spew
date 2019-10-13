@@ -16,19 +16,22 @@
 package uk.co.magictractor.spew.api.connection;
 
 import java.time.Instant;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 import uk.co.magictractor.spew.api.OutgoingHttpRequest;
-import uk.co.magictractor.spew.api.SpewApplication;
 import uk.co.magictractor.spew.api.SpewAuthorizationVerifiedConnection;
-import uk.co.magictractor.spew.api.SpewServiceProvider;
+import uk.co.magictractor.spew.api.SpewConnectionConfiguration;
 
 /**
  *
  */
-public abstract class AbstractAuthorizationConnection<APP extends SpewApplication<SP>, SP extends SpewServiceProvider>
-        extends AbstractConnection<APP, SP> implements SpewAuthorizationVerifiedConnection {
+public abstract class AbstractAuthorizationConnection<CONFIG extends SpewConnectionConfiguration>
+        extends AbstractSpewConnection<CONFIG>
+        implements SpewAuthorizationVerifiedConnection {
+
+    protected AbstractAuthorizationConnection(CONFIG configuration) {
+        super(configuration);
+    }
 
     @Override
     public void prepareApplicationRequest(OutgoingHttpRequest request) {
@@ -73,16 +76,15 @@ public abstract class AbstractAuthorizationConnection<APP extends SpewApplicatio
     // TODO! add resetUserAuthorization() and call it after 401.
 
     @Override
-    public Map<String, Object> getProperties() {
-        LinkedHashMap<String, Object> properties = new LinkedHashMap<>();
+    public void addProperties(Map<String, Object> properties) {
+        super.addProperties(properties);
+
         Instant expiry = authorizationExpiry();
         properties.put("Authorization expires", expiry != null);
         if (expiry != null) {
             properties.put("Authorization expiry", expiry);
         }
         // TODO! and "Has refresh token"
-
-        return properties;
     }
 
 }

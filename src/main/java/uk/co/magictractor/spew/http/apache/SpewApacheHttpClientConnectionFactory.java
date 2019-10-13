@@ -17,18 +17,20 @@ package uk.co.magictractor.spew.http.apache;
 
 import uk.co.magictractor.spew.api.SpewApplication;
 import uk.co.magictractor.spew.api.SpewConnection;
+import uk.co.magictractor.spew.api.SpewConnectionConfiguration;
 import uk.co.magictractor.spew.api.connection.SpewConnectionFactory;
 
 public class SpewApacheHttpClientConnectionFactory implements SpewConnectionFactory {
 
+    // TODO! should this pass in config?
     @Override
     public SpewConnection createConnection(SpewApplication<?> application) {
         return null;
     }
 
     @Override
-    public SpewConnection createConnectionWithoutAuth() {
-        return new SpewApacheHttpClientConnection();
+    public SpewConnection createConnectionWithoutAuth(SpewConnectionConfiguration configuration) {
+        return new SpewApacheHttpClientConnection(configuration);
     }
 
 }

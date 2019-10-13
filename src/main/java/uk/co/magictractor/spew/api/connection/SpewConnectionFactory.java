@@ -17,6 +17,7 @@ package uk.co.magictractor.spew.api.connection;
 
 import uk.co.magictractor.spew.api.SpewApplication;
 import uk.co.magictractor.spew.api.SpewConnection;
+import uk.co.magictractor.spew.api.SpewConnectionConfiguration;
 
 /**
  *
@@ -32,7 +33,7 @@ public interface SpewConnectionFactory {
      */
     public SpewConnection createConnection(SpewApplication<?> application);
 
-    default SpewConnection createConnectionWithoutAuth() {
+    default SpewConnection createConnectionWithoutAuth(SpewConnectionConfiguration configuration) {
         return null;
     }
 

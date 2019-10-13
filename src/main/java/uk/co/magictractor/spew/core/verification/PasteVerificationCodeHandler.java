@@ -18,8 +18,8 @@ package uk.co.magictractor.spew.core.verification;
 import java.util.Scanner;
 
 import uk.co.magictractor.spew.api.SpewApplication;
-import uk.co.magictractor.spew.api.SpewApplicationCache;
 import uk.co.magictractor.spew.api.SpewAuthorizationVerifiedConnection;
+import uk.co.magictractor.spew.api.connection.SpewConnectionVerificationPendingCache;
 import uk.co.magictractor.spew.util.IOUtil;
 
 /**
@@ -44,9 +44,7 @@ public class PasteVerificationCodeHandler implements AuthorizationHandler {
     }
 
     private void verify(Scanner scanner) {
-        SpewApplication<?> application = SpewApplicationCache.removeSingleton();
-        SpewAuthorizationVerifiedConnection connection = (SpewAuthorizationVerifiedConnection) application
-                .getConnection();
+        SpewAuthorizationVerifiedConnection connection = SpewConnectionVerificationPendingCache.removeSingleton();
 
         System.out.println("Enter verification code:");
 

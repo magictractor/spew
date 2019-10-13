@@ -8,6 +8,13 @@ import uk.co.magictractor.spew.util.spi.SPIUtil;
 public interface SpewOAuth2Application<SP extends SpewOAuth2ServiceProvider>
         extends SpewApplication<SP>, HasCallbackServer {
 
+    default SpewOAuth2Configuration getConfiguration() {
+        return getServiceProvider()
+                .getConfigurationBuilder()
+                .withApplication(this)
+                .build();
+    }
+
     default String getClientId() {
         // TODO! firstNonNull would be better
         return SPIUtil.firstAvailable(ApplicationPropertyStore.class).getProperty(this, "client_id");

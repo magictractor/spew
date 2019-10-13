@@ -28,16 +28,14 @@ import org.springframework.web.client.RequestCallback;
 import org.springframework.web.client.RestOperations;
 
 import uk.co.magictractor.spew.api.OutgoingHttpRequest;
-import uk.co.magictractor.spew.api.SpewConnection;
 import uk.co.magictractor.spew.api.SpewHeader;
 import uk.co.magictractor.spew.api.SpewHttpResponse;
 import uk.co.magictractor.spew.api.SpewOAuth1Configuration;
+import uk.co.magictractor.spew.api.connection.AbstractSpewConnection;
 import uk.co.magictractor.spew.util.ExceptionUtil;
 
 // https://docs.spring.io/spring-social/docs/current-SNAPSHOT/reference/htmlsingle/
-public class SpringSocialOAuth1Connection implements SpewConnection {
-
-    private final SpewOAuth1Configuration configuration;
+public class SpringSocialOAuth1Connection extends AbstractSpewConnection<SpewOAuth1Configuration> {
 
     private RestOperations springOps;
 
@@ -47,7 +45,7 @@ public class SpringSocialOAuth1Connection implements SpewConnection {
      * indirectly via OAuthConnectionFactory.
      */
     /* default */ SpringSocialOAuth1Connection(SpewOAuth1Configuration configuration) {
-        this.configuration = configuration;
+        super(configuration);
 
         SpewOAuth1ConnectionFactory connectionFactory = new SpewOAuth1ConnectionFactory(configuration);
 

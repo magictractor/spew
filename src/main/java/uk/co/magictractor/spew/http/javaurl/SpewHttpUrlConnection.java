@@ -19,28 +19,28 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import uk.co.magictractor.spew.api.OutgoingHttpRequest;
-import uk.co.magictractor.spew.api.SpewConnection;
+import uk.co.magictractor.spew.api.SpewConnectionConfiguration;
 import uk.co.magictractor.spew.api.SpewHeader;
 import uk.co.magictractor.spew.api.SpewHttpResponse;
+import uk.co.magictractor.spew.api.connection.AbstractSpewConnection;
 import uk.co.magictractor.spew.util.ExceptionUtil;
 
 /**
  *
  */
-public class SpewHttpUrlConnection implements SpewConnection {
+public class SpewHttpUrlConnection extends AbstractSpewConnection<SpewConnectionConfiguration> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(SpewHttpUrlConnection.class);
+    public SpewHttpUrlConnection(SpewConnectionConfiguration configuration) {
+        super(configuration);
+    }
 
     @Override
     public SpewHttpResponse request(OutgoingHttpRequest request) {
         return ExceptionUtil.call(() -> request0(request));
     }
 
-    public SpewHttpResponse request0(OutgoingHttpRequest request) throws IOException {
+    private SpewHttpResponse request0(OutgoingHttpRequest request) throws IOException {
         // URL has no knowledge of escaping, the application must do that. See URL Javadoc.
         URL url = new URL(request.getUrl());
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -58,8 +58,8 @@ public class SpewHttpUrlConnection implements SpewConnection {
 
         IncomingHttpUrlConnectionResponse response = new IncomingHttpUrlConnectionResponse(connection);
 
-        LOGGER.debug("request sent: {}", request);
-        LOGGER.debug("response received: {}", response);
+        getLogger().debug("request sent: {}", request);
+        getLogger().debug("response received: {}", response);
 
         return response;
     }

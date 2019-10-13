@@ -7,7 +7,7 @@
 <body>
 <div class="summary">Verification failed.</div>
 <div class="info">
-  ${app.props}
+  ${conn.props}
 </div>
 <script src="/js/shutdownOnLoad.js"></script>
 </body>

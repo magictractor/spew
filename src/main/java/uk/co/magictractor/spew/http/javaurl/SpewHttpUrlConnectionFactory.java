@@ -17,6 +17,7 @@ package uk.co.magictractor.spew.http.javaurl;
 
 import uk.co.magictractor.spew.api.SpewApplication;
 import uk.co.magictractor.spew.api.SpewConnection;
+import uk.co.magictractor.spew.api.SpewConnectionConfiguration;
 import uk.co.magictractor.spew.api.connection.SpewConnectionFactory;
 
 public class SpewHttpUrlConnectionFactory implements SpewConnectionFactory {
@@ -27,8 +28,8 @@ public class SpewHttpUrlConnectionFactory implements SpewConnectionFactory {
     }
 
     @Override
-    public SpewConnection createConnectionWithoutAuth() {
-        return new SpewHttpUrlConnection();
+    public SpewConnection createConnectionWithoutAuth(SpewConnectionConfiguration configuration) {
+        return new SpewHttpUrlConnection(configuration);
     }
 
 }

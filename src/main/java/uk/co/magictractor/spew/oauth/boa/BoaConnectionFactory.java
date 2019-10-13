@@ -30,10 +30,11 @@ public class BoaConnectionFactory implements SpewConnectionFactory {
     public SpewConnection createConnection(SpewApplication<?> application) {
         if (application instanceof SpewOAuth1Application) {
             SpewOAuth1Application<?> oauth1Application = (SpewOAuth1Application<?>) application;
-            return new BoaOAuth1Connection<>(oauth1Application, oauth1Application.getConfiguration());
+            return new BoaOAuth1Connection(oauth1Application, oauth1Application.getConfiguration());
         }
         else if (application instanceof SpewOAuth2Application) {
-            return new BoaOAuth2Connection<>((SpewOAuth2Application<?>) application);
+            SpewOAuth2Application<?> oauth2Application = (SpewOAuth2Application<?>) application;
+            return new BoaOAuth2Connection(oauth2Application, oauth2Application.getConfiguration());
         }
         else {
             return null;

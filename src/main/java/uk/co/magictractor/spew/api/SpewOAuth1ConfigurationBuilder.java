@@ -16,6 +16,7 @@
 package uk.co.magictractor.spew.api;
 
 import java.net.URLEncoder;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.function.BiFunction;
@@ -116,7 +117,13 @@ public class SpewOAuth1ConfigurationBuilder {
             configuration.userSecretProperty = SPIUtil.firstAvailable(UserPropertyStore.class)
                     .getProperty(application, "user_secret");
         }
+        withProperties(application.getProperties());
 
+        return this;
+    }
+
+    public SpewOAuth1ConfigurationBuilder withProperties(Map<String, Object> properties) {
+        configuration.properties.putAll(properties);
         return this;
     }
 
@@ -173,6 +180,7 @@ public class SpewOAuth1ConfigurationBuilder {
         private Function<OutgoingHttpRequest, String> signatureBaseStringFunction;
         private BiFunction<byte[], byte[], byte[]> signatureFunction;
         private Function<byte[], String> signatureEncodingFunction;
+        private Map<String, Object> properties = new LinkedHashMap<>();
 
         @Override
         public String getConsumerKey() {
@@ -227,6 +235,11 @@ public class SpewOAuth1ConfigurationBuilder {
         @Override
         public Function<byte[], String> getSignatureEncodingFunction() {
             return signatureEncodingFunction;
+        }
+
+        @Override
+        public void addProperties(Map<String, Object> properties) {
+            properties.putAll(this.properties);
         }
 
     }

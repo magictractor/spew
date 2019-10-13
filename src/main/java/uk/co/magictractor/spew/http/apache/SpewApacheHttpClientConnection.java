@@ -25,18 +25,19 @@ import org.apache.http.client.methods.RequestBuilder;
 import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import uk.co.magictractor.spew.api.OutgoingHttpRequest;
-import uk.co.magictractor.spew.api.SpewConnection;
+import uk.co.magictractor.spew.api.SpewConnectionConfiguration;
 import uk.co.magictractor.spew.api.SpewHeader;
 import uk.co.magictractor.spew.api.SpewHttpResponse;
+import uk.co.magictractor.spew.api.connection.AbstractSpewConnection;
 import uk.co.magictractor.spew.util.ExceptionUtil;
 
-public class SpewApacheHttpClientConnection implements SpewConnection {
+public class SpewApacheHttpClientConnection extends AbstractSpewConnection<SpewConnectionConfiguration> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(SpewApacheHttpClientConnection.class);
+    public SpewApacheHttpClientConnection(SpewConnectionConfiguration configuration) {
+        super(configuration);
+    }
 
     @Override
     public SpewHttpResponse request(OutgoingHttpRequest request) {
@@ -81,8 +82,9 @@ public class SpewApacheHttpClientConnection implements SpewConnection {
 
         IncomingApacheHttpClientResponse response = new IncomingApacheHttpClientResponse(apacheResponse);
 
-        LOGGER.debug("request sent: {}", request);
-        LOGGER.debug("response received: {}", response);
+        // TODO! push logging up to abstract class
+        getLogger().debug("request sent: {}", request);
+        getLogger().debug("response received: {}", response);
 
         return response;
     }

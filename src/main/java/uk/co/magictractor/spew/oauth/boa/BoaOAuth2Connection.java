@@ -20,11 +20,11 @@ import io.netty.buffer.ByteBuf;
 import io.netty.handler.codec.http.FullHttpMessage;
 import io.netty.handler.codec.http.QueryStringDecoder;
 import uk.co.magictractor.spew.api.OutgoingHttpRequest;
-import uk.co.magictractor.spew.api.SpewApplicationCache;
 import uk.co.magictractor.spew.api.SpewHttpResponse;
 import uk.co.magictractor.spew.api.SpewOAuth2Application;
-import uk.co.magictractor.spew.api.SpewOAuth2ServiceProvider;
+import uk.co.magictractor.spew.api.SpewOAuth2Configuration;
 import uk.co.magictractor.spew.api.connection.AbstractAuthorizationDecoratorConnection;
+import uk.co.magictractor.spew.api.connection.SpewConnectionVerificationPendingCache;
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponseBuilder;
 import uk.co.magictractor.spew.core.verification.AuthorizationHandler;
@@ -38,8 +38,7 @@ import uk.co.magictractor.spew.util.spi.SPIUtil;
 
 // https://tools.ietf.org/html/rfc6749
 // https://developers.google.com/identity/protocols/OAuth2
-public class BoaOAuth2Connection<SP extends SpewOAuth2ServiceProvider>
-        extends AbstractAuthorizationDecoratorConnection<SpewOAuth2Application<SP>, SP> {
+public class BoaOAuth2Connection extends AbstractAuthorizationDecoratorConnection<SpewOAuth2Configuration> {
 
     /**
      * Seconds to remove from expiry to ensure that we refresh if getting close
@@ -60,7 +59,8 @@ public class BoaOAuth2Connection<SP extends SpewOAuth2ServiceProvider>
      * {@link BoaConnectionFactory#createConnection}, usually indirectly via
      * OAuthConnectionFactory.
      */
-    /* default */ BoaOAuth2Connection(SpewOAuth2Application<SP> application) {
+    /* default */ BoaOAuth2Connection(SpewOAuth2Application<?> application, SpewOAuth2Configuration configuration) {
+        super(configuration);
         this.application = application;
 
         UserPropertyStore userPropertyStore = SPIUtil.firstAvailable(UserPropertyStore.class);
@@ -137,8 +137,8 @@ public class BoaOAuth2Connection<SP extends SpewOAuth2ServiceProvider>
         String state = hashCode() + "-" + RandomUtil.nextBigPositiveLong();
         request.setQueryStringParam("state", state);
 
-        SpewApplicationCache.addVerificationPending(req -> state.equals(req.getQueryStringParam("state").orElse(null)),
-            application);
+        SpewConnectionVerificationPendingCache.addVerificationPending(
+            req -> state.equals(req.getQueryStringParam("state").orElse(null)), this);
 
         application.modifyAuthorizationRequest(request);
 

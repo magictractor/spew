@@ -1,15 +1,16 @@
 package uk.co.magictractor.spew.api;
 
-import java.util.Collections;
 import java.util.Map;
 
 /**
  * Application code should not need to interact with SpewConnection instances.
  */
-public interface SpewConnection {
+public interface SpewConnection extends HasProperties {
+
+    String getId();
 
     // Typically used to add authorization information to the request.
-    // This is no called for requests which fetch authoentication tokens etc.
+    // This is not called for requests which fetch authorization tokens etc.
     default void prepareApplicationRequest(OutgoingHttpRequest request) {
     }
 
@@ -24,11 +25,9 @@ public interface SpewConnection {
      */
     SpewHttpResponse request(OutgoingHttpRequest apiRequest);
 
-    /**
-     * A summary of the state of the connection, displayed after authorization.
-     */
-    default Map<String, Object> getProperties() {
-        return Collections.emptyMap();
+    @Override
+    default void addProperties(Map<String, Object> properties) {
+        // Do nothing
     }
 
 }

@@ -19,8 +19,8 @@ import static uk.co.magictractor.spew.api.HttpHeaderNames.CACHE_CONTROL;
 
 import java.util.Optional;
 
-import uk.co.magictractor.spew.api.SpewApplication;
-import uk.co.magictractor.spew.api.SpewApplicationCache;
+import uk.co.magictractor.spew.api.SpewConnection;
+import uk.co.magictractor.spew.api.connection.SpewConnectionCache;
 
 public class ShutdownRequestHandler implements RequestHandler {
 
@@ -34,10 +34,10 @@ public class ShutdownRequestHandler implements RequestHandler {
     public void handleRequest(SpewHttpRequest request, OutgoingResponseBuilder responseBuilder) {
         String path = request.getPath();
         if (path.equals(shutdownPath)) {
-            Optional<String> applicationId = request.getQueryStringParam("app");
-            if (applicationId.isPresent()) {
-                SpewApplication<?> application = SpewApplicationCache.get(applicationId.get());
-                if (application != null) {
+            Optional<String> connectionIdOpt = request.getQueryStringParam("conn");
+            if (connectionIdOpt.isPresent()) {
+                Optional<SpewConnection> connectionOpt = SpewConnectionCache.get(connectionIdOpt.get());
+                if (connectionOpt.isPresent()) {
                     responseBuilder.withShutdown();
                 }
             }

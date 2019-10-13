@@ -25,7 +25,7 @@ import uk.co.magictractor.spew.store.EditableProperty;
  */
 // TODO! move the annotation here?
 // @SpewAuthType("OAuth1")
-public interface SpewOAuth1Configuration {
+public interface SpewOAuth1Configuration extends SpewConnectionConfiguration {
 
     String getConsumerKey();
 

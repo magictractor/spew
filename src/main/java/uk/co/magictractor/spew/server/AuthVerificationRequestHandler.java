@@ -20,9 +20,8 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import uk.co.magictractor.spew.api.SpewApplication;
-import uk.co.magictractor.spew.api.SpewApplicationCache;
 import uk.co.magictractor.spew.api.SpewAuthorizationVerifiedConnection;
+import uk.co.magictractor.spew.api.connection.SpewConnectionVerificationPendingCache;
 
 /**
  *
@@ -38,16 +37,15 @@ public class AuthVerificationRequestHandler implements RequestHandler {
             return;
         }
 
-        Optional<SpewApplication<?>> applicationOpt = SpewApplicationCache.removeVerificationPending(request);
+        Optional<SpewAuthorizationVerifiedConnection> connectionOpt = SpewConnectionVerificationPendingCache
+                .removeVerificationPending(request);
 
-        if (applicationOpt.isEmpty()) {
+        if (connectionOpt.isEmpty()) {
             LOGGER.warn("Missing application pending verification for request {}", request);
             return;
         }
 
-        SpewApplication<?> application = applicationOpt.get();
-        SpewAuthorizationVerifiedConnection connection = (SpewAuthorizationVerifiedConnection) application
-                .getConnection();
+        SpewAuthorizationVerifiedConnection connection = connectionOpt.get();
         boolean verified = connection.verifyAuthorization(request);
 
         StringBuilder urlBuilder = new StringBuilder();
@@ -57,8 +55,8 @@ public class AuthVerificationRequestHandler implements RequestHandler {
         else {
             urlBuilder.append("/verificationFailed.html");
         }
-        urlBuilder.append("?app=");
-        urlBuilder.append(application.getId());
+        urlBuilder.append("?conn=");
+        urlBuilder.append(connection.getId());
 
         responseBuilder.withRedirect(urlBuilder.toString());
     }

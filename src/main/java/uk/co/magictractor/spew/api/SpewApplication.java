@@ -1,7 +1,5 @@
 package uk.co.magictractor.spew.api;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 import com.google.common.base.MoreObjects;
@@ -12,7 +10,7 @@ import uk.co.magictractor.spew.core.response.parser.SpewParsedResponseBuilder;
 import uk.co.magictractor.spew.core.verification.AuthorizationHandler;
 import uk.co.magictractor.spew.util.StringUtil;
 
-public interface SpewApplication<SP extends SpewServiceProvider> {
+public interface SpewApplication<SP extends SpewServiceProvider> extends HasProperties {
 
     /**
      * <p>
@@ -26,9 +24,9 @@ public interface SpewApplication<SP extends SpewServiceProvider> {
      * fails by including the id in a query string.
      * </p>
      */
-    default String getId() {
+    default int getId() {
         // Base the id on the class to trigger an error if multiple instances of an application are added to the cache.
-        return Integer.toString(getClass().hashCode());
+        return getClass().hashCode();
     }
 
     default String getName() {
@@ -83,18 +81,12 @@ public interface SpewApplication<SP extends SpewServiceProvider> {
     // not used by BoaOAuth2??
     String getOutOfBandUri();
 
-    /**
-     * A summary of the state of the application, displayed after authorization.
-     */
-    default Map<String, Object> getProperties() {
-        HashMap<String, Object> properties = new LinkedHashMap<>();
+    @Override
+    default void addProperties(Map<String, Object> properties) {
         properties.put("Application name", getName());
         properties.put("Service provider name", getServiceProvider().getName());
         properties.put("Authorization type", SpewAuthTypeUtil.getAuthType(getClass()));
 
-        properties.putAll(getConnection().getProperties());
-
-        return properties;
     }
 
     public static ToStringHelper toStringHelper(SpewApplication<?> application) {
