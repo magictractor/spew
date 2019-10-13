@@ -22,7 +22,7 @@ import java.util.function.Function;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
 
-import uk.co.magictractor.spew.api.SpewHeader;
+import uk.co.magictractor.spew.core.http.header.SpewHeader;
 
 public class OutgoingResponseBuilder {
 
@@ -78,7 +78,7 @@ public class OutgoingResponseBuilder {
         if (headers == null) {
             headers = new ArrayList<>();
         }
-        headers.add(new SpewHeader(name, value));
+        headers.add(SpewHeader.of(name, value));
 
         return this;
     }

@@ -21,9 +21,9 @@ import java.net.URL;
 
 import uk.co.magictractor.spew.api.OutgoingHttpRequest;
 import uk.co.magictractor.spew.api.SpewConnectionConfiguration;
-import uk.co.magictractor.spew.api.SpewHeader;
 import uk.co.magictractor.spew.api.SpewHttpResponse;
 import uk.co.magictractor.spew.api.connection.AbstractSpewConnection;
+import uk.co.magictractor.spew.core.http.header.SpewHeader;
 import uk.co.magictractor.spew.util.ExceptionUtil;
 
 /**

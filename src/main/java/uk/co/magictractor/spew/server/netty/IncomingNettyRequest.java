@@ -24,7 +24,7 @@ import com.google.common.base.Splitter;
 
 import io.netty.buffer.ByteBufInputStream;
 import io.netty.handler.codec.http.FullHttpRequest;
-import uk.co.magictractor.spew.api.SpewHeader;
+import uk.co.magictractor.spew.core.http.header.SpewHeader;
 import uk.co.magictractor.spew.core.message.AbstractInputStreamMessage;
 import uk.co.magictractor.spew.server.SpewHttpRequest;
 import uk.co.magictractor.spew.util.HttpMessageUtil;
@@ -83,7 +83,7 @@ public class IncomingNettyRequest extends AbstractInputStreamMessage implements 
             headers = request.headers()
                     .entries()
                     .stream()
-                    .map(e -> new SpewHeader(e.getKey(), e.getValue()))
+                    .map(SpewHeader::of)
                     .collect(Collectors.toList());
         }
         return headers;

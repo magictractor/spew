@@ -31,9 +31,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import uk.co.magictractor.spew.api.ApplicationRequest;
-import uk.co.magictractor.spew.api.HasHttpHeaders;
 import uk.co.magictractor.spew.api.SpewHttpMessage;
 import uk.co.magictractor.spew.core.contenttype.ContentTypeFromResourceName;
+import uk.co.magictractor.spew.core.http.header.HasHttpHeaders;
 import uk.co.magictractor.spew.util.spi.SPIUtil;
 
 /**

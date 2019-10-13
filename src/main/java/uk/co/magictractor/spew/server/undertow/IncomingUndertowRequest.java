@@ -24,7 +24,7 @@ import java.util.Map;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.util.HeaderMap;
 import io.undertow.util.HeaderValues;
-import uk.co.magictractor.spew.api.SpewHeader;
+import uk.co.magictractor.spew.core.http.header.SpewHeader;
 import uk.co.magictractor.spew.core.message.AbstractInputStreamMessage;
 import uk.co.magictractor.spew.server.SpewHttpRequest;
 import uk.co.magictractor.spew.util.HttpMessageUtil;
@@ -75,7 +75,7 @@ public class IncomingUndertowRequest extends AbstractInputStreamMessage implemen
                 HeaderValues undertowHeaderValues = undertowHeaders.fiCurrent(fiCookie);
                 for (int i = 0; i < undertowHeaderValues.size(); i++) {
                     headers.add(
-                        new SpewHeader(undertowHeaderValues.getHeaderName().toString(), undertowHeaderValues.get(i)));
+                        SpewHeader.of(undertowHeaderValues.getHeaderName().toString(), undertowHeaderValues.get(i)));
                 }
                 fiCookie = undertowHeaders.fiNext(fiCookie);
             }

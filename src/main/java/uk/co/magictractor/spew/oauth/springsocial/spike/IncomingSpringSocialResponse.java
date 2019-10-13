@@ -23,8 +23,8 @@ import java.util.Map;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.client.ClientHttpResponse;
 
-import uk.co.magictractor.spew.api.SpewHeader;
 import uk.co.magictractor.spew.api.SpewHttpResponse;
+import uk.co.magictractor.spew.core.http.header.SpewHeader;
 import uk.co.magictractor.spew.core.message.AbstractInputStreamMessage;
 import uk.co.magictractor.spew.util.ExceptionUtil;
 import uk.co.magictractor.spew.util.HttpMessageUtil;
@@ -55,7 +55,7 @@ public class IncomingSpringSocialResponse extends AbstractInputStreamMessage imp
             for (Map.Entry<String, List<String>> springHeaderEntry : springHeaders.entrySet()) {
                 String headerName = springHeaderEntry.getKey();
                 for (String headerValue : springHeaderEntry.getValue()) {
-                    headers.add(new SpewHeader(headerName, headerValue));
+                    headers.add(SpewHeader.of(headerName, headerValue));
                 }
             }
         }

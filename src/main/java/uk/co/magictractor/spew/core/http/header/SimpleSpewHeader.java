@@ -13,17 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.co.magictractor.spew.api;
+package uk.co.magictractor.spew.core.http.header;
 
-import com.google.common.base.MoreObjects;
 import com.google.common.base.Strings;
 
-public class SpewHeader {
+/** Instances are created via SpewHeader.of() */
+/* default */ class SimpleSpewHeader implements SpewHeader {
 
     private final String name;
     private final String value;
 
-    public SpewHeader(String name, String value) {
+    public SimpleSpewHeader(String name, String value) {
         if (Strings.isNullOrEmpty(name)) {
             throw new IllegalArgumentException("name must not be null or empty");
         }
@@ -34,20 +34,19 @@ public class SpewHeader {
         this.value = value;
     }
 
+    @Override
     public String getName() {
         return name;
     }
 
+    @Override
     public String getValue() {
         return value;
     }
 
     @Override
     public String toString() {
-        return MoreObjects.toStringHelper(this)
-                .add("name", name)
-                .add("value", value)
-                .toString();
+        return SpewHeader.toStringHelper(this).toString();
     }
 
 }

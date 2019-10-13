@@ -27,11 +27,11 @@ import java.util.function.Consumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import uk.co.magictractor.spew.api.HasHttpHeaders;
 import uk.co.magictractor.spew.api.SpewApplication;
-import uk.co.magictractor.spew.api.SpewHeader;
 import uk.co.magictractor.spew.api.SpewHttpMessage;
 import uk.co.magictractor.spew.api.SpewHttpResponse;
+import uk.co.magictractor.spew.core.http.header.HasHttpHeaders;
+import uk.co.magictractor.spew.core.http.header.SpewHeader;
 import uk.co.magictractor.spew.util.ContentTypeUtil;
 import uk.co.magictractor.spew.util.ExceptionUtil;
 

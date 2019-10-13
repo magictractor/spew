@@ -15,6 +15,8 @@
  */
 package uk.co.magictractor.spew.api;
 
+import uk.co.magictractor.spew.core.http.header.HasHttpHeaders;
+
 public interface SpewHttpMessage extends HasHttpHeaders, HasHttpBody {
 
     /**

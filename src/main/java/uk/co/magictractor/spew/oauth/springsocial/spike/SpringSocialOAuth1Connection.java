@@ -28,10 +28,10 @@ import org.springframework.web.client.RequestCallback;
 import org.springframework.web.client.RestOperations;
 
 import uk.co.magictractor.spew.api.OutgoingHttpRequest;
-import uk.co.magictractor.spew.api.SpewHeader;
 import uk.co.magictractor.spew.api.SpewHttpResponse;
 import uk.co.magictractor.spew.api.SpewOAuth1Configuration;
 import uk.co.magictractor.spew.api.connection.AbstractSpewConnection;
+import uk.co.magictractor.spew.core.http.header.SpewHeader;
 import uk.co.magictractor.spew.util.ExceptionUtil;
 
 // https://docs.spring.io/spring-social/docs/current-SNAPSHOT/reference/htmlsingle/

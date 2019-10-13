@@ -22,8 +22,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import uk.co.magictractor.spew.api.SpewHeader;
 import uk.co.magictractor.spew.api.SpewHttpResponse;
+import uk.co.magictractor.spew.core.http.header.SpewHeader;
 import uk.co.magictractor.spew.core.message.AbstractInputStreamMessage;
 import uk.co.magictractor.spew.util.ExceptionUtil;
 import uk.co.magictractor.spew.util.HttpMessageUtil;
@@ -73,7 +73,7 @@ public class IncomingHttpUrlConnectionResponse extends AbstractInputStreamMessag
                     continue;
                 }
                 for (String headerValue : httpUrlHeaderEntry.getValue()) {
-                    headers.add(new SpewHeader(headerName, headerValue));
+                    headers.add(SpewHeader.of(headerName, headerValue));
                 }
             }
         }

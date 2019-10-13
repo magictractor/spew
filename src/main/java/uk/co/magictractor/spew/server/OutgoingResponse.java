@@ -25,9 +25,9 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import uk.co.magictractor.spew.api.HasHttpHeaders;
-import uk.co.magictractor.spew.api.SpewHeader;
 import uk.co.magictractor.spew.api.SpewHttpResponse;
+import uk.co.magictractor.spew.core.http.header.HasHttpHeaders;
+import uk.co.magictractor.spew.core.http.header.SpewHeader;
 import uk.co.magictractor.spew.core.message.AbstractByteArrayMessage;
 import uk.co.magictractor.spew.util.HttpMessageUtil;
 
@@ -72,7 +72,7 @@ public abstract class OutgoingResponse extends AbstractByteArrayMessage implemen
     }
 
     protected void addHeader(String name, String value) {
-        headers.add(new SpewHeader(name, value));
+        headers.add(SpewHeader.of(name, value));
     }
 
     protected void addHeader(String name, Instant value) {

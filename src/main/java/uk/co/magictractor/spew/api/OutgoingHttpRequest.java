@@ -22,6 +22,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import uk.co.magictractor.spew.core.http.header.HasHttpHeaders;
+import uk.co.magictractor.spew.core.http.header.SpewHeader;
 import uk.co.magictractor.spew.server.SpewHttpRequest;
 import uk.co.magictractor.spew.util.HttpMessageUtil;
 
@@ -96,9 +98,8 @@ public final class OutgoingHttpRequest implements SpewHttpRequest {
         setQueryStringParam(key, Long.toString(value));
     }
 
-    public void addHeader(String name, String value) {
-        ensureNotSent();
-        headers.add(new SpewHeader(name, value));
+    public void setHeader(String name, String value) {
+        HasHttpHeaders.setHeader(headers, name, value);
     }
 
     public void setBody(byte[] body) {

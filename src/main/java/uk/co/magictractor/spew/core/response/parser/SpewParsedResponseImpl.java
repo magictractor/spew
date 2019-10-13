@@ -17,8 +17,8 @@ package uk.co.magictractor.spew.core.response.parser;
 
 import java.util.List;
 
-import uk.co.magictractor.spew.api.SpewHeader;
 import uk.co.magictractor.spew.api.SpewHttpResponse;
+import uk.co.magictractor.spew.core.http.header.SpewHeader;
 import uk.co.magictractor.spew.util.HttpMessageUtil;
 
 /**

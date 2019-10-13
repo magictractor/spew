@@ -76,7 +76,7 @@ public class BoaOAuth2Connection extends AbstractAuthorizationDecoratorConnectio
 
     @Override
     protected void addAuthorization(OutgoingHttpRequest request) {
-        request.addHeader(AUTHORIZATION, "Bearer " + accessToken.getValue());
+        request.setHeader(AUTHORIZATION, "Bearer " + accessToken.getValue());
     }
 
     @Override
@@ -113,7 +113,7 @@ public class BoaOAuth2Connection extends AbstractAuthorizationDecoratorConnectio
             application.getServiceProvider().getAuthorizationUri());
 
         // GitHub returns application/x-www-form-urlencoded content type by default
-        request.addHeader(ACCEPT, ContentTypeUtil.JSON_MIME_TYPES.get(0));
+        request.setHeader(ACCEPT, ContentTypeUtil.JSON_MIME_TYPES.get(0));
 
         // Mucky. The callback value comes from the handler but is also used in the verification function.
         //AuthorizationHandler[] authHandlerHolder = new AuthorizationHandler[1];
@@ -179,7 +179,7 @@ public class BoaOAuth2Connection extends AbstractAuthorizationDecoratorConnectio
         OutgoingHttpRequest request = new OutgoingHttpRequest("POST", application.getServiceProvider().getTokenUri());
 
         // GitHub returns application/x-www-form-urlencoded content type by default
-        request.addHeader(ACCEPT, ContentTypeUtil.JSON_MIME_TYPES.get(0));
+        request.setHeader(ACCEPT, ContentTypeUtil.JSON_MIME_TYPES.get(0));
 
         HashMap<String, String> bodyData = new HashMap<>();
         bodyData.put("code", code);
@@ -268,7 +268,7 @@ public class BoaOAuth2Connection extends AbstractAuthorizationDecoratorConnectio
     //      }
 
     private SpewParsedResponse authRequest(OutgoingHttpRequest request, HashMap<String, String> bodyData) {
-        request.addHeader(CONTENT_TYPE, ContentTypeUtil.FORM_MIME_TYPE);
+        request.setHeader(CONTENT_TYPE, ContentTypeUtil.FORM_MIME_TYPE);
 
         String body = Joiner.on('&').withKeyValueSeparator('=').join(bodyData);
         request.setBody(body.getBytes(StandardCharsets.UTF_8));

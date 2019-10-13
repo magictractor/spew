@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.co.magictractor.spew.api;
+package uk.co.magictractor.spew.core.http.header;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,15 +25,14 @@ import java.util.stream.Collectors;
 public interface HasHttpHeaders {
 
     /**
-     * TODO! update this comment - the code here deals with this
      * <p>
      * Note that header names should be case insensitive, but with some third
-     * party libraries header names are case sensitive, in which case the
-     * SpewResponse wrapper should work around the case sensitivity.
+     * party libraries header names are case sensitive. The default getter
+     * methods provided by this interface are case insentitive. If these methods
+     * are overridden, care to be taken to ensure that case insensitivity is
+     * preserved.
      * </p>
      *
-     * @param headerName case insensitive header name
-     * @return
      * @see https://stackoverflow.com/questions/5258977/are-http-headers-case-sensitive
      */
     List<SpewHeader> getHeaders();
@@ -85,7 +84,7 @@ public interface HasHttpHeaders {
             }
         }
 
-        SpewHeader header = new SpewHeader(headerName, headerValue);
+        SpewHeader header = SpewHeader.of(headerName, headerValue);
         if (existingIndex == -1) {
             headers.add(header);
         }

@@ -22,8 +22,8 @@ import java.util.Map;
 import io.netty.buffer.ByteBufInputStream;
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpHeaders;
-import uk.co.magictractor.spew.api.SpewHeader;
 import uk.co.magictractor.spew.api.SpewHttpResponse;
+import uk.co.magictractor.spew.core.http.header.SpewHeader;
 import uk.co.magictractor.spew.core.message.AbstractInputStreamMessage;
 import uk.co.magictractor.spew.util.HttpMessageUtil;
 
@@ -49,7 +49,7 @@ public class IncomingNettyResponse extends AbstractInputStreamMessage implements
             HttpHeaders nettyHeaders = nettyResponse.headers();
             headers = new ArrayList<>(nettyHeaders.size());
             for (Map.Entry<String, String> headerEntry : nettyHeaders.entries()) {
-                headers.add(new SpewHeader(headerEntry.getKey(), headerEntry.getValue()));
+                headers.add(SpewHeader.of(headerEntry));
             }
         }
         return headers;

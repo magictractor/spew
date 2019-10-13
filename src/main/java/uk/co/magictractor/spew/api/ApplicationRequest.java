@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import uk.co.magictractor.spew.core.http.header.HasHttpHeaders;
+import uk.co.magictractor.spew.core.http.header.SpewHeader;
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponseBuilder;
 import uk.co.magictractor.spew.core.response.parser.jayway.JaywayConfigurationCache;
@@ -125,7 +127,7 @@ public final class ApplicationRequest {
     }
 
     public void addHeader(String headerName, String headerValue) {
-        headers.add(new SpewHeader(headerName, headerValue));
+        headers.add(SpewHeader.of(headerName, headerValue));
     }
 
     public void addHeader(String headerName, long headerValue) {

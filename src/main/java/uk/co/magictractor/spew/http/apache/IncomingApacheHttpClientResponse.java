@@ -21,8 +21,8 @@ import java.util.List;
 import org.apache.http.Header;
 import org.apache.http.client.methods.CloseableHttpResponse;
 
-import uk.co.magictractor.spew.api.SpewHeader;
 import uk.co.magictractor.spew.api.SpewHttpResponse;
+import uk.co.magictractor.spew.core.http.header.SpewHeader;
 import uk.co.magictractor.spew.core.message.AbstractInputStreamMessage;
 import uk.co.magictractor.spew.util.HttpMessageUtil;
 
@@ -47,7 +47,7 @@ public class IncomingApacheHttpClientResponse extends AbstractInputStreamMessage
             Header[] apacheHeaders = response.getAllHeaders();
             headers = new ArrayList<>(apacheHeaders.length);
             for (Header apacheHeader : apacheHeaders) {
-                headers.add(new SpewHeader(apacheHeader.getName(), apacheHeader.getValue()));
+                headers.add(new ApacheHeader(apacheHeader));
             }
         }
         return headers;
