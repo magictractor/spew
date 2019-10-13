@@ -8,7 +8,7 @@ import uk.co.magictractor.spew.example.twitter.MyTwitterApp;
 import uk.co.magictractor.spew.example.twitter.pojo.Tweet;
 
 // https://developer.twitter.com/en/docs/tweets/timelines/api-reference/get-statuses-user_timeline.html
-public class UserTimelineIterator<E> extends TwitterTimelineIterator<E> {
+public class TwitterUserTimelineIterator<E> extends TwitterTimelineIterator<E> {
 
     // If non-null fetch tweets for user with this screen name, otherwise tweets are fetched for the authenticated user.
     private String screenName;
@@ -35,10 +35,10 @@ public class UserTimelineIterator<E> extends TwitterTimelineIterator<E> {
     }
 
     public static class UserTimelineIteratorBuilder<E>
-            extends TwitterTimelineIteratorBuilder<E, UserTimelineIterator<E>, UserTimelineIteratorBuilder<E>> {
+            extends TwitterTimelineIteratorBuilder<E, TwitterUserTimelineIterator<E>, UserTimelineIteratorBuilder<E>> {
 
         public UserTimelineIteratorBuilder(SpewApplication<?> application, Class<E> elementType) {
-            super(application, elementType, new UserTimelineIterator<>());
+            super(application, elementType, new TwitterUserTimelineIterator<>());
         }
 
         public UserTimelineIteratorBuilder<E> withScreenName(String screenName) {

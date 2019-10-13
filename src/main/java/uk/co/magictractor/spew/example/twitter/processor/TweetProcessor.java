@@ -18,7 +18,7 @@ import uk.co.magictractor.spew.photo.TagType;
 import uk.co.magictractor.spew.processor.ProcessorChain;
 import uk.co.magictractor.spew.processor.SimpleProcessor;
 import uk.co.magictractor.spew.processor.SimpleProcessorContext;
-import uk.co.magictractor.spew.provider.twitter.UserTimelineIterator.UserTimelineIteratorBuilder;
+import uk.co.magictractor.spew.provider.twitter.TwitterUserTimelineIterator.UserTimelineIteratorBuilder;
 
 public class TweetProcessor implements SimpleProcessor<Tweet> {
 
