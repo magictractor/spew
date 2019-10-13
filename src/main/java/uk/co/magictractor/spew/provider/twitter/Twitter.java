@@ -1,11 +1,12 @@
 package uk.co.magictractor.spew.provider.twitter;
 
 import uk.co.magictractor.spew.api.SpewOAuth1ServiceProvider;
+import uk.co.magictractor.spew.api.SpewOAuth2ServiceProvider;
 
 // manage apps at apps.twitter.com
 // Twitter can be accessed via OAuth1 or OAuth2 - names TwitterOAuth1 and TwitterOAuth2?
 // Twitter has strict rate limiting https://developer.twitter.com/en/docs/basics/rate-limiting
-public class Twitter implements SpewOAuth1ServiceProvider {
+public class Twitter implements SpewOAuth1ServiceProvider, SpewOAuth2ServiceProvider {
 
     /**
      * Twitter services typically have a default page size of 20 and a maximum
@@ -38,6 +39,18 @@ public class Twitter implements SpewOAuth1ServiceProvider {
     @Override
     public String oauth1RequestSignatureMethod() {
         return "HMAC-SHA1";
+    }
+
+    // https://developer.twitter.com/en/docs/basics/authentication/api-reference/token
+    @Override
+    public String oauth2TokenUri() {
+        return "https://api.twitter.com/oauth2/token";
+    }
+
+    @Override
+    public String oauth2AuthorizationUri() {
+        throw new UnsupportedOperationException(
+            "Twitter OAuth2 only supports grant_type=client_credentials, so this method should never be called");
     }
 
     @Override

@@ -10,7 +10,7 @@ public interface SpewOAuth2Application<SP extends SpewOAuth2ServiceProvider>
 
     default SpewOAuth2Configuration getConfiguration() {
         return getServiceProvider()
-                .getConfigurationBuilder()
+                .oauth2ConfigurationBuilder()
                 .withApplication(this)
                 .build();
     }

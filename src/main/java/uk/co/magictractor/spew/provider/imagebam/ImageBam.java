@@ -38,7 +38,7 @@ public class ImageBam implements SpewOAuth1ServiceProvider {
     }
 
     @Override
-    public SpewOAuth1ConfigurationBuilder getConfigurationBuilder() {
+    public SpewOAuth1ConfigurationBuilder oauth1ConfigurationBuilder() {
         SpewOAuth1ConfigurationBuilder builder = new SpewOAuth1ConfigurationBuilder();
         Supplier<SpewOAuth1Configuration> configurationSupplier = builder.nextBuild();
         return builder

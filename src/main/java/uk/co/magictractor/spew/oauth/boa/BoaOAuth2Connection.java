@@ -176,7 +176,8 @@ public class BoaOAuth2Connection extends AbstractAuthorizationDecoratorConnectio
         String redirectUri = application.createAuthorizationHandler(application).getRedirectUri();
 
         // ah! needed to be POST else 404 (Google)
-        OutgoingHttpRequest request = new OutgoingHttpRequest("POST", application.getServiceProvider().oauth2TokenUri());
+        OutgoingHttpRequest request = new OutgoingHttpRequest("POST",
+            application.getServiceProvider().oauth2TokenUri());
 
         // GitHub returns application/x-www-form-urlencoded content type by default
         request.setHeader(ACCEPT, ContentTypeUtil.JSON_MIME_TYPES.get(0));
@@ -185,6 +186,8 @@ public class BoaOAuth2Connection extends AbstractAuthorizationDecoratorConnectio
         bodyData.put("code", code);
         bodyData.put("client_id", application.getClientId());
         bodyData.put("client_secret", application.getClientSecret());
+        // Hmm. Twitter only supports "client_credentials".
+        // https://developer.twitter.com/en/docs/basics/authentication/api-reference/token
         bodyData.put("grant_type", "authorization_code");
         bodyData.put("redirect_uri", redirectUri);
 
@@ -207,7 +210,8 @@ public class BoaOAuth2Connection extends AbstractAuthorizationDecoratorConnectio
     // TODO! handle invalid/expired refresh tokens
     // https://developers.google.com/identity/protocols/OAuth2InstalledApp#offline
     private SpewParsedResponse fetchRefreshedAccessToken() {
-        OutgoingHttpRequest request = new OutgoingHttpRequest("POST", application.getServiceProvider().oauth2TokenUri());
+        OutgoingHttpRequest request = new OutgoingHttpRequest("POST",
+            application.getServiceProvider().oauth2TokenUri());
 
         HashMap<String, String> bodyData = new LinkedHashMap<>();
         bodyData.put("refresh_token", refreshToken.getValue());
