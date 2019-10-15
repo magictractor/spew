@@ -33,8 +33,8 @@ owl
   long-eared owl
 pochard
 redshank
-redwing
-robin
+redwing = Turdus iliacus
+robin = Erithacus rubecula
 shag
 siskin = Spinus spinus
 sparrowhawk = Accipiter nisus
@@ -47,15 +47,15 @@ teal
 thrush
   mistle thrush = Turdus viscivorus
   song thrush = Turdus philomelos
-treecreeper
+treecreeper = Certhia familiaris
 tufted duck
 wagtail
   grey wagtail = Motacilla cinerea
   pied wagtail = Motacilla alba
-water rail
+water rail = Rallus aquaticus
 warbler
   chiffchaff = Phylloscopus collybita
-waxwing
+waxwing = Bombycilla garrulus
 wheatear = Oenanthe oenanthe
 woodpecker
   great spotted woodpecker = Dendrocopos major
