@@ -40,14 +40,25 @@ public class JnaWindowsRegistryProperty extends AbstractEditableProperty {
 
     @Override
     public void persistValue(String key, String value) {
-        // keyPathExists may be null here, since fetching one of a set of keys may be sufficient
+        // valueExists may be null here, since fetching one of a set of keys may be sufficient
         // to determine that values are missing, e.g. OAuth secret and token only requires checking
         // whether one of them exists
         if (!Boolean.TRUE.equals(valueExists)) {
-            Advapi32Util.registryCreateKey(WinReg.HKEY_CURRENT_USER, keyPath, key);
+            // Ensure the path exists, otherwise an error will result when setting the value.
+            boolean created = Advapi32Util.registryCreateKey(WinReg.HKEY_CURRENT_USER, keyPath);
+            if (getLogger().isDebugEnabled()) {
+                if (created) {
+                    getLogger().debug("Created user path in Windows registry: {}", keyPath);
+                }
+                else {
+                    getLogger().trace("User path in Windows registry already existed: {}", keyPath);
+                }
+            }
             valueExists = true;
         }
+
         Advapi32Util.registrySetStringValue(WinReg.HKEY_CURRENT_USER, keyPath, key, value);
+        getLogger().debug("Set user value in Windows registry: path={}, name={}, value={}", keyPath, key, value);
     }
 
     // And support remove? Ideally remove path if removing last node too...
