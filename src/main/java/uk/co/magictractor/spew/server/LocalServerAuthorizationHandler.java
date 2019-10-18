@@ -16,36 +16,33 @@
 package uk.co.magictractor.spew.server;
 
 import uk.co.magictractor.spew.api.HasCallbackServer;
-import uk.co.magictractor.spew.api.SpewApplication;
+import uk.co.magictractor.spew.api.SpewVerifiedAuthConnectionConfiguration;
 import uk.co.magictractor.spew.core.verification.AuthorizationHandler;
 import uk.co.magictractor.spew.util.spi.SPIUtil;
 
 /**
  *
  */
-public class LocalServerAuthorizationHandler implements AuthorizationHandler {
+public class LocalServerAuthorizationHandler implements AuthorizationHandler, HasCallbackServer {
 
-    private final HasCallbackServer applicationWithCallbackServer;
+    private final HasCallbackServer callbackServerConfig;
     // TODO! server could be static, maybe not here, and could serve other applications/pages while running?
     private CallbackServer server;
 
-    public LocalServerAuthorizationHandler(SpewApplication<?> application) {
-        if (!HasCallbackServer.class.isInstance(application)) {
-            throw new IllegalArgumentException(
-                "Application should implement HasCallbackServer if it can have authorization callbacks");
-        }
-        this.applicationWithCallbackServer = (HasCallbackServer) application;
+    public LocalServerAuthorizationHandler(SpewVerifiedAuthConnectionConfiguration connectionConfiguration) {
+        this.callbackServerConfig = new HasCallbackServer() {
+        };
     }
 
     @Override
     public void preOpenAuthorizationInBrowser() {
         server = SPIUtil.firstAvailable(CallbackServer.class);
-        server.run(applicationWithCallbackServer.getServerRequestHandlers(), applicationWithCallbackServer.port());
+        server.run(callbackServerConfig.getServerRequestHandlers(), callbackServerConfig.port());
     }
 
     @Override
     public String getRedirectUri() {
-        return applicationWithCallbackServer.uri();
+        return callbackServerConfig.uri();
     }
 
     @Override

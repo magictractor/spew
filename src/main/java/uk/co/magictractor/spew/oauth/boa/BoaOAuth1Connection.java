@@ -31,7 +31,7 @@ public final class BoaOAuth1Connection extends AbstractAuthorizationDecoratorCon
     private final EditableProperty userToken;
     private final EditableProperty userSecret;
 
-    // TO BE REMOVED
+    @Deprecated(forRemoval = true)
     private final SpewOAuth1Application<?> application;
 
     /**
@@ -74,7 +74,7 @@ public final class BoaOAuth1Connection extends AbstractAuthorizationDecoratorCon
 
     @Override
     public void obtainAuthorization() {
-        AuthorizationHandler authorizationHandler = application.createAuthorizationHandler(application);
+        AuthorizationHandler authorizationHandler = application.createAuthorizationHandler(getConfiguration());
         authorizationHandler.preOpenAuthorizationInBrowser();
 
         openAuthorizationUriInBrowser(authorizationHandler.getRedirectUri());

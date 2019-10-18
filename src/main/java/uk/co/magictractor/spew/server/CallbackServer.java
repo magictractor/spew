@@ -20,6 +20,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import uk.co.magictractor.spew.api.HasCallbackServer;
 import uk.co.magictractor.spew.api.SpewHttpResponse;
 import uk.co.magictractor.spew.example.flickr.MyFlickrApp;
 import uk.co.magictractor.spew.example.google.MyGooglePhotosApp;
@@ -73,7 +74,10 @@ public interface CallbackServer {
         MyFlickrApp application = MyFlickrApp.get();
 
         CallbackServer server = SPIUtil.firstAvailable(CallbackServer.class);
-        server.run(application.getServerRequestHandlers(), application.port());
+        // Yuck! do something better
+        HasCallbackServer callbackServerConfig = new HasCallbackServer() {
+        };
+        server.run(callbackServerConfig.getServerRequestHandlers(), callbackServerConfig.port());
 
         Logger logger = LoggerFactory.getLogger(server.getClass());
         logger.info("Server started");

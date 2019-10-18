@@ -5,10 +5,10 @@ import java.util.function.Supplier;
 import com.google.common.io.BaseEncoding;
 
 import uk.co.magictractor.spew.api.OutgoingHttpRequest;
-import uk.co.magictractor.spew.api.SpewApplication;
 import uk.co.magictractor.spew.api.SpewOAuth1Configuration;
 import uk.co.magictractor.spew.api.SpewOAuth1ConfigurationBuilder;
 import uk.co.magictractor.spew.api.SpewOAuth1ServiceProvider;
+import uk.co.magictractor.spew.api.SpewVerifiedAuthConnectionConfiguration;
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponseBuilder;
 import uk.co.magictractor.spew.core.verification.AuthorizationHandler;
 import uk.co.magictractor.spew.core.verification.PasteVerificationCodeHandler;
@@ -108,9 +108,10 @@ public class ImageBam implements SpewOAuth1ServiceProvider {
     //    }
 
     @Override
-    public AuthorizationHandler createDefaultAuthorizationHandler(SpewApplication<?> application) {
+    public AuthorizationHandler createDefaultAuthorizationHandler(
+            SpewVerifiedAuthConnectionConfiguration connectionConfiguration) {
         // ImageBam does not do callbacks, it always displays a code to copy into the application.
-        return new PasteVerificationCodeHandler(application);
+        return new PasteVerificationCodeHandler(connectionConfiguration);
     }
 
     // Cannot edit application details, only add client.

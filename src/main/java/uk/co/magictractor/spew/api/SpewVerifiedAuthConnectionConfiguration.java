@@ -15,13 +15,16 @@
  */
 package uk.co.magictractor.spew.api;
 
-public interface SpewOAuth2Configuration extends SpewVerifiedAuthConnectionConfiguration {
+/**
+ *
+ */
+public interface SpewVerifiedAuthConnectionConfiguration extends SpewConnectionConfiguration {
 
-    @Override
-    default String getOutOfBandUri() {
-        // out-of-band isn't in the spec, but is supported by Google and other
-        // https://mailarchive.ietf.org/arch/msg/oauth/OCeJLZCEtNb170Xy-C3uTVDIYjM
-        return "urn:ietf:wg:oauth:2.0:oob";
-    }
+    /**
+     * The out-of-band URI (sometimes referred to as "oob") is a special value
+     * used in the redirect_url to tell the server to display a verification
+     * code rather than perform a callback.
+     */
+    String getOutOfBandUri();
 
 }

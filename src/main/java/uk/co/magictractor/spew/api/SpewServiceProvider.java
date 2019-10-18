@@ -69,9 +69,10 @@ public interface SpewServiceProvider {
     default void buildParsedResponse(SpewParsedResponseBuilder parsedResponseBuilder) {
     }
 
-    default AuthorizationHandler createDefaultAuthorizationHandler(SpewApplication<?> application) {
-        return new LocalServerAuthorizationHandler(application);
-        //return new PasteVerificationCodeHandler(application);
+    default AuthorizationHandler createDefaultAuthorizationHandler(
+            SpewVerifiedAuthConnectionConfiguration connectionConfiguration) {
+        return new LocalServerAuthorizationHandler(connectionConfiguration);
+        //return new PasteVerificationCodeHandler(connectionConfiguration);
     }
 
     default String appManagementUrl() {

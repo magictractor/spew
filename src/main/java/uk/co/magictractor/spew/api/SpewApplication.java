@@ -67,19 +67,10 @@ public interface SpewApplication<SP extends SpewServiceProvider> extends HasProp
         return createRequest("DEL", url);
     }
 
-    default AuthorizationHandler createAuthorizationHandler(SpewApplication<?> application) {
-        // ...aah this creates a new instance, but they can be stateful (redirect_uri built from local server config)
-        return getServiceProvider().createDefaultAuthorizationHandler(application);
+    default AuthorizationHandler createAuthorizationHandler(
+            SpewVerifiedAuthConnectionConfiguration connectionConfiguration) {
+        return getServiceProvider().createDefaultAuthorizationHandler(connectionConfiguration);
     }
-
-    /**
-     * The out-of-band URI (sometimes referred to as "oob") is a special value
-     * used in the redirect_url to tell the server to display a verification
-     * code rather than perform a callback.
-     */
-    // hmm, move this? not right for basic auth / no auth - maybe subinterface for verified apps?
-    // not used by BoaOAuth2??
-    String getOutOfBandUri();
 
     @Override
     default void addProperties(Map<String, Object> properties) {

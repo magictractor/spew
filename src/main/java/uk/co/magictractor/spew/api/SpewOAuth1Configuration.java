@@ -25,7 +25,7 @@ import uk.co.magictractor.spew.store.EditableProperty;
  */
 // TODO! move the annotation here?
 // @SpewAuthType("OAuth1")
-public interface SpewOAuth1Configuration extends SpewConnectionConfiguration {
+public interface SpewOAuth1Configuration extends SpewVerifiedAuthConnectionConfiguration {
 
     String getConsumerKey();
 
@@ -48,5 +48,10 @@ public interface SpewOAuth1Configuration extends SpewConnectionConfiguration {
     EditableProperty getUserTokenProperty();
 
     EditableProperty getUserSecretProperty();
+
+    @Override
+    default String getOutOfBandUri() {
+        return "oob";
+    }
 
 }

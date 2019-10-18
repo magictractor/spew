@@ -5,8 +5,7 @@ import uk.co.magictractor.spew.util.spi.SPIUtil;
 
 // OAuth2 specification https://tools.ietf.org/html/rfc6749
 @SpewAuthType("OAuth2")
-public interface SpewOAuth2Application<SP extends SpewOAuth2ServiceProvider>
-        extends SpewApplication<SP>, HasCallbackServer {
+public interface SpewOAuth2Application<SP extends SpewOAuth2ServiceProvider> extends SpewApplication<SP> {
 
     default SpewOAuth2Configuration getConfiguration() {
         return getServiceProvider()
@@ -50,13 +49,6 @@ public interface SpewOAuth2Application<SP extends SpewOAuth2ServiceProvider>
     // https://tools.ietf.org/html/rfc6749#section-3.3
     default String getScope() {
         return null;
-    }
-
-    @Override
-    default String getOutOfBandUri() {
-        // out-of-band isn't in the spec, but is supported by Google and other
-        // https://mailarchive.ietf.org/arch/msg/oauth/OCeJLZCEtNb170Xy-C3uTVDIYjM
-        return "urn:ietf:wg:oauth:2.0:oob";
     }
 
 }

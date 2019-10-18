@@ -18,6 +18,7 @@ package uk.co.magictractor.spew.example.dropbox;
 import uk.co.magictractor.spew.api.SpewApplication;
 import uk.co.magictractor.spew.api.SpewApplicationCache;
 import uk.co.magictractor.spew.api.SpewOAuth2Application;
+import uk.co.magictractor.spew.api.SpewVerifiedAuthConnectionConfiguration;
 import uk.co.magictractor.spew.core.verification.AuthorizationHandler;
 import uk.co.magictractor.spew.provider.dropbox.Dropbox;
 import uk.co.magictractor.spew.server.LocalServerAuthorizationHandler;
@@ -34,9 +35,10 @@ public class MyDropboxApp implements SpewOAuth2Application<Dropbox> {
     }
 
     @Override
-    public AuthorizationHandler createAuthorizationHandler(SpewApplication<?> application) {
+    public AuthorizationHandler createAuthorizationHandler(
+            SpewVerifiedAuthConnectionConfiguration connectionConfiguration) {
         //return new PasteVerificationCodeHandler();
-        return new LocalServerAuthorizationHandler(application);
+        return new LocalServerAuthorizationHandler(connectionConfiguration);
     }
 
     @Override
