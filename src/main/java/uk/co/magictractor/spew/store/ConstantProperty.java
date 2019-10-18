@@ -18,15 +18,22 @@ package uk.co.magictractor.spew.store;
 /**
  *
  */
-public interface EditableProperty {
+public class ConstantProperty implements EditableProperty {
 
-    String getValue();
+    private final String value;
 
-    default String getValue(String defaultValue) {
-        String value = getValue();
-        return value != null ? value : defaultValue;
+    public ConstantProperty(String value) {
+        this.value = value;
     }
 
-    void setValue(String value);
+    @Override
+    public String getValue() {
+        return value;
+    }
+
+    @Override
+    public void setValue(String value) {
+        throw new UnsupportedOperationException("setValue() is not supported");
+    }
 
 }

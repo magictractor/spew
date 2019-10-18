@@ -43,13 +43,6 @@ public abstract class AbstractEditableProperty implements EditableProperty {
         this.value = Optional.ofNullable(value);
     }
 
-    /** Used for temporary token and secret with OAuth1. */
-    // TODO! pass params within BoaOAuth1 rather than using this??
-    @Override
-    public final void setUnpersistedValue(String value) {
-        this.value = Optional.ofNullable(value);
-    }
-
     public abstract String fetchValue(String key, String def);
 
     public abstract void persistValue(String key, String value);

@@ -16,6 +16,7 @@ import uk.co.magictractor.spew.core.response.parser.text.KeyValuePairsHttpMessag
 import uk.co.magictractor.spew.core.verification.AuthorizationHandler;
 import uk.co.magictractor.spew.server.SpewHttpRequest;
 import uk.co.magictractor.spew.store.EditableProperty;
+import uk.co.magictractor.spew.store.ConstantProperty;
 import uk.co.magictractor.spew.util.BrowserUtil;
 
 // TODO! common interface for OAuth1 and OAuth2 connections (and no auth? / other auth?)
@@ -25,11 +26,12 @@ public final class BoaOAuth1Connection extends AbstractAuthorizationDecoratorCon
     private final Random nonceGenerator = new Random();
 
     /**
-     * Temporary tokens and secrets are held in memory and not persisted.
+     * These are generally the persisted properties from
+     * SpewOAuth1Configuration, but are replaced with transient unpersisted
+     * properties during verification.
      */
-    // TODO! just use config.userXxx() directly?
-    private final EditableProperty userToken;
-    private final EditableProperty userSecret;
+    private EditableProperty userToken;
+    private EditableProperty userSecret;
 
     @Deprecated(forRemoval = true)
     private final SpewOAuth1Application<?> application;
@@ -99,10 +101,19 @@ public final class BoaOAuth1Connection extends AbstractAuthorizationDecoratorCon
             throw new IllegalStateException("missing oauth_token and/or oauth_token_secret values in " + response);
         }
 
-        // These are temporary values, only used to get the user's token and secret, so
-        // don't persist them.
-        userToken.setUnpersistedValue(authToken);
-        userSecret.setUnpersistedValue(authSecret);
+        /**
+         * <p>
+         * The auth token and secret used for the validation step are used once
+         * only until verification is complete. They are reset to persisted
+         * properties when a new user token and secret is obtained from
+         * successful verification.
+         * </p>
+         * <p>
+         * Alternatively, could persist these values with an immediate expiry.
+         * <p>
+         */
+        userToken = new ConstantProperty(authToken);
+        userSecret = new ConstantProperty(authSecret);
 
         // TODO! use OutgoingHttpRequest to build the Uri
         String authUriBase = getConfiguration().getResourceOwnerAuthorizationUri();
@@ -167,6 +178,10 @@ public final class BoaOAuth1Connection extends AbstractAuthorizationDecoratorCon
         if (!verified) {
             return false;
         }
+
+        // Reinstate the persisted properties.
+        userToken = getConfiguration().getUserTokenProperty();
+        userSecret = getConfiguration().getUserSecretProperty();
 
         String newAuthToken = response.getString("oauth_token");
         String authSecret = response.getString("oauth_token_secret");
