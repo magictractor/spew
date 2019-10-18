@@ -13,20 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.co.magictractor.spew.util.spi;
+package uk.co.magictractor.spew.store.user;
 
-import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.Test;
+import uk.co.magictractor.spew.store.PreferencesProperty;
 
-import uk.co.magictractor.spew.store.application.ApplicationPropertyStore;
+/**
+ * User property store based on java.util.prefs.Preferences.
+ */
+public class PreferencesUserPropertyStore extends AbstractUserPropertyStore<PreferencesProperty> {
 
-public class SPIUtilTest {
-
-    @Test
-    public void testFirstAvailable_sameInstance() {
-        ApplicationPropertyStore a = SPIUtil.firstAvailable(ApplicationPropertyStore.class);
-        ApplicationPropertyStore b = SPIUtil.firstAvailable(ApplicationPropertyStore.class);
-        Assertions.assertThat(a).isSameAs(b);
+    public PreferencesUserPropertyStore() {
+        super((app, key) -> new PreferencesProperty(app, key));
     }
 
 }

@@ -52,7 +52,10 @@ dependencies {
     // These may be provided for determining content types
     compileOnly("javax.activation:activation:1.1.1")
     compileOnly("org.apache.tika:tika-core:1.22")
-			
+    
+    // Advapi32Util for JNA based Windows registry access for user store
+    compileOnly("net.java.dev.jna:jna-platform:5.4.0")
+
     // MoreObjects is used for toString() implementations
     // also Iterator concatenation and filtering
     implementation("com.google.guava:guava:27.0.1-jre")

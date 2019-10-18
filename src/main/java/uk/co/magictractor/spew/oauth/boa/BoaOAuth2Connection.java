@@ -30,7 +30,7 @@ import uk.co.magictractor.spew.core.response.parser.SpewParsedResponseBuilder;
 import uk.co.magictractor.spew.core.verification.AuthorizationHandler;
 import uk.co.magictractor.spew.server.SpewHttpRequest;
 import uk.co.magictractor.spew.store.EditableProperty;
-import uk.co.magictractor.spew.store.UserPropertyStore;
+import uk.co.magictractor.spew.store.user.UserPropertyStore;
 import uk.co.magictractor.spew.util.BrowserUtil;
 import uk.co.magictractor.spew.util.ContentTypeUtil;
 import uk.co.magictractor.spew.util.RandomUtil;
@@ -131,7 +131,9 @@ public class BoaOAuth2Connection extends AbstractAuthorizationDecoratorConnectio
         // "pin" for Imgur
         request.setQueryStringParam("response_type", "code");
 
-        request.setQueryStringParam("scope", application.getScope());
+        if (application.getScope() != null) {
+            request.setQueryStringParam("scope", application.getScope());
+        }
 
         // This gets passed back to the verifier
         String state = hashCode() + "-" + RandomUtil.nextBigPositiveLong();
@@ -157,22 +159,6 @@ public class BoaOAuth2Connection extends AbstractAuthorizationDecoratorConnectio
 
     @Override
     public boolean verifyAuthorization(String verificationCode) {
-
-        boolean verified = false;
-        try {
-            fetchAccessAndRefreshToken(verificationCode);
-            verified = true;
-        }
-        catch (Exception e) {
-            // Do nothing. verified is false.
-            System.err.println("verification failed");
-            e.printStackTrace(System.err);
-        }
-
-        return verified;
-    }
-
-    private void fetchAccessAndRefreshToken(String code) {
         String redirectUri = application.createAuthorizationHandler(getConfiguration()).getRedirectUri();
 
         // ah! needed to be POST else 404 (Google)
@@ -183,7 +169,7 @@ public class BoaOAuth2Connection extends AbstractAuthorizationDecoratorConnectio
         request.setHeader(ACCEPT, ContentTypeUtil.JSON_MIME_TYPES.get(0));
 
         HashMap<String, String> bodyData = new HashMap<>();
-        bodyData.put("code", code);
+        bodyData.put("code", verificationCode);
         bodyData.put("client_id", application.getClientId());
         bodyData.put("client_secret", application.getClientSecret());
         // Hmm. Twitter only supports "client_credentials".
@@ -195,6 +181,11 @@ public class BoaOAuth2Connection extends AbstractAuthorizationDecoratorConnectio
 
         SpewParsedResponse response = authRequest(request, bodyData);
 
+        boolean verified = response.getStatus() == 200;
+        if (!verified) {
+            return false;
+        }
+
         // TODO! only get a refresh_token if auth request included access_type=offline
         // add that or not? perhaps make it configurable in application
         String refreshTokenValue = response.getString("refresh_token");
@@ -205,6 +196,8 @@ public class BoaOAuth2Connection extends AbstractAuthorizationDecoratorConnectio
         // accessToken.setValue(response.getString("access_token"));
         // System.err.println("access_token set to " + accessToken.getValue());
         setAccessToken((key) -> response.getString(key));
+
+        return true;
     }
 
     // TODO! handle invalid/expired refresh tokens
@@ -278,7 +271,7 @@ public class BoaOAuth2Connection extends AbstractAuthorizationDecoratorConnectio
         request.setBody(body.getBytes(StandardCharsets.UTF_8));
 
         SpewHttpResponse response = request(request);
-        return new SpewParsedResponseBuilder(application, response).build();
+        return new SpewParsedResponseBuilder(application, response).withoutVerification().build();
     }
 
 }

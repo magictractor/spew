@@ -18,6 +18,7 @@ package uk.co.magictractor.spew.api;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,7 +35,8 @@ public final class OutgoingHttpRequest implements SpewHttpRequest {
 
     private final String httpMethod;
     private final String path;
-    private Map<String, String> queryStringParams = new LinkedHashMap<>();
+    private final Map<String, String> queryStringParams = new LinkedHashMap<>();
+    private Map<String, String> unmodifiableQueryStringParams;
     private List<SpewHeader> headers = new ArrayList<>();
     private byte[] body;
 
@@ -64,11 +66,15 @@ public final class OutgoingHttpRequest implements SpewHttpRequest {
 
     @Override
     public Map<String, String> getQueryStringParams() {
-        return queryStringParams;
+        if (unmodifiableQueryStringParams == null) {
+            unmodifiableQueryStringParams = Collections.unmodifiableMap(queryStringParams);
+        }
+        return unmodifiableQueryStringParams;
     }
 
     @Override
     public List<SpewHeader> getHeaders() {
+        // TODO! unmodifiable?
         return headers;
     }
 
@@ -91,6 +97,9 @@ public final class OutgoingHttpRequest implements SpewHttpRequest {
 
     public void setQueryStringParam(String key, String value) {
         ensureNotSent();
+        if (value == null) {
+            throw new IllegalArgumentException("value must not be null");
+        }
         queryStringParams.put(key, value);
     }
 
@@ -117,7 +126,7 @@ public final class OutgoingHttpRequest implements SpewHttpRequest {
         urlBuilder.append(getPath());
 
         boolean first = true;
-        for (Map.Entry<String, String> entry : getQueryStringParams().entrySet()) {
+        for (Map.Entry<String, String> entry : queryStringParams.entrySet()) {
             if (first) {
                 first = false;
                 urlBuilder.append('?');

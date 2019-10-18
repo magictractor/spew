@@ -1,6 +1,6 @@
 package uk.co.magictractor.spew.api;
 
-import uk.co.magictractor.spew.store.ApplicationPropertyStore;
+import uk.co.magictractor.spew.store.application.ApplicationPropertyStore;
 import uk.co.magictractor.spew.util.spi.SPIUtil;
 
 // OAuth2 specification https://tools.ietf.org/html/rfc6749

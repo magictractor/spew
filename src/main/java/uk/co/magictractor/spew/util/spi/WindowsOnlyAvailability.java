@@ -13,24 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.co.magictractor.spew.store;
-
-import java.util.HashMap;
-import java.util.Map;
-
-import uk.co.magictractor.spew.api.SpewApplication;
+package uk.co.magictractor.spew.util.spi;
 
 /**
- *
+ * <p>
+ * Optional interface which may be implemented by SPI service implementations to
+ * indicate that the service should only be used if running on a Windows
+ * platform.
  */
-public class UserPreferencePropertyStore implements UserPropertyStore {
-
-    private final Map<String, PreferencesProperty> propertyMap = new HashMap<>();
+public interface WindowsOnlyAvailability extends SPIAvailability {
 
     @Override
-    public EditableProperty getProperty(SpewApplication<?> application, String propertyName) {
-        String key = application.getClass().getName() + ":" + propertyName;
-        return propertyMap.computeIfAbsent(key, k -> new PreferencesProperty(application, propertyName));
+    default boolean isAvailable() {
+        // This is how java.util.prefs.Preferences checks for Windows, so likely to be robust.
+        // Would be happy to use a lib for this, but I didn't find it in Guava.
+        return System.getProperty("os.name").startsWith("Windows");
     }
 
 }

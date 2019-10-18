@@ -15,18 +15,24 @@
  */
 package uk.co.magictractor.spew.util.spi;
 
-import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.Test;
+/**
+ * <p>
+ * Optional interface which may be implemented by SPI service implementations
+ * loaded via SPIUtil to indicate that the service should not be used.
+ * </p>
+ * <p>
+ * May be used to restrict a service implementation to Windows or Linux
+ * platforms.
+ * </p>
+ * <p>
+ * SPIUtil additionally catches NoClassDefFoundError to deal with service
+ * implementations which are missing a required dependency, implementing this
+ * interface is not required for that case.
+ * </p>
+ */
+public interface SPIAvailability {
 
-import uk.co.magictractor.spew.store.application.ApplicationPropertyStore;
-
-public class SPIUtilTest {
-
-    @Test
-    public void testFirstAvailable_sameInstance() {
-        ApplicationPropertyStore a = SPIUtil.firstAvailable(ApplicationPropertyStore.class);
-        ApplicationPropertyStore b = SPIUtil.firstAvailable(ApplicationPropertyStore.class);
-        Assertions.assertThat(a).isSameAs(b);
-    }
+    // TODO! return more than a boolean for logging purposes (log reason non-availability)
+    boolean isAvailable();
 
 }

@@ -13,24 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.co.magictractor.spew.store;
+package uk.co.magictractor.spew.store.application;
 
 import uk.co.magictractor.spew.api.SpewApplication;
 
-public interface UserPropertyStore {
+public interface ApplicationPropertyStore {
 
-    /**
-     * <p>
-     * User properties are editable because user access tokens are stored once
-     * access to the application has been verified.
-     * </p>
-     * <p>
-     * An implementation could have a no-op for
-     * {@link EditableProperty#setValue}, which would prevent the access token
-     * being persisted and require the user to authorise access to the
-     * application every time.
-     * </p>
-     */
-    EditableProperty getProperty(SpewApplication<?> application, String propertyName);
+    String getProperty(SpewApplication<?> application, String propertyName);
 
 }

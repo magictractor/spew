@@ -55,6 +55,9 @@ public class KeyValuePairsHttpMessageBodyReader
             // Spitter chokes getting a Map from an empty String.
             return Collections.emptyMap();
         }
+        // TODO! error splitting
+        // oauth_problem=signature_invalid&debug_sbs=GET&https%3A%2F%2Fwww.flickr.com%2Fservices%2Foauth%2Frequest_token&oauth_callback%3Doob%26oauth_consumer_key%3D35e0382168530999e5a5ff2e661a966a%26oauth_nonce%3D-1362419498%26oauth_signature_method%3DHMAC-SHA1%26oauth_timestamp%3D1571404244%26oauth_version%3D1.0
+        // Chunk [https%3A%2F%2Fwww.flickr.com%2Fservices%2Foauth%2Frequest_token] is not a valid entry
         return Splitter.on("&").withKeyValueSeparator("=").split(body);
     }
 

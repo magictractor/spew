@@ -13,12 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.co.magictractor.spew.store;
+package uk.co.magictractor.spew.store.application;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import uk.co.magictractor.spew.api.SpewApplication;
+import uk.co.magictractor.spew.store.ResourceFileProperties;
 
 public class ResourceFileApplicationPropertyStore
         implements ApplicationPropertyStore {

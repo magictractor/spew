@@ -154,17 +154,6 @@ public final class BoaOAuth1Connection extends AbstractAuthorizationDecoratorCon
     }
 
     private boolean verifyAuthorization(String authToken, String verificationCode) {
-        try {
-            fetchToken(authToken, verificationCode);
-            return true;
-        }
-        catch (Exception e) {
-            System.err.println(e);
-            return false;
-        }
-    }
-
-    private void fetchToken(String authToken, String verificationCode) {
         // TODO! POST? - imagebam allows get or post
         OutgoingHttpRequest request = new OutgoingHttpRequest("GET", getConfiguration().getTokenRequestUri());
         request.setQueryStringParam("oauth_token", authToken);
@@ -172,10 +161,19 @@ public final class BoaOAuth1Connection extends AbstractAuthorizationDecoratorCon
 
         SpewParsedResponse response = authRequest(request);
 
+        // Example failure (Flickr)
+        // status=401, body=oauth_problem=verifier_invalid
+        boolean verified = response.getStatus() == 200;
+        if (!verified) {
+            return false;
+        }
+
         String newAuthToken = response.getString("oauth_token");
         String authSecret = response.getString("oauth_token_secret");
         userToken.setValue(newAuthToken);
         userSecret.setValue(authSecret);
+
+        return true;
     }
 
     private String getSignature(OutgoingHttpRequest request) {

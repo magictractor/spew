@@ -44,6 +44,7 @@ import uk.co.magictractor.spew.core.response.parser.xpath.JavaXPathResponseFacto
 import uk.co.magictractor.spew.core.signature.MacSignatureGenerator;
 import uk.co.magictractor.spew.core.signature.MessageDigestSignatureGenerator;
 import uk.co.magictractor.spew.core.signature.SignatureGenerator;
+import uk.co.magictractor.spew.extra.registry.JnaWindowsRegistryUserPropertyStore;
 import uk.co.magictractor.spew.http.apache.SpewApacheHttpClientConnectionFactory;
 import uk.co.magictractor.spew.http.javaurl.SpewHttpUrlConnectionFactory;
 import uk.co.magictractor.spew.oauth.boa.BoaConnectionFactory;
@@ -58,10 +59,10 @@ import uk.co.magictractor.spew.photo.local.dates.LocalDirectoryDatesStrategy;
 import uk.co.magictractor.spew.server.CallbackServer;
 import uk.co.magictractor.spew.server.netty.NettyCallbackServer;
 import uk.co.magictractor.spew.server.undertow.UndertowCallbackServer;
-import uk.co.magictractor.spew.store.ApplicationPropertyStore;
-import uk.co.magictractor.spew.store.ResourceFileApplicationPropertyStore;
-import uk.co.magictractor.spew.store.UserPreferencePropertyStore;
-import uk.co.magictractor.spew.store.UserPropertyStore;
+import uk.co.magictractor.spew.store.application.ApplicationPropertyStore;
+import uk.co.magictractor.spew.store.application.ResourceFileApplicationPropertyStore;
+import uk.co.magictractor.spew.store.user.PreferencesUserPropertyStore;
+import uk.co.magictractor.spew.store.user.UserPropertyStore;
 import uk.co.magictractor.spew.util.ExceptionUtil;
 
 /**
@@ -80,7 +81,8 @@ public final class SPIUtil {
     static {
         addDefault(ApplicationPropertyStore.class, ResourceFileApplicationPropertyStore.class);
 
-        addDefault(UserPropertyStore.class, UserPreferencePropertyStore.class);
+        addDefault(UserPropertyStore.class, JnaWindowsRegistryUserPropertyStore.class);
+        addDefault(UserPropertyStore.class, PreferencesUserPropertyStore.class);
 
         addDefault(SpewConnectionFactory.class, BoaConnectionFactory.class);
         addDefault(SpewConnectionFactory.class, SpringSocialConnectionFactory.class);
@@ -217,9 +219,10 @@ public final class SPIUtil {
     }
 
     private static <T> T newInstance(Class<T> implClass) {
+        T instance;
         try {
             // This unwraps InvocationTargetException;
-            return ExceptionUtil.call(() -> newInstance0(implClass));
+            instance = ExceptionUtil.call(() -> newInstance0(implClass));
         }
         catch (NoClassDefFoundError e) {
             // Some default implementation are optional and only used if a dependency is provided.
@@ -234,6 +237,16 @@ public final class SPIUtil {
                 e);
             return null;
         }
+
+        if (instance instanceof SPIAvailability) {
+            SPIAvailability availability = (SPIAvailability) instance;
+            if (!availability.isAvailable()) {
+                LOGGER.info("{} is not available because {}", implClass.getName(), "TODO");
+                return null;
+            }
+        }
+
+        return instance;
     }
 
     private static <T> T newInstance0(Class<T> implClass) throws ReflectiveOperationException {
