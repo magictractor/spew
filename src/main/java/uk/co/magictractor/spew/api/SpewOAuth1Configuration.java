@@ -49,9 +49,4 @@ public interface SpewOAuth1Configuration extends SpewVerifiedAuthConnectionConfi
 
     EditableProperty getUserSecretProperty();
 
-    @Override
-    default String getOutOfBandUri() {
-        return "oob";
-    }
-
 }

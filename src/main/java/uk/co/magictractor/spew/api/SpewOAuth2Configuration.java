@@ -27,11 +27,4 @@ public interface SpewOAuth2Configuration extends SpewVerifiedAuthConnectionConfi
 
     String getScope();
 
-    @Override
-    default String getOutOfBandUri() {
-        // out-of-band isn't in the spec, but is supported by Google and other
-        // https://mailarchive.ietf.org/arch/msg/oauth/OCeJLZCEtNb170Xy-C3uTVDIYjM
-        return "urn:ietf:wg:oauth:2.0:oob";
-    }
-
 }

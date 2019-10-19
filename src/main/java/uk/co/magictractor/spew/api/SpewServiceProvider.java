@@ -46,6 +46,7 @@ public interface SpewServiceProvider {
     //    return ContentTypeUtil.fromHeader(response);
     //}
 
+    // TODO! no default - force implementations to implement this
     default List<SpewTypeAdapter<?>> getTypeAdapters() {
         return Collections.emptyList();
     }

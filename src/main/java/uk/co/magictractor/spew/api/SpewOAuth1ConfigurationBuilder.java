@@ -16,15 +16,14 @@
 package uk.co.magictractor.spew.api;
 
 import java.net.URLEncoder;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.function.BiFunction;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 import com.google.common.io.BaseEncoding;
 
+import uk.co.magictractor.spew.api.SpewOAuth1ConfigurationBuilder.SpewOAuth1ConfigurationImpl;
 import uk.co.magictractor.spew.core.signature.SignatureGenerator;
 import uk.co.magictractor.spew.store.EditableProperty;
 import uk.co.magictractor.spew.store.application.ApplicationPropertyStore;
@@ -35,42 +34,31 @@ import uk.co.magictractor.spew.util.spi.SPIUtil;
 /**
  *
  */
-public class SpewOAuth1ConfigurationBuilder {
+public class SpewOAuth1ConfigurationBuilder
+        extends
+        SpewVerifiedAuthConnectionConfigurationBuilder<SpewOAuth1Configuration, SpewOAuth1ConfigurationImpl, SpewOAuth1Application<?>, SpewOAuth1ConfigurationBuilder> {
 
-    private SpewOAuth1ConfigurationImpl configuration = new SpewOAuth1ConfigurationImpl();
-    private boolean done;
+    public SpewOAuth1ConfigurationBuilder() {
+        withOutOfBandUri("oob");
 
-    public SpewOAuth1Configuration build() {
-        if (configuration.signatureBaseStringFunction == null) {
-            withSignatureBaseStringFunction(SpewOAuth1ConfigurationBuilder::getSignatureBaseString);
-        }
-        if (configuration.signatureEncodingFunction == null) {
-            withSignatureEncodingFunction(BaseEncoding.base64());
-        }
-
-        done = true;
-
-        return configuration;
+        withSignatureBaseStringFunction(SpewOAuth1ConfigurationBuilder::getSignatureBaseString);
+        withSignatureEncodingFunction(BaseEncoding.base64());
     }
 
-    public Supplier<SpewOAuth1Configuration> nextBuild() {
-        return () -> {
-            if (!done) {
-                throw new IllegalStateException("Not built yet");
-            }
-            return configuration;
-        };
+    @Override
+    public SpewOAuth1ConfigurationImpl newInstance() {
+        return new SpewOAuth1ConfigurationImpl();
     }
 
     public SpewOAuth1ConfigurationBuilder withSignatureBaseStringFunction(
             Function<OutgoingHttpRequest, String> signatureBaseStringFunction) {
-        configuration.signatureBaseStringFunction = signatureBaseStringFunction;
+        configuration().signatureBaseStringFunction = signatureBaseStringFunction;
         return this;
     }
 
     public SpewOAuth1ConfigurationBuilder withSignatureEncodingFunction(
             Function<byte[], String> signatureEncodingFunction) {
-        configuration.signatureEncodingFunction = signatureEncodingFunction;
+        configuration().signatureEncodingFunction = signatureEncodingFunction;
         return this;
     }
 
@@ -79,6 +67,10 @@ public class SpewOAuth1ConfigurationBuilder {
     }
 
     public SpewOAuth1ConfigurationBuilder withServiceProvider(SpewOAuth1ServiceProvider serviceProvider) {
+        super.withServiceProvider(serviceProvider);
+
+        SpewOAuth1ConfigurationImpl configuration = configuration();
+
         if (configuration.temporaryCredentialRequestUri == null) {
             configuration.temporaryCredentialRequestUri = serviceProvider.oauth1TemporaryCredentialRequestUri();
         }
@@ -100,7 +92,12 @@ public class SpewOAuth1ConfigurationBuilder {
         return this;
     }
 
+    @Override
     public SpewOAuth1ConfigurationBuilder withApplication(SpewOAuth1Application<?> application) {
+        super.withApplication(application);
+
+        SpewOAuth1ConfigurationImpl configuration = configuration();
+
         if (configuration.consumerKey == null) {
             configuration.consumerKey = SPIUtil.firstAvailable(ApplicationPropertyStore.class)
                     .getProperty(application, "consumer_key");
@@ -117,13 +114,7 @@ public class SpewOAuth1ConfigurationBuilder {
             configuration.userSecretProperty = SPIUtil.firstAvailable(UserPropertyStore.class)
                     .getProperty(application, "user_secret");
         }
-        withProperties(application.getProperties());
 
-        return this;
-    }
-
-    public SpewOAuth1ConfigurationBuilder withProperties(Map<String, Object> properties) {
-        configuration.properties.putAll(properties);
         return this;
     }
 
@@ -167,7 +158,9 @@ public class SpewOAuth1ConfigurationBuilder {
         return urlEncoded.replace("+", "%20").replace("*", "%2A").replace("%7E", "~");
     }
 
-    private static final class SpewOAuth1ConfigurationImpl implements SpewOAuth1Configuration {
+    public static final class SpewOAuth1ConfigurationImpl
+            extends SpewVerifiedAuthConnectionConfigurationBuilder.SpewVerifiedAuthConnectionConfigurationImpl
+            implements SpewOAuth1Configuration {
 
         private String consumerKey;
         private String consumerSecret;
@@ -180,7 +173,6 @@ public class SpewOAuth1ConfigurationBuilder {
         private Function<OutgoingHttpRequest, String> signatureBaseStringFunction;
         private BiFunction<byte[], byte[], byte[]> signatureFunction;
         private Function<byte[], String> signatureEncodingFunction;
-        private Map<String, Object> properties = new LinkedHashMap<>();
 
         @Override
         public String getConsumerKey() {
@@ -235,11 +227,6 @@ public class SpewOAuth1ConfigurationBuilder {
         @Override
         public Function<byte[], String> getSignatureEncodingFunction() {
             return signatureEncodingFunction;
-        }
-
-        @Override
-        public void addProperties(Map<String, Object> properties) {
-            properties.putAll(this.properties);
         }
 
     }

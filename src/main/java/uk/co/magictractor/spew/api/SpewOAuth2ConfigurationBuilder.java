@@ -15,37 +15,33 @@
  */
 package uk.co.magictractor.spew.api;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.function.Supplier;
-
+import uk.co.magictractor.spew.api.SpewOAuth2ConfigurationBuilder.SpewOAuth2ConfigurationImpl;
 import uk.co.magictractor.spew.store.application.ApplicationPropertyStore;
 import uk.co.magictractor.spew.util.spi.SPIUtil;
 
 /**
  *
  */
-public class SpewOAuth2ConfigurationBuilder {
+public class SpewOAuth2ConfigurationBuilder
+        extends
+        SpewVerifiedAuthConnectionConfigurationBuilder<SpewOAuth2Configuration, SpewOAuth2ConfigurationImpl, SpewOAuth2Application<?>, SpewOAuth2ConfigurationBuilder> {
 
-    private SpewOAuth2ConfigurationImpl configuration = new SpewOAuth2ConfigurationImpl();
-    private boolean done;
-
-    public SpewOAuth2Configuration build() {
-        done = true;
-
-        return configuration;
+    public SpewOAuth2ConfigurationBuilder() {
+        // out-of-band isn't in the spec, but is supported by Google and other
+        // https://mailarchive.ietf.org/arch/msg/oauth/OCeJLZCEtNb170Xy-C3uTVDIYjM
+        withOutOfBandUri("urn:ietf:wg:oauth:2.0:oob");
     }
 
-    public Supplier<SpewOAuth2Configuration> nextBuild() {
-        return () -> {
-            if (!done) {
-                throw new IllegalStateException("Not built yet");
-            }
-            return configuration;
-        };
+    @Override
+    public SpewOAuth2ConfigurationImpl newInstance() {
+        return new SpewOAuth2ConfigurationImpl();
     }
 
     public SpewOAuth2ConfigurationBuilder withServiceProvider(SpewOAuth2ServiceProvider serviceProvider) {
+        super.withServiceProvider(serviceProvider);
+
+        SpewOAuth2ConfigurationImpl configuration = configuration();
+
         if (configuration.authorizationUri == null) {
             configuration.authorizationUri = serviceProvider.oauth2AuthorizationUri();
         }
@@ -56,7 +52,12 @@ public class SpewOAuth2ConfigurationBuilder {
         return this;
     }
 
+    @Override
     public SpewOAuth2ConfigurationBuilder withApplication(SpewOAuth2Application<?> application) {
+        super.withApplication(application);
+
+        SpewOAuth2ConfigurationImpl configuration = configuration();
+
         if (configuration.clientId == null) {
             // TODO! firstNonNull would be better
             configuration.clientId = SPIUtil.firstAvailable(ApplicationPropertyStore.class)
@@ -75,19 +76,15 @@ public class SpewOAuth2ConfigurationBuilder {
         return this;
     }
 
-    public SpewOAuth2ConfigurationBuilder withProperties(Map<String, Object> properties) {
-        configuration.properties.putAll(properties);
-        return this;
-    }
-
-    private static final class SpewOAuth2ConfigurationImpl implements SpewOAuth2Configuration {
+    public static final class SpewOAuth2ConfigurationImpl
+            extends SpewVerifiedAuthConnectionConfigurationBuilder.SpewVerifiedAuthConnectionConfigurationImpl
+            implements SpewOAuth2Configuration {
 
         private String clientId;
         private String clientSecret;
         private String authorizationUri;
         private String tokenUri;
         private String scope;
-        private Map<String, Object> properties = new LinkedHashMap<>();
 
         @Override
         public String getClientId() {
@@ -112,11 +109,6 @@ public class SpewOAuth2ConfigurationBuilder {
         @Override
         public String getScope() {
             return scope;
-        }
-
-        @Override
-        public void addProperties(Map<String, Object> properties) {
-            properties.putAll(this.properties);
         }
 
     }

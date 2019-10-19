@@ -15,9 +15,19 @@
  */
 package uk.co.magictractor.spew.api;
 
+import java.util.List;
+
+import uk.co.magictractor.spew.core.typeadapter.SpewTypeAdapter;
+
 /**
  *
  */
 public interface SpewConnectionConfiguration extends HasProperties {
+
+    /**
+     * Type adapters which are used for converting values in Json and XML
+     * payloads.
+     */
+    List<SpewTypeAdapter<?>> getTypeAdapters();
 
 }
