@@ -15,13 +15,12 @@
  */
 package uk.co.magictractor.spew.api;
 
-import java.net.URLEncoder;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.TreeMap;
 import java.util.function.Supplier;
 
-import uk.co.magictractor.spew.util.ExceptionUtil;
+import uk.co.magictractor.spew.store.application.ApplicationPropertyStore;
+import uk.co.magictractor.spew.util.spi.SPIUtil;
 
 /**
  *
@@ -47,44 +46,29 @@ public class SpewOAuth2ConfigurationBuilder {
     }
 
     public SpewOAuth2ConfigurationBuilder withServiceProvider(SpewOAuth2ServiceProvider serviceProvider) {
-        //        if (configuration.temporaryCredentialRequestUri == null) {
-        //            configuration.temporaryCredentialRequestUri = serviceProvider.getTemporaryCredentialRequestUri();
-        //        }
-        //        if (configuration.resourceOwnerAuthorizationUri == null) {
-        //            configuration.resourceOwnerAuthorizationUri = serviceProvider.getResourceOwnerAuthorizationUri();
-        //        }
-        //        if (configuration.tokenRequestUri == null) {
-        //            configuration.tokenRequestUri = serviceProvider.getTokenRequestUri();
-        //        }
-        //        if (configuration.requestSignatureMethod == null) {
-        //            configuration.requestSignatureMethod = serviceProvider.getRequestSignatureMethod();
-        //        }
-        //        if (configuration.signatureFunction == null) {
-        //            configuration.signatureFunction = SPIUtil.firstNotNull(SignatureGenerator.class,
-        //                gen -> gen.signatureFunction(configuration.requestSignatureMethod))
-        //                    .orElse(null);
-        //        }
+        if (configuration.authorizationUri == null) {
+            configuration.authorizationUri = serviceProvider.oauth2AuthorizationUri();
+        }
+        if (configuration.tokenUri == null) {
+            configuration.tokenUri = serviceProvider.oauth2TokenUri();
+        }
 
         return this;
     }
 
     public SpewOAuth2ConfigurationBuilder withApplication(SpewOAuth2Application<?> application) {
-        //        if (configuration.consumerKey == null) {
-        //            configuration.consumerKey = SPIUtil.firstAvailable(ApplicationPropertyStore.class)
-        //                    .getProperty(application, "consumer_key");
-        //        }
-        //        if (configuration.consumerSecret == null) {
-        //            configuration.consumerSecret = SPIUtil.firstAvailable(ApplicationPropertyStore.class)
-        //                    .getProperty(application, "consumer_secret");
-        //        }
-        //        if (configuration.userTokenProperty == null) {
-        //            configuration.userTokenProperty = SPIUtil.firstAvailable(UserPropertyStore.class)
-        //                    .getProperty(application, "user_token");
-        //        }
-        //        if (configuration.userSecretProperty == null) {
-        //            configuration.userSecretProperty = SPIUtil.firstAvailable(UserPropertyStore.class)
-        //                    .getProperty(application, "user_secret");
-        //        }
+        if (configuration.clientId == null) {
+            // TODO! firstNonNull would be better
+            configuration.clientId = SPIUtil.firstAvailable(ApplicationPropertyStore.class)
+                    .getProperty(application, "client_id");
+        }
+        if (configuration.clientSecret == null) {
+            configuration.clientSecret = SPIUtil.firstAvailable(ApplicationPropertyStore.class)
+                    .getProperty(application, "client_secret");
+        }
+        if (configuration.scope == null) {
+            configuration.scope = application.getScope();
+        }
 
         withProperties(application.getProperties());
 
@@ -96,49 +80,39 @@ public class SpewOAuth2ConfigurationBuilder {
         return this;
     }
 
-    // move this??
-    // See https://www.flickr.com/services/api/auth.oauth.html
-    private static String getSignatureBaseString(OutgoingHttpRequest request) {
-        StringBuilder signatureBaseStringBuilder = new StringBuilder();
-        signatureBaseStringBuilder.append(request.getHttpMethod());
-        signatureBaseStringBuilder.append('&');
-        signatureBaseStringBuilder.append(oauthEncode(request.getPath()));
-        signatureBaseStringBuilder.append('&');
-        signatureBaseStringBuilder.append(oauthEncode(getSignatureQueryString(request)));
-
-        return signatureBaseStringBuilder.toString();
-    }
-
-    private static String getSignatureQueryString(OutgoingHttpRequest request) {
-        // TODO! maybe ignore some params - see Flickr upload photo
-        TreeMap<String, Object> orderedParams = new TreeMap<>(request.getQueryStringParams());
-        StringBuilder stringBuilder = new StringBuilder();
-        boolean first = true;
-        for (Map.Entry<String, Object> entry : orderedParams.entrySet()) {
-            if (first) {
-                first = false;
-            }
-            else {
-                stringBuilder.append('&');
-            }
-            stringBuilder.append(entry.getKey());
-            stringBuilder.append('=');
-            stringBuilder.append(oauthEncode(entry.getValue().toString()));
-        }
-
-        return stringBuilder.toString();
-    }
-
-    // https://stackoverflow.com/questions/5864954/java-and-rfc-3986-uri-encoding
-    private static final String oauthEncode(String string) {
-        // TODO! something more efficient?
-        String urlEncoded = ExceptionUtil.call(() -> URLEncoder.encode(string, "UTF-8"));
-        return urlEncoded.replace("+", "%20").replace("*", "%2A").replace("%7E", "~");
-    }
-
     private static final class SpewOAuth2ConfigurationImpl implements SpewOAuth2Configuration {
 
+        private String clientId;
+        private String clientSecret;
+        private String authorizationUri;
+        private String tokenUri;
+        private String scope;
         private Map<String, Object> properties = new LinkedHashMap<>();
+
+        @Override
+        public String getClientId() {
+            return clientId;
+        }
+
+        @Override
+        public String getClientSecret() {
+            return clientSecret;
+        }
+
+        @Override
+        public String getAuthorizationUri() {
+            return authorizationUri;
+        }
+
+        @Override
+        public String getTokenUri() {
+            return tokenUri;
+        }
+
+        @Override
+        public String getScope() {
+            return scope;
+        }
 
         @Override
         public void addProperties(Map<String, Object> properties) {

@@ -1,8 +1,5 @@
 package uk.co.magictractor.spew.api;
 
-import uk.co.magictractor.spew.store.application.ApplicationPropertyStore;
-import uk.co.magictractor.spew.util.spi.SPIUtil;
-
 // OAuth2 specification https://tools.ietf.org/html/rfc6749
 @SpewAuthType("OAuth2")
 public interface SpewOAuth2Application<SP extends SpewOAuth2ServiceProvider> extends SpewApplication<SP> {
@@ -12,15 +9,6 @@ public interface SpewOAuth2Application<SP extends SpewOAuth2ServiceProvider> ext
                 .oauth2ConfigurationBuilder()
                 .withApplication(this)
                 .build();
-    }
-
-    default String getClientId() {
-        // TODO! firstNonNull would be better
-        return SPIUtil.firstAvailable(ApplicationPropertyStore.class).getProperty(this, "client_id");
-    }
-
-    default String getClientSecret() {
-        return SPIUtil.firstAvailable(ApplicationPropertyStore.class).getProperty(this, "client_secret");
     }
 
     default void modifyAuthorizationRequest(OutgoingHttpRequest request) {
@@ -43,6 +31,10 @@ public interface SpewOAuth2Application<SP extends SpewOAuth2ServiceProvider> ext
      * </p>
      * <p>
      * Scope is only used by some service providers.
+     * </p>
+     * <p>
+     * This method may be overridden to provide a scope for an application,
+     * alternatively withScope() may be used on the configuration builder.
      * </p>
      */
     // https://brandur.org/oauth-scope

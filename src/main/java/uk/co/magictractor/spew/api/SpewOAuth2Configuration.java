@@ -17,6 +17,16 @@ package uk.co.magictractor.spew.api;
 
 public interface SpewOAuth2Configuration extends SpewVerifiedAuthConnectionConfiguration {
 
+    String getClientId();
+
+    String getClientSecret();
+
+    String getAuthorizationUri();
+
+    String getTokenUri();
+
+    String getScope();
+
     @Override
     default String getOutOfBandUri() {
         // out-of-band isn't in the spec, but is supported by Google and other
