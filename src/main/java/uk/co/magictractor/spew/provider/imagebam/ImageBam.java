@@ -10,8 +10,8 @@ import uk.co.magictractor.spew.api.SpewOAuth1ConfigurationBuilder;
 import uk.co.magictractor.spew.api.SpewOAuth1ServiceProvider;
 import uk.co.magictractor.spew.api.SpewVerifiedAuthConnectionConfiguration;
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponseBuilder;
-import uk.co.magictractor.spew.core.verification.AuthorizationHandler;
-import uk.co.magictractor.spew.core.verification.PasteVerificationCodeHandler;
+import uk.co.magictractor.spew.core.verification.AuthVerificationHandler;
+import uk.co.magictractor.spew.core.verification.PasteAuthVerificationHandler;
 import uk.co.magictractor.spew.util.ContentTypeUtil;
 import uk.co.magictractor.spew.util.HttpMessageUtil;
 
@@ -108,10 +108,10 @@ public class ImageBam implements SpewOAuth1ServiceProvider {
     //    }
 
     @Override
-    public AuthorizationHandler createDefaultAuthorizationHandler(
+    public AuthVerificationHandler createDefaultAuthorizationHandler(
             SpewVerifiedAuthConnectionConfiguration connectionConfiguration) {
         // ImageBam does not do callbacks, it always displays a code to copy into the application.
-        return new PasteVerificationCodeHandler(connectionConfiguration);
+        return new PasteAuthVerificationHandler(connectionConfiguration);
     }
 
     // Cannot edit application details, only add client.

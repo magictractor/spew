@@ -28,7 +28,7 @@ import uk.co.magictractor.spew.api.connection.AbstractAuthorizationDecoratorConn
 import uk.co.magictractor.spew.api.connection.SpewConnectionVerificationPendingCache;
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponseBuilder;
-import uk.co.magictractor.spew.core.verification.AuthorizationHandler;
+import uk.co.magictractor.spew.core.verification.AuthVerificationHandler;
 import uk.co.magictractor.spew.server.SpewHttpRequest;
 import uk.co.magictractor.spew.store.EditableProperty;
 import uk.co.magictractor.spew.store.user.UserPropertyStore;
@@ -117,7 +117,7 @@ public class BoaOAuth2Connection extends AbstractAuthorizationDecoratorConnectio
 
         // Mucky. The callback value comes from the handler but is also used in the verification function.
         //AuthorizationHandler[] authHandlerHolder = new AuthorizationHandler[1];
-        AuthorizationHandler authHandler = application.createAuthorizationHandler(getConfiguration());
+        AuthVerificationHandler authHandler = application.createAuthorizationHandler(getConfiguration());
         //authHandlerHolder[0] = authHandler;
 
         authHandler.preOpenAuthorizationInBrowser();

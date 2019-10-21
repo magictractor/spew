@@ -25,11 +25,11 @@ import uk.co.magictractor.spew.util.IOUtil;
 /**
  *
  */
-public class PasteVerificationCodeHandler implements AuthorizationHandler {
+public class PasteAuthVerificationHandler implements AuthVerificationHandler {
 
     private final SpewVerifiedAuthConnectionConfiguration connectionConfiguration;
 
-    public PasteVerificationCodeHandler(SpewVerifiedAuthConnectionConfiguration connection) {
+    public PasteAuthVerificationHandler(SpewVerifiedAuthConnectionConfiguration connection) {
         this.connectionConfiguration = connection;
     }
 

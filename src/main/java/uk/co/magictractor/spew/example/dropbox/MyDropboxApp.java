@@ -19,9 +19,9 @@ import uk.co.magictractor.spew.api.SpewApplication;
 import uk.co.magictractor.spew.api.SpewApplicationCache;
 import uk.co.magictractor.spew.api.SpewOAuth2Application;
 import uk.co.magictractor.spew.api.SpewVerifiedAuthConnectionConfiguration;
-import uk.co.magictractor.spew.core.verification.AuthorizationHandler;
+import uk.co.magictractor.spew.core.verification.AuthVerificationHandler;
 import uk.co.magictractor.spew.provider.dropbox.Dropbox;
-import uk.co.magictractor.spew.server.LocalServerAuthorizationHandler;
+import uk.co.magictractor.spew.server.LocalServerAuthVerificationHandler;
 
 public class MyDropboxApp implements SpewOAuth2Application<Dropbox> {
 
@@ -35,10 +35,10 @@ public class MyDropboxApp implements SpewOAuth2Application<Dropbox> {
     }
 
     @Override
-    public AuthorizationHandler createAuthorizationHandler(
+    public AuthVerificationHandler createAuthorizationHandler(
             SpewVerifiedAuthConnectionConfiguration connectionConfiguration) {
         //return new PasteVerificationCodeHandler();
-        return new LocalServerAuthorizationHandler(connectionConfiguration);
+        return new LocalServerAuthVerificationHandler(connectionConfiguration);
     }
 
     @Override

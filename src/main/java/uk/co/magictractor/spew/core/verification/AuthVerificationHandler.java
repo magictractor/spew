@@ -26,7 +26,7 @@ package uk.co.magictractor.spew.core.verification;
  * up a lightweight web server to capture verification codes.
  * </p>
  */
-public interface AuthorizationHandler {
+public interface AuthVerificationHandler {
 
     /**
      * Verification codes are passed back via an HTTP redirect to a local server

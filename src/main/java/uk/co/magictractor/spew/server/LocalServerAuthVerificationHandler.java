@@ -17,19 +17,19 @@ package uk.co.magictractor.spew.server;
 
 import uk.co.magictractor.spew.api.HasCallbackServer;
 import uk.co.magictractor.spew.api.SpewVerifiedAuthConnectionConfiguration;
-import uk.co.magictractor.spew.core.verification.AuthorizationHandler;
+import uk.co.magictractor.spew.core.verification.AuthVerificationHandler;
 import uk.co.magictractor.spew.util.spi.SPIUtil;
 
 /**
  *
  */
-public class LocalServerAuthorizationHandler implements AuthorizationHandler, HasCallbackServer {
+public class LocalServerAuthVerificationHandler implements AuthVerificationHandler, HasCallbackServer {
 
     private final HasCallbackServer callbackServerConfig;
     // TODO! server could be static, maybe not here, and could serve other applications/pages while running?
     private CallbackServer server;
 
-    public LocalServerAuthorizationHandler(SpewVerifiedAuthConnectionConfiguration connectionConfiguration) {
+    public LocalServerAuthVerificationHandler(SpewVerifiedAuthConnectionConfiguration connectionConfiguration) {
         this.callbackServerConfig = new HasCallbackServer() {
         };
     }

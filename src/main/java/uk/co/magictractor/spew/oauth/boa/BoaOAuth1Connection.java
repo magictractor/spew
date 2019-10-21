@@ -14,7 +14,7 @@ import uk.co.magictractor.spew.api.connection.SpewConnectionVerificationPendingC
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponseBuilder;
 import uk.co.magictractor.spew.core.response.parser.text.KeyValuePairsHttpMessageBodyReader;
-import uk.co.magictractor.spew.core.verification.AuthorizationHandler;
+import uk.co.magictractor.spew.core.verification.AuthVerificationHandler;
 import uk.co.magictractor.spew.server.SpewHttpRequest;
 import uk.co.magictractor.spew.store.ConstantProperty;
 import uk.co.magictractor.spew.store.EditableProperty;
@@ -77,7 +77,7 @@ public final class BoaOAuth1Connection extends AbstractAuthorizationDecoratorCon
 
     @Override
     public void obtainAuthorization() {
-        AuthorizationHandler authorizationHandler = application.createAuthorizationHandler(getConfiguration());
+        AuthVerificationHandler authorizationHandler = application.createAuthorizationHandler(getConfiguration());
         authorizationHandler.preOpenAuthorizationInBrowser();
 
         openAuthorizationUriInBrowser(authorizationHandler.getRedirectUri());
