@@ -5,9 +5,6 @@ My TODO list. In no particular order. Some of these may never happen.
 * LocalLibrary and a mechanism to find the original local copy of a photo found on Flickr, Google Photos etc.
 Finding the local copy will be based on the DateTaken if it is available. Perhaps put local file name into a tag on the photo.
 
-* Restore check for expiry date if it present and reauthorize, using refresh_token if it is available.
-Just Boa? What do Spring Social and Google do?
-
 * Handle 401 failures, and reauthorize (just once).
 
 * Handle 5xx failures with wait and retry (repeated retries with increasing waits, see Google API doc)
@@ -44,9 +41,40 @@ If it's not clear which description is newer, then a problem should be reported 
 
 * Allow open ended date ranges.
 
-* Support for XML messages. Currently only JSON supported. Some service providers support both, including Flickr.
-Not currently aware of any which are XML only.
-
 * New ImageIterator which wraps PathIterator but returns only single element for raw+jpg+sidecar, raw+sidecar, raw+jpg, raw+jpg1+jpg2 etc.
 
 * SPI for "is file content binary" and "is file content camera raw"
+
+* Add support for basic auth (and digest auth?)
+https://en.wikipedia.org/wiki/Basic_access_authentication
+https://en.wikipedia.org/wiki/Digest_access_authentication
+Github supports modified basic auth (returns 404 rather than 401 for failed auth)
+https://developer.github.com/v3/auth/
+
+* Remove references to SpewApplication and SpewServiceProvider from SpewConnection implementations.
+Ideally the connection layer would have no knowledge of the application layer.
+
+* More work required to prevent JsonConfiguration being passed around too much.
+
+* Could first obtain authorization when opening the connection rather than checking when sending every request
+
+* State/nonce usage incomplete in Boa implementations.
+
+* Static methods on CallbackServer which cause it to start and stop?
+Perhaps register(key, requestHandlers) and deregister(key).
+Order of request handlers if multiple register() calls?
+Equality of request handlers in case already registered?
+
+* Show 500 page when there's a server-side error.
+Perhaps show stacktrace. Maybe conditionally.
+
+* Flickr "?perms=write" should be added in the application, with the path in the service provider
+
+* Twitter OAuth2 and OAuth1
+Needs OAuth1 to support grant_type=client_credentials
+
+* Keep snapshot of Twitter followers.
+And add abilty to update large followers list over a long period.
+This call is capped at 15 requests per 15 minutes and 200 users per request.
+
+
