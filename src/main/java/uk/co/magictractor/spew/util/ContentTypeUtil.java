@@ -139,6 +139,7 @@ public class ContentTypeUtil {
         return Optional.ofNullable(charset);
     }
 
+    // TODO! Jayway param - yuck
     public static byte[] bodyBytes(ApplicationRequest request, Configuration jsonConfiguration) {
         String contentType = request.getContentType();
         if (isJson(contentType)) {

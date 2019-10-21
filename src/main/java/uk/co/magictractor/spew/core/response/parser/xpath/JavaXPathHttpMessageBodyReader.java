@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
-import uk.co.magictractor.spew.api.SpewApplication;
+import uk.co.magictractor.spew.api.SpewConnectionConfiguration;
 import uk.co.magictractor.spew.api.SpewHttpMessage;
 import uk.co.magictractor.spew.core.response.parser.ObjectCentricHttpMessageBodyReader;
 import uk.co.magictractor.spew.util.ExceptionUtil;
@@ -53,7 +53,7 @@ public class JavaXPathHttpMessageBodyReader
      * Default visibility because instances should only be created via
      * JaywayResponseParserInit.
      */
-    JavaXPathHttpMessageBodyReader(SpewApplication<?> application, SpewHttpMessage httpMessage) {
+    JavaXPathHttpMessageBodyReader(SpewConnectionConfiguration connectionConfiguration, SpewHttpMessage httpMessage) {
 
         xpath = XPathFactory.newInstance().newXPath();
         //String expression = "/widgets/widget";

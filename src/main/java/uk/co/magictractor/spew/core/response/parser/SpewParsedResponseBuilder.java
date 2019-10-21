@@ -27,7 +27,7 @@ import java.util.function.Consumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import uk.co.magictractor.spew.api.SpewApplication;
+import uk.co.magictractor.spew.api.SpewConnectionConfiguration;
 import uk.co.magictractor.spew.api.SpewHttpMessage;
 import uk.co.magictractor.spew.api.SpewHttpResponse;
 import uk.co.magictractor.spew.core.http.header.HasHttpHeaders;
@@ -42,7 +42,7 @@ public class SpewParsedResponseBuilder implements SpewHttpMessage {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SpewParsedResponseBuilder.class);
 
-    private final SpewApplication<?> application;
+    private final SpewConnectionConfiguration connectionConfiguration;
     private final SpewHttpResponse response;
 
     private Integer status;
@@ -51,8 +51,8 @@ public class SpewParsedResponseBuilder implements SpewHttpMessage {
     private Collection<Integer> verifiedStatuses = Collections.singleton(200);
     private Consumer<SpewParsedResponse> verification = this::defaultVerification;
 
-    public SpewParsedResponseBuilder(SpewApplication<?> application, SpewHttpResponse response) {
-        this.application = application;
+    public SpewParsedResponseBuilder(SpewConnectionConfiguration connectionConfiguration, SpewHttpResponse response) {
+        this.connectionConfiguration = connectionConfiguration;
         this.response = response;
         this.status = response.getStatus();
         this.headers = new ArrayList<>(response.getHeaders());
@@ -145,14 +145,15 @@ public class SpewParsedResponseBuilder implements SpewHttpMessage {
 
     private void defaultVerification(SpewParsedResponse parsedResponse) {
         // TODO! only warn once
+        // TODO! log Information about application / service provider
         LOGGER.warn(
-            "There is no verifier for {} responses, either implement one or call withoutVerification() to remove this warning",
-            application.getServiceProvider().getClass().getSimpleName());
+            "There is no verifier for {} responses, either implement one or call withoutVerification() to remove this warning"
+        /* , application.getServiceProvider().getClass().getSimpleName() */);
     }
 
     public SpewHttpMessageBodyReader getBodyReader() {
         if (bodyReader == null) {
-            bodyReader = SpewHttpMessageBodyReader.instanceFor(application, this);
+            bodyReader = SpewHttpMessageBodyReader.instanceFor(connectionConfiguration, this);
         }
         return bodyReader;
     }

@@ -34,7 +34,8 @@ public abstract class AbstractSpewConnection<CONFIG extends SpewConnectionConfig
         return id;
     }
 
-    protected CONFIG getConfiguration() {
+    @Override
+    public CONFIG getConfiguration() {
         return configuration;
     }
 

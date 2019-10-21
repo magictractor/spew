@@ -197,7 +197,9 @@ public final class ApplicationRequest {
 
         SpewHttpResponse response = connection.request(request);
 
-        SpewParsedResponseBuilder parsedResponseBuilder = new SpewParsedResponseBuilder(application, response);
+        SpewConnectionConfiguration connectionConfiguration = connection.getConfiguration();
+        SpewParsedResponseBuilder parsedResponseBuilder = new SpewParsedResponseBuilder(
+            connectionConfiguration, response);
 
         application.buildParsedResponse(parsedResponseBuilder);
 
@@ -223,7 +225,10 @@ public final class ApplicationRequest {
             // setDoOutput(true);
             if (!getBodyParams().isEmpty()) {
                 // TODO! allow body to have been set explicitly
-                bodyBytes = ContentTypeUtil.bodyBytes(this, JaywayConfigurationCache.getConfiguration(application));
+                SpewConnectionConfiguration connectionConfiguration = application.getConnection().getConfiguration();
+                // TODO! should not assume Jayway
+                bodyBytes = ContentTypeUtil.bodyBytes(this,
+                    JaywayConfigurationCache.getConfiguration(connectionConfiguration));
                 setHeader(CONTENT_TYPE, getContentType());
                 setHeader(CONTENT_LENGTH, bodyBytes.length);
             }

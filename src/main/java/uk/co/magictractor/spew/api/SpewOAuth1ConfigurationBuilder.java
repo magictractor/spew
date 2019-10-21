@@ -66,6 +66,7 @@ public class SpewOAuth1ConfigurationBuilder
         return withSignatureEncodingFunction(bytes -> encoding.encode(bytes));
     }
 
+    // aah... does not override... more generics...?
     public SpewOAuth1ConfigurationBuilder withServiceProvider(SpewOAuth1ServiceProvider serviceProvider) {
         super.withServiceProvider(serviceProvider);
 

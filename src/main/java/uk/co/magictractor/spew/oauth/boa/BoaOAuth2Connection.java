@@ -20,6 +20,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.handler.codec.http.FullHttpMessage;
 import io.netty.handler.codec.http.QueryStringDecoder;
 import uk.co.magictractor.spew.api.OutgoingHttpRequest;
+import uk.co.magictractor.spew.api.SpewConnectionConfiguration;
 import uk.co.magictractor.spew.api.SpewHttpResponse;
 import uk.co.magictractor.spew.api.SpewOAuth2Application;
 import uk.co.magictractor.spew.api.SpewOAuth2Configuration;
@@ -266,7 +267,7 @@ public class BoaOAuth2Connection extends AbstractAuthorizationDecoratorConnectio
         request.setBody(body.getBytes(StandardCharsets.UTF_8));
 
         SpewHttpResponse response = request(request);
-        return new SpewParsedResponseBuilder(application, response).withoutVerification().build();
+        return new SpewParsedResponseBuilder(SpewConnectionConfiguration.AUTH, response).withoutVerification().build();
     }
 
 }

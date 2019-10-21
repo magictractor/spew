@@ -64,6 +64,12 @@ public abstract class SpewConnectionConfigurationBuilder<CONFIG extends SpewConn
 
     @SuppressWarnings("unchecked")
     public BUILDER withServiceProvider(SpewServiceProvider serviceProvider) {
+        SpewConnectionConfigurationImpl configuration = this.configuration;
+
+        if (configuration.typeAdapters == null) {
+            configuration.typeAdapters = serviceProvider.getTypeAdapters();
+        }
+
         return (BUILDER) this;
     }
 

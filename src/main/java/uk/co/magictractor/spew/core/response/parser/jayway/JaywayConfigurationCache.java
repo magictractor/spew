@@ -27,7 +27,7 @@ import com.jayway.jsonpath.spi.json.JsonProvider;
 import com.jayway.jsonpath.spi.mapper.GsonMappingProvider;
 import com.jayway.jsonpath.spi.mapper.MappingProvider;
 
-import uk.co.magictractor.spew.api.SpewApplication;
+import uk.co.magictractor.spew.api.SpewConnectionConfiguration;
 import uk.co.magictractor.spew.core.typeadapter.SpewTypeAdapter;
 import uk.co.magictractor.spew.json.GsonTypeAdapter;
 
@@ -36,16 +36,16 @@ import uk.co.magictractor.spew.json.GsonTypeAdapter;
  */
 public class JaywayConfigurationCache {
 
-    private static final Map<SpewApplication<?>, Configuration> CONFIGURATION_MAP = new HashMap<>();
+    private static final Map<SpewConnectionConfiguration, Configuration> CONFIGURATION_MAP = new HashMap<>();
 
-    public static Configuration getConfiguration(SpewApplication<?> application) {
-        Configuration configuration = CONFIGURATION_MAP.get(application);
+    public static Configuration getConfiguration(SpewConnectionConfiguration connectionConfiguration) {
+        Configuration configuration = CONFIGURATION_MAP.get(connectionConfiguration);
         if (configuration == null) {
             synchronized (CONFIGURATION_MAP) {
-                configuration = CONFIGURATION_MAP.get(application);
+                configuration = CONFIGURATION_MAP.get(connectionConfiguration);
                 if (configuration == null) {
-                    configuration = createConfiguration(application);
-                    CONFIGURATION_MAP.put(application, configuration);
+                    configuration = createConfiguration(connectionConfiguration);
+                    CONFIGURATION_MAP.put(connectionConfiguration, configuration);
                 }
             }
         }
@@ -54,10 +54,9 @@ public class JaywayConfigurationCache {
     }
 
     // TODO! move this to SPI? allow for advanced config...
-    private static Configuration createConfiguration(SpewApplication<?> application) {
+    private static Configuration createConfiguration(SpewConnectionConfiguration connectionConfiguration) {
         GsonBuilder gsonBuilder = new GsonBuilder();
-        // TODO! allow application to add type adapters
-        for (SpewTypeAdapter<?> spewTypeAdapter : application.getServiceProvider().getTypeAdapters()) {
+        for (SpewTypeAdapter<?> spewTypeAdapter : connectionConfiguration.getTypeAdapters()) {
             GsonTypeAdapter<?> gsonTypeAdapter = new GsonTypeAdapter<>(spewTypeAdapter);
             gsonBuilder.registerTypeAdapter(spewTypeAdapter.getType(), gsonTypeAdapter);
         }

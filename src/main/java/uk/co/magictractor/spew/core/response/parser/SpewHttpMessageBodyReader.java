@@ -23,8 +23,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import uk.co.magictractor.spew.api.HttpHeaderNames;
-import uk.co.magictractor.spew.api.SpewApplication;
+import uk.co.magictractor.spew.api.SpewConnectionConfiguration;
 import uk.co.magictractor.spew.api.SpewHttpMessage;
 import uk.co.magictractor.spew.util.HttpMessageUtil;
 import uk.co.magictractor.spew.util.spi.SPIUtil;
@@ -73,10 +72,11 @@ public interface SpewHttpMessageBodyReader {
                 .collect(Collectors.toList());
     }
 
-    static SpewHttpMessageBodyReader instanceFor(SpewApplication<?> application, SpewHttpMessage response) {
+    static SpewHttpMessageBodyReader instanceFor(SpewConnectionConfiguration connectionConfiguration,
+            SpewHttpMessage response) {
 
         Optional<SpewHttpMessageBodyReader> instance = SPIUtil.firstNotNull(SpewHttpMessageBodyReaderFactory.class,
-            factory -> factory.instanceFor(application, response));
+            factory -> factory.instanceFor(connectionConfiguration, response));
         if (instance.isPresent()) {
             return instance.get();
         }

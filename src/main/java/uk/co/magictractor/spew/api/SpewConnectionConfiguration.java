@@ -15,7 +15,9 @@
  */
 package uk.co.magictractor.spew.api;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import uk.co.magictractor.spew.core.typeadapter.SpewTypeAdapter;
 
@@ -24,10 +26,26 @@ import uk.co.magictractor.spew.core.typeadapter.SpewTypeAdapter;
  */
 public interface SpewConnectionConfiguration extends HasProperties {
 
+    static final SpewConnectionConfiguration AUTH = new AuthConnectionConfiguration();
+
     /**
      * Type adapters which are used for converting values in Json and XML
      * payloads.
      */
     List<SpewTypeAdapter<?>> getTypeAdapters();
+
+    static final class AuthConnectionConfiguration implements SpewConnectionConfiguration {
+
+        @Override
+        public List<SpewTypeAdapter<?>> getTypeAdapters() {
+            return Collections.emptyList();
+        }
+
+        @Override
+        public void addProperties(Map<String, Object> properties) {
+            throw new UnsupportedOperationException();
+        }
+
+    }
 
 }

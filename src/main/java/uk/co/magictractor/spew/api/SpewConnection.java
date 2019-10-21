@@ -30,4 +30,6 @@ public interface SpewConnection extends HasProperties {
         // Do nothing
     }
 
+    SpewConnectionConfiguration getConfiguration();
+
 }

@@ -5,6 +5,7 @@ import java.time.Instant;
 import java.util.Random;
 
 import uk.co.magictractor.spew.api.OutgoingHttpRequest;
+import uk.co.magictractor.spew.api.SpewConnectionConfiguration;
 import uk.co.magictractor.spew.api.SpewHttpResponse;
 import uk.co.magictractor.spew.api.SpewOAuth1Application;
 import uk.co.magictractor.spew.api.SpewOAuth1Configuration;
@@ -15,8 +16,8 @@ import uk.co.magictractor.spew.core.response.parser.SpewParsedResponseBuilder;
 import uk.co.magictractor.spew.core.response.parser.text.KeyValuePairsHttpMessageBodyReader;
 import uk.co.magictractor.spew.core.verification.AuthorizationHandler;
 import uk.co.magictractor.spew.server.SpewHttpRequest;
-import uk.co.magictractor.spew.store.EditableProperty;
 import uk.co.magictractor.spew.store.ConstantProperty;
+import uk.co.magictractor.spew.store.EditableProperty;
 import uk.co.magictractor.spew.util.BrowserUtil;
 
 // TODO! common interface for OAuth1 and OAuth2 connections (and no auth? / other auth?)
@@ -141,7 +142,7 @@ public final class BoaOAuth1Connection extends AbstractAuthorizationDecoratorCon
         addOAuthSignature(request);
         SpewHttpResponse response = request(request);
 
-        return new SpewParsedResponseBuilder(application, response)
+        return new SpewParsedResponseBuilder(SpewConnectionConfiguration.AUTH, response)
                 .withBodyReader(KeyValuePairsHttpMessageBodyReader.class)
                 .withoutVerification()
                 .build();

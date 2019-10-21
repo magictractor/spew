@@ -16,6 +16,7 @@
 package uk.co.magictractor.spew.core.response.parser;
 
 import uk.co.magictractor.spew.api.SpewApplication;
+import uk.co.magictractor.spew.api.SpewConnectionConfiguration;
 import uk.co.magictractor.spew.api.SpewHttpMessage;
 
 /**
@@ -37,6 +38,7 @@ public interface SpewHttpMessageBodyReaderFactory {
      *        be found
      * @return flag indicating whether this parser
      */
-    SpewHttpMessageBodyReader instanceFor(SpewApplication<?> application, SpewHttpMessage response);
+    SpewHttpMessageBodyReader instanceFor(SpewConnectionConfiguration connectionConfiguration,
+            SpewHttpMessage response);
 
 }

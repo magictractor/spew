@@ -25,7 +25,7 @@ import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.ReadContext;
 import com.jayway.jsonpath.TypeRef;
 
-import uk.co.magictractor.spew.api.SpewApplication;
+import uk.co.magictractor.spew.api.SpewConnectionConfiguration;
 import uk.co.magictractor.spew.api.SpewHttpMessage;
 import uk.co.magictractor.spew.core.response.parser.ObjectCentricHttpMessageBodyReader;
 import uk.co.magictractor.spew.util.HttpMessageUtil;
@@ -43,11 +43,10 @@ public class JaywayHttpMessageBodyReader
      * Default visibility because instances should only be created via
      * JaywayResponseParserInit.
      */
-    JaywayHttpMessageBodyReader(SpewApplication<?> application, SpewHttpMessage httpMessage) {
+    JaywayHttpMessageBodyReader(SpewConnectionConfiguration connectionConfiguration, SpewHttpMessage httpMessage) {
         InputStream bodyInputStream = HttpMessageUtil.createBodyInputStream(httpMessage);
         IOUtil.acceptThenClose(bodyInputStream, body -> {
-            // AARGH appl...
-            ctx = JsonPath.parse(body, JaywayConfigurationCache.getConfiguration(application));
+            ctx = JsonPath.parse(body, JaywayConfigurationCache.getConfiguration(connectionConfiguration));
         });
     }
 
