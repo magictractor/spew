@@ -1,7 +1,11 @@
 package uk.co.magictractor.spew.provider.twitter;
 
+import java.util.Collections;
+import java.util.List;
+
 import uk.co.magictractor.spew.api.SpewOAuth1ServiceProvider;
 import uk.co.magictractor.spew.api.SpewOAuth2ServiceProvider;
+import uk.co.magictractor.spew.core.typeadapter.SpewTypeAdapter;
 
 // manage apps at apps.twitter.com
 // Twitter can be accessed via OAuth1 or OAuth2 - names TwitterOAuth1 and TwitterOAuth2?
@@ -56,6 +60,11 @@ public class Twitter implements SpewOAuth1ServiceProvider, SpewOAuth2ServiceProv
     @Override
     public String appManagementUrl() {
         return "https://developer.twitter.com/en/apps";
+    }
+
+    @Override
+    public List<SpewTypeAdapter<?>> getTypeAdapters() {
+        return Collections.emptyList();
     }
 
 }

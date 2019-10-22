@@ -15,7 +15,11 @@
  */
 package uk.co.magictractor.spew.provider.github;
 
+import java.util.Collections;
+import java.util.List;
+
 import uk.co.magictractor.spew.api.SpewOAuth2ServiceProvider;
+import uk.co.magictractor.spew.core.typeadapter.SpewTypeAdapter;
 
 /**
  *
@@ -38,6 +42,11 @@ public class GitHub implements SpewOAuth2ServiceProvider {
     @Override
     public String oauth2TokenUri() {
         return "https://github.com/login/oauth/access_token";
+    }
+
+    @Override
+    public List<SpewTypeAdapter<?>> getTypeAdapters() {
+        return Collections.emptyList();
     }
 
 }

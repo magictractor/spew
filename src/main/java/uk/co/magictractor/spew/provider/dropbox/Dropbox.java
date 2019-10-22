@@ -15,7 +15,11 @@
  */
 package uk.co.magictractor.spew.provider.dropbox;
 
+import java.util.Collections;
+import java.util.List;
+
 import uk.co.magictractor.spew.api.SpewOAuth2ServiceProvider;
+import uk.co.magictractor.spew.core.typeadapter.SpewTypeAdapter;
 
 // https://www.dropbox.com/developers/apps
 public class Dropbox implements SpewOAuth2ServiceProvider {
@@ -31,6 +35,11 @@ public class Dropbox implements SpewOAuth2ServiceProvider {
     @Override
     public String oauth2TokenUri() {
         return "https://api.dropboxapi.com/oauth2/token";
+    }
+
+    @Override
+    public List<SpewTypeAdapter<?>> getTypeAdapters() {
+        return Collections.emptyList();
     }
 
 }

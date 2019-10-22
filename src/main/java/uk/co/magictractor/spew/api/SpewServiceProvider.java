@@ -1,6 +1,5 @@
 package uk.co.magictractor.spew.api;
 
-import java.util.Collections;
 import java.util.List;
 
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponseBuilder;
@@ -47,10 +46,7 @@ public interface SpewServiceProvider {
     //    return ContentTypeUtil.fromHeader(response);
     //}
 
-    // TODO! no default - force implementations to implement this
-    default List<SpewTypeAdapter<?>> getTypeAdapters() {
-        return Collections.emptyList();
-    }
+    List<SpewTypeAdapter<?>> getTypeAdapters();
 
     /**
      * Check that the response has an "ok" status (if it contains a status) and

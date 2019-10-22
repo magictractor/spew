@@ -1,5 +1,7 @@
 package uk.co.magictractor.spew.provider.imagebam;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.function.Supplier;
 
 import com.google.common.io.BaseEncoding;
@@ -10,6 +12,7 @@ import uk.co.magictractor.spew.api.SpewOAuth1ConfigurationBuilder;
 import uk.co.magictractor.spew.api.SpewOAuth1ServiceProvider;
 import uk.co.magictractor.spew.api.SpewVerifiedAuthConnectionConfiguration;
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponseBuilder;
+import uk.co.magictractor.spew.core.typeadapter.SpewTypeAdapter;
 import uk.co.magictractor.spew.core.verification.AuthVerificationHandler;
 import uk.co.magictractor.spew.core.verification.PasteAuthVerificationHandler;
 import uk.co.magictractor.spew.util.ContentTypeUtil;
@@ -116,6 +119,11 @@ public class ImageBam implements SpewOAuth1ServiceProvider {
     @Override
     public String appManagementUrl() {
         return "http://www.imagebam.com/sys/API/clients";
+    }
+
+    @Override
+    public List<SpewTypeAdapter<?>> getTypeAdapters() {
+        return Collections.emptyList();
     }
 
 }
