@@ -51,12 +51,6 @@ public class Twitter implements SpewOAuth1ServiceProvider, SpewOAuth2ServiceProv
             "Twitter OAuth2 only supports grant_type=client_credentials, so this method should never be called");
     }
 
-    // https://developer.twitter.com/en/docs/basics/authentication/guides/creating-a-signature
-    @Override
-    public String oauth1RequestSignatureMethod() {
-        return "HMAC-SHA1";
-    }
-
     @Override
     public String appManagementUrl() {
         return "https://developer.twitter.com/en/apps";

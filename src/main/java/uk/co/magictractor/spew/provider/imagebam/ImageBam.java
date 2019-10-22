@@ -43,6 +43,7 @@ public class ImageBam implements SpewOAuth1ServiceProvider {
     @Override
     public void initConnectionConfigurationBuilder(SpewOAuth1ConfigurationBuilder builder) {
         Supplier<SpewOAuth1Configuration> configurationSupplier = builder.nextBuild();
+        builder.withRequestSignatureMethod("MD5");
         builder.withSignatureBaseStringFunction(req -> getImageBamSignatureBaseString(req, configurationSupplier));
         builder.withSignatureEncodingFunction(BaseEncoding.base16().lowerCase());
     }
@@ -89,11 +90,6 @@ public class ImageBam implements SpewOAuth1ServiceProvider {
     @Override
     public String oauth1TokenRequestUri() {
         return "http://www.imagebam.com/sys/oauth/request_access_token";
-    }
-
-    @Override
-    public String oauth1RequestSignatureMethod() {
-        return "MD5";
     }
 
     // {"rsp":{"status":"fail","error_code":108,"error_message":"permission denied: gallery_id"}}

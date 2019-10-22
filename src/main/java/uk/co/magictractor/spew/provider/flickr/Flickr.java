@@ -46,11 +46,6 @@ public class Flickr implements SpewOAuth1ServiceProvider {
     }
 
     @Override
-    public String oauth1RequestSignatureMethod() {
-        return "HMAC-SHA1";
-    }
-
-    @Override
     public List<SpewTypeAdapter<?>> getTypeAdapters() {
         return Arrays.asList(
             BooleanTypeAdapter.ZERO_AND_ONE,

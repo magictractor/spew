@@ -83,9 +83,6 @@ public class SpewOAuth1ConfigurationBuilder
         if (configuration.tokenRequestUri == null) {
             configuration.tokenRequestUri = serviceProvider.oauth1TokenRequestUri();
         }
-        if (configuration.requestSignatureMethod == null) {
-            configuration.requestSignatureMethod = serviceProvider.oauth1RequestSignatureMethod();
-        }
         if (configuration.signatureFunction == null) {
             configuration.signatureFunction = SPIUtil.firstNotNull(SignatureGenerator.class,
                 gen -> gen.signatureFunction(configuration.requestSignatureMethod))
@@ -121,6 +118,11 @@ public class SpewOAuth1ConfigurationBuilder
                     .getProperty(application, "user_secret");
         }
 
+        return this;
+    }
+
+    public SpewOAuth1ConfigurationBuilder withRequestSignatureMethod(String requestSignatureMethod) {
+        configuration().requestSignatureMethod = requestSignatureMethod;
         return this;
     }
 
@@ -175,7 +177,7 @@ public class SpewOAuth1ConfigurationBuilder
         private String temporaryCredentialRequestUri;
         private String resourceOwnerAuthorizationUri;
         private String tokenRequestUri;
-        private String requestSignatureMethod;
+        private String requestSignatureMethod = "HMAC-SHA1";
         private Function<OutgoingHttpRequest, String> signatureBaseStringFunction;
         private BiFunction<byte[], byte[], byte[]> signatureFunction;
         private Function<byte[], String> signatureEncodingFunction;
