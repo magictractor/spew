@@ -16,7 +16,6 @@ import uk.co.magictractor.spew.core.response.parser.SpewParsedResponseBuilder;
 import uk.co.magictractor.spew.core.response.parser.text.KeyValuePairsHttpMessageBodyReader;
 import uk.co.magictractor.spew.core.verification.AuthVerificationHandler;
 import uk.co.magictractor.spew.server.SpewHttpRequest;
-import uk.co.magictractor.spew.store.ConstantProperty;
 import uk.co.magictractor.spew.store.EditableProperty;
 import uk.co.magictractor.spew.util.BrowserUtil;
 
@@ -31,8 +30,8 @@ public final class BoaOAuth1Connection extends AbstractAuthorizationDecoratorCon
      * SpewOAuth1Configuration, but are replaced with transient unpersisted
      * properties during verification.
      */
-    private EditableProperty userToken;
-    private EditableProperty userSecret;
+    private final EditableProperty userToken;
+    private final EditableProperty userSecret;
 
     @Deprecated(forRemoval = true)
     private final SpewOAuth1Application<?> application;
@@ -110,11 +109,13 @@ public final class BoaOAuth1Connection extends AbstractAuthorizationDecoratorCon
          * successful verification.
          * </p>
          * <p>
-         * Alternatively, could persist these values with an immediate expiry.
+         * Alternatively, could persist these values with an immediate expiry???
          * <p>
          */
-        userToken = new ConstantProperty(authToken);
-        userSecret = new ConstantProperty(authSecret);
+        //userToken = new ConstantProperty(authToken);
+        //userSecret = new ConstantProperty(authSecret);
+        userToken.setValue(authToken);
+        userSecret.setValue(authSecret);
 
         // TODO! use OutgoingHttpRequest to build the Uri
         String authUriBase = getConfiguration().getResourceOwnerAuthorizationUri();
@@ -181,8 +182,8 @@ public final class BoaOAuth1Connection extends AbstractAuthorizationDecoratorCon
         }
 
         // Reinstate the persisted properties.
-        userToken = getConfiguration().getUserTokenProperty();
-        userSecret = getConfiguration().getUserSecretProperty();
+        //userToken = getConfiguration().getUserTokenProperty();
+        //userSecret = getConfiguration().getUserSecretProperty();
 
         String newAuthToken = response.getString("oauth_token");
         String authSecret = response.getString("oauth_token_secret");
