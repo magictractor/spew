@@ -44,6 +44,8 @@ import uk.co.magictractor.spew.core.response.parser.xpath.JavaXPathResponseFacto
 import uk.co.magictractor.spew.core.signature.MacSignatureGenerator;
 import uk.co.magictractor.spew.core.signature.MessageDigestSignatureGenerator;
 import uk.co.magictractor.spew.core.signature.SignatureGenerator;
+import uk.co.magictractor.spew.core.verification.AuthVerificationHandlerFactory;
+import uk.co.magictractor.spew.core.verification.ConsolePasteAuthVerificationHandlerFactory;
 import uk.co.magictractor.spew.extra.registry.JnaWindowsRegistryUserPropertyStore;
 import uk.co.magictractor.spew.http.apache.SpewApacheHttpClientConnectionFactory;
 import uk.co.magictractor.spew.http.javaurl.SpewHttpUrlConnectionFactory;
@@ -57,6 +59,7 @@ import uk.co.magictractor.spew.photo.local.LocalLibraryPathFinder;
 import uk.co.magictractor.spew.photo.local.dates.DefaultLocalDirectoryDatesStrategy;
 import uk.co.magictractor.spew.photo.local.dates.LocalDirectoryDatesStrategy;
 import uk.co.magictractor.spew.server.CallbackServer;
+import uk.co.magictractor.spew.server.LocalServerAuthVerificationHandlerFactory;
 import uk.co.magictractor.spew.server.netty.NettyCallbackServer;
 import uk.co.magictractor.spew.server.undertow.UndertowCallbackServer;
 import uk.co.magictractor.spew.store.application.ApplicationPropertyStore;
@@ -94,6 +97,9 @@ public final class SPIUtil {
         addDefault(SpewHttpMessageBodyReaderFactory.class, JavaXPathResponseFactory.class);
 
         addDefault(ParsedResponsePojoConverter.class, DefaultParsedResponsePojoConverter.class);
+
+        addDefault(AuthVerificationHandlerFactory.class, LocalServerAuthVerificationHandlerFactory.class);
+        addDefault(AuthVerificationHandlerFactory.class, ConsolePasteAuthVerificationHandlerFactory.class);
 
         // Could have a Wiremock implementation too
         addDefault(CallbackServer.class, UndertowCallbackServer.class);

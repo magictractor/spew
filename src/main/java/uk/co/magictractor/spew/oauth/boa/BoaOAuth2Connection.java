@@ -117,7 +117,7 @@ public class BoaOAuth2Connection extends AbstractAuthorizationDecoratorConnectio
 
         // Mucky. The callback value comes from the handler but is also used in the verification function.
         //AuthorizationHandler[] authHandlerHolder = new AuthorizationHandler[1];
-        AuthVerificationHandler authHandler = application.createAuthorizationHandler(getConfiguration());
+        AuthVerificationHandler authHandler = getConfiguration().createAuthVerificationHandler();
         //authHandlerHolder[0] = authHandler;
 
         authHandler.preOpenAuthorizationInBrowser();
@@ -159,7 +159,8 @@ public class BoaOAuth2Connection extends AbstractAuthorizationDecoratorConnectio
 
     @Override
     public boolean verifyAuthorization(String verificationCode) {
-        String redirectUri = application.createAuthorizationHandler(getConfiguration()).getRedirectUri();
+        // TODO! perhaps encode the redirectUri with the state so that it can be extracted from callbacks.
+        String redirectUri = getConfiguration().createAuthVerificationHandler().getRedirectUri();
 
         // ah! needed to be POST else 404 (Google)
         OutgoingHttpRequest request = new OutgoingHttpRequest("POST", getConfiguration().getTokenUri());

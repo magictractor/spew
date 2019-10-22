@@ -15,6 +15,13 @@
  */
 package uk.co.magictractor.spew.core.verification;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+
+import uk.co.magictractor.spew.api.SpewVerifiedAuthConnectionConfiguration;
+import uk.co.magictractor.spew.util.spi.SPIUtil;
+
 /**
  * <p>
  * Interface for capturing verification codes when a user permits the
@@ -33,14 +40,27 @@ public interface AuthVerificationHandler {
      * fired up to receive the callback using Netty or another lightweight web
      * server.
      */
-    // Strings rather than enum to allow users to devise alternate mechanisms.
-    public static final String VERIFICATION_TYPE_LOCAL_CALLBACK_SERVER = "LocalCallbackServer";
+    public static final String AUTH_VERIFICATION_TYPE_CALLBACK = "Callback";
 
     /**
      * Verification codes are displayed on a web paste and manually copied to
      * the console by the user.
      */
-    public static final String VERIFICATION_TYPE_PASTE_CONSOLE = "PasteConsole";
+    public static final String AUTH_VERIFICATION_TYPE_PASTE = "Paste";
+
+    /**
+     * <p>
+     * Default verification types used for applications.
+     * </p>
+     * <p>
+     * Verification types used by an application may be changed by modifying the
+     * connection builder.
+     * </p>
+     */
+    // Strings rather than enum to allow users to devise alternate mechanisms.
+    public static final List<String> DEFAULT_AUTH_VERIFICATION_TYPES = Arrays.asList(
+        AUTH_VERIFICATION_TYPE_CALLBACK,
+        AUTH_VERIFICATION_TYPE_PASTE);
 
     void preOpenAuthorizationInBrowser();
 
@@ -60,5 +80,19 @@ public interface AuthVerificationHandler {
      * </p>
      */
     String getRedirectUri();
+
+    public static AuthVerificationHandler instanceFor(SpewVerifiedAuthConnectionConfiguration connectionConfiguration) {
+
+        for (String authVerificationType : connectionConfiguration.getVerificationHandlerTypes()) {
+            Optional<AuthVerificationHandler> handlerOpt = SPIUtil.firstNotNull(AuthVerificationHandlerFactory.class,
+                factory -> factory.instanceFor(authVerificationType, connectionConfiguration));
+            if (handlerOpt.isPresent()) {
+                return handlerOpt.get();
+            }
+        }
+
+        throw new IllegalStateException("No " + AuthVerificationHandlerFactory.class.getSimpleName()
+                + " for any of the handler types " + connectionConfiguration.getVerificationHandlerTypes());
+    }
 
 }

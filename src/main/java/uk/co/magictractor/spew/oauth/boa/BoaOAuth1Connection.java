@@ -76,7 +76,7 @@ public final class BoaOAuth1Connection extends AbstractAuthorizationDecoratorCon
 
     @Override
     public void obtainAuthorization() {
-        AuthVerificationHandler authorizationHandler = application.createAuthorizationHandler(getConfiguration());
+        AuthVerificationHandler authorizationHandler = getConfiguration().createAuthVerificationHandler();
         authorizationHandler.preOpenAuthorizationInBrowser();
 
         openAuthorizationUriInBrowser(authorizationHandler.getRedirectUri());

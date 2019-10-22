@@ -13,26 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.co.magictractor.spew.api;
+package uk.co.magictractor.spew.core.verification;
 
-import java.util.List;
+import uk.co.magictractor.spew.api.SpewVerifiedAuthConnectionConfiguration;
 
-import uk.co.magictractor.spew.core.verification.AuthVerificationHandler;
+public interface AuthVerificationHandlerFactory {
 
-/**
- *
- */
-public interface SpewVerifiedAuthConnectionConfiguration extends SpewConnectionConfiguration {
-
-    /**
-     * The out-of-band URI (sometimes referred to as "oob") is a special value
-     * used in the redirect_url to tell the server to display a verification
-     * code rather than perform a callback.
-     */
-    String getOutOfBandUri();
-
-    List<String> getVerificationHandlerTypes();
-
-    AuthVerificationHandler createAuthVerificationHandler();
+    AuthVerificationHandler instanceFor(String authVerificationType,
+            SpewVerifiedAuthConnectionConfiguration connectionConfiguration);
 
 }

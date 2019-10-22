@@ -7,7 +7,6 @@ import com.google.common.base.MoreObjects.ToStringHelper;
 
 import uk.co.magictractor.spew.api.connection.SpewConnectionCache;
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponseBuilder;
-import uk.co.magictractor.spew.core.verification.AuthVerificationHandler;
 import uk.co.magictractor.spew.util.StringUtil;
 
 public interface SpewApplication<SP extends SpewServiceProvider> extends HasProperties {
@@ -65,11 +64,6 @@ public interface SpewApplication<SP extends SpewServiceProvider> extends HasProp
 
     default ApplicationRequest createDelRequest(String url) {
         return createRequest("DEL", url);
-    }
-
-    default AuthVerificationHandler createAuthorizationHandler(
-            SpewVerifiedAuthConnectionConfiguration connectionConfiguration) {
-        return getServiceProvider().createDefaultAuthorizationHandler(connectionConfiguration);
     }
 
     @Override

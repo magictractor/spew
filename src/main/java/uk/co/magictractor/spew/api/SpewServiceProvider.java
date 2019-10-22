@@ -4,8 +4,6 @@ import java.util.List;
 
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponseBuilder;
 import uk.co.magictractor.spew.core.typeadapter.SpewTypeAdapter;
-import uk.co.magictractor.spew.core.verification.AuthVerificationHandler;
-import uk.co.magictractor.spew.core.verification.PasteAuthVerificationHandler;
 
 // Base interface for OAuth1 and OAuth2. Some methods likely to move here from OAuth1 when (and if) OAuth2 support is added.
 // https://stackoverflow.com/questions/4113934/how-is-oauth-2-different-from-oauth-1
@@ -65,12 +63,6 @@ public interface SpewServiceProvider {
 
     // TODO! no default, every service provider should have a non-empty impl of this method
     default void buildParsedResponse(SpewParsedResponseBuilder parsedResponseBuilder) {
-    }
-
-    default AuthVerificationHandler createDefaultAuthorizationHandler(
-            SpewVerifiedAuthConnectionConfiguration connectionConfiguration) {
-        //return new LocalServerAuthVerificationHandler(connectionConfiguration);
-        return new PasteAuthVerificationHandler(connectionConfiguration);
     }
 
     default String appManagementUrl() {

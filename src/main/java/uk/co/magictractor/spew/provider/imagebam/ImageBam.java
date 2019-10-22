@@ -10,11 +10,9 @@ import uk.co.magictractor.spew.api.OutgoingHttpRequest;
 import uk.co.magictractor.spew.api.SpewOAuth1Configuration;
 import uk.co.magictractor.spew.api.SpewOAuth1ConfigurationBuilder;
 import uk.co.magictractor.spew.api.SpewOAuth1ServiceProvider;
-import uk.co.magictractor.spew.api.SpewVerifiedAuthConnectionConfiguration;
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponseBuilder;
 import uk.co.magictractor.spew.core.typeadapter.SpewTypeAdapter;
 import uk.co.magictractor.spew.core.verification.AuthVerificationHandler;
-import uk.co.magictractor.spew.core.verification.PasteAuthVerificationHandler;
 import uk.co.magictractor.spew.util.ContentTypeUtil;
 import uk.co.magictractor.spew.util.HttpMessageUtil;
 
@@ -46,6 +44,9 @@ public class ImageBam implements SpewOAuth1ServiceProvider {
         builder.withRequestSignatureMethod("MD5");
         builder.withSignatureBaseStringFunction(req -> getImageBamSignatureBaseString(req, configurationSupplier));
         builder.withSignatureEncodingFunction(BaseEncoding.base16().lowerCase());
+
+        // Imagebam only supports copy and paste of a code.
+        builder.withoutVerificationHandlerType(AuthVerificationHandler.AUTH_VERIFICATION_TYPE_CALLBACK);
     }
 
     private String getImageBamSignatureBaseString(OutgoingHttpRequest request,
@@ -103,13 +104,6 @@ public class ImageBam implements SpewOAuth1ServiceProvider {
     //            throw new BadResponseException(status, errorCode, errorMessage);
     //        }
     //    }
-
-    @Override
-    public AuthVerificationHandler createDefaultAuthorizationHandler(
-            SpewVerifiedAuthConnectionConfiguration connectionConfiguration) {
-        // ImageBam does not do callbacks, it always displays a code to copy into the application.
-        return new PasteAuthVerificationHandler(connectionConfiguration);
-    }
 
     // Cannot edit application details, only add client.
     @Override
