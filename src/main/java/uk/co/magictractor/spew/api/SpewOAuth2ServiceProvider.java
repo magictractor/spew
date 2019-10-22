@@ -1,9 +1,6 @@
 package uk.co.magictractor.spew.api;
 
-import uk.co.magictractor.spew.api.connection.HasConnectionConfigurationBuilder;
-
-public interface SpewOAuth2ServiceProvider
-        extends SpewServiceProvider, HasConnectionConfigurationBuilder<SpewOAuth2ConfigurationBuilder> {
+public interface SpewOAuth2ServiceProvider extends SpewServiceProvider {
 
     String oauth2AuthorizationUri();
 
@@ -17,6 +14,9 @@ public interface SpewOAuth2ServiceProvider
     // TODO! bin this, configuration builder should handle it
     default void modifyTokenRequest(OutgoingHttpRequest request) {
         // Do nothing.
+    }
+
+    default void initConnectionConfigurationBuilder(SpewOAuth2ConfigurationBuilder configurationBuilder) {
     }
 
 }
