@@ -7,7 +7,6 @@ import java.util.Random;
 import uk.co.magictractor.spew.api.OutgoingHttpRequest;
 import uk.co.magictractor.spew.api.SpewConnectionConfiguration;
 import uk.co.magictractor.spew.api.SpewHttpResponse;
-import uk.co.magictractor.spew.api.SpewOAuth1Application;
 import uk.co.magictractor.spew.api.SpewOAuth1Configuration;
 import uk.co.magictractor.spew.api.connection.AbstractAuthorizationDecoratorConnection;
 import uk.co.magictractor.spew.api.connection.SpewConnectionVerificationPendingCache;
@@ -33,17 +32,13 @@ public final class BoaOAuth1Connection extends AbstractAuthorizationDecoratorCon
     private final EditableProperty userToken;
     private final EditableProperty userSecret;
 
-    @Deprecated(forRemoval = true)
-    private final SpewOAuth1Application<?> application;
-
     /**
      * Default visibility, applications should obtain instances via
      * {@link BoaConnectionFactory#createConnection}, usually indirectly via
      * OAuthConnectionFactory.
      */
-    /* default */ BoaOAuth1Connection(SpewOAuth1Application<?> application, SpewOAuth1Configuration configuration) {
+    /* default */ BoaOAuth1Connection(SpewOAuth1Configuration configuration) {
         super(configuration);
-        this.application = application;
         this.userToken = configuration.getUserTokenProperty();
         this.userSecret = configuration.getUserSecretProperty();
     }
