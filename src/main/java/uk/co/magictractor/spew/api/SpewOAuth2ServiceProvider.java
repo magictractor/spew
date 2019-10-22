@@ -1,11 +1,9 @@
 package uk.co.magictractor.spew.api;
 
-public interface SpewOAuth2ServiceProvider extends SpewServiceProvider {
+import uk.co.magictractor.spew.api.connection.HasConnectionConfigurationBuilder;
 
-    default SpewOAuth2ConfigurationBuilder oauth2ConfigurationBuilder() {
-        return new SpewOAuth2ConfigurationBuilder()
-                .withServiceProvider(this);
-    }
+public interface SpewOAuth2ServiceProvider
+        extends SpewServiceProvider, HasConnectionConfigurationBuilder<SpewOAuth2ConfigurationBuilder> {
 
     String oauth2AuthorizationUri();
 

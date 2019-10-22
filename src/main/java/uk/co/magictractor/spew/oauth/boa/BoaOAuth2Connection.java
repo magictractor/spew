@@ -131,7 +131,9 @@ public class BoaOAuth2Connection extends AbstractAuthorizationDecoratorConnectio
         // "pin" for Imgur
         request.setQueryStringParam("response_type", "code");
 
-        request.setQueryStringParam("scope", getConfiguration().getScope());
+        if (getConfiguration().getScope() != null) {
+            request.setQueryStringParam("scope", getConfiguration().getScope());
+        }
 
         // This gets passed back to the verifier
         String state = hashCode() + "-" + RandomUtil.nextBigPositiveLong();

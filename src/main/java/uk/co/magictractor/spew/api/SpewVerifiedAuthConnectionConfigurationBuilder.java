@@ -20,22 +20,8 @@ import uk.co.magictractor.spew.api.SpewVerifiedAuthConnectionConfigurationBuilde
 /**
  *
  */
-public abstract class SpewVerifiedAuthConnectionConfigurationBuilder<CONFIG extends SpewVerifiedAuthConnectionConfiguration, IMPL extends SpewVerifiedAuthConnectionConfigurationImpl, APP extends SpewApplication<?>, BUILDER extends SpewVerifiedAuthConnectionConfigurationBuilder<CONFIG, IMPL, APP, BUILDER>>
-        extends SpewConnectionConfigurationBuilder<CONFIG, IMPL, APP, BUILDER> {
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public BUILDER withServiceProvider(SpewServiceProvider serviceProvider) {
-        super.withServiceProvider(serviceProvider);
-        return (BUILDER) this;
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public BUILDER withApplication(APP application) {
-        super.withApplication(application);
-        return (BUILDER) this;
-    }
+public abstract class SpewVerifiedAuthConnectionConfigurationBuilder<CONFIG extends SpewVerifiedAuthConnectionConfiguration, IMPL extends SpewVerifiedAuthConnectionConfigurationImpl, APP extends SpewApplication<SP>, SP extends SpewServiceProvider, BUILDER extends SpewVerifiedAuthConnectionConfigurationBuilder<CONFIG, IMPL, APP, SP, BUILDER>>
+        extends SpewConnectionConfigurationBuilder<CONFIG, IMPL, APP, SP, BUILDER> {
 
     public BUILDER withOutOfBandUri(String outOfBandUri) {
         SpewVerifiedAuthConnectionConfigurationImpl configuration = configuration();

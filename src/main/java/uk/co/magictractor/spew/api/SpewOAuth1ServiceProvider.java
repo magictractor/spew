@@ -1,11 +1,9 @@
 package uk.co.magictractor.spew.api;
 
-public interface SpewOAuth1ServiceProvider extends SpewServiceProvider {
+import uk.co.magictractor.spew.api.connection.HasConnectionConfigurationBuilder;
 
-    default SpewOAuth1ConfigurationBuilder oauth1ConfigurationBuilder() {
-        return new SpewOAuth1ConfigurationBuilder()
-                .withServiceProvider(this);
-    }
+public interface SpewOAuth1ServiceProvider
+        extends SpewServiceProvider, HasConnectionConfigurationBuilder<SpewOAuth1ConfigurationBuilder> {
 
     String oauth1TemporaryCredentialRequestUri();
 
@@ -13,6 +11,7 @@ public interface SpewOAuth1ServiceProvider extends SpewServiceProvider {
 
     String oauth1TokenRequestUri();
 
+    // TODO! config builder only for this
     String oauth1RequestSignatureMethod();
 
 }

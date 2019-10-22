@@ -1,12 +1,14 @@
 package uk.co.magictractor.spew.api;
 
+import uk.co.magictractor.spew.api.connection.HasConnectionConfigurationBuilder;
+
 // OAuth2 specification https://tools.ietf.org/html/rfc6749
 @SpewAuthType("OAuth2")
-public interface SpewOAuth2Application<SP extends SpewOAuth2ServiceProvider> extends SpewApplication<SP> {
+public interface SpewOAuth2Application<SP extends SpewOAuth2ServiceProvider>
+        extends SpewApplication<SP>, HasConnectionConfigurationBuilder<SpewOAuth2ConfigurationBuilder> {
 
     default SpewOAuth2Configuration getConfiguration() {
-        return getServiceProvider()
-                .oauth2ConfigurationBuilder()
+        return new SpewOAuth2ConfigurationBuilder()
                 .withApplication(this)
                 .build();
     }

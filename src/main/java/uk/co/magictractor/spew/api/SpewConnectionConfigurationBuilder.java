@@ -27,7 +27,7 @@ import uk.co.magictractor.spew.core.typeadapter.SpewTypeAdapter;
 /**
  *
  */
-public abstract class SpewConnectionConfigurationBuilder<CONFIG extends SpewConnectionConfiguration, IMPL extends SpewConnectionConfigurationImpl, APP extends SpewApplication<?>, BUILDER extends SpewConnectionConfigurationBuilder<CONFIG, IMPL, APP, BUILDER>> {
+public abstract class SpewConnectionConfigurationBuilder<CONFIG extends SpewConnectionConfiguration, IMPL extends SpewConnectionConfigurationImpl, APP extends SpewApplication<SP>, SP extends SpewServiceProvider, BUILDER extends SpewConnectionConfigurationBuilder<CONFIG, IMPL, APP, SP, BUILDER>> {
 
     private IMPL configuration;
     private List<CONFIG> next;
@@ -57,25 +57,31 @@ public abstract class SpewConnectionConfigurationBuilder<CONFIG extends SpewConn
         if (next == null) {
             next = new ArrayList<>();
         }
+        List<CONFIG> holder = next;
         return () -> {
-            return next.get(0);
+            return holder.get(0);
         };
     }
 
     @SuppressWarnings("unchecked")
-    public BUILDER withServiceProvider(SpewServiceProvider serviceProvider) {
-        SpewConnectionConfigurationImpl configuration = this.configuration;
-
-        if (configuration.typeAdapters == null) {
-            configuration.typeAdapters = serviceProvider.getTypeAdapters();
+    public BUILDER withApplication(APP application) {
+        if (application.getServiceProvider() != null) {
+            withServiceProvider(application.getServiceProvider());
         }
+
+        withProperties(application.getProperties());
 
         return (BUILDER) this;
     }
 
     @SuppressWarnings("unchecked")
-    public BUILDER withApplication(APP application) {
-        withProperties(application.getProperties());
+    public BUILDER withServiceProvider(SP serviceProvider) {
+
+        SpewConnectionConfigurationImpl configuration = this.configuration;
+
+        if (configuration.typeAdapters == null) {
+            configuration.typeAdapters = serviceProvider.getTypeAdapters();
+        }
 
         return (BUILDER) this;
     }

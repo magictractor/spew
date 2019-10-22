@@ -38,13 +38,10 @@ public class ImageBam implements SpewOAuth1ServiceProvider {
     }
 
     @Override
-    public SpewOAuth1ConfigurationBuilder oauth1ConfigurationBuilder() {
-        SpewOAuth1ConfigurationBuilder builder = new SpewOAuth1ConfigurationBuilder();
+    public void initConnectionConfigurationBuilder(SpewOAuth1ConfigurationBuilder builder) {
         Supplier<SpewOAuth1Configuration> configurationSupplier = builder.nextBuild();
-        return builder
-                .withSignatureBaseStringFunction(req -> getImageBamSignatureBaseString(req, configurationSupplier))
-                .withSignatureEncodingFunction(BaseEncoding.base16().lowerCase())
-                .withServiceProvider(this);
+        builder.withSignatureBaseStringFunction(req -> getImageBamSignatureBaseString(req, configurationSupplier));
+        builder.withSignatureEncodingFunction(BaseEncoding.base16().lowerCase());
     }
 
     private String getImageBamSignatureBaseString(OutgoingHttpRequest request,
@@ -58,6 +55,7 @@ public class ImageBam implements SpewOAuth1ServiceProvider {
         signatureBaseStringBuilder.append(request.getQueryStringParam("oauth_timestamp").get());
         signatureBaseStringBuilder.append(request.getQueryStringParam("oauth_nonce").get());
         if (configuration.getUserTokenProperty().getValue() != null) {
+            // aaah... token and secret were swapped out... => expires idea is better??
             signatureBaseStringBuilder.append(configuration.getUserTokenProperty().getValue());
             signatureBaseStringBuilder.append(configuration.getUserSecretProperty().getValue());
         }

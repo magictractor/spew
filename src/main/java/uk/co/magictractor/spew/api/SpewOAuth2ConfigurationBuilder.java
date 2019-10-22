@@ -24,7 +24,7 @@ import uk.co.magictractor.spew.util.spi.SPIUtil;
  */
 public class SpewOAuth2ConfigurationBuilder
         extends
-        SpewVerifiedAuthConnectionConfigurationBuilder<SpewOAuth2Configuration, SpewOAuth2ConfigurationImpl, SpewOAuth2Application<?>, SpewOAuth2ConfigurationBuilder> {
+        SpewVerifiedAuthConnectionConfigurationBuilder<SpewOAuth2Configuration, SpewOAuth2ConfigurationImpl, SpewOAuth2Application<SpewOAuth2ServiceProvider>, SpewOAuth2ServiceProvider, SpewOAuth2ConfigurationBuilder> {
 
     public SpewOAuth2ConfigurationBuilder() {
         // out-of-band isn't in the spec, but is supported by Google and other
@@ -37,8 +37,11 @@ public class SpewOAuth2ConfigurationBuilder
         return new SpewOAuth2ConfigurationImpl();
     }
 
+    @Override
     public SpewOAuth2ConfigurationBuilder withServiceProvider(SpewOAuth2ServiceProvider serviceProvider) {
         super.withServiceProvider(serviceProvider);
+
+        serviceProvider.initConnectionConfigurationBuilder(this);
 
         SpewOAuth2ConfigurationImpl configuration = configuration();
 
@@ -53,8 +56,10 @@ public class SpewOAuth2ConfigurationBuilder
     }
 
     @Override
-    public SpewOAuth2ConfigurationBuilder withApplication(SpewOAuth2Application<?> application) {
+    public SpewOAuth2ConfigurationBuilder withApplication(SpewOAuth2Application application) {
         super.withApplication(application);
+
+        application.initConnectionConfigurationBuilder(this);
 
         SpewOAuth2ConfigurationImpl configuration = configuration();
 

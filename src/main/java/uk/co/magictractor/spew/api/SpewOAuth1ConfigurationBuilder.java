@@ -36,7 +36,7 @@ import uk.co.magictractor.spew.util.spi.SPIUtil;
  */
 public class SpewOAuth1ConfigurationBuilder
         extends
-        SpewVerifiedAuthConnectionConfigurationBuilder<SpewOAuth1Configuration, SpewOAuth1ConfigurationImpl, SpewOAuth1Application<?>, SpewOAuth1ConfigurationBuilder> {
+        SpewVerifiedAuthConnectionConfigurationBuilder<SpewOAuth1Configuration, SpewOAuth1ConfigurationImpl, SpewOAuth1Application<SpewOAuth1ServiceProvider>, SpewOAuth1ServiceProvider, SpewOAuth1ConfigurationBuilder> {
 
     public SpewOAuth1ConfigurationBuilder() {
         withOutOfBandUri("oob");
@@ -66,9 +66,11 @@ public class SpewOAuth1ConfigurationBuilder
         return withSignatureEncodingFunction(bytes -> encoding.encode(bytes));
     }
 
-    // aah... does not override... more generics...?
+    @Override
     public SpewOAuth1ConfigurationBuilder withServiceProvider(SpewOAuth1ServiceProvider serviceProvider) {
         super.withServiceProvider(serviceProvider);
+
+        serviceProvider.initConnectionConfigurationBuilder(this);
 
         SpewOAuth1ConfigurationImpl configuration = configuration();
 
@@ -94,8 +96,11 @@ public class SpewOAuth1ConfigurationBuilder
     }
 
     @Override
-    public SpewOAuth1ConfigurationBuilder withApplication(SpewOAuth1Application<?> application) {
+    public SpewOAuth1ConfigurationBuilder withApplication(
+            SpewOAuth1Application application) {
         super.withApplication(application);
+
+        application.initConnectionConfigurationBuilder(this);
 
         SpewOAuth1ConfigurationImpl configuration = configuration();
 
