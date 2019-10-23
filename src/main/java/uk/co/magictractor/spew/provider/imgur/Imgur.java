@@ -2,8 +2,11 @@ package uk.co.magictractor.spew.provider.imgur;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import uk.co.magictractor.spew.api.OutgoingHttpRequest;
+import uk.co.magictractor.spew.api.SpewOAuth2Configuration;
+import uk.co.magictractor.spew.api.SpewOAuth2ConfigurationBuilder;
 import uk.co.magictractor.spew.api.SpewOAuth2ServiceProvider;
 import uk.co.magictractor.spew.core.typeadapter.InstantTypeAdapter;
 import uk.co.magictractor.spew.core.typeadapter.SpewTypeAdapter;
@@ -34,37 +37,39 @@ public class Imgur implements SpewOAuth2ServiceProvider {
     }
 
     @Override
-    public void modifyAuthorizationRequest(OutgoingHttpRequest request) {
-        // Meh - this method needs refactored anyway - then I moved the oob and completely broke it.
-        throw new UnsupportedOperationException("work in progress");
+    public void initConnectionConfigurationBuilder(SpewOAuth2ConfigurationBuilder builder) {
 
-        //        System.err.println("modifyAuthorizationRequest: " + request);
-        //        Map<String, String> queryParams = request.getQueryStringParams();
-        //        if (queryParams.get("redirect_uri").equals(getOutOfBandUri())) {
-        //            // Imgur uses "pin" response_type rather than "urn:ietf:wg:oauth:2.0:oob"
-        //            queryParams.put("response_type", "pin");
-        //            queryParams.remove("redirect_uri");
-        //        }
+        // Imgur uses "pin" response_type for out of band values (copy and paste code)
+        builder.withModifyAuthRequest(this::modifyAuthorizationRequest);
+        builder.withModifyTokenRequest(this::modifyTokenRequest);
     }
 
-    @Override
-    public void modifyTokenRequest(OutgoingHttpRequest request) {
+    private void modifyAuthorizationRequest(OutgoingHttpRequest request, SpewOAuth2Configuration configuration) {
+
+        System.err.println("modifyAuthorizationRequest: " + request);
+        Map<String, String> queryParams = request.getQueryStringParams();
+        if (queryParams.get("redirect_uri").equals(configuration.getOutOfBandUri())) {
+            // Imgur uses "pin" response_type rather than "urn:ietf:wg:oauth:2.0:oob"
+            request.setQueryStringParam("response_type", "pin");
+            request.setQueryStringParam("redirect_uri", null);
+        }
+    }
+
+    private void modifyTokenRequest(OutgoingHttpRequest request, Map<String, String> bodyData,
+            SpewOAuth2Configuration configuration) {
         System.err.println("modifyTokenRequest: " + request);
         // Aaah... now dealing with OutgoingHttpRequest rather than ApplicationRequest, so no longer have the body params...
-        throw new UnsupportedOperationException("broken by outgoing request rework");
-        //        Map<String, Object> bodyParams = request.getBodyParams();
-        //        if (bodyParams.get("redirect_uri").equals(getOutOfBandUri())) {
-        //            // Imgur uses "pin" response_type rather than "urn:ietf:wg:oauth:2.0:oob"
-        //            bodyParams.put("grant_type", "pin");
-        //            Object code = bodyParams.remove("code");
-        //            bodyParams.put("pin", code);
-        //        }
+        if (bodyData.get("redirect_uri").equals(configuration.getOutOfBandUri())) {
+            // Imgur uses "pin" response_type rather than "urn:ietf:wg:oauth:2.0:oob"
+            bodyData.put("grant_type", "pin");
+            String code = bodyData.remove("code");
+            bodyData.put("pin", code);
+        }
     }
 
     @Override
     public List<SpewTypeAdapter<?>> getTypeAdapters() {
-        return Arrays.asList(
-            InstantTypeAdapter.EPOCH_SECONDS);
+        return Arrays.asList(InstantTypeAdapter.EPOCH_SECONDS);
     }
 
 }

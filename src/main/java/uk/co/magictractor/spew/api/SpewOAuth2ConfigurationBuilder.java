@@ -15,6 +15,12 @@
  */
 package uk.co.magictractor.spew.api;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import uk.co.magictractor.spew.api.SpewOAuth2Configuration.AuthRequestModifier;
+import uk.co.magictractor.spew.api.SpewOAuth2Configuration.TokenRequestModifier;
 import uk.co.magictractor.spew.api.SpewOAuth2ConfigurationBuilder.SpewOAuth2ConfigurationImpl;
 import uk.co.magictractor.spew.store.application.ApplicationPropertyStore;
 import uk.co.magictractor.spew.util.spi.SPIUtil;
@@ -81,6 +87,24 @@ public class SpewOAuth2ConfigurationBuilder
         return this;
     }
 
+    public void withModifyAuthRequest(AuthRequestModifier modifier) {
+        SpewOAuth2ConfigurationImpl configuration = configuration();
+
+        if (configuration.authRequestModifiers == null) {
+            configuration.authRequestModifiers = new ArrayList<>();
+        }
+        configuration.authRequestModifiers.add(modifier);
+    }
+
+    public void withModifyTokenRequest(TokenRequestModifier modifier) {
+        SpewOAuth2ConfigurationImpl configuration = configuration();
+
+        if (configuration.tokenRequestModifiers == null) {
+            configuration.tokenRequestModifiers = new ArrayList<>();
+        }
+        configuration.tokenRequestModifiers.add(modifier);
+    }
+
     public static final class SpewOAuth2ConfigurationImpl
             extends SpewVerifiedAuthConnectionConfigurationBuilder.SpewVerifiedAuthConnectionConfigurationImpl
             implements SpewOAuth2Configuration {
@@ -90,6 +114,9 @@ public class SpewOAuth2ConfigurationBuilder
         private String authorizationUri;
         private String tokenUri;
         private String scope;
+        // TODO! Spring code won't use these
+        private List<AuthRequestModifier> authRequestModifiers;
+        private List<TokenRequestModifier> tokenRequestModifiers;
 
         @Override
         public String getClientId() {
@@ -114,6 +141,24 @@ public class SpewOAuth2ConfigurationBuilder
         @Override
         public String getScope() {
             return scope;
+        }
+
+        @Override
+        public void modifyAuthorizationRequest(OutgoingHttpRequest request) {
+            if (authRequestModifiers != null) {
+                for (AuthRequestModifier authRequestModifier : authRequestModifiers) {
+                    authRequestModifier.modify(request, this);
+                }
+            }
+        }
+
+        @Override
+        public void modifyTokenRequest(OutgoingHttpRequest request, Map<String, String> bodyData) {
+            if (tokenRequestModifiers != null) {
+                for (TokenRequestModifier tokenRequestModifier : tokenRequestModifiers) {
+                    tokenRequestModifier.modify(request, bodyData, this);
+                }
+            }
         }
 
     }

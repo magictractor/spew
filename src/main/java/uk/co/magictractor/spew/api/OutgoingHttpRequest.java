@@ -98,9 +98,11 @@ public final class OutgoingHttpRequest implements SpewHttpRequest {
     public void setQueryStringParam(String key, String value) {
         ensureNotSent();
         if (value == null) {
-            throw new IllegalArgumentException("value must not be null");
+            queryStringParams.remove(key);
         }
-        queryStringParams.put(key, value);
+        else {
+            queryStringParams.put(key, value);
+        }
     }
 
     public void setQueryStringParam(String key, long value) {

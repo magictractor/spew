@@ -13,14 +13,6 @@ public interface SpewOAuth2Application<SP extends SpewOAuth2ServiceProvider>
                 .build();
     }
 
-    default void modifyAuthorizationRequest(OutgoingHttpRequest request) {
-        getServiceProvider().modifyAuthorizationRequest(request);
-    }
-
-    default void modifyTokenRequest(OutgoingHttpRequest request) {
-        getServiceProvider().modifyTokenRequest(request);
-    }
-
     /**
      * <p>
      * Scope may be specified for an application to restrict which API calls may

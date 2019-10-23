@@ -110,30 +110,27 @@ public class BoaOAuth2Connection extends AbstractAuthorizationDecoratorConnectio
     // https://developers.google.com/photos/library/guides/authentication-authorization
     @Override
     public void obtainAuthorization() {
-        OutgoingHttpRequest request = new OutgoingHttpRequest("GET", getConfiguration().getAuthorizationUri());
+        SpewOAuth2Configuration configuration = getConfiguration();
+
+        OutgoingHttpRequest request = new OutgoingHttpRequest("GET", configuration.getAuthorizationUri());
 
         // GitHub returns application/x-www-form-urlencoded content type by default
         request.setHeader(ACCEPT, ContentTypeUtil.JSON_MIME_TYPES.get(0));
 
-        // Mucky. The callback value comes from the handler but is also used in the verification function.
-        //AuthorizationHandler[] authHandlerHolder = new AuthorizationHandler[1];
-        AuthVerificationHandler authHandler = getConfiguration().createAuthVerificationHandler();
-        //authHandlerHolder[0] = authHandler;
+        AuthVerificationHandler authHandler = configuration.createAuthVerificationHandler();
 
         authHandler.preOpenAuthorizationInBrowser();
 
-        request.setQueryStringParam("client_id", getConfiguration().getClientId());
+        request.setQueryStringParam("client_id", configuration.getClientId());
         // Omit for Imgur with "pin"
         request.setQueryStringParam("redirect_uri", authHandler.getRedirectUri());
 
-        // Always "code".
-        // "token" type is more appropriate for client-side OAuth.
-        // "pin" for Imgur
+        // Usually "code".
+        // "token" type is more appropriate for OAuth with in a browser.
+        // "pin" for Imgur out of band, changed using modifyAuthorizationRequest();
         request.setQueryStringParam("response_type", "code");
 
-        if (getConfiguration().getScope() != null) {
-            request.setQueryStringParam("scope", getConfiguration().getScope());
-        }
+        request.setQueryStringParam("scope", configuration.getScope());
 
         // This gets passed back to the verifier
         String state = hashCode() + "-" + RandomUtil.nextBigPositiveLong();
@@ -142,7 +139,7 @@ public class BoaOAuth2Connection extends AbstractAuthorizationDecoratorConnectio
         SpewConnectionVerificationPendingCache.addVerificationPending(
             req -> state.equals(req.getQueryStringParam("state").orElse(null)), this);
 
-        application.modifyAuthorizationRequest(request);
+        configuration.modifyAuthorizationRequest(request);
 
         String authUri = request.getUrl();
         BrowserUtil.openBrowserTab(authUri);
@@ -159,25 +156,27 @@ public class BoaOAuth2Connection extends AbstractAuthorizationDecoratorConnectio
 
     @Override
     public boolean verifyAuthorization(String verificationCode) {
+        SpewOAuth2Configuration configuration = getConfiguration();
+
         // TODO! perhaps encode the redirectUri with the state so that it can be extracted from callbacks.
-        String redirectUri = getConfiguration().createAuthVerificationHandler().getRedirectUri();
+        String redirectUri = configuration.createAuthVerificationHandler().getRedirectUri();
 
         // ah! needed to be POST else 404 (Google)
-        OutgoingHttpRequest request = new OutgoingHttpRequest("POST", getConfiguration().getTokenUri());
+        OutgoingHttpRequest request = new OutgoingHttpRequest("POST", configuration.getTokenUri());
 
         // GitHub returns application/x-www-form-urlencoded content type by default
         request.setHeader(ACCEPT, ContentTypeUtil.JSON_MIME_TYPES.get(0));
 
         HashMap<String, String> bodyData = new HashMap<>();
         bodyData.put("code", verificationCode);
-        bodyData.put("client_id", getConfiguration().getClientId());
-        bodyData.put("client_secret", getConfiguration().getClientSecret());
+        bodyData.put("client_id", configuration.getClientId());
+        bodyData.put("client_secret", configuration.getClientSecret());
         // Hmm. Twitter only supports "client_credentials".
         // https://developer.twitter.com/en/docs/basics/authentication/api-reference/token
         bodyData.put("grant_type", "authorization_code");
         bodyData.put("redirect_uri", redirectUri);
 
-        application.modifyTokenRequest(request);
+        configuration.modifyTokenRequest(request, bodyData);
 
         SpewParsedResponse response = authRequest(request, bodyData);
 
@@ -263,7 +262,7 @@ public class BoaOAuth2Connection extends AbstractAuthorizationDecoratorConnectio
     //        "token_type": "Bearer"
     //      }
 
-    private SpewParsedResponse authRequest(OutgoingHttpRequest request, HashMap<String, String> bodyData) {
+    private SpewParsedResponse authRequest(OutgoingHttpRequest request, Map<String, String> bodyData) {
         request.setHeader(CONTENT_TYPE, ContentTypeUtil.FORM_MIME_TYPE);
 
         String body = Joiner.on('&').withKeyValueSeparator('=').join(bodyData);

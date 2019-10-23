@@ -15,6 +15,8 @@
  */
 package uk.co.magictractor.spew.api;
 
+import java.util.Map;
+
 public interface SpewOAuth2Configuration extends SpewVerifiedAuthConnectionConfiguration {
 
     String getClientId();
@@ -26,5 +28,21 @@ public interface SpewOAuth2Configuration extends SpewVerifiedAuthConnectionConfi
     String getTokenUri();
 
     String getScope();
+
+    // TODO! maybe not public? could roll in with getAuthorizationUri()? check whether that would work with Spring
+    void modifyAuthorizationRequest(OutgoingHttpRequest request);
+
+    // ditto
+    void modifyTokenRequest(OutgoingHttpRequest request, Map<String, String> bodyData);
+
+    @FunctionalInterface
+    public static interface AuthRequestModifier {
+        void modify(OutgoingHttpRequest request, SpewOAuth2Configuration configuration);
+    }
+
+    @FunctionalInterface
+    public static interface TokenRequestModifier {
+        void modify(OutgoingHttpRequest request, Map<String, String> bodyData, SpewOAuth2Configuration configuration);
+    }
 
 }
