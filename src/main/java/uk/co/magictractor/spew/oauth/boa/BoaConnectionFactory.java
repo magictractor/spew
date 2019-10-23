@@ -15,10 +15,10 @@
  */
 package uk.co.magictractor.spew.oauth.boa;
 
-import uk.co.magictractor.spew.api.SpewApplication;
 import uk.co.magictractor.spew.api.SpewConnection;
-import uk.co.magictractor.spew.api.SpewOAuth1Application;
-import uk.co.magictractor.spew.api.SpewOAuth2Application;
+import uk.co.magictractor.spew.api.SpewConnectionConfiguration;
+import uk.co.magictractor.spew.api.SpewOAuth1Configuration;
+import uk.co.magictractor.spew.api.SpewOAuth2Configuration;
 import uk.co.magictractor.spew.api.connection.SpewConnectionFactory;
 
 /**
@@ -27,14 +27,12 @@ import uk.co.magictractor.spew.api.connection.SpewConnectionFactory;
 public class BoaConnectionFactory implements SpewConnectionFactory {
 
     @Override
-    public SpewConnection createConnection(SpewApplication<?> application) {
-        if (application instanceof SpewOAuth1Application) {
-            SpewOAuth1Application<?> oauth1Application = (SpewOAuth1Application<?>) application;
-            return new BoaOAuth1Connection(oauth1Application.getConfiguration());
+    public SpewConnection createConnection(SpewConnectionConfiguration configuration) {
+        if (configuration instanceof SpewOAuth1Configuration) {
+            return new BoaOAuth1Connection((SpewOAuth1Configuration) configuration);
         }
-        else if (application instanceof SpewOAuth2Application) {
-            SpewOAuth2Application<?> oauth2Application = (SpewOAuth2Application<?>) application;
-            return new BoaOAuth2Connection(oauth2Application.getConfiguration());
+        else if (configuration instanceof SpewOAuth2Configuration) {
+            return new BoaOAuth2Connection((SpewOAuth2Configuration) configuration);
         }
         else {
             return null;

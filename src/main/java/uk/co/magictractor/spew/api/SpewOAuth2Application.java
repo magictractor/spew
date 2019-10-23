@@ -7,7 +7,7 @@ import uk.co.magictractor.spew.api.connection.HasConnectionConfigurationBuilder;
 public interface SpewOAuth2Application<SP extends SpewOAuth2ServiceProvider>
         extends SpewApplication<SP>, HasConnectionConfigurationBuilder<SpewOAuth2ConfigurationBuilder> {
 
-    default SpewOAuth2Configuration getConfiguration() {
+    default SpewOAuth2Configuration createConfiguration() {
         return new SpewOAuth2ConfigurationBuilder()
                 .withApplication(this)
                 .build();

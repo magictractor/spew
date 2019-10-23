@@ -40,6 +40,8 @@ public interface SpewApplication<SP extends SpewServiceProvider> extends HasProp
         return SpewConnectionCache.getOrCreateConnection(this);
     }
 
+    SpewConnectionConfiguration createConfiguration();
+
     default ApplicationRequest createRequest(String httpMethod, String url) {
         ApplicationRequest request = new ApplicationRequest(this, httpMethod, url);
         prepareRequest(request);

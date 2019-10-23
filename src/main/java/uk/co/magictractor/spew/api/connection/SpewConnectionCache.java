@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import uk.co.magictractor.spew.api.SpewApplication;
 import uk.co.magictractor.spew.api.SpewConnection;
+import uk.co.magictractor.spew.api.SpewConnectionConfiguration;
 import uk.co.magictractor.spew.util.spi.SPIUtil;
 
 public class SpewConnectionCache {
@@ -44,7 +45,8 @@ public class SpewConnectionCache {
     }
 
     private static SpewConnection initConnection(SpewApplication<?> application) {
-        return SPIUtil.firstNotNull(SpewConnectionFactory.class, factory -> factory.createConnection(application))
+        SpewConnectionConfiguration configuration = application.createConfiguration();
+        return SPIUtil.firstNotNull(SpewConnectionFactory.class, factory -> factory.createConnection(configuration))
                 .get();
     }
 
