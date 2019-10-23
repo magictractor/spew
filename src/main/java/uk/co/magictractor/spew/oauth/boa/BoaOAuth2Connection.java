@@ -22,7 +22,6 @@ import io.netty.handler.codec.http.QueryStringDecoder;
 import uk.co.magictractor.spew.api.OutgoingHttpRequest;
 import uk.co.magictractor.spew.api.SpewConnectionConfiguration;
 import uk.co.magictractor.spew.api.SpewHttpResponse;
-import uk.co.magictractor.spew.api.SpewOAuth2Application;
 import uk.co.magictractor.spew.api.SpewOAuth2Configuration;
 import uk.co.magictractor.spew.api.connection.AbstractAuthorizationDecoratorConnection;
 import uk.co.magictractor.spew.api.connection.SpewConnectionVerificationPendingCache;
@@ -30,7 +29,6 @@ import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponseBuilder;
 import uk.co.magictractor.spew.core.verification.AuthVerificationHandler;
 import uk.co.magictractor.spew.server.SpewHttpRequest;
-import uk.co.magictractor.spew.store.EditableProperty;
 import uk.co.magictractor.spew.store.user.UserPropertyStore;
 import uk.co.magictractor.spew.util.BrowserUtil;
 import uk.co.magictractor.spew.util.ContentTypeUtil;
@@ -47,42 +45,30 @@ public class BoaOAuth2Connection extends AbstractAuthorizationDecoratorConnectio
      */
     private static final int EXPIRY_BUFFER = 60;
 
-    private final EditableProperty accessToken;
-    // seconds since start of epoch
-    private final EditableProperty accessTokenExpiry;
-    private final EditableProperty refreshToken;
-
-    @Deprecated(forRemoval = true)
-    private final SpewOAuth2Application<?> application;
-
     /**
      * Default visibility, applications should obtain instances via
      * {@link BoaConnectionFactory#createConnection}, usually indirectly via
      * OAuthConnectionFactory.
      */
-    /* default */ BoaOAuth2Connection(SpewOAuth2Application<?> application, SpewOAuth2Configuration configuration) {
+    /* default */ BoaOAuth2Connection(SpewOAuth2Configuration configuration) {
         super(configuration);
-        this.application = application;
 
         UserPropertyStore userPropertyStore = SPIUtil.firstAvailable(UserPropertyStore.class);
-        this.accessToken = userPropertyStore.getProperty(application, "access_token");
-        this.accessTokenExpiry = userPropertyStore.getProperty(application, "access_token_expiry");
-        this.refreshToken = userPropertyStore.getProperty(application, "refresh_token");
     }
 
     @Override
     protected boolean hasExistingAuthorization() {
-        return accessToken.getValue() != null;
+        return getConfiguration().getAccessTokenProperty().getValue() != null;
     }
 
     @Override
     protected void addAuthorization(OutgoingHttpRequest request) {
-        request.setHeader(AUTHORIZATION, "Bearer " + accessToken.getValue());
+        request.setHeader(AUTHORIZATION, "Bearer " + getConfiguration().getAccessTokenProperty().getValue());
     }
 
     @Override
     protected Instant authorizationExpiry() {
-        String expiry = accessTokenExpiry.getValue();
+        String expiry = getConfiguration().getAccessTokenExpiryProperty().getValue();
         if (expiry == null) {
             return null;
         }
@@ -93,7 +79,7 @@ public class BoaOAuth2Connection extends AbstractAuthorizationDecoratorConnectio
 
     @Override
     protected boolean refreshAuthorization() {
-        boolean hasRefreshToken = refreshToken.getValue() != null;
+        boolean hasRefreshToken = getConfiguration().getRefreshTokenProperty().getValue() != null;
         if (!hasRefreshToken) {
             return false;
         }
@@ -189,7 +175,7 @@ public class BoaOAuth2Connection extends AbstractAuthorizationDecoratorConnectio
         // add that or not? perhaps make it configurable in application
         String refreshTokenValue = response.getString("refresh_token");
         if (refreshTokenValue != null) {
-            refreshToken.setValue(refreshTokenValue);
+            getConfiguration().getRefreshTokenProperty().setValue(refreshTokenValue);
         }
 
         // accessToken.setValue(response.getString("access_token"));
@@ -205,7 +191,7 @@ public class BoaOAuth2Connection extends AbstractAuthorizationDecoratorConnectio
         OutgoingHttpRequest request = new OutgoingHttpRequest("POST", getConfiguration().getTokenUri());
 
         HashMap<String, String> bodyData = new LinkedHashMap<>();
-        bodyData.put("refresh_token", refreshToken.getValue());
+        bodyData.put("refresh_token", getConfiguration().getRefreshTokenProperty().getValue());
         bodyData.put("client_id", getConfiguration().getClientId());
         bodyData.put("client_secret", getConfiguration().getClientSecret());
         bodyData.put("grant_type", "refresh_token");
@@ -234,7 +220,7 @@ public class BoaOAuth2Connection extends AbstractAuthorizationDecoratorConnectio
     }
 
     private void setAccessToken(Function<String, String> valueMap) {
-        accessToken.setValue(valueMap.apply("access_token"));
+        getConfiguration().getAccessTokenProperty().setValue(valueMap.apply("access_token"));
 
         // typically 3600 for one hour
         String expiresInString = valueMap.apply("expires_in");
@@ -242,16 +228,14 @@ public class BoaOAuth2Connection extends AbstractAuthorizationDecoratorConnectio
             int expiresIn = Integer.parseInt(valueMap.apply("expires_in"));
             long now = System.currentTimeMillis() / 1000;
             long expiry = now + expiresIn - EXPIRY_BUFFER;
-            accessTokenExpiry.setValue(Long.toString(expiry));
+            getConfiguration().getAccessTokenExpiryProperty().setValue(Long.toString(expiry));
         }
 
         // some service providers update the refresh token, others do not
         String newRefreshToken = valueMap.apply("refresh_token");
         if (newRefreshToken != null) {
-            refreshToken.setValue(newRefreshToken);
+            getConfiguration().getRefreshTokenProperty().setValue(newRefreshToken);
         }
-
-        System.err.println("accessToken set: " + accessToken.getValue() + " expires " + accessTokenExpiry.getValue());
     }
 
     //  {

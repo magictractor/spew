@@ -22,7 +22,9 @@ import java.util.Map;
 import uk.co.magictractor.spew.api.SpewOAuth2Configuration.AuthRequestModifier;
 import uk.co.magictractor.spew.api.SpewOAuth2Configuration.TokenRequestModifier;
 import uk.co.magictractor.spew.api.SpewOAuth2ConfigurationBuilder.SpewOAuth2ConfigurationImpl;
+import uk.co.magictractor.spew.store.EditableProperty;
 import uk.co.magictractor.spew.store.application.ApplicationPropertyStore;
+import uk.co.magictractor.spew.store.user.UserPropertyStore;
 import uk.co.magictractor.spew.util.spi.SPIUtil;
 
 /**
@@ -78,6 +80,20 @@ public class SpewOAuth2ConfigurationBuilder
             configuration.clientSecret = SPIUtil.firstAvailable(ApplicationPropertyStore.class)
                     .getProperty(application, "client_secret");
         }
+
+        if (configuration.accessTokenProperty == null) {
+            configuration.accessTokenProperty = SPIUtil.firstAvailable(UserPropertyStore.class)
+                    .getProperty(application, "access_token");
+        }
+        if (configuration.accessTokenExpiryProperty == null) {
+            configuration.accessTokenExpiryProperty = SPIUtil.firstAvailable(UserPropertyStore.class)
+                    .getProperty(application, "access_token_expiry");
+        }
+        if (configuration.refreshTokenProperty == null) {
+            configuration.refreshTokenProperty = SPIUtil.firstAvailable(UserPropertyStore.class)
+                    .getProperty(application, "refresh_token");
+        }
+
         if (configuration.scope == null) {
             configuration.scope = application.getScope();
         }
@@ -111,6 +127,9 @@ public class SpewOAuth2ConfigurationBuilder
 
         private String clientId;
         private String clientSecret;
+        private EditableProperty refreshTokenProperty;
+        private EditableProperty accessTokenExpiryProperty;
+        private EditableProperty accessTokenProperty;
         private String authorizationUri;
         private String tokenUri;
         private String scope;
@@ -126,6 +145,21 @@ public class SpewOAuth2ConfigurationBuilder
         @Override
         public String getClientSecret() {
             return clientSecret;
+        }
+
+        @Override
+        public EditableProperty getAccessTokenProperty() {
+            return accessTokenProperty;
+        }
+
+        @Override
+        public EditableProperty getAccessTokenExpiryProperty() {
+            return accessTokenExpiryProperty;
+        }
+
+        @Override
+        public EditableProperty getRefreshTokenProperty() {
+            return refreshTokenProperty;
         }
 
         @Override

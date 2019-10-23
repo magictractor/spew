@@ -17,11 +17,19 @@ package uk.co.magictractor.spew.api;
 
 import java.util.Map;
 
+import uk.co.magictractor.spew.store.EditableProperty;
+
 public interface SpewOAuth2Configuration extends SpewVerifiedAuthConnectionConfiguration {
 
     String getClientId();
 
     String getClientSecret();
+
+    EditableProperty getAccessTokenProperty();
+
+    EditableProperty getAccessTokenExpiryProperty();
+
+    EditableProperty getRefreshTokenProperty();
 
     String getAuthorizationUri();
 
