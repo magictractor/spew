@@ -15,30 +15,35 @@
  */
 package uk.co.magictractor.spew.oauth.springsocial.spike;
 
-import org.springframework.social.oauth1.OAuthToken;
+import org.springframework.social.oauth2.AccessGrant;
 import org.springframework.web.client.RestOperations;
 
-import uk.co.magictractor.spew.api.SpewOAuth1Configuration;
+import uk.co.magictractor.spew.api.SpewOAuth2Configuration;
 
 // https://docs.spring.io/spring-social/docs/current-SNAPSHOT/reference/htmlsingle/
-public class SpringSocialOAuth1Connection extends AbstractSpringSocialConnection<SpewOAuth1Configuration> {
+public class SpringSocialOAuth2Connection extends AbstractSpringSocialConnection<SpewOAuth2Configuration> {
 
     /**
      * Default visibility, applications should obtain instances via
      * {@link SpringSocialConnectionFactory#createConnection}, usually
      * indirectly via OAuthConnectionFactory.
      */
-    /* default */ SpringSocialOAuth1Connection(SpewOAuth1Configuration configuration) {
+    /* default */ SpringSocialOAuth2Connection(SpewOAuth2Configuration configuration) {
         super(configuration);
     }
 
     @Override
-    RestOperations init(SpewOAuth1Configuration configuration) {
-        SpewOAuth1ConnectionFactory connectionFactory = new SpewOAuth1ConnectionFactory(configuration);
+    RestOperations init(SpewOAuth2Configuration configuration) {
+        SpewOAuth2ConnectionFactory connectionFactory = new SpewOAuth2ConnectionFactory(configuration);
 
-        OAuthToken token = new OAuthToken(
-            configuration.getUserTokenProperty().getValue(), configuration.getUserSecretProperty().getValue());
-        return connectionFactory.createConnection(token).getApi();
+        String accessToken = configuration.getAccessTokenProperty().getValue();
+        String scope = configuration.getScope();
+        String refreshToken = configuration.getRefreshTokenProperty().getValue();
+        // TODO! expiry
+        Long expiresIn = null;
+        AccessGrant accessGrant = new AccessGrant(accessToken, scope, refreshToken, expiresIn);
+
+        return connectionFactory.createConnection(accessGrant).getApi();
     }
 
 }

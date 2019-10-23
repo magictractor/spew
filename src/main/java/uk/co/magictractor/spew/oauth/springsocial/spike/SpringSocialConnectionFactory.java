@@ -18,6 +18,7 @@ package uk.co.magictractor.spew.oauth.springsocial.spike;
 import uk.co.magictractor.spew.api.SpewConnection;
 import uk.co.magictractor.spew.api.SpewConnectionConfiguration;
 import uk.co.magictractor.spew.api.SpewOAuth1Configuration;
+import uk.co.magictractor.spew.api.SpewOAuth2Configuration;
 import uk.co.magictractor.spew.api.connection.SpewConnectionFactory;
 
 /**
@@ -29,7 +30,13 @@ public class SpringSocialConnectionFactory implements SpewConnectionFactory {
     public SpewConnection createConnection(SpewConnectionConfiguration configuration) {
         // TODO OAuth2
         // TODO! push some code up
-        return new SpringSocialOAuth1Connection((SpewOAuth1Configuration) configuration);
+        if (configuration instanceof SpewOAuth1Configuration) {
+            return new SpringSocialOAuth1Connection((SpewOAuth1Configuration) configuration);
+        }
+        else if (configuration instanceof SpewOAuth2Configuration) {
+            return new SpringSocialOAuth2Connection((SpewOAuth2Configuration) configuration);
+        }
+        return null;
     }
 
 }
