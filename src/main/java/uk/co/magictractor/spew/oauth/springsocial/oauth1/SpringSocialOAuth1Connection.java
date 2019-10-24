@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.co.magictractor.spew.oauth.springsocial.spike;
+package uk.co.magictractor.spew.oauth.springsocial.oauth1;
 
 import org.springframework.social.oauth1.GenericOAuth1ConnectionFactory;
 import org.springframework.social.oauth1.OAuth1Version;
@@ -21,21 +21,23 @@ import org.springframework.social.oauth1.OAuthToken;
 import org.springframework.web.client.RestOperations;
 
 import uk.co.magictractor.spew.api.SpewOAuth1Configuration;
+import uk.co.magictractor.spew.oauth.springsocial.AbstractSpringSocialConnection;
+import uk.co.magictractor.spew.oauth.springsocial.SpringSocialConnectionFactory;
 
 // https://docs.spring.io/spring-social/docs/current-SNAPSHOT/reference/htmlsingle/
 public class SpringSocialOAuth1Connection extends AbstractSpringSocialConnection<SpewOAuth1Configuration> {
 
     /**
-     * Default visibility, applications should obtain instances via
+     * Applications should obtain instances via
      * {@link SpringSocialConnectionFactory#createConnection}, usually
      * indirectly via OAuthConnectionFactory.
      */
-    /* default */ SpringSocialOAuth1Connection(SpewOAuth1Configuration configuration) {
+    public SpringSocialOAuth1Connection(SpewOAuth1Configuration configuration) {
         super(configuration);
     }
 
     @Override
-    RestOperations init(SpewOAuth1Configuration configuration) {
+    protected RestOperations init(SpewOAuth1Configuration configuration) {
         GenericOAuth1ConnectionFactory connectionFactory = new GenericOAuth1ConnectionFactory(
             "TODO!", /*
                       * application.getClass().getSimpleName().toLowerCase(),

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.co.magictractor.spew.oauth.springsocial.spike;
+package uk.co.magictractor.spew.oauth.springsocial;
 
 import uk.co.magictractor.spew.api.connection.SpewConnectionFactory;
 import uk.co.magictractor.spew.example.flickr.processor.FlickrPhotoUpdateProcessor;

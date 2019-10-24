@@ -50,7 +50,7 @@ import uk.co.magictractor.spew.extra.registry.JnaWindowsRegistryUserPropertyStor
 import uk.co.magictractor.spew.http.apache.SpewApacheHttpClientConnectionFactory;
 import uk.co.magictractor.spew.http.javaurl.SpewHttpUrlConnectionFactory;
 import uk.co.magictractor.spew.oauth.boa.BoaConnectionFactory;
-import uk.co.magictractor.spew.oauth.springsocial.spike.SpringSocialConnectionFactory;
+import uk.co.magictractor.spew.oauth.springsocial.SpringSocialConnectionFactory;
 import uk.co.magictractor.spew.photo.HardCodedTagLoader;
 import uk.co.magictractor.spew.photo.IndentedFileTagLoader;
 import uk.co.magictractor.spew.photo.TagLoader;

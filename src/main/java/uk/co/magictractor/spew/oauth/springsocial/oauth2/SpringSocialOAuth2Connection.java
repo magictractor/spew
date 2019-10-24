@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.co.magictractor.spew.oauth.springsocial.spike;
+package uk.co.magictractor.spew.oauth.springsocial.oauth2;
 
 import org.springframework.social.oauth2.AccessGrant;
 import org.springframework.social.oauth2.GenericOAuth2ConnectionFactory;
@@ -21,6 +21,8 @@ import org.springframework.social.oauth2.OAuth2Operations;
 import org.springframework.web.client.RestOperations;
 
 import uk.co.magictractor.spew.api.SpewOAuth2Configuration;
+import uk.co.magictractor.spew.oauth.springsocial.AbstractSpringSocialConnection;
+import uk.co.magictractor.spew.oauth.springsocial.SpringSocialConnectionFactory;
 
 // https://docs.spring.io/spring-social/docs/current-SNAPSHOT/reference/htmlsingle/
 public class SpringSocialOAuth2Connection extends AbstractSpringSocialConnection<SpewOAuth2Configuration> {
@@ -29,16 +31,16 @@ public class SpringSocialOAuth2Connection extends AbstractSpringSocialConnection
     private OAuth2Operations authOps;
 
     /**
-     * Default visibility, applications should obtain instances via
+     * Applications should obtain instances via
      * {@link SpringSocialConnectionFactory#createConnection}, usually
      * indirectly via OAuthConnectionFactory.
      */
-    /* default */ SpringSocialOAuth2Connection(SpewOAuth2Configuration configuration) {
+    public SpringSocialOAuth2Connection(SpewOAuth2Configuration configuration) {
         super(configuration);
     }
 
     @Override
-    RestOperations init(SpewOAuth2Configuration configuration) {
+    protected RestOperations init(SpewOAuth2Configuration configuration) {
         GenericOAuth2ConnectionFactory connectionFactory = new GenericOAuth2ConnectionFactory(
             "TODO!",
             configuration.getClientSecret(),

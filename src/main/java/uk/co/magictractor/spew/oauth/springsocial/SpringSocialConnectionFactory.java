@@ -13,13 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.co.magictractor.spew.oauth.springsocial.spike;
+package uk.co.magictractor.spew.oauth.springsocial;
 
 import uk.co.magictractor.spew.api.SpewConnection;
 import uk.co.magictractor.spew.api.SpewConnectionConfiguration;
 import uk.co.magictractor.spew.api.SpewOAuth1Configuration;
 import uk.co.magictractor.spew.api.SpewOAuth2Configuration;
 import uk.co.magictractor.spew.api.connection.SpewConnectionFactory;
+import uk.co.magictractor.spew.oauth.springsocial.oauth1.SpringSocialOAuth1Connection;
+import uk.co.magictractor.spew.oauth.springsocial.oauth2.SpringSocialOAuth2Connection;
 
 /**
  *

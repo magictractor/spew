@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.co.magictractor.spew.oauth.springsocial.spike;
+package uk.co.magictractor.spew.oauth.springsocial;
 
 import java.io.IOException;
 import java.net.URI;
@@ -43,7 +43,7 @@ public abstract class AbstractSpringSocialConnection<CONFIG extends SpewConnecti
         springOps = init(configuration);
     }
 
-    abstract RestOperations init(CONFIG configuration);
+    abstract protected RestOperations init(CONFIG configuration);
 
     @Override
     public SpewHttpResponse request(OutgoingHttpRequest apiRequest) {
