@@ -16,12 +16,17 @@
 package uk.co.magictractor.spew.oauth.springsocial.spike;
 
 import org.springframework.social.oauth2.AccessGrant;
+import org.springframework.social.oauth2.GenericOAuth2ConnectionFactory;
+import org.springframework.social.oauth2.OAuth2Operations;
 import org.springframework.web.client.RestOperations;
 
 import uk.co.magictractor.spew.api.SpewOAuth2Configuration;
 
 // https://docs.spring.io/spring-social/docs/current-SNAPSHOT/reference/htmlsingle/
 public class SpringSocialOAuth2Connection extends AbstractSpringSocialConnection<SpewOAuth2Configuration> {
+
+    // would be nice if this was final (set in init() rather than constructor)
+    private OAuth2Operations authOps;
 
     /**
      * Default visibility, applications should obtain instances via
@@ -34,13 +39,22 @@ public class SpringSocialOAuth2Connection extends AbstractSpringSocialConnection
 
     @Override
     RestOperations init(SpewOAuth2Configuration configuration) {
-        SpewOAuth2ConnectionFactory connectionFactory = new SpewOAuth2ConnectionFactory(configuration);
+        GenericOAuth2ConnectionFactory connectionFactory = new GenericOAuth2ConnectionFactory(
+            "TODO!",
+            configuration.getClientSecret(),
+            configuration.getClientSecret(),
+            configuration.getAuthorizationUri(),
+            configuration.getTokenUri(),
+            null);
+
+        authOps = connectionFactory.getOAuthOperations();
 
         String accessToken = configuration.getAccessTokenProperty().getValue();
         String scope = configuration.getScope();
         String refreshToken = configuration.getRefreshTokenProperty().getValue();
         // TODO! expiry
         Long expiresIn = null;
+        // TODO! could create subclass of AccessGrant which always reads from property (so handling updated values)
         AccessGrant accessGrant = new AccessGrant(accessToken, scope, refreshToken, expiresIn);
 
         return connectionFactory.createConnection(accessGrant).getApi();

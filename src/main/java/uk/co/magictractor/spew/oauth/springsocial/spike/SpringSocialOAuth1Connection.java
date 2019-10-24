@@ -15,6 +15,8 @@
  */
 package uk.co.magictractor.spew.oauth.springsocial.spike;
 
+import org.springframework.social.oauth1.GenericOAuth1ConnectionFactory;
+import org.springframework.social.oauth1.OAuth1Version;
 import org.springframework.social.oauth1.OAuthToken;
 import org.springframework.web.client.RestOperations;
 
@@ -34,10 +36,22 @@ public class SpringSocialOAuth1Connection extends AbstractSpringSocialConnection
 
     @Override
     RestOperations init(SpewOAuth1Configuration configuration) {
-        SpewOAuth1ConnectionFactory connectionFactory = new SpewOAuth1ConnectionFactory(configuration);
+        GenericOAuth1ConnectionFactory connectionFactory = new GenericOAuth1ConnectionFactory(
+            "TODO!", /*
+                      * application.getClass().getSimpleName().toLowerCase(),
+                      */
+            configuration.getConsumerKey(),
+            configuration.getConsumerSecret(),
+            configuration.getTemporaryCredentialRequestUri(),
+            configuration.getResourceOwnerAuthorizationUri(),
+            //"http://localhost/spring-social-callback",
+            configuration.getTokenRequestUri(),
+            OAuth1Version.CORE_10_REVISION_A,
+            null);
 
         OAuthToken token = new OAuthToken(
             configuration.getUserTokenProperty().getValue(), configuration.getUserSecretProperty().getValue());
+
         return connectionFactory.createConnection(token).getApi();
     }
 
