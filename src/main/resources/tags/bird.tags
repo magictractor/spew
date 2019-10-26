@@ -1,31 +1,32 @@
-blackbird
-blackcap
-blue tit
-bullfinch
+blackbird = Turdus merula
+blackcap = Sylvia atricapilla
+blue tit = Cyanistes caeruleus
+bullfinch = Pyrrhula pyrrhula
 buzzard
-chaffinch
-coal tit
+chaffinch = Fringilla coelebs
+coal tit = Periparus ater
 collared dove = Streptopelia decaocto
-coot
+coot = Fulica atra
 dipper
-dunnock
-fieldfare
-goldcrest
+dunnock = Prunella modularis
+fieldfare = Turdus pilaris
+goldcrest = Regulus regulus
 goldeneye
 goldfinch = Carduelis carduelis
-goosander
-great tit
+goosander = Mergus merganser
+great tit = Parus major
 greenfinch = Chloris chloris
 grey heron = Ardea cinerea = heron
 gull
   black-headed gull = Chroicocephalus ridibundus
-  lesser black-backed gull
+  herring gull = Larus argentatus
+  lesser black-backed gull = Larus fuscus
 kestrel
 kingfisher = Alcedo atthis
 linnet
 long-tailed tit = Aegithalos caudatus
-mallard
-moorhen
+mallard = Anas platyrhynchos
+moorhen = Gallinula chloropus
 nuthatch = Sitta europaea
 oystercatcher
 owl
@@ -59,4 +60,4 @@ waxwing = Bombycilla garrulus
 wheatear = Oenanthe oenanthe
 woodpecker
   great spotted woodpecker = Dendrocopos major
-wren
+wren = Troglodytes troglodytes
