@@ -57,9 +57,13 @@ public class SpringSocialOAuth2Connection extends AbstractSpringSocialConnection
         // TODO! expiry
         Long expiresIn = null;
         // TODO! could create subclass of AccessGrant which always reads from property (so handling updated values)
+        // NO! values are copied from the grant into the connection => may want to override the connection type too?
         AccessGrant accessGrant = new AccessGrant(accessToken, scope, refreshToken, expiresIn);
 
         return connectionFactory.createConnection(accessGrant).getApi();
+
+        // connection.hasExpired()
+        // connection.refresh()
     }
 
 }
