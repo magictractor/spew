@@ -1,11 +1,11 @@
-honey bee
-early mining bee
-common carder bee
+honey bee = Apis mellifera
+early mining bee = Andrena haemorrhoa
+common carder bee = Bombus pascuorum
 wool carder bee = Anthidium manicatum
 
 Colletes sp.
 
 bumblebee
-  tree bumblebee
+  tree bumblebee = Bombus hypnorum
   red-tailed bumblebee = Bombus lapidarius
-  buff-tailed bumbleebee
+  buff-tailed bumbleebee = Bombus terrestris

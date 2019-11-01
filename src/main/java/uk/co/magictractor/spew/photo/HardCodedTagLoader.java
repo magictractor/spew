@@ -44,18 +44,18 @@ public class HardCodedTagLoader implements TagLoader {
     }
 
     private void initBirds() {
-        Tag bird = init(SUBJECT, "Bird");
+        Tag bird = init(SUBJECT, "bird");
         //        init(bird, "Blackbird", "Blackcap", "Blue tit", "Bullfinch", "Buzzard", "Chaffinch", "Coal tit",
         //            "Collared dove", "Coot", "Dipper", "Dunnock", "Fieldfare", "Goldcrest", "Goldeneye", "Goldfinch",
         //            "Goosander", "Great tit", "Kestrel", "Kingfisher", "Linnet", "Long-tailed tit", "Mallard", "Moorhen",
         //            "Nuthatch", "Oystercatcher", "Pochard", "Redshank", "Redwing", "Robin", "Shag", "Siskin", "Sparrowhawk",
         //            "Starling", "Swallow", "Teal", "Treecreeper", "Tufted duck", "Water rail", "Waxwing", "Wren");
 
-        Tag crow = init(bird, "Crow");
-        init(crow, "Carrion crow");
+        Tag crow = init(bird, "crow");
+        init(crow, "carrion crow");
 
-        Tag grebe = init(bird, "Grebe");
-        init(grebe, "Little grebe", "Great crested grebe");
+        Tag grebe = init(bird, "grebe");
+        init(grebe, "little grebe", "great crested grebe");
 
         //Tag gull = init(bird, "Gull");
         //init(gull, "Black-headed gull", "Lesser black-backed gull");
@@ -66,84 +66,49 @@ public class HardCodedTagLoader implements TagLoader {
         //Tag owl = init(bird, "Owl");
         //init(owl, "Tawny owl");
 
-        Tag pigeon = init(bird, "Pigeon");
-        init(pigeon, "Feral pigeon", "Wood pigeon");
+        Tag pigeon = init(bird, "pigeon");
+        init(pigeon, "feral pigeon", "wood pigeon");
 
-        Tag pipit = init(bird, "Pipit");
-        init(pipit, "Meadow Pipit");
+        Tag pipit = init(bird, "pipit");
+        init(pipit, "meadow pipit");
 
-        Tag sparrow = init(bird, "Sparrow");
-        init(sparrow, "House sparrow");
-
-        //Tag swan = init(bird, "Swan");
-        //init(swan, "Mute swan");
-
-        //        Tag thrush = init(bird, "Thrush");
-        //        init(thrush, "Mistle thrush", "Song thrush");
-
-        //Tag wagtail = init(bird, "Wagtail");
-        //init(wagtail, "Grey wagtail", "Pied wagtail");
-
-        // Tag warbler = init(bird, "Warbler");
-        // init(warbler, "Chiffchaff", "Willow warbler");
+        Tag sparrow = init(bird, "sparrow");
+        init(sparrow, "house sparrow");
 
         // also a warbler
-        Tag whiteThroat = init(bird, "White throat");
-        init(whiteThroat, "Common white throat");
-
-        //Tag woodpecker = init(bird, "Woodpecker");
-        //init(woodpecker, "Green woodpecker", "Great spotted woodpecker");
-        // gulls and woodpeckers and swans and warblers
-        // "Black-headed gull",
+        Tag whiteThroat = init(bird, "white throat");
+        init(whiteThroat, "common white throat");
     }
 
     private void initRodents() {
         // Not a rodent!
-        init(SUBJECT, "Otter");
+        init(SUBJECT, "otter");
 
-        Tag rodent = init(SUBJECT, "Rodent");
+        Tag rodent = init(SUBJECT, "rodent");
 
         //        Tag squirrel = init(rodent, "Squirrel");
         //        init(squirrel, "Grey squirrel", "Red squirrel");
 
-        Tag rat = init(rodent, "Rat");
-        init(rat, "Brown rat");
+        Tag rat = init(rodent, "rat");
+        init(rat, "brown rat");
     }
 
     private void initInsects() {
-        Tag insect = init(SUBJECT, "Insect");
-        init(insect, "Caddisfly");
-
-        //        Tag bee = init(insect, "Bee");
-        //        init(bee, "Honey bee", "Early mining bee");
-        //        Tag bumblebee = init(bee, "Bumblebee");
-        //        init(bumblebee, "Common carder bee", "Tree bumblebee", "Red-tailed bumblebee", "Buff-tailed bumbleebee",
-        //            "Wool carder bee");
+        Tag insect = init(SUBJECT, "insect");
+        init(insect, "caddisfly");
 
         Tag wasp = init(insect, "Wasp");
         init(wasp, "Common wasp");
 
-        //        Tag hoverfly = init(insect, "Hoverfly");
-        //        init(hoverfly, "Footballer");
-        //        Tag dronefly = init(hoverfly, "Drone fly");
-        //        init(dronefly, "Common drone fly", "Tapered drone fly");
-        //
-        //        Tag diptera = init(insect, "Diptera");
-        //        init(diptera, "Tachina fera", "Tachina ursina");
+        Tag shieldbug = init(insect, "shield-bug");
+        init(shieldbug, "Birch shield-bug", "Gorse shield-bug", "Hawthorn shield-bug");
 
-        //Tag tipula = init(diptera, "Tipula");
-        //init(tipula, "Tipula vittata");
-        // more
+        Tag snail = init(insect, "snail");
+        init(snail, "garden snail");
 
-        Tag shieldbug = init(insect, "Shield bug");
-        init(shieldbug, "Birch shield bug", "Gorse shield bug", "Hawthorn shield bug");
+        init(insect, "mayfly");
 
-        Tag snail = init(insect, "Snail");
-        init(snail, "Garden snail");
-
-        init(insect, "Mayfly");
-
-        init(insect, "Slug");
+        init(insect, "slug");
     }
 
     private Tag init(String tagTypeName, String tagName) {
