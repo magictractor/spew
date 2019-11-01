@@ -77,4 +77,11 @@ Needs OAuth1 to support grant_type=client_credentials
 And add abilty to update large followers list over a long period.
 This call is capped at 15 requests per 15 minutes and 200 users per request.
 
-
+* Add more service providers
+ ** Evernote https://dev.evernote.com/doc/
+ ** LinkedIn https://developer.linkedin.com/docs/rest-api
+ 
+ * Add more OAuth clients https://oauth.net/code/java/
+ 
+ * Bin HardCodedTagLoader
+ 
