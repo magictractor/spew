@@ -38,11 +38,11 @@ public interface SpewParsedResponse extends SpewHttpResponse {
 
     String getString(String key);
 
-    int getInt(String key);
+    Integer getInt(String key);
 
-    long getLong(String key);
+    Long getLong(String key);
 
-    boolean getBoolean(String key);
+    Boolean getBoolean(String key);
 
     Object getObject(String key);
 

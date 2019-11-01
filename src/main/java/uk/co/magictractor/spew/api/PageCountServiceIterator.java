@@ -64,7 +64,12 @@ public abstract class PageCountServiceIterator<E> extends PageServiceIterator<E>
         return totalItemCount;
     }
 
-    protected void setTotalItemCount(int totalItemCount) {
+    protected void setTotalItemCount(Integer totalItemCount) {
+        if (totalItemCount == null) {
+            // Note that the total disappeared briefly from Flickr photoset
+            // Could perhaps configure the iterator to allow this to be optional.
+            throw new IllegalArgumentException("total item count must not be null");
+        }
         if (this.totalItemCount == UNKNOWN) {
             this.totalItemCount = totalItemCount;
         }

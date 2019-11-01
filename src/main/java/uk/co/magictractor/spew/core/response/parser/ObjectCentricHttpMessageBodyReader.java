@@ -23,17 +23,17 @@ public interface ObjectCentricHttpMessageBodyReader extends SpewHttpMessageBodyR
     }
 
     @Override
-    public default int getInt(String expr) {
+    public default Integer getInt(String expr) {
         return getObject(expr, Integer.class);
     }
 
     @Override
-    public default long getLong(String expr) {
+    public default Long getLong(String expr) {
         return getObject(expr, Long.class);
     }
 
     @Override
-    public default boolean getBoolean(String expr) {
+    public default Boolean getBoolean(String expr) {
         return getObject(expr, Boolean.class);
     }
 

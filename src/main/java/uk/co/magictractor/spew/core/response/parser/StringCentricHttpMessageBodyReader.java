@@ -20,18 +20,18 @@ public interface StringCentricHttpMessageBodyReader extends /*
                                                              */ SpewHttpMessageBodyReader {
 
     @Override
-    public default int getInt(String key) {
+    public default Integer getInt(String key) {
         return Integer.parseInt(getString(key));
     }
 
     @Override
-    public default long getLong(String key) {
+    public default Long getLong(String key) {
         return Long.parseLong(getString(key));
     }
 
     // TODO! make more strict, and throw an error rather than false for dodgy values.
     @Override
-    public default boolean getBoolean(String key) {
+    public default Boolean getBoolean(String key) {
         return Boolean.parseBoolean(getString(key));
     }
 

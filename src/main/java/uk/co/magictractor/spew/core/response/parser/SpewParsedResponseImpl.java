@@ -60,17 +60,17 @@ public class SpewParsedResponseImpl implements SpewParsedResponse {
     }
 
     @Override
-    public int getInt(String expr) {
+    public Integer getInt(String expr) {
         return this.bodyReader.getInt(expr);
     }
 
     @Override
-    public long getLong(String expr) {
+    public Long getLong(String expr) {
         return this.bodyReader.getLong(expr);
     }
 
     @Override
-    public boolean getBoolean(String expr) {
+    public Boolean getBoolean(String expr) {
         return this.bodyReader.getBoolean(expr);
     }
 
