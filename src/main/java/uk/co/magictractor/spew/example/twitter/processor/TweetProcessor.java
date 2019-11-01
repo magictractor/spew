@@ -49,7 +49,8 @@ public class TweetProcessor implements SimpleProcessor<Tweet> {
             if (scoreAndTweet.subject != null) {
                 distinctSubjects.add(scoreAndTweet.subject);
             }
-            System.out.println(rank++ + "  " + scoreAndTweet.score + " " + scoreAndTweet.tweet);
+            System.out.println(rank++ + "  " + scoreAndTweet.score + " " + scoreAndTweet.subject + " "
+                    + scoreAndTweet.tweet.getText());
         }
 
         System.out.println();
