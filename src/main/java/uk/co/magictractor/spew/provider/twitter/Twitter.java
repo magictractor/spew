@@ -1,16 +1,40 @@
 package uk.co.magictractor.spew.provider.twitter;
 
-import java.util.Collections;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+import java.time.format.TextStyle;
+import java.time.temporal.ChronoField;
+import java.util.Arrays;
 import java.util.List;
 
 import uk.co.magictractor.spew.api.SpewOAuth1ServiceProvider;
 import uk.co.magictractor.spew.api.SpewOAuth2ServiceProvider;
+import uk.co.magictractor.spew.core.typeadapter.LocalDateTimeTypeAdapter;
 import uk.co.magictractor.spew.core.typeadapter.SpewTypeAdapter;
 
 // manage apps at apps.twitter.com
 // Twitter can be accessed via OAuth1 or OAuth2 - names TwitterOAuth1 and TwitterOAuth2?
 // Twitter has strict rate limiting https://developer.twitter.com/en/docs/basics/rate-limiting
 public class Twitter implements SpewOAuth1ServiceProvider, SpewOAuth2ServiceProvider {
+
+    // "created_at": "Tue May 28 12:43:55 +0000 2019"
+    private static final DateTimeFormatter TWITTER_INSTANT_FORMATTER = new DateTimeFormatterBuilder()
+            .appendText(ChronoField.DAY_OF_WEEK, TextStyle.SHORT)
+            .appendLiteral(' ')
+            .appendText(ChronoField.MONTH_OF_YEAR, TextStyle.SHORT)
+            .appendLiteral(' ')
+            .appendValue(ChronoField.DAY_OF_MONTH, 2)
+            .appendLiteral(' ')
+            .appendValue(ChronoField.HOUR_OF_DAY, 2)
+            .appendLiteral(':')
+            .appendValue(ChronoField.MINUTE_OF_HOUR, 2)
+            .appendLiteral(':')
+            .appendValue(ChronoField.SECOND_OF_MINUTE, 2)
+            .appendLiteral(' ')
+            .appendOffset("+HHMM", "")
+            .appendLiteral(' ')
+            .appendValue(ChronoField.YEAR, 4)
+            .toFormatter();
 
     /**
      * Twitter services typically have a default page size of 20 and a maximum
@@ -58,7 +82,8 @@ public class Twitter implements SpewOAuth1ServiceProvider, SpewOAuth2ServiceProv
 
     @Override
     public List<SpewTypeAdapter<?>> getTypeAdapters() {
-        return Collections.emptyList();
+        return Arrays.asList(
+            new LocalDateTimeTypeAdapter(TWITTER_INSTANT_FORMATTER));
     }
 
 }

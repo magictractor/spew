@@ -50,7 +50,7 @@ public class TweetProcessor implements SimpleProcessor<Tweet> {
                 distinctSubjects.add(scoreAndTweet.subject);
             }
             System.out.println(rank++ + "  " + scoreAndTweet.score + " " + scoreAndTweet.subject + " "
-                    + scoreAndTweet.tweet.getText());
+                    + scoreAndTweet.tweet.getText() + " " + scoreAndTweet.tweet.getCreatedAt());
         }
 
         System.out.println();

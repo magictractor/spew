@@ -1,10 +1,10 @@
 package uk.co.magictractor.spew.example.twitter.pojo;
 
+import java.time.LocalDateTime;
+
 import com.google.common.base.MoreObjects;
 
 public class Tweet {
-
-    // "created_at": "Tue May 28 12:43:55 +0000 2019"
 
     private String id_str;
     //private String id_str;
@@ -12,6 +12,10 @@ public class Tweet {
     private String full_text;
     private int favorite_count;
     private int retweet_count;
+    // "created_at": "Tue May 28 12:43:55 +0000 2019"
+    // would Instant be better?
+    // private Instant created_at;
+    private LocalDateTime created_at;
 
     public String getServiceProviderId() {
         return id_str;
@@ -27,6 +31,11 @@ public class Tweet {
 
     public int getRetweets() {
         return retweet_count;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        // public Instant getCreatedAt() {
+        return created_at;
     }
 
     @Override
