@@ -1,8 +1,6 @@
 package uk.co.magictractor.spew.example.google.pojo;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.util.function.Supplier;
 
 import uk.co.magictractor.spew.photo.Media;
@@ -62,8 +60,7 @@ public class GoogleImage implements Media, Supplier<GoogleImage> {
     }
 
     public static final class GoogleMediaMetadata {
-        // Google does have zone information "2018-11-20T15:09:42Z" => instant here?
-        private LocalDateTime creationTime;
+        private Instant creationTime;
         private int width;
         private int height;
         private GooglePhotoMetadata photo;
@@ -108,8 +105,7 @@ public class GoogleImage implements Media, Supplier<GoogleImage> {
 
     @Override
     public Instant getDateTimeTaken() {
-        // return mediaMetadata.creationTime.toLocalDateTime();
-        return mediaMetadata.creationTime.toInstant(ZoneOffset.UTC);
+        return mediaMetadata.creationTime;
     }
 
     @Override
