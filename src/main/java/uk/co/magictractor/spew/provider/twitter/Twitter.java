@@ -9,7 +9,7 @@ import java.util.List;
 
 import uk.co.magictractor.spew.api.SpewOAuth1ServiceProvider;
 import uk.co.magictractor.spew.api.SpewOAuth2ServiceProvider;
-import uk.co.magictractor.spew.core.typeadapter.LocalDateTimeTypeAdapter;
+import uk.co.magictractor.spew.core.typeadapter.InstantTypeAdapter;
 import uk.co.magictractor.spew.core.typeadapter.SpewTypeAdapter;
 
 // manage apps at apps.twitter.com
@@ -83,7 +83,7 @@ public class Twitter implements SpewOAuth1ServiceProvider, SpewOAuth2ServiceProv
     @Override
     public List<SpewTypeAdapter<?>> getTypeAdapters() {
         return Arrays.asList(
-            new LocalDateTimeTypeAdapter(TWITTER_INSTANT_FORMATTER));
+            new InstantTypeAdapter(TWITTER_INSTANT_FORMATTER));
     }
 
 }

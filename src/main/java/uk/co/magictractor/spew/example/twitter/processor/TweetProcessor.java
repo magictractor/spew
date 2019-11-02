@@ -9,6 +9,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.function.Function;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
 
 import uk.co.magictractor.spew.example.twitter.MyTwitterApp;
@@ -49,8 +50,11 @@ public class TweetProcessor implements SimpleProcessor<Tweet> {
             if (scoreAndTweet.subject != null) {
                 distinctSubjects.add(scoreAndTweet.subject);
             }
-            System.out.println(rank++ + "  " + scoreAndTweet.score + " " + scoreAndTweet.subject + " "
-                    + scoreAndTweet.tweet.getText() + " " + scoreAndTweet.tweet.getCreatedAt());
+            System.out.println(Strings.padStart(Integer.toString(rank++), 2, ' ') + "  "
+                    + scoreAndTweet.score + "  "
+                    + Strings.padEnd(scoreAndTweet.subject, 15, ' ') + " "
+                    + scoreAndTweet.tweet.getCreatedAt() + "  "
+                    + scoreAndTweet.tweet.getText());
         }
 
         System.out.println();

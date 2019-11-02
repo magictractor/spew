@@ -7,6 +7,8 @@ import java.time.format.DateTimeFormatterBuilder;
 // TODO! do not use LocalDateTime (unless timezone is unknown)
 // LocalDateTime does NOT have a timezone
 // https://stackoverflow.com/questions/32437550/whats-the-difference-between-instant-and-localdatetime/32443004
+// Use InstantTypeAdapter instead
+@Deprecated(forRemoval = true)
 public class LocalDateTimeTypeAdapter implements SpewTypeAdapter<LocalDateTime> {
 
     private final DateTimeFormatter formatter;
