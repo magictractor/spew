@@ -9,7 +9,7 @@ import uk.co.magictractor.spew.api.SpewOAuth1ServiceProvider;
 import uk.co.magictractor.spew.core.response.parser.SpewHttpMessageBodyReader;
 import uk.co.magictractor.spew.core.response.parser.SpewParsedResponseBuilder;
 import uk.co.magictractor.spew.core.typeadapter.BooleanTypeAdapter;
-import uk.co.magictractor.spew.core.typeadapter.InstantTypeAdapter;
+import uk.co.magictractor.spew.core.typeadapter.InstantEpochTypeAdapter;
 import uk.co.magictractor.spew.core.typeadapter.LocalDateTimeTypeAdapter;
 import uk.co.magictractor.spew.core.typeadapter.SpewTypeAdapter;
 import uk.co.magictractor.spew.provider.flickr.json.TagSetTypeAdapter;
@@ -50,7 +50,7 @@ public class Flickr implements SpewOAuth1ServiceProvider {
         return Arrays.asList(
             BooleanTypeAdapter.ZERO_AND_ONE,
             new LocalDateTimeTypeAdapter("yyyy-MM-dd HH:mm:ss"),
-            InstantTypeAdapter.EPOCH_SECONDS,
+            InstantEpochTypeAdapter.SECONDS,
             TagSetTypeAdapter.getInstance());
     }
 

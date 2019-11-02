@@ -8,7 +8,7 @@ import uk.co.magictractor.spew.api.OutgoingHttpRequest;
 import uk.co.magictractor.spew.api.SpewOAuth2Configuration;
 import uk.co.magictractor.spew.api.SpewOAuth2ConfigurationBuilder;
 import uk.co.magictractor.spew.api.SpewOAuth2ServiceProvider;
-import uk.co.magictractor.spew.core.typeadapter.InstantTypeAdapter;
+import uk.co.magictractor.spew.core.typeadapter.InstantEpochTypeAdapter;
 import uk.co.magictractor.spew.core.typeadapter.SpewTypeAdapter;
 
 /**
@@ -69,7 +69,7 @@ public class Imgur implements SpewOAuth2ServiceProvider {
 
     @Override
     public List<SpewTypeAdapter<?>> getTypeAdapters() {
-        return Arrays.asList(InstantTypeAdapter.EPOCH_SECONDS);
+        return Arrays.asList(InstantEpochTypeAdapter.SECONDS);
     }
 
 }

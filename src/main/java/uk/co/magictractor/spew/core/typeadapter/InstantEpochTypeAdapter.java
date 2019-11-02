@@ -23,16 +23,16 @@ import uk.co.magictractor.spew.util.ExceptionUtil;
 /**
  *
  */
-public class InstantTypeAdapter implements SpewTypeAdapter<Instant> {
+public class InstantEpochTypeAdapter implements SpewTypeAdapter<Instant> {
 
     private final Function<String, Instant> converter;
 
-    public static InstantTypeAdapter EPOCH_MILLIS = new InstantTypeAdapter(
-        InstantTypeAdapter::convertEpochMillis);
-    public static InstantTypeAdapter EPOCH_SECONDS = new InstantTypeAdapter(
-        InstantTypeAdapter::convertEpochSeconds);
+    public static InstantEpochTypeAdapter MILLIS = new InstantEpochTypeAdapter(
+        InstantEpochTypeAdapter::convertEpochMillis);
+    public static InstantEpochTypeAdapter SECONDS = new InstantEpochTypeAdapter(
+        InstantEpochTypeAdapter::convertEpochSeconds);
 
-    private InstantTypeAdapter(Function<String, Instant> converter) {
+    private InstantEpochTypeAdapter(Function<String, Instant> converter) {
         this.converter = converter;
     }
 
