@@ -61,6 +61,9 @@ public final class HttpMessageUtil {
             .appendValue(ChronoField.MINUTE_OF_HOUR, 2)
             .appendLiteral(':')
             .appendValue(ChronoField.SECOND_OF_MINUTE, 2)
+            // TODO! this looks wrong
+            // should use .withZone(ZoneOffset.UTC)
+            // and appendOffset()?
             .appendLiteral(" GMT")
             .toFormatter();
 
