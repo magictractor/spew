@@ -58,9 +58,13 @@ public class DateRange {
         return new DateRange(from, to);
     }
 
+    public static DateRange forDay(LocalDate localDate) {
+        return new DateRange(localDate, localDate);
+    }
+
     public static DateRange forDay(int year, int month, int day) {
-        LocalDate from = LocalDate.of(year, month, day);
-        return new DateRange(from, from);
+        LocalDate localDate = LocalDate.of(year, month, day);
+        return forDay(localDate);
     }
 
     public static DateRange thisMonth() {

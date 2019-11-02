@@ -16,10 +16,18 @@
 package uk.co.magictractor.spew.photo.local;
 
 import java.nio.file.Path;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import uk.co.magictractor.spew.photo.Photo;
 import uk.co.magictractor.spew.photo.local.dates.DateRange;
 import uk.co.magictractor.spew.photo.local.dates.LocalDirectoryDatesStrategy;
 import uk.co.magictractor.spew.photo.local.files.PathIterator;
@@ -29,6 +37,8 @@ import uk.co.magictractor.spew.util.spi.SPIUtil;
  *
  */
 public class LocalLibrary {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(LocalLibrary.class);
 
     private static LocalLibrary instance;
 
@@ -44,6 +54,7 @@ public class LocalLibrary {
         return new PathIterator(roots);
     }
 
+    // TODO! allow date search to be relaxed for finding images in tweets (based on subject and approx date)
     public PathIterator iterator(DateRange dateRange) {
         PathIterator iterator = iterator();
         iterator.addDirectoryFilter(path -> directoryDatesStrategy.test(path, dateRange));
@@ -63,6 +74,55 @@ public class LocalLibrary {
             }
         }
         return instance;
+    }
+
+    /**
+     * <p>
+     * Find the local copy of a remote photo.
+     * </p>
+     * <p>
+     * It is likely that the remote photo was created by loading the local
+     * photo. The remote photo is likely to lost the original file name, and is
+     * likely to have been compressed. However, the date taken should allow for
+     * a qucik and accurate match, and the dimensions of the image are used for
+     * verification.
+     * </p>
+     * TODO! allow a machine tag containing the local file name
+     */
+    public LocalPhoto findLocalPhoto(Photo remotePhoto) {
+        LocalDate dateTaken = remotePhoto.getDateTaken();
+        DateRange dateRange = DateRange.forDay(dateTaken);
+        Predicate<Path> directoryFilter = (dir) -> directoryDatesStrategy.test(dir, dateRange);
+        // TODO! more general (but not raw) - check TIF, GIF, JPG etc
+        Predicate<Path> fileFilter = (file) -> file.toString().toLowerCase().endsWith(".jpg");
+        PathIterator localIterator = iterator();
+        localIterator.addDirectoryFilter(directoryFilter);
+        localIterator.addFileFilter(fileFilter);
+
+        Instant remoteDateTimeTaken = remotePhoto.getDateTimeTaken();
+        List<LocalPhoto> localWithSameDateTaken = new ArrayList<>();
+        while (iterator().hasNext()) {
+            LocalPhoto candidate = new LocalPhoto(iterator().next());
+            // Might need to allow for remote rounding to seconds etc.
+            if (candidate.getDateTimeTaken().equals(remoteDateTimeTaken)) {
+                localWithSameDateTaken.add(candidate);
+            }
+        }
+
+        if (localWithSameDateTaken.isEmpty()) {
+            throw new IllegalStateException("Failed to find local copy of " + remotePhoto);
+        }
+        else if (localWithSameDateTaken.size() > 1) {
+            throw new IllegalStateException("Multiple local photos matched" + remotePhoto);
+        }
+
+        LocalPhoto result = localWithSameDateTaken.get(0);
+
+        // TODO! additional verification: size
+
+        LOGGER.debug("findLocalPhoto() found local file {}", result);
+
+        return result;
     }
 
     public static void main(String[] args) {

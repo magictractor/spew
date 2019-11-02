@@ -18,6 +18,8 @@ public class PhotoTidyProcessorChain extends ProcessorChain<Media, MutablePhoto,
         // not default title
         addProcessor(new TitleProcessor("SUBJECT"));
 
+        addProcessor(new LocalPhotoSyncProcessor());
+
         addProcessor(new BotanicsAlbumProcessor());
 
         // add "(record shot)" to title
