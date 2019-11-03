@@ -100,9 +100,6 @@ public class HardCodedTagLoader implements TagLoader {
         Tag wasp = init(insect, "Wasp");
         init(wasp, "Common wasp");
 
-        Tag shieldbug = init(insect, "shield-bug");
-        init(shieldbug, "Birch shield-bug", "Gorse shield-bug", "Hawthorn shield-bug");
-
         Tag snail = init(insect, "snail");
         init(snail, "garden snail");
 
