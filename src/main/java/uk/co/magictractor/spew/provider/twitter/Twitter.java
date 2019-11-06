@@ -42,6 +42,7 @@ public class Twitter implements SpewOAuth1ServiceProvider, SpewOAuth2ServiceProv
      * per 15 minutes), so Twitter iterator builder implementations may want to
      * set this page size by default.
      */
+    // hmm max 100 at https://developer.twitter.com/en/docs/tweets/post-and-engage/api-reference/get-statuses-retweets_of_me
     public static final int MAX_PAGE_SIZE = 200;
 
     // https://developer.twitter.com/en/docs/basics/authentication/api-reference/request_token
