@@ -85,3 +85,5 @@ This call is capped at 15 requests per 15 minutes and 200 users per request.
  
  * Bin HardCodedTagLoader
  
+ * Support video on Flickr. Tag and title tidy etc to work with video too.
+
