@@ -30,7 +30,7 @@ public class MutableAlbum implements Album {
     private Album underlyingAlbum;
 
     private String title;
-    private List<MutablePhoto> photos = new ArrayList<>();
+    private List<MutableMedia> photos = new ArrayList<>();
 
     public MutableAlbum(String title) {
         this.title = title;
@@ -47,7 +47,7 @@ public class MutableAlbum implements Album {
         return underlyingAlbum;
     }
 
-    public List<MutablePhoto> getPhotos() {
+    public List<MutableMedia> getPhotos() {
         return photos;
     }
 
@@ -76,7 +76,7 @@ public class MutableAlbum implements Album {
         return photos.size();
     }
 
-    public void addPhoto(MutablePhoto photo) {
+    public void addPhoto(MutableMedia photo) {
         photos.add(photo);
     }
 

@@ -21,16 +21,16 @@ import uk.co.magictractor.spew.photo.TagSet;
 import uk.co.magictractor.spew.photo.filter.DateTakenPhotoFilter;
 import uk.co.magictractor.spew.photo.local.dates.DateRange;
 import uk.co.magictractor.spew.processor.common.MutableAlbum;
-import uk.co.magictractor.spew.processor.common.MutablePhoto;
-import uk.co.magictractor.spew.processor.common.PhotoProcessorContext;
+import uk.co.magictractor.spew.processor.common.MutableMedia;
+import uk.co.magictractor.spew.processor.common.MediaProcessorContext;
 import uk.co.magictractor.spew.processor.common.PhotoTidyProcessorChain;
-import uk.co.magictractor.spew.processor.common.PhotoUpdateProcessor;
+import uk.co.magictractor.spew.processor.common.MediaUpdateProcessor;
 import uk.co.magictractor.spew.provider.flickr.Flickr;
 import uk.co.magictractor.spew.provider.flickr.FlickrPhotoIterator.FlickrPhotoIteratorBuilder;
 import uk.co.magictractor.spew.provider.flickr.FlickrPhotosetIterator;
 import uk.co.magictractor.spew.provider.flickr.FlickrPhotosetPhotosIterator.FlickrPhotosetPhotosIteratorBuilder;
 
-public class FlickrPhotoUpdateProcessor extends PhotoUpdateProcessor {
+public class FlickrPhotoUpdateProcessor extends MediaUpdateProcessor {
 
     private final SpewApplication<Flickr> application;
 
@@ -43,7 +43,7 @@ public class FlickrPhotoUpdateProcessor extends PhotoUpdateProcessor {
     // date posted using flickr.photos.setDates
     // @Override
     @Override
-    public void process(MutablePhoto photo, PhotoProcessorContext context) {
+    public void process(MutableMedia photo, MediaProcessorContext context) {
         if (photo.isTitleChanged()) {
             setMeta(photo);
         }
@@ -61,7 +61,7 @@ public class FlickrPhotoUpdateProcessor extends PhotoUpdateProcessor {
     //	The title for the photo. At least one of title or description must be set.
     //	description (Optional)
     //	The description for the photo. At least one of title or description must be set.
-    private void setMeta(MutablePhoto photo) {
+    private void setMeta(MutableMedia photo) {
         // TODO Auto-generated method stub
         System.err.println("set title: " + photo.getTitle());
 
@@ -75,7 +75,7 @@ public class FlickrPhotoUpdateProcessor extends PhotoUpdateProcessor {
         request.sendRequest();
     }
 
-    private void setTags(MutablePhoto photo) {
+    private void setTags(MutableMedia photo) {
         // TODO Auto-generated method stub
         System.err.println("set tags: " + photo.getTagSet());
 
@@ -116,11 +116,11 @@ public class FlickrPhotoUpdateProcessor extends PhotoUpdateProcessor {
     }
 
     @Override
-    public void afterProcessing(PhotoProcessorContext context) {
+    public void afterProcessing(MediaProcessorContext context) {
         syncAlbums(context);
     }
 
-    private void syncAlbums(PhotoProcessorContext context) {
+    private void syncAlbums(MediaProcessorContext context) {
         new FlickrPhotosetIterator.FlickrPhotosetIteratorBuilder<>(application, FlickrPhotoset.class)
                 .withFilter(album -> isAlbumOfInterest(album, context))
                 .build()
@@ -136,7 +136,7 @@ public class FlickrPhotoUpdateProcessor extends PhotoUpdateProcessor {
     }
 
     // Ignore albums which are known to the service provider but have not been referenced by any processors.
-    private boolean isAlbumOfInterest(FlickrPhotoset album, PhotoProcessorContext context) {
+    private boolean isAlbumOfInterest(FlickrPhotoset album, MediaProcessorContext context) {
         return context.hasAlbum(album.getTitle());
     }
 
@@ -144,7 +144,7 @@ public class FlickrPhotoUpdateProcessor extends PhotoUpdateProcessor {
      * @param mutableAlbum
      * @param context
      */
-    private FlickrPhotoset createAlbum(MutableAlbum mutableAlbum, PhotoProcessorContext context) {
+    private FlickrPhotoset createAlbum(MutableAlbum mutableAlbum, MediaProcessorContext context) {
         ApplicationRequest request = application.createPostRequest(Flickr.REST_ENDPOINT);
         request.setQueryStringParam("method", "flickr.photosets.create");
         request.setQueryStringParam("title", mutableAlbum.getTitle());
@@ -241,7 +241,7 @@ public class FlickrPhotoUpdateProcessor extends PhotoUpdateProcessor {
         Iterator<FlickrPhoto> iterator = new FlickrPhotoIteratorBuilder<>(MyFlickrApp.get(), FlickrPhoto.class)
                 .withFilter(new DateTakenPhotoFilter(DateRange.uptoToday(since)))
                 .build();
-        processorChain.execute(iterator, new PhotoProcessorContext());
+        processorChain.execute(iterator, new MediaProcessorContext());
     }
 
 }

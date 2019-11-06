@@ -4,17 +4,17 @@ import java.util.Iterator;
 
 import uk.co.magictractor.spew.example.google.MyGooglePhotosApp;
 import uk.co.magictractor.spew.example.google.pojo.GoogleImage;
-import uk.co.magictractor.spew.processor.common.MutablePhoto;
-import uk.co.magictractor.spew.processor.common.PhotoProcessorContext;
+import uk.co.magictractor.spew.processor.common.MutableMedia;
+import uk.co.magictractor.spew.processor.common.MediaProcessorContext;
 import uk.co.magictractor.spew.processor.common.PhotoTidyProcessorChain;
-import uk.co.magictractor.spew.processor.common.PhotoUpdateProcessor;
+import uk.co.magictractor.spew.processor.common.MediaUpdateProcessor;
 import uk.co.magictractor.spew.provider.google.GoogleMediaItemIterator.GoogleMediaItemIteratorBuilder;
 
 // TODO! currently just a stub
-public class GooglePhotoUpdateProcessor extends PhotoUpdateProcessor {
+public class GooglePhotoUpdateProcessor extends MediaUpdateProcessor {
 
     @Override
-    public void process(MutablePhoto photo, PhotoProcessorContext context) {
+    public void process(MutableMedia photo, MediaProcessorContext context) {
         //      if (photo.isTitleChanged()) {
         //          setMeta(photo);
         //      }
@@ -30,7 +30,7 @@ public class GooglePhotoUpdateProcessor extends PhotoUpdateProcessor {
         Iterator<GoogleImage> iterator = new GoogleMediaItemIteratorBuilder<>(MyGooglePhotosApp.get(),
             GoogleImage.class)
                     .build();
-        processorChain.execute(iterator, new PhotoProcessorContext());
+        processorChain.execute(iterator, new MediaProcessorContext());
     }
 
 }

@@ -6,17 +6,17 @@ import java.util.LinkedHashMap;
 import uk.co.magictractor.spew.photo.Media;
 import uk.co.magictractor.spew.processor.ProcessorContext;
 
-public class PhotoProcessorContext implements ProcessorContext<Media, MutablePhoto> {
+public class MediaProcessorContext implements ProcessorContext<Media, MutableMedia> {
 
     private LinkedHashMap<String, MutableAlbum> albums = new LinkedHashMap<>();
 
     @Override
-    public MutablePhoto beforeElement(Media photo) {
-        return new MutablePhoto(photo);
+    public MutableMedia beforeElement(Media photo) {
+        return new MutableMedia(photo);
     }
 
     @Override
-    public void afterElement(MutablePhoto photo) {
+    public void afterElement(MutableMedia photo) {
     }
 
     public MutableAlbum getAlbum(String albumTitle) {

@@ -9,10 +9,10 @@ import uk.co.magictractor.spew.photo.Media;
 import uk.co.magictractor.spew.photo.TagSet;
 
 /**
- * It is expected that all other Photo implementations will be immutable and any
+ * It is expected that all other Media implementations will be immutable and any
  * changes made to images or sidecars will be done via this class.
  */
-public class MutablePhoto implements Media {
+public class MutableMedia implements Media {
 
     // private final Photo photo;
     //	private final String photoId;
@@ -21,29 +21,30 @@ public class MutablePhoto implements Media {
     //	public final LocalDate originalDateTaken;
     //	private final Instant originalDateTimeUpload;
     //	private final TagSet originalTagSet;
-    private final Media originalPhoto;
+    private final Media originalMedia;
 
     private String title;
     // private Instant dateTimeUpload;
     private TagSet tagSet;
 
-    public MutablePhoto(Media photo) {
-        originalPhoto = photo;
+    public MutableMedia(Media media) {
+        originalMedia = media;
         //		photoId = photo.getServiceProviderId();
         //		originalTitle = photo.getTitle();
         //		originalDateTaken = photo.getDateTaken();
         //		originalDateTimeUpload = photo.getDateTimeUpload();
         //		originalTagSet = photo.getTagSet();
 
-        title = photo.getTitle();
+        title = media.getTitle();
         // dateTimeUpload = originalDateTimeUpload;
-        if (photo.getTagSet() != null) {
-            tagSet = new TagSet(photo.getTagSet());
+        if (media.getTagSet() != null) {
+            tagSet = new TagSet(media.getTagSet());
         }
     }
 
     // Mutable values
 
+    @Override
     public String getTitle() {
         return title;
     }
@@ -53,60 +54,62 @@ public class MutablePhoto implements Media {
     }
 
     public boolean isTitleChanged() {
-        return !Objects.equals(originalPhoto.getTitle(), title);
+        return !Objects.equals(originalMedia.getTitle(), title);
     }
 
     // No setter, add and remove Tag instances this Tags instance
     // TODO! could ensure TagSet for other Photo impls is immutable
+    @Override
     public TagSet getTagSet() {
         return tagSet;
     }
 
     public boolean isTagSetChanged() {
-        return !Objects.equals(originalPhoto.getTagSet(), tagSet);
+        return !Objects.equals(originalMedia.getTagSet(), tagSet);
     }
 
     // Immutable values
 
     @Override
     public String getServiceProviderId() {
-        return originalPhoto.getServiceProviderId();
+        return originalMedia.getServiceProviderId();
     }
 
     @Override
     public String getFileName() {
-        return originalPhoto.getFileName();
+        return originalMedia.getFileName();
     }
 
     @Override
     public String getDescription() {
-        return originalPhoto.getDescription();
+        return originalMedia.getDescription();
     }
 
     @Override
     public Instant getDateTimeTaken() {
-        return originalPhoto.getDateTimeTaken();
+        return originalMedia.getDateTimeTaken();
     }
 
     @Override
     public Instant getDateTimeUpload() {
-        return originalPhoto.getDateTimeUpload();
+        return originalMedia.getDateTimeUpload();
     }
 
     @Override
     public Integer getWidth() {
-        return originalPhoto.getWidth();
+        return originalMedia.getWidth();
     }
 
     @Override
     public Integer getHeight() {
-        return originalPhoto.getHeight();
+        return originalMedia.getHeight();
     }
 
+    @Override
     public String toString() {
         ToStringHelper toStringHelper = Media.toStringHelper(this);
-        // TODO! would rather add underlying photo type first but that's not supported by ToStringHelper
-        toStringHelper.add("originalPhoto.class", originalPhoto.getClass().getSimpleName());
+        // TODO! would rather add underlying media type first but that's not supported by ToStringHelper
+        toStringHelper.add("originalMedia.class", originalMedia.getClass().getSimpleName());
         toStringHelper.add("isTitleChanged", isTitleChanged());
         toStringHelper.add("isTagSetChanged", isTagSetChanged());
         return toStringHelper.toString();

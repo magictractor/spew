@@ -8,13 +8,13 @@ import uk.co.magictractor.spew.photo.Media;
 import uk.co.magictractor.spew.photo.Tag;
 import uk.co.magictractor.spew.photo.TagSet;
 import uk.co.magictractor.spew.photo.TagType;
-import uk.co.magictractor.spew.processor.Processor;
+import uk.co.magictractor.spew.processor.MediaProcessor;
 
 /**
  * Replace default titles based on the file name, "IMG_1234" etc, with the name
  * from the subject tag.
  */
-public class TitleProcessor implements Processor<Media, MutablePhoto, PhotoProcessorContext> {
+public class TitleProcessor implements MediaProcessor {
 
     private final TagType titleTagType;
 
@@ -38,7 +38,7 @@ public class TitleProcessor implements Processor<Media, MutablePhoto, PhotoProce
     }
 
     @Override
-    public void process(MutablePhoto photo, PhotoProcessorContext context) {
+    public void process(MutableMedia photo, MediaProcessorContext context) {
         if (isUnwantedTitlePhoto(photo)) {
             String newTitle = createTitle(photo);
 

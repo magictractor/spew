@@ -20,13 +20,12 @@ import java.time.LocalDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import uk.co.magictractor.spew.photo.Media;
 import uk.co.magictractor.spew.photo.Tag;
 import uk.co.magictractor.spew.photo.TagSet;
 import uk.co.magictractor.spew.photo.TagType;
-import uk.co.magictractor.spew.processor.Processor;
+import uk.co.magictractor.spew.processor.MediaProcessor;
 
-public class BotanicsAlbumProcessor implements Processor<Media, MutablePhoto, PhotoProcessorContext> {
+public class BotanicsAlbumProcessor implements MediaProcessor {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BotanicsAlbumProcessor.class);
 
@@ -34,21 +33,21 @@ public class BotanicsAlbumProcessor implements Processor<Media, MutablePhoto, Ph
     private static final Tag BOTANICS_TAG = Tag.fetchTag("RBGE");
 
     @Override
-    public void process(MutablePhoto photo, PhotoProcessorContext context) {
+    public void process(MutableMedia photo, MediaProcessorContext context) {
         Tag locationTag = TagSet.getDeepestTag(photo.getTagSet(), LOCATION_TAG_TYPE);
         if (BOTANICS_TAG.equals(locationTag)) {
             addToBotanicsAlbum(photo, context);
         }
     }
 
-    private void addToBotanicsAlbum(MutablePhoto photo, PhotoProcessorContext context) {
+    private void addToBotanicsAlbum(MutableMedia photo, MediaProcessorContext context) {
         String albumTitle = getAlbumTitle(photo);
         MutableAlbum album = context.getAlbum(albumTitle);
         album.addPhoto(photo);
         LOGGER.info("Botanics album '{}' contains photo {}", album.getTitle(), photo.getTitle());
     }
 
-    private String getAlbumTitle(MutablePhoto photo) {
+    private String getAlbumTitle(MutableMedia photo) {
         LocalDate dateTaken = photo.getDateTaken();
         StringBuilder albumTitleBuilder = new StringBuilder();
         albumTitleBuilder.append("RBGE ");

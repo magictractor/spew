@@ -4,8 +4,8 @@ import java.util.Iterator;
 
 import uk.co.magictractor.spew.example.flickr.MyFlickrApp;
 import uk.co.magictractor.spew.example.flickr.pojo.FlickrPhoto;
-import uk.co.magictractor.spew.processor.common.MutablePhoto;
-import uk.co.magictractor.spew.processor.common.PhotoProcessorContext;
+import uk.co.magictractor.spew.processor.common.MutableMedia;
+import uk.co.magictractor.spew.processor.common.MediaProcessorContext;
 import uk.co.magictractor.spew.processor.common.PhotoUploadProcessor;
 import uk.co.magictractor.spew.processor.common.PhotoUploadProcessorChain;
 import uk.co.magictractor.spew.provider.flickr.FlickrPhotoIterator.FlickrPhotoIteratorBuilder;
@@ -14,7 +14,7 @@ import uk.co.magictractor.spew.provider.flickr.FlickrPhotoIterator.FlickrPhotoIt
 public class FlickrPhotoUploadProcessor extends PhotoUploadProcessor {
 
     @Override
-    public void process(MutablePhoto photo, PhotoProcessorContext context) {
+    public void process(MutableMedia photo, MediaProcessorContext context) {
         if (photo.getServiceProviderId() != null) {
             return;
         }
@@ -23,7 +23,7 @@ public class FlickrPhotoUploadProcessor extends PhotoUploadProcessor {
     public static void main(String[] args) {
         PhotoUploadProcessorChain processorChain = new PhotoUploadProcessorChain(new FlickrPhotoUploadProcessor());
         Iterator<FlickrPhoto> iterator = new FlickrPhotoIteratorBuilder<>(MyFlickrApp.get(), FlickrPhoto.class).build();
-        processorChain.execute(iterator, new PhotoProcessorContext());
+        processorChain.execute(iterator, new MediaProcessorContext());
     }
 
 }

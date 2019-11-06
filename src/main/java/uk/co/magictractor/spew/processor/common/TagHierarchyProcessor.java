@@ -1,11 +1,10 @@
 package uk.co.magictractor.spew.processor.common;
 
-import uk.co.magictractor.spew.photo.Media;
 import uk.co.magictractor.spew.photo.Tag;
 import uk.co.magictractor.spew.photo.TagComparator;
 import uk.co.magictractor.spew.photo.TagSet;
 import uk.co.magictractor.spew.photo.TagType;
-import uk.co.magictractor.spew.processor.Processor;
+import uk.co.magictractor.spew.processor.MediaProcessor;
 
 /**
  * <p>
@@ -16,10 +15,10 @@ import uk.co.magictractor.spew.processor.Processor;
  * Also ensure tags are correctly ordered.
  * </p>
  */
-public class TagHierarchyProcessor implements Processor<Media, MutablePhoto, PhotoProcessorContext> {
+public class TagHierarchyProcessor implements MediaProcessor {
 
     @Override
-    public void process(MutablePhoto photoChanges, PhotoProcessorContext context) {
+    public void process(MutableMedia photoChanges, MediaProcessorContext context) {
         TagSet tagSet = photoChanges.getTagSet();
         if (tagSet == null) {
             return;
