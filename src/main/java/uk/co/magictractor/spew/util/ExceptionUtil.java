@@ -41,16 +41,22 @@ public final class ExceptionUtil {
     }
 
     private static RuntimeException asRuntimeException(Throwable e) {
+        return asRuntimeException(null, e);
+    }
+
+    public static RuntimeException asRuntimeException(String message, Throwable e) {
         if (e instanceof RuntimeException) {
+            // hmm, message lost...
             return (RuntimeException) e;
         }
-        else if (e instanceof IOException) {
-            return new UncheckedIOException((IOException) e);
-        }
         else if (e instanceof Error) {
+            // hmm, message lost...
             throw (Error) e;
         }
-        return new IllegalStateException(e);
+        else if (e instanceof IOException) {
+            return new UncheckedIOException(message, (IOException) e);
+        }
+        return new IllegalStateException(message, e);
     }
 
     @FunctionalInterface

@@ -68,16 +68,17 @@ public class ExifPropertiesSupplierFactory implements PhotoPropertiesSupplierFac
         // bias value, metering mode, focal length, (exif image) width, height
         // metadata.
         Directory subIFD = metadata.getFirstDirectoryOfType(ExifSubIFDDirectory.class);
-        System.err.println("aperture:  " + subIFD.getString(ExifSubIFDDirectory.TAG_EXPOSURE_TIME)); // null
-        System.err.println("shutter:   " + subIFD.getString(ExifSubIFDDirectory.TAG_FNUMBER)); // null 6.3 5.6 10
-        System.err.println("iso:       " + subIFD.getString(ExifSubIFDDirectory.TAG_ISO_EQUIVALENT)); // 320
-        System.err.println("exp prog:  " + subIFD.getString(ExifSubIFDDirectory.TAG_EXPOSURE_PROGRAM)); // 3
-        System.err.println("exp bias:  " + subIFD.getString(ExifSubIFDDirectory.TAG_EXPOSURE_BIAS)); // 0 -33/50
-        System.err.println("focal len: " + subIFD.getString(ExifSubIFDDirectory.TAG_FOCAL_LENGTH)); // 400
-        System.err.println("width:     " + subIFD.getString(ExifSubIFDDirectory.TAG_EXIF_IMAGE_WIDTH)); // 5184
-        System.err.println("height:    " + subIFD.getString(ExifSubIFDDirectory.TAG_EXIF_IMAGE_HEIGHT));
-        // what's the difference between original and digitized?
-        System.err.println("datetime:  " + subIFD.getString(ExifSubIFDDirectory.TAG_DATETIME_ORIGINAL));
+
+        //System.err.println("aperture:  " + subIFD.getString(ExifSubIFDDirectory.TAG_EXPOSURE_TIME)); // null
+        //System.err.println("shutter:   " + subIFD.getString(ExifSubIFDDirectory.TAG_FNUMBER)); // null 6.3 5.6 10
+        //System.err.println("iso:       " + subIFD.getString(ExifSubIFDDirectory.TAG_ISO_EQUIVALENT)); // 320
+        //System.err.println("exp prog:  " + subIFD.getString(ExifSubIFDDirectory.TAG_EXPOSURE_PROGRAM)); // 3
+        //System.err.println("exp bias:  " + subIFD.getString(ExifSubIFDDirectory.TAG_EXPOSURE_BIAS)); // 0 -33/50
+        //System.err.println("focal len: " + subIFD.getString(ExifSubIFDDirectory.TAG_FOCAL_LENGTH)); // 400
+        //System.err.println("width:     " + subIFD.getString(ExifSubIFDDirectory.TAG_EXIF_IMAGE_WIDTH)); // 5184
+        //System.err.println("height:    " + subIFD.getString(ExifSubIFDDirectory.TAG_EXIF_IMAGE_HEIGHT));
+        //// what's the difference between original and digitized?
+        //System.err.println("datetime:  " + subIFD.getString(ExifSubIFDDirectory.TAG_DATETIME_ORIGINAL));
 
         //		for (Directory dir : metadata.getDirectories()) {
         //			// dir.

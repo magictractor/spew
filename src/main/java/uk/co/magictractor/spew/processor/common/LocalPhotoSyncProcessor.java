@@ -1,6 +1,7 @@
 package uk.co.magictractor.spew.processor.common;
 
 import uk.co.magictractor.spew.photo.local.LocalLibrary;
+import uk.co.magictractor.spew.photo.local.LocalPhoto;
 import uk.co.magictractor.spew.processor.MediaProcessor;
 
 /**
@@ -14,7 +15,7 @@ public class LocalPhotoSyncProcessor implements MediaProcessor {
     @Override
     public void process(MutableMedia remotePhoto, MediaProcessorContext context) {
         // TODO! need to tidy use of Media/Photo. MutablePhoto implements Media, not Photo
-        // LocalPhoto localPhoto = localLibrary.findLocalPhoto(remotePhoto.);
+        LocalPhoto localPhoto = localLibrary.findLocalPhoto(remotePhoto);
     }
 
 }

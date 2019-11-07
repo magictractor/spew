@@ -4,6 +4,9 @@ import java.time.Instant;
 import java.util.Iterator;
 import java.util.stream.Stream;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import uk.co.magictractor.spew.photo.Photo;
 import uk.co.magictractor.spew.photo.TagSet;
 
@@ -12,6 +15,8 @@ import uk.co.magictractor.spew.photo.TagSet;
  * multiple sources such as exif data in images and sidecar data.
  */
 public abstract class PropertySuppliedPhoto implements Photo {
+
+    private Logger logger = LoggerFactory.getLogger(getClass());
 
     private boolean propertyValuesRead;
 
@@ -148,20 +153,22 @@ public abstract class PropertySuppliedPhoto implements Photo {
         Iterator<PhotoPropertiesSupplier<T>> iter = propertyValueSuppliers.iterator();
         while (iter.hasNext()) {
             PhotoPropertiesSupplier<T> propertyValueSupplier = iter.next();
-            T value = propertyValueSupplier.get();
+            T propertyValue = propertyValueSupplier.get();
 
-            System.err.println(propertyValueSupplier.getDescription() + " -> " + value);
-
-            if (value != null) {
+            if (propertyValue != null) {
                 if (bestPropertyValue == null) {
                     // First non-null value is best.
-                    bestPropertyValue = value;
+                    bestPropertyValue = propertyValue;
                     // TODO! could check log level here and return immediately if not logging
                     // different values.
                 }
-                else if (!value.equals(bestPropertyValue)) {
+                else if (!propertyValue.equals(bestPropertyValue)) {
                     // TODO! improve this
-                    System.err.println("Different value from " + propertyValueSupplier.getDescription());
+                    // Seeing this a lot for F-Number and Exposure Time which require normalisation
+                    // '10/2000' '1/200'
+                    // '130/10' '13'
+                    logger.warn("Different value from {} retaining '{}', ignoring '{}'",
+                        propertyValueSupplier.getDescription(), bestPropertyValue, propertyValue);
                 }
             }
         }

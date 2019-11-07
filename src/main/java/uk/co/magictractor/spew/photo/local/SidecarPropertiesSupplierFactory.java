@@ -39,17 +39,16 @@ public class SidecarPropertiesSupplierFactory implements PhotoPropertiesSupplier
     private static final Namespace DC = new Namespace("dc", "http://purl.org/dc/elements/1.1/");
     private static final Namespace EXIF = new Namespace("exif", "http://ns.adobe.com/exif/1.0/");
 
-    private final Path path;
+    //private final Path path;
     private XMPMeta xmpMeta;
 
     public SidecarPropertiesSupplierFactory(Path path) {
-        this.path = path;
-        ExceptionUtil.call(this::init);
-    }
-
-    private void init() throws IOException, XMPException {
+        //this.path = path;
         try (InputStream sidecarStream = Files.newInputStream(path)) {
             xmpMeta = XMPMetaFactory.parse(sidecarStream);
+        }
+        catch (IOException | XMPException e) {
+            throw ExceptionUtil.asRuntimeException("Problem reading sidecar file " + path, e);
         }
     }
 

@@ -17,7 +17,7 @@ public interface LocalDirectoryDatesStrategy {
     default boolean test(Path path, DateRange dateRange) {
         DateRange directoryDateRange = getDateRange(path);
 
-        System.err.println("date range for " + path + ": " + directoryDateRange);
+        // System.err.println("date range for " + path + ": " + directoryDateRange);
 
         if (directoryDateRange == null) {
             // If the date range cannot be determined, return true so that subdirectories

@@ -26,8 +26,10 @@ public interface PhotoPropertiesSupplierFactory {
 
     Stream<PhotoPropertiesSupplier<Integer>> getRatingPropertyValueSuppliers();
 
+    // Not String
     Stream<PhotoPropertiesSupplier<String>> getShutterSpeedPropertyValueSuppliers();
 
+    // Not String, something like com.drew.lang.Rational
     Stream<PhotoPropertiesSupplier<String>> getAperturePropertyValueSuppliers();
 
     Stream<PhotoPropertiesSupplier<Integer>> getIsoPropertyValueSuppliers();

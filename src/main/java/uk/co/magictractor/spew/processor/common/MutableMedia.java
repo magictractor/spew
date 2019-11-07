@@ -108,6 +108,8 @@ public class MutableMedia implements Media {
     @Override
     public String toString() {
         ToStringHelper toStringHelper = Media.toStringHelper(this);
+        toStringHelper.add("title", getTitle());
+        toStringHelper.add("dateTimeTaken", getDateTimeTaken());
         // TODO! would rather add underlying media type first but that's not supported by ToStringHelper
         toStringHelper.add("originalMedia.class", originalMedia.getClass().getSimpleName());
         toStringHelper.add("isTitleChanged", isTitleChanged());

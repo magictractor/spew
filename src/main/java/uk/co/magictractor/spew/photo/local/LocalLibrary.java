@@ -18,6 +18,7 @@ package uk.co.magictractor.spew.photo.local;
 import java.nio.file.Path;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.temporal.ChronoField;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -27,7 +28,7 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import uk.co.magictractor.spew.photo.Photo;
+import uk.co.magictractor.spew.photo.Media;
 import uk.co.magictractor.spew.photo.local.dates.DateRange;
 import uk.co.magictractor.spew.photo.local.dates.LocalDirectoryDatesStrategy;
 import uk.co.magictractor.spew.photo.local.files.PathIterator;
@@ -89,8 +90,8 @@ public class LocalLibrary {
      * </p>
      * TODO! allow a machine tag containing the local file name
      */
-    public LocalPhoto findLocalPhoto(Photo remotePhoto) {
-        LocalDate dateTaken = remotePhoto.getDateTaken();
+    public LocalPhoto findLocalPhoto(Media remoteMedia) {
+        LocalDate dateTaken = remoteMedia.getDateTaken();
         DateRange dateRange = DateRange.forDay(dateTaken);
         Predicate<Path> directoryFilter = (dir) -> directoryDatesStrategy.test(dir, dateRange);
         // TODO! more general (but not raw) - check TIF, GIF, JPG etc
@@ -99,21 +100,29 @@ public class LocalLibrary {
         localIterator.addDirectoryFilter(directoryFilter);
         localIterator.addFileFilter(fileFilter);
 
-        Instant remoteDateTimeTaken = remotePhoto.getDateTimeTaken();
+        Instant remoteDateTimeTaken = remoteMedia.getDateTimeTaken();
         List<LocalPhoto> localWithSameDateTaken = new ArrayList<>();
-        while (iterator().hasNext()) {
-            LocalPhoto candidate = new LocalPhoto(iterator().next());
+        //System.err.println("remote: " + remoteDateTimeTaken);
+        while (localIterator.hasNext()) {
+            Path localPath = localIterator.next();
+            LocalPhoto candidate = new LocalPhoto(localPath);
             // Might need to allow for remote rounding to seconds etc.
-            if (candidate.getDateTimeTaken().equals(remoteDateTimeTaken)) {
+            // 2019-10-31T13:15:05Z
+            // 2019-10-31T13:15:05.324Z
+            // TODO! something better (maybe include accuracy in Photo impl)
+            if (candidate.getDateTimeTaken().with(ChronoField.MILLI_OF_SECOND, 0).equals(remoteDateTimeTaken)) {
+                //System.err.println("candidate: " + candidate.getDateTimeTaken() + " " + localPath);
                 localWithSameDateTaken.add(candidate);
             }
         }
 
         if (localWithSameDateTaken.isEmpty()) {
-            throw new IllegalStateException("Failed to find local copy of " + remotePhoto);
+            throw new IllegalStateException("Failed to find local copy of " + remoteMedia);
         }
         else if (localWithSameDateTaken.size() > 1) {
-            throw new IllegalStateException("Multiple local photos matched" + remotePhoto);
+            // TODO! this is OK (multiple crops of same image), should include in same group
+            //throw new IllegalStateException("Multiple local photos matched " + remoteMedia);
+            LOGGER.warn("Multiple local photos matched " + remoteMedia);
         }
 
         LocalPhoto result = localWithSameDateTaken.get(0);
