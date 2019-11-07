@@ -4,8 +4,7 @@ import java.time.Instant;
 import java.util.stream.Stream;
 
 import uk.co.magictractor.spew.photo.TagSet;
-import uk.co.magictractor.spew.photo.local.PhotoPropertiesSupplier;
-import uk.co.magictractor.spew.photo.local.PhotoPropertiesSupplierFactory;
+import uk.co.magictractor.spew.photo.fraction.Fraction;
 
 public class NoopPhotoPropertiesSupplierFactory implements PhotoPropertiesSupplierFactory {
 
@@ -40,12 +39,12 @@ public class NoopPhotoPropertiesSupplierFactory implements PhotoPropertiesSuppli
     }
 
     @Override
-    public Stream<PhotoPropertiesSupplier<String>> getShutterSpeedPropertyValueSuppliers() {
+    public Stream<PhotoPropertiesSupplier<Fraction>> getShutterSpeedPropertyValueSuppliers() {
         return Stream.empty();
     }
 
     @Override
-    public Stream<PhotoPropertiesSupplier<String>> getAperturePropertyValueSuppliers() {
+    public Stream<PhotoPropertiesSupplier<Fraction>> getAperturePropertyValueSuppliers() {
         return Stream.empty();
     }
 

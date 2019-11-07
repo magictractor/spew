@@ -25,6 +25,7 @@ import com.adobe.xmp.properties.XMPPropertyInfo;
 import com.google.common.collect.Streams;
 
 import uk.co.magictractor.spew.photo.TagSet;
+import uk.co.magictractor.spew.photo.fraction.Fraction;
 import uk.co.magictractor.spew.util.ExceptionUtil;
 
 /**
@@ -88,13 +89,13 @@ public class SidecarPropertiesSupplierFactory implements PhotoPropertiesSupplier
     }
 
     @Override
-    public Stream<PhotoPropertiesSupplier<String>> getShutterSpeedPropertyValueSuppliers() {
-        return Stream.of(createStringSupplier(EXIF, "ExposureTime"));
+    public Stream<PhotoPropertiesSupplier<Fraction>> getShutterSpeedPropertyValueSuppliers() {
+        return Stream.of(createFractionSupplier(EXIF, "ExposureTime"));
     }
 
     @Override
-    public Stream<PhotoPropertiesSupplier<String>> getAperturePropertyValueSuppliers() {
-        return Stream.of(createStringSupplier(EXIF, "FNumber"));
+    public Stream<PhotoPropertiesSupplier<Fraction>> getAperturePropertyValueSuppliers() {
+        return Stream.of(createFractionSupplier(EXIF, "FNumber"));
     }
 
     @Override
@@ -120,6 +121,11 @@ public class SidecarPropertiesSupplierFactory implements PhotoPropertiesSupplier
 
     private XmpMetaPropertyValueSupplier<Integer> createIntegerSupplier(Namespace namespace, String propertyName) {
         return new XmpMetaPropertyValueSupplier<>(namespace, propertyName, (n, p) -> xmpMeta.getPropertyInteger(n, p));
+    }
+
+    private XmpMetaPropertyValueSupplier<Fraction> createFractionSupplier(Namespace namespace, String propertyName) {
+        return new XmpMetaPropertyValueSupplier<>(namespace, propertyName,
+            (n, p) -> Fraction.of(xmpMeta.getPropertyString(n, p)));
     }
 
     private XmpMetaPropertyValueSupplier<Instant> createInstantSupplier(Namespace namespace, String propertyName) {

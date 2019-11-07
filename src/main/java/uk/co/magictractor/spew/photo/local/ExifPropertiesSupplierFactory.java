@@ -17,6 +17,7 @@ import com.drew.metadata.xmp.XmpDirectory;
 import com.google.common.collect.Iterables;
 
 import uk.co.magictractor.spew.photo.TagSet;
+import uk.co.magictractor.spew.photo.fraction.Fraction;
 
 public class ExifPropertiesSupplierFactory implements PhotoPropertiesSupplierFactory {
 
@@ -131,13 +132,13 @@ public class ExifPropertiesSupplierFactory implements PhotoPropertiesSupplierFac
     }
 
     @Override
-    public Stream<PhotoPropertiesSupplier<String>> getShutterSpeedPropertyValueSuppliers() {
-        return Stream.of(new ExifStringValueSupplier(ExifSubIFDDirectory.TAG_EXPOSURE_TIME));
+    public Stream<PhotoPropertiesSupplier<Fraction>> getShutterSpeedPropertyValueSuppliers() {
+        return Stream.of(new ExifFractionValueSupplier(ExifSubIFDDirectory.TAG_EXPOSURE_TIME));
     }
 
     @Override
-    public Stream<PhotoPropertiesSupplier<String>> getAperturePropertyValueSuppliers() {
-        return Stream.of(new ExifStringValueSupplier(ExifSubIFDDirectory.TAG_FNUMBER));
+    public Stream<PhotoPropertiesSupplier<Fraction>> getAperturePropertyValueSuppliers() {
+        return Stream.of(new ExifFractionValueSupplier(ExifSubIFDDirectory.TAG_FNUMBER));
     }
 
     @Override
@@ -189,6 +190,17 @@ public class ExifPropertiesSupplierFactory implements PhotoPropertiesSupplierFac
         @Override
         public Integer get() {
             return exif.getInteger(tagType);
+        }
+    }
+
+    public class ExifFractionValueSupplier extends ExifValueSupplier<Fraction> {
+        ExifFractionValueSupplier(int tagType) {
+            super(tagType);
+        }
+
+        @Override
+        public Fraction get() {
+            return Fraction.of(exif.getString(tagType));
         }
     }
 

@@ -7,6 +7,7 @@ import uk.co.magictractor.spew.photo.Media;
 import uk.co.magictractor.spew.photo.Photo;
 import uk.co.magictractor.spew.photo.TagSet;
 import uk.co.magictractor.spew.photo.Video;
+import uk.co.magictractor.spew.photo.fraction.Fraction;
 
 //{
 //    "id": "AO6co5uaPax0_68QU28KxDL3ZySSl-znViY5GJpRQrS3b1mE__i0xoZBYjalUiXj5GNcR_9WTquqF_L5RpQae-eWxcBIANY7mg",
@@ -71,7 +72,7 @@ public class GoogleImage implements Media, Supplier<GoogleImage> {
         private String cameraMake;
         private String cameraModel;
         private String focalLength;
-        private String apertureFNumber;
+        private Fraction apertureFNumber;
         private Integer isoEquivalent;
     }
 
@@ -135,12 +136,13 @@ public class GoogleImage implements Media, Supplier<GoogleImage> {
 
     //// Photo
 
-    public String getShutterSpeed() {
+    public Fraction getShutterSpeed() {
+        // TODO confirm this comment.
         // Curiously, this isn't returned although aperture, focal length etc are
         return null;
     }
 
-    public String getAperture() {
+    public Fraction getAperture() {
         return mediaMetadata.photo.apertureFNumber;
     }
 

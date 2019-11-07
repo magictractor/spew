@@ -8,6 +8,7 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 
 import uk.co.magictractor.spew.photo.TagSet;
+import uk.co.magictractor.spew.photo.fraction.Fraction;
 
 public class ConcatPropertiesSupplierFactory implements PhotoPropertiesSupplierFactory {
 
@@ -52,12 +53,12 @@ public class ConcatPropertiesSupplierFactory implements PhotoPropertiesSupplierF
     }
 
     @Override
-    public Stream<PhotoPropertiesSupplier<String>> getShutterSpeedPropertyValueSuppliers() {
+    public Stream<PhotoPropertiesSupplier<Fraction>> getShutterSpeedPropertyValueSuppliers() {
         return concat(PhotoPropertiesSupplierFactory::getShutterSpeedPropertyValueSuppliers);
     }
 
     @Override
-    public Stream<PhotoPropertiesSupplier<String>> getAperturePropertyValueSuppliers() {
+    public Stream<PhotoPropertiesSupplier<Fraction>> getAperturePropertyValueSuppliers() {
         return concat(PhotoPropertiesSupplierFactory::getAperturePropertyValueSuppliers);
     }
 

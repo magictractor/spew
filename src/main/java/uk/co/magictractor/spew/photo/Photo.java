@@ -15,16 +15,20 @@
  */
 package uk.co.magictractor.spew.photo;
 
+import uk.co.magictractor.spew.photo.fraction.Fraction;
+
 /**
  *
  */
 public interface Photo extends Media {
 
-    default String getShutterSpeed() {
+    // 1/100, 10/1000, 0.01 etc
+    default Fraction getShutterSpeed() {
         return null;
     }
 
-    default String getAperture() {
+    // 6.3, 63/100 etc
+    default Fraction getAperture() {
         return null;
     }
 

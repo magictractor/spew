@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.util.stream.Stream;
 
 import uk.co.magictractor.spew.photo.TagSet;
+import uk.co.magictractor.spew.photo.fraction.Fraction;
 
 /**
  * Implementations may return null, which will result in warnings. Use this for
@@ -26,11 +27,9 @@ public interface PhotoPropertiesSupplierFactory {
 
     Stream<PhotoPropertiesSupplier<Integer>> getRatingPropertyValueSuppliers();
 
-    // Not String
-    Stream<PhotoPropertiesSupplier<String>> getShutterSpeedPropertyValueSuppliers();
+    Stream<PhotoPropertiesSupplier<Fraction>> getShutterSpeedPropertyValueSuppliers();
 
-    // Not String, something like com.drew.lang.Rational
-    Stream<PhotoPropertiesSupplier<String>> getAperturePropertyValueSuppliers();
+    Stream<PhotoPropertiesSupplier<Fraction>> getAperturePropertyValueSuppliers();
 
     Stream<PhotoPropertiesSupplier<Integer>> getIsoPropertyValueSuppliers();
 

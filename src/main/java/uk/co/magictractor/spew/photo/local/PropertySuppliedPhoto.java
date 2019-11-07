@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import uk.co.magictractor.spew.photo.Photo;
 import uk.co.magictractor.spew.photo.TagSet;
+import uk.co.magictractor.spew.photo.fraction.Fraction;
 
 /**
  * For photographs where title, description, rating etc can be derived from
@@ -27,8 +28,8 @@ public abstract class PropertySuppliedPhoto implements Photo {
     private TagSet tagSet;
     private Instant dateTimeTaken;
     private Integer rating;
-    private String shutterSpeed;
-    private String aperture;
+    private Fraction shutterSpeed;
+    private Fraction aperture;
     private Integer iso;
     private Integer width;
     private Integer height;
@@ -83,13 +84,13 @@ public abstract class PropertySuppliedPhoto implements Photo {
     }
 
     @Override
-    public String getShutterSpeed() {
+    public Fraction getShutterSpeed() {
         ensurePropertyValuesRead();
         return shutterSpeed;
     }
 
     @Override
-    public String getAperture() {
+    public Fraction getAperture() {
         ensurePropertyValuesRead();
         return aperture;
     }
