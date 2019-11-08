@@ -11,6 +11,7 @@ import uk.co.magictractor.spew.core.response.parser.SpewParsedResponse;
 import uk.co.magictractor.spew.example.google.MyGooglePhotosApp;
 import uk.co.magictractor.spew.example.google.pojo.GoogleImage;
 import uk.co.magictractor.spew.photo.Photo;
+import uk.co.magictractor.spew.photo.fraction.Fraction;
 import uk.co.magictractor.spew.util.ResourceUtil;
 
 public class GoogleMediaItemsResponseTest {
@@ -34,7 +35,7 @@ public class GoogleMediaItemsResponseTest {
         assertThat(photo.getDateTimeTaken())
                 .isEqualTo(LocalDateTime.of(2018, 11, 23, 13, 25, 59).toInstant(ZoneOffset.UTC));
         assertThat(photo.getShutterSpeed()).isNull();
-        assertThat(photo.getAperture()).isEqualTo("5.6");
+        assertThat(photo.getAperture()).isEqualTo(Fraction.of("5.6"));
         assertThat(photo.getIso()).isEqualTo(1000);
         //		assertThat(photo.tags).isEqualTo(new TagSet("kingfisher rbge"));
         //		assertThat(photo.isPublic).isTrue();

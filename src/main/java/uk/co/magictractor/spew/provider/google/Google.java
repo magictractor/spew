@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import uk.co.magictractor.spew.api.SpewOAuth2ServiceProvider;
+import uk.co.magictractor.spew.core.typeadapter.FractionTypeAdapter;
 import uk.co.magictractor.spew.core.typeadapter.InstantTypeAdapter;
 import uk.co.magictractor.spew.core.typeadapter.SpewTypeAdapter;
 
@@ -54,28 +55,11 @@ public class Google implements SpewOAuth2ServiceProvider {
         return "https://www.googleapis.com/oauth2/v4/token";
     }
 
-    // public static final String REST_ENDPOINT = "https://api.imgur.com/3/";
-
-    //	@Override
-    //	public String getTemporaryCredentialRequestUri() {
-    //		return "https://www.flickr.com/services/oauth/request_token";
-    //	}
-    //
-    //	@Override
-    //	public String getResourceOwnerAuthorizationUri() {
-    //		// temporaryAuthToken added
-    //		return "https://www.flickr.com/services/oauth/authorize?perms=write";
-    //	}
-    //
-    //	@Override
-    //	public String getTokenRequestUri() {
-    //		return "https://www.flickr.com/services/oauth/access_token";
-    //	}
-
     @Override
     public List<SpewTypeAdapter<?>> getTypeAdapters() {
         return Arrays.asList(
-            new InstantTypeAdapter(GOOGLE_INSTANT_FORMATTER));
+            new InstantTypeAdapter(GOOGLE_INSTANT_FORMATTER),
+            FractionTypeAdapter.NUMERIC);
     }
 
 }

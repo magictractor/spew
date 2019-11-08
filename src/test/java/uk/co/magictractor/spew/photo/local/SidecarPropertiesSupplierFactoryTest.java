@@ -11,6 +11,7 @@ import java.time.ZonedDateTime;
 import org.junit.jupiter.api.Test;
 
 import uk.co.magictractor.spew.photo.Photo;
+import uk.co.magictractor.spew.photo.fraction.Fraction;
 import uk.co.magictractor.spew.util.ExceptionUtil;
 
 public class SidecarPropertiesSupplierFactoryTest {
@@ -26,8 +27,8 @@ public class SidecarPropertiesSupplierFactoryTest {
         // TODO! better assert method??
         assertThat(sidecar.getDateTimeTaken())
                 .isEqualTo(ZonedDateTime.of(2019, 3, 15, 14, 7, 10, 37 * 1000000, ZoneOffset.UTC).toInstant());
-        assertThat(sidecar.getShutterSpeed()).isEqualTo("10/2500"); // TODO! convert to 1/250
-        assertThat(sidecar.getAperture()).isEqualTo("63/10"); // // TODO! convert/standardise
+        assertThat(sidecar.getShutterSpeed()).isEqualTo(Fraction.of("1/250"));
+        assertThat(sidecar.getAperture()).isEqualTo(Fraction.of("6.3"));
         // Digikam does not copy width and height to the sidecar
         assertThat(sidecar.getWidth()).isNull();
         assertThat(sidecar.getHeight()).isNull();
@@ -61,8 +62,8 @@ public class SidecarPropertiesSupplierFactoryTest {
         assertThat(sidecar.getDateTimeTaken())
                 .isEqualTo(ZonedDateTime.of(2019, 3, 15, 14, 7, 10, 37 * 1000000, ZoneOffset.UTC).toInstant());
         // ZonedDateTimeAssert.
-        assertThat(sidecar.getShutterSpeed()).isEqualTo("1/250");
-        assertThat(sidecar.getAperture()).isEqualTo("63/10"); // TODO! convert/standardise
+        assertThat(sidecar.getShutterSpeed()).isEqualTo(Fraction.of("1/250"));
+        assertThat(sidecar.getAperture()).isEqualTo(Fraction.of("63/10"));
         assertThat(sidecar.getIso()).isEqualTo(200);
         assertThat(sidecar.getWidth()).isEqualTo(5184);
         assertThat(sidecar.getHeight()).isEqualTo(3888);

@@ -11,8 +11,7 @@ import java.time.ZonedDateTime;
 import org.junit.jupiter.api.Test;
 
 import uk.co.magictractor.spew.photo.Photo;
-import uk.co.magictractor.spew.photo.local.ExifPropertiesSupplierFactory;
-import uk.co.magictractor.spew.photo.local.PropertySuppliedPhoto;
+import uk.co.magictractor.spew.photo.fraction.Fraction;
 import uk.co.magictractor.spew.util.ExceptionUtil;
 
 public class ExifPropertiesSupplierFactoryTest {
@@ -29,8 +28,8 @@ public class ExifPropertiesSupplierFactoryTest {
         // TODO! better assert method??
         assertThat(photo.getDateTimeTaken())
                 .isEqualTo(ZonedDateTime.of(2018, 7, 26, 14, 42, 25, 0, ZoneOffset.UTC).toInstant());
-        assertThat(photo.getShutterSpeed()).isEqualTo("1/200");
-        assertThat(photo.getAperture()).isEqualTo("5.6");
+        assertThat(photo.getShutterSpeed()).isEqualTo(Fraction.of("1/200"));
+        assertThat(photo.getAperture()).isEqualTo(Fraction.of("5.6"));
         assertThat(photo.getIso()).isEqualTo(125);
         assertThat(photo.getWidth()).isEqualTo(4608);
         assertThat(photo.getHeight()).isEqualTo(3456);

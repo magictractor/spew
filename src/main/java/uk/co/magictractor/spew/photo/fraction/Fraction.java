@@ -15,7 +15,12 @@
  */
 package uk.co.magictractor.spew.photo.fraction;
 
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.function.Function;
+
 import com.google.common.base.MoreObjects;
+import com.google.common.base.Strings;
 
 /**
  * <p>
@@ -29,24 +34,46 @@ import com.google.common.base.MoreObjects;
  */
 public class Fraction {
 
+    // TODO! grow Array like FORMATTERS
     private static final int[] POWER_OF_TEN = new int[] { 1, 10, 100, 1000, 10000, 100000 };
+    private static final int DEFAULT_DECIMAL_PLACES = 3;
+    private static final ArrayList<DecimalFormat> FORMATTERS = new ArrayList<>();
 
     public static Fraction of(String string) {
+        return safe(string, str -> of0(str), "Not a numeric or rational fraction");
+    }
+
+    public static Fraction ofRational(String string) {
+        return safe(string, str -> ofRational0(str), "Not a rational fraction");
+    }
+
+    public static Fraction ofNumeric(String string) {
+        return safe(string, str -> ofNumeric0(str), "Not a numeric fraction");
+    }
+
+    private static Fraction safe(String string, Function<String, Fraction> mapping, String errorMessage) {
         if (string == null) {
             return null;
         }
-        else if (string.contains("/")) {
-            return ofRational(string);
+
+        try {
+            return mapping.apply(string);
         }
-        else if (string.contains(".")) {
-            return ofDecimal(string);
-        }
-        else {
-            return ofInteger(string);
+        catch (RuntimeException e) {
+            throw new IllegalArgumentException(errorMessage + ": " + string);
         }
     }
 
-    private static Fraction ofRational(String string) {
+    private static Fraction of0(String string) {
+        if (string.contains("/")) {
+            return ofRational0(string);
+        }
+        else {
+            return ofNumeric0(string);
+        }
+    }
+
+    private static Fraction ofRational0(String string) {
         int slashIndex = string.indexOf('/');
         String lhs = string.substring(0, slashIndex);
         String rhs = string.substring(slashIndex + 1);
@@ -56,11 +83,16 @@ public class Fraction {
         return of(numerator, denominator);
     }
 
-    // 0.01 -> (0 * 100 + 1)  / 100
-    // 1.25 -> (1 * 100 + 25) / 100
-    // 6.3  -> (6 * 10  + 3)  / 10
-    // 18   -> (18 * 1  + 0)  / 1  (via ofInteger)
-    private static Fraction ofDecimal(String string) {
+    private static Fraction ofNumeric0(String string) {
+        if (string.contains(".")) {
+            return ofDecimal0(string);
+        }
+        else {
+            return ofInteger0(string);
+        }
+    }
+
+    private static Fraction ofDecimal0(String string) {
         int dotIndex = string.indexOf('.');
         String lhs = string.substring(0, dotIndex);
         String rhs = string.substring(dotIndex + 1);
@@ -75,7 +107,7 @@ public class Fraction {
         return of(numerator, denominator);
     }
 
-    private static Fraction ofInteger(String string) {
+    private static Fraction ofInteger0(String string) {
         int numerator = Integer.parseInt(string);
 
         return of(numerator, 1);
@@ -98,6 +130,8 @@ public class Fraction {
         this.denominator = denominator;
     }
 
+    // TODO! hashCode
+
     @Override
     public boolean equals(Object other) {
         if (other == null) {
@@ -110,6 +144,38 @@ public class Fraction {
         Fraction otherFraction = (Fraction) other;
         // Tolerates non-canonical forms.
         return this.denominator * otherFraction.numerator == otherFraction.denominator * this.numerator;
+    }
+
+    public String toRationalString() {
+        return numerator + "/" + denominator;
+    }
+
+    public String toNumericString() {
+        return toNumericString(DEFAULT_DECIMAL_PLACES);
+    }
+
+    public String toNumericString(int decimalPlaces) {
+        DecimalFormat formatter = null;
+
+        if (FORMATTERS.size() <= decimalPlaces) {
+            FORMATTERS.ensureCapacity(decimalPlaces);
+            int expand = decimalPlaces - FORMATTERS.size();
+            while (expand-- >= 0) {
+                FORMATTERS.add(null);
+            }
+        }
+        else {
+            formatter = FORMATTERS.get(decimalPlaces);
+        }
+
+        if (formatter == null) {
+            String pattern = "#." + Strings.repeat("#", decimalPlaces);
+            formatter = new DecimalFormat(pattern);
+            FORMATTERS.set(decimalPlaces, formatter);
+        }
+
+        double quotient = (double) numerator / denominator;
+        return formatter.format(quotient);
     }
 
     @Override
