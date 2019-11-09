@@ -33,6 +33,10 @@ public final class ArrayUtil {
             return;
         }
 
+        ensureSize0(list, minimumSize);
+    }
+
+    private static void ensureSize0(List<?> list, int minimumSize) {
         if (list instanceof ArrayList) {
             ((ArrayList<?>) list).ensureCapacity(minimumSize);
         }
@@ -68,7 +72,7 @@ public final class ArrayUtil {
             value = list.get(index);
         }
         else if (ensureSize) {
-            ensureSize(list, index + 1);
+            ensureSize0(list, index + 1);
         }
 
         if (value == null) {
