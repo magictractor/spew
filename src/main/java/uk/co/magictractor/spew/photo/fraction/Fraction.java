@@ -21,6 +21,9 @@ import java.util.function.Function;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Strings;
+import com.google.common.math.IntMath;
+
+import uk.co.magictractor.spew.util.ArrayUtil;
 
 /**
  * <p>
@@ -34,8 +37,8 @@ import com.google.common.base.Strings;
  */
 public class Fraction {
 
-    // TODO! grow Array like FORMATTERS
-    private static final int[] POWER_OF_TEN = new int[] { 1, 10, 100, 1000, 10000, 100000 };
+    private static final int[] POWER_OF_TEN = new int[] { 1, 10, 100, 1000, 10000, 100000, 1000000, 10000000,
+            10000000, 100000000, 1000000000 };
     private static final int DEFAULT_DECIMAL_PLACES = 3;
     private static final ArrayList<DecimalFormat> FORMATTERS = new ArrayList<>();
 
@@ -115,12 +118,12 @@ public class Fraction {
 
     public static Fraction of(int numerator, int denominator) {
         // TODO! cache?
-        // TODO! canonicalise (use GCD)
         return new Fraction(numerator, denominator);
     }
 
     private final int numerator;
     private final int denominator;
+    private Fraction canonicalForm;
 
     private Fraction(int numerator, int denominator) {
         if (denominator <= 0) {
@@ -130,10 +133,42 @@ public class Fraction {
         this.denominator = denominator;
     }
 
-    // TODO! hashCode
+    public int getNumerator() {
+        return numerator;
+    }
+
+    public int getDenominator() {
+        return denominator;
+    }
+
+    public Fraction getCanonicalForm() {
+        if (canonicalForm == null) {
+            int gcd = IntMath.gcd(numerator, denominator);
+            if (gcd == 1) {
+                canonicalForm = this;
+            }
+            else {
+                canonicalForm = Fraction.of(numerator / gcd, denominator / gcd);
+            }
+        }
+
+        return canonicalForm;
+    }
+
+    @Override
+    public int hashCode() {
+        // Use canonicalForm to ensure that hashCode() is equal when equals() is true.
+        Fraction canonical = getCanonicalForm();
+
+        // TODO! better implementation here?
+        return canonical.numerator << 8 ^ canonical.denominator;
+    }
 
     @Override
     public boolean equals(Object other) {
+        if (other == this) {
+            return true;
+        }
         if (other == null) {
             return false;
         }
@@ -142,7 +177,6 @@ public class Fraction {
         }
 
         Fraction otherFraction = (Fraction) other;
-        // Tolerates non-canonical forms.
         return this.denominator * otherFraction.numerator == otherFraction.denominator * this.numerator;
     }
 
@@ -155,27 +189,16 @@ public class Fraction {
     }
 
     public String toNumericString(int decimalPlaces) {
-        DecimalFormat formatter = null;
-
-        if (FORMATTERS.size() <= decimalPlaces) {
-            FORMATTERS.ensureCapacity(decimalPlaces);
-            int expand = decimalPlaces - FORMATTERS.size();
-            while (expand-- >= 0) {
-                FORMATTERS.add(null);
-            }
-        }
-        else {
-            formatter = FORMATTERS.get(decimalPlaces);
-        }
-
-        if (formatter == null) {
-            String pattern = "#." + Strings.repeat("#", decimalPlaces);
-            formatter = new DecimalFormat(pattern);
-            FORMATTERS.set(decimalPlaces, formatter);
-        }
+        DecimalFormat formatter = ArrayUtil.ensureSizeAndComputeIfAbsent(FORMATTERS, decimalPlaces,
+            this::createDecimalFormatter);
 
         double quotient = (double) numerator / denominator;
         return formatter.format(quotient);
+    }
+
+    private DecimalFormat createDecimalFormatter(int decimalPlaces) {
+        String pattern = "#." + Strings.repeat("#", decimalPlaces);
+        return new DecimalFormat(pattern);
     }
 
     @Override
