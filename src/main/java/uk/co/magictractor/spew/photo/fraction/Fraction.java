@@ -27,13 +27,18 @@ import uk.co.magictractor.spew.util.ArrayUtil;
 
 /**
  * <p>
- * Used for fractional media propery values, such as exposure and aperture which
- * are represented in different, but equivalent, ways by different tools.
+ * Used for fractional media property values, such as exposure and aperture
+ * which are represented in different, but equivalent, ways by different tools.
  * </p>
  * <p>
  * For example, exposure may be stored as 1/100, 10/1000 and 0.01 which all
  * represent the same value.
  * </p>
+ * <p>
+ * The numerator and denominator are ints, so are not suitable for large values.
+ * Additionally there are no arithmetic operations. This class is used to check
+ * the equivalence of values in image files and sidecars, it is not suitable for
+ * arithmetic with rational numbers.
  */
 public class Fraction {
 
@@ -43,15 +48,15 @@ public class Fraction {
     private static final ArrayList<DecimalFormat> FORMATTERS = new ArrayList<>();
 
     public static Fraction of(String string) {
-        return safe(string, str -> of0(str), "Not a numeric or rational fraction");
+        return safe(string, str -> of0(str), "Not a numeric or rational fraction or too big");
     }
 
     public static Fraction ofRational(String string) {
-        return safe(string, str -> ofRational0(str), "Not a rational fraction");
+        return safe(string, str -> ofRational0(str), "Not a rational fraction or too big");
     }
 
     public static Fraction ofNumeric(String string) {
-        return safe(string, str -> ofNumeric0(str), "Not a numeric fraction");
+        return safe(string, str -> ofNumeric0(str), "Not a numeric fraction or too big");
     }
 
     private static Fraction safe(String string, Function<String, Fraction> mapping, String errorMessage) {

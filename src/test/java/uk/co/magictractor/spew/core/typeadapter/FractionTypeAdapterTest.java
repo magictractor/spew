@@ -46,7 +46,7 @@ public class FractionTypeAdapterTest {
     public void testFromStringRational_givenNumeric() {
         Assertions.assertThatThrownBy(() -> FractionTypeAdapter.RATIONAL.fromString("0.01"))
                 .isExactlyInstanceOf(IllegalArgumentException.class)
-                .hasMessage("Not a rational fraction: 0.01");
+                .hasMessage("Not a rational fraction or too big: 0.01");
     }
 
     @Test
@@ -78,7 +78,7 @@ public class FractionTypeAdapterTest {
     public void testFromStringNumeric_givenRational() {
         Assertions.assertThatThrownBy(() -> FractionTypeAdapter.NUMERIC.fromString("1/100"))
                 .isExactlyInstanceOf(IllegalArgumentException.class)
-                .hasMessage("Not a numeric fraction: 1/100");
+                .hasMessage("Not a numeric fraction or too big: 1/100");
     }
 
     @Test

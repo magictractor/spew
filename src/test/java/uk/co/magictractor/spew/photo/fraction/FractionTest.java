@@ -57,7 +57,14 @@ public class FractionTest {
     public void testOf_illegalArgument() {
         assertThatThrownBy(() -> Fraction.of("xyz"))
                 .isExactlyInstanceOf(IllegalArgumentException.class)
-                .hasMessage("Not a numeric or rational fraction: xyz");
+                .hasMessage("Not a numeric or rational fraction or too big: xyz");
+    }
+
+    @Test
+    public void testOf_bigNumber() {
+        assertThatThrownBy(() -> Fraction.of("1/10000000000"))
+                .isExactlyInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Not a numeric or rational fraction or too big: 1/10000000000");
     }
 
     @Test
@@ -79,7 +86,7 @@ public class FractionTest {
     public void testOfRational_numeric() {
         assertThatThrownBy(() -> Fraction.ofRational("6.3"))
                 .isExactlyInstanceOf(IllegalArgumentException.class)
-                .hasMessage("Not a rational fraction: 6.3");
+                .hasMessage("Not a rational fraction or too big: 6.3");
     }
 
     @Test
@@ -109,7 +116,7 @@ public class FractionTest {
     public void testOfNumeric_rational() {
         assertThatThrownBy(() -> Fraction.ofNumeric("1/500"))
                 .isExactlyInstanceOf(IllegalArgumentException.class)
-                .hasMessage("Not a numeric fraction: 1/500");
+                .hasMessage("Not a numeric fraction or too big: 1/500");
     }
 
     @Test
