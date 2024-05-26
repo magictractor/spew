@@ -87,3 +87,12 @@ This call is capped at 15 requests per 15 minutes and 200 users per request.
  
  * Support video on Flickr. Tag and title tidy etc to work with video too.
 
+ * Remove @SpewAuthType
+
+ * Album descriptions and common album code (currently in FlickrPhotoUpdateProcessor)
+
+ * Allow scope to be specified on ApplicationRequest,
+   and re-authorise if scope associated with the connection does not include the additional scope on the request.
+   
+ * Get date range for folder "pics2019" as well as "2019"
+ 

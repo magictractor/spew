@@ -3,11 +3,16 @@ package uk.co.magictractor.spew.api;
 import java.util.List;
 
 /**
+ * <p>
  * Base class for iterators which fetch items using third party service methods
- * which return a page of items, and service requests are passed a page number.
+ * which return a page of items, and service requests are passed a start number
+ * and count.
+ * </p>
+ * <p>
  * The first page is fetched on the first use of {@link #hasNext()} or
  * {@link #next()}, and the next page is fetched only after iterating over all
  * items in the first page.
+ * <p>
  */
 public abstract class PageCountServiceIterator<E> extends PageServiceIterator<E> {
 

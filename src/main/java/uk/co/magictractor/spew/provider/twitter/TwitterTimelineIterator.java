@@ -37,6 +37,7 @@ public abstract class TwitterTimelineIterator<E> extends PageTokenServiceIterato
         return new PageAndNextToken<>(page, nextToken);
     }
 
+    // See pattern in LinkedIn/StartAtServiceIterator. Do this, or pass incomplete request to subclass?
     protected abstract ApplicationRequest createPageRequest();
 
     public static class TwitterTimelineIteratorBuilder<E, I extends TwitterTimelineIterator<E>, B>
