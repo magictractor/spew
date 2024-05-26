@@ -17,6 +17,8 @@ package uk.co.magictractor.spew.photo.fraction;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Function;
 
 import com.google.common.base.MoreObjects;
@@ -41,6 +43,13 @@ import uk.co.magictractor.spew.util.ArrayUtil;
  * arithmetic with rational numbers.
  */
 public class Fraction {
+
+    /**
+     * The use of a cache is an optimisation with the intended purpose of using
+     * for photos, where the same shutter speeds and aperture values will be
+     * seen in many photos.
+     */
+    private static final Map<Integer, Map<Integer, Fraction>> CACHE = new HashMap<>();
 
     private static final int[] POWER_OF_TEN = new int[] { 1, 10, 100, 1000, 10000, 100000, 1000000, 10000000,
             10000000, 100000000, 1000000000 };
@@ -122,8 +131,36 @@ public class Fraction {
     }
 
     public static Fraction of(int numerator, int denominator) {
-        // TODO! cache?
-        return new Fraction(numerator, denominator);
+        // Likely (with photos) that many numerators will be 1, so key by denominator first.
+        Map<Integer, Fraction> denominatorCache = CACHE.get(denominator);
+        if (denominatorCache == null) {
+            synchronized (CACHE) {
+                denominatorCache = CACHE.get(denominator);
+                if (denominatorCache == null) {
+                    denominatorCache = new HashMap<>();
+                    CACHE.put(denominator, denominatorCache);
+                }
+            }
+        }
+
+        Fraction fraction = denominatorCache.get(numerator);
+        if (fraction == null) {
+            synchronized (denominatorCache) {
+                fraction = denominatorCache.get(numerator);
+                if (fraction == null) {
+                    fraction = new Fraction(numerator, denominator);
+                    denominatorCache.put(numerator, fraction);
+                }
+            }
+        }
+
+        return fraction;
+    }
+
+    public static void clearCache() {
+        synchronized (CACHE) {
+            CACHE.clear();
+        }
     }
 
     private final int numerator;

@@ -242,11 +242,11 @@ public class FractionTest {
     @Test
     public void testEquals_sameNumeratorAndDenominator() {
         Fraction fraction = Fraction.of("0.01");
+        Fraction.clearCache();
         Fraction other = Fraction.of(1, 100);
-        // This will need to be reworked if a Fraction cache is implemented
-        // maybe just allow the cache to be explicitly cleared
         assertThat(fraction.getNumerator()).isEqualTo(other.getNumerator());
         assertThat(fraction.getDenominator()).isEqualTo(other.getDenominator());
+        // The cache was cleared for this same-as check.
         assertThat(fraction).isNotSameAs(other);
 
         assertThat(fraction.equals(other)).isTrue();
