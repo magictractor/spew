@@ -83,14 +83,6 @@ public class HardCodedTagLoader implements TagLoader {
     private void initRodents() {
         // Not a rodent!
         init(SUBJECT, "otter");
-
-        Tag rodent = init(SUBJECT, "rodent");
-
-        //        Tag squirrel = init(rodent, "Squirrel");
-        //        init(squirrel, "Grey squirrel", "Red squirrel");
-
-        Tag rat = init(rodent, "rat");
-        init(rat, "brown rat");
     }
 
     private void initInsects() {
