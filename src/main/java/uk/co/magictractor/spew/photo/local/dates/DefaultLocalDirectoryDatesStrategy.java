@@ -17,6 +17,15 @@ public class DefaultLocalDirectoryDatesStrategy implements LocalDirectoryDatesSt
     @Override
     public DateRange getDateRange(String directoryName) {
         String dateString = getDateString(directoryName);
+
+        // Check for other digits
+        int n = directoryName.length() - dateString.length() - 1;
+        for (int i = 0; i < n; i++) {
+            if (Character.isDigit(directoryName.charAt(i))) {
+                return null;
+            }
+        }
+
         switch (dateString.length()) {
             case 8:
                 return dayRange(dateString);
@@ -58,11 +67,20 @@ public class DefaultLocalDirectoryDatesStrategy implements LocalDirectoryDatesSt
      * encountered.
      */
     private String getDateString(String directoryName) {
-        int index = 0;
-        while (index < directoryName.length() && Character.isDigit(directoryName.charAt(index))) {
-            index++;
+        // improve this.
+        //        int index = 0;
+        //        while (index < directoryName.length() && Character.isDigit(directoryName.charAt(index))) {
+        //            index++;
+        //        }
+        //
+        //        return directoryName.substring(0, index);
+
+        int dirNameLength = directoryName.length();
+        int index = dirNameLength - 1;
+        while (index >= 0 && Character.isDigit(directoryName.charAt(index))) {
+            index--;
         }
 
-        return directoryName.substring(0, index);
+        return directoryName.substring(index + 1);
     }
 }

@@ -6,9 +6,6 @@ import java.time.LocalDate;
 
 import org.junit.jupiter.api.Test;
 
-import uk.co.magictractor.spew.photo.local.dates.DateRange;
-import uk.co.magictractor.spew.photo.local.dates.DefaultLocalDirectoryDatesStrategy;
-
 public class DefaultLocalDirectoryDatesStrategyTest {
 
     private DefaultLocalDirectoryDatesStrategy strategy = new DefaultLocalDirectoryDatesStrategy();
@@ -56,8 +53,21 @@ public class DefaultLocalDirectoryDatesStrategyTest {
     }
 
     @Test
-    public void testOtherDigits() {
+    public void testPicsYYYY() {
+        DateRange actual = strategy.getDateRange("pics2024");
+        assertThat(actual.getFrom()).isEqualTo(LocalDate.of(2024, 1, 1));
+        assertThat(actual.getTo()).isEqualTo(LocalDate.of(2024, 12, 31));
+    }
+
+    @Test
+    public void testOtherDigits_many() {
         DateRange actual = strategy.getDateRange("123_0408");
+        assertThat(actual).isNull();
+    }
+
+    @Test
+    public void testOtherDigits_single() {
+        DateRange actual = strategy.getDateRange("ab3_0408");
         assertThat(actual).isNull();
     }
 
