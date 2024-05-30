@@ -57,12 +57,7 @@ dependencies {
     compileOnly("io.netty:netty-all:4.1.110.Final")
     compileOnly("io.undertow:undertow-core:2.3.13.Final")
 			
-    // These may be provided for determining content types
-    compileOnly("javax.activation:activation:1.1.1")
-    // javax.activation has moved to jakarta.activation.
-    // Switching to jakarta.activation requires a MimeTypeRegistryProvider implementation. Better to just bin it?
-    // compileOnly("jakarta.activation:jakarta.activation-api:1.2.2")
-    // compileOnly("jakarta.activation:jakarta.activation-api:2.1.3")
+    // Optional for determining content types
     compileOnly("org.apache.tika:tika-core:2.9.2")
     
     // Advapi32Util for JNA based Windows registry access for user store
