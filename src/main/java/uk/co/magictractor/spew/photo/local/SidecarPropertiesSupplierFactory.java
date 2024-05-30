@@ -15,13 +15,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.adobe.xmp.XMPDateTime;
-import com.adobe.xmp.XMPException;
-import com.adobe.xmp.XMPMeta;
-import com.adobe.xmp.XMPMetaFactory;
-import com.adobe.xmp.options.IteratorOptions;
-import com.adobe.xmp.properties.XMPProperty;
-import com.adobe.xmp.properties.XMPPropertyInfo;
+import com.adobe.internal.xmp.XMPDateTime;
+import com.adobe.internal.xmp.XMPException;
+import com.adobe.internal.xmp.XMPMeta;
+import com.adobe.internal.xmp.XMPMetaFactory;
+import com.adobe.internal.xmp.options.IteratorOptions;
+import com.adobe.internal.xmp.properties.XMPProperty;
+import com.adobe.internal.xmp.properties.XMPPropertyInfo;
 import com.google.common.collect.Streams;
 
 import uk.co.magictractor.spew.photo.TagSet;

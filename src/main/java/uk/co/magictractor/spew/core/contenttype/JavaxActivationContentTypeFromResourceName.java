@@ -15,6 +15,7 @@
  */
 package uk.co.magictractor.spew.core.contenttype;
 
+//import jakarta.activation.MimetypesFileTypeMap;
 import javax.activation.MimetypesFileTypeMap;
 
 public class JavaxActivationContentTypeFromResourceName

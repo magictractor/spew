@@ -110,8 +110,8 @@ public class HardCodedContentTypeFromResourceName
         // Camera raw extensions from https://en.wikipedia.org/wiki/Raw_image_format.
         // Pattern x-raw-manufacturer observed with Apache Tika.
         map.put("crw", "image/x-raw-canon");
-        map.put("cr2", "image/x-raw-canon");
-        map.put("cr3", "image/x-raw-canon");
+        map.put("cr2", "image/x-canon-cr2");
+        map.put("cr3", "image/x-canon-cr3");
         map.put("nef", "image/x-raw-nikon");
         map.put("nrw", "image/x-raw-nikon");
         map.put("rw2", "image/x-raw-panasonic");

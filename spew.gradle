@@ -21,11 +21,11 @@ repositories {
 }
 
 dependencies {
-    implementation("org.slf4j:slf4j-api:1.7.26")
+    implementation("org.slf4j:slf4j-api:2.0.13")
     
     // For JSON parsing with Boa
-    implementation("com.jayway.jsonpath:json-path:2.3.0")
-    implementation("com.google.code.gson:gson:2.8.5")
+    implementation("com.jayway.jsonpath:json-path:2.9.0")
+    implementation("com.google.code.gson:gson:2.11.0")
     
     // For creating Json bodies in Boa OAuth2 auth requests
     // No! auth requests use form data, not Json
@@ -34,14 +34,14 @@ dependencies {
     // Provide one of these if a transort only (no auth) connection is required
     // Boa authorisation is layered on top of a transport only connection
     // Spring social dynamically determines the transport depending on available classes.
-    compileOnly("org.apache.httpcomponents:httpclient:4.5.9")
+    compileOnly("org.apache.httpcomponents.client5:httpclient5:5.3.1")
 
     // Provide one of these to use a third-party OAuth implementation (not Boa)
     
     // https://developers.google.com/api-client-library/java/google-oauth-java-client/oauth1
     // If changing the version, check the Guava version too, otherwise an Android Guava dependency may result.
     // test by running FlickrPhotoUpdateProcessor which can exhibit a class loader problem with Streams
-    compileOnly("com.google.oauth-client:google-oauth-client:1.30.3")
+    compileOnly("com.google.oauth-client:google-oauth-client:1.36.0")
     
     
     // Spring Social mothballed July 2019. See https://spring.io/projects/spring-social.
@@ -51,27 +51,31 @@ dependencies {
     compileOnly("com.fasterxml.jackson.core:jackson-databind:2.10.0")
             
     // For reading metadata from local photo files
-    implementation("com.drewnoakes:metadata-extractor:2.11.0")
+    implementation("com.drewnoakes:metadata-extractor:2.19.0")
     
     // Provide one of these if using a callback server
-    compileOnly("io.netty:netty-all:4.1.38.Final")
-    compileOnly("io.undertow:undertow-core:2.0.25.Final")
+    compileOnly("io.netty:netty-all:4.1.110.Final")
+    compileOnly("io.undertow:undertow-core:2.3.13.Final")
 			
     // These may be provided for determining content types
     compileOnly("javax.activation:activation:1.1.1")
-    compileOnly("org.apache.tika:tika-core:1.22")
+    // javax.activation has moved to jakarta.activation.
+    // Switching to jakarta.activation requires a MimeTypeRegistryProvider implementation. Better to just bin it?
+    // compileOnly("jakarta.activation:jakarta.activation-api:1.2.2")
+    // compileOnly("jakarta.activation:jakarta.activation-api:2.1.3")
+    compileOnly("org.apache.tika:tika-core:2.9.2")
     
     // Advapi32Util for JNA based Windows registry access for user store
-    compileOnly("net.java.dev.jna:jna-platform:5.4.0")
+    compileOnly("net.java.dev.jna:jna-platform:5.14.0")
 
     // MoreObjects is used for toString() implementations
     // also Iterator concatenation and filtering
-    implementation("com.google.guava:guava:30.1-jre")
+    implementation("com.google.guava:guava:33.2.0-jre")
 
     testImplementation("uk.co.magictractor:jura:0.0.1-SNAPSHOT")
     
     // Logger implementation for unit tests and main() methods.
-    runtimeOnly("ch.qos.logback:logback-classic:1.2.3")
+    runtimeOnly("ch.qos.logback:logback-classic:1.5.6")
 }
 
 

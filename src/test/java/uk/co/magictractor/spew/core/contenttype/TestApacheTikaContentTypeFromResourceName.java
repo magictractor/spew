@@ -24,8 +24,8 @@ public class TestApacheTikaContentTypeFromResourceName extends AbstractTestConte
 
     @BeforeAll
     public static void setUpUnsupported() {
-        // Likely to be supported with a future release of Tika.
-        unsupported("cr3");
+        // All supported now, but note change from "x-raw-canon" to "x-canon-cr2" and "x-canon-cr3".
+        unsupported();
     }
 
     @Override

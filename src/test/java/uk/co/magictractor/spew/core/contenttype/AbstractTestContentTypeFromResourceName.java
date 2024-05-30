@@ -107,12 +107,12 @@ public abstract class AbstractTestContentTypeFromResourceName {
 
     @Test
     public void testCr2() {
-        check("photo.cr2", "image/x-raw-canon");
+        check("photo.cr2", "image/x-canon-cr2");
     }
 
     @Test
     public void testCr3() {
-        check("photo.cr3", "image/x-raw-canon");
+        check("photo.cr3", "image/x-canon-cr3");
     }
 
     @Test
