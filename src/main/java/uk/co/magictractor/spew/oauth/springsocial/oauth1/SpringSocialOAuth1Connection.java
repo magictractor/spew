@@ -36,6 +36,9 @@ public class SpringSocialOAuth1Connection extends AbstractSpringSocialConnection
         super(configuration);
     }
 
+    // https://stackoverflow.com/questions/58982286/spring-security-5-replacement-for-oauth2resttemplate?rq=3
+    // https://mvnrepository.com/artifact/org.springframework.security.oauth/spring-security-oauth
+    // https://stackoverflow.com/questions/49633210/spring-boot-oauth-2-0-and-oauth-1-0a-clients-in-same-app
     @Override
     protected RestOperations init(SpewOAuth1Configuration configuration) {
         GenericOAuth1ConnectionFactory connectionFactory = new GenericOAuth1ConnectionFactory(
