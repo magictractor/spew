@@ -44,8 +44,9 @@ public class ContentTypeUtil {
     private static final Logger LOGGER = LoggerFactory.getLogger(ContentTypeUtil.class);
 
     // TODO! private
-    // TODO! Dropbox auth uses text/javascript in the token response. Tolerate here for now, but perhaps move to an override in the app?
-    public static final List<String> JSON_MIME_TYPES = Arrays.asList("application/json", "text/javascript");
+    // text/javascript is correct, application/javascript is now deemed obsolete but was formerly correct 
+    // see comments in HardCodedContentTypeFromResourceName
+    public static final List<String> JSON_MIME_TYPES = Arrays.asList("text/javascript", "application/json");
     public static final List<String> XML_MIME_TYPES = Arrays.asList("application/xml", "text/xml");
     public static final List<String> HTML_MIME_TYPES = Arrays.asList("text/html");
     private static final List<String> CSS_MIME_TYPES = Arrays.asList("text/css");

@@ -51,9 +51,10 @@ public class HardCodedContentTypeFromResourceName
         map.put("jar", "application/java-archive");
         map.put("jpeg", "image/jpeg");
         map.put("jpg", "image/jpeg");
-        // Mozilla list says text/javascript but that is now obsolete, and application/javascript is correct
-        // https://tools.ietf.org/html/rfc4329#section-7
-        map.put("js", "application/javascript");
+        // https://tools.ietf.org/html/rfc4329#section-7 (2006) says application/javascript
+        // but is superseded by
+        // https://www.rfc-editor.org/rfc/rfc9239.html#name-iana-considerations (2022) saying text/javascript
+        map.put("js", "text/javascript");
         map.put("json", "application/json");
         map.put("jsonld", "application/ld+json");
         map.put("mid", "audio/midi");

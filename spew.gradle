@@ -27,8 +27,8 @@ dependencies {
     runtimeOnly libs.logback.classic
     
     // For JSON parsing with Boa
-    implementation("com.jayway.jsonpath:json-path:2.9.0")
-    implementation("com.google.code.gson:gson:2.11.0")
+    implementation("com.jayway.jsonpath:json-path:3.0.0")
+    implementation("com.google.code.gson:gson:2.13.2")
     
     // For creating Json bodies in Boa OAuth2 auth requests
     // No! auth requests use form data, not Json
@@ -37,14 +37,14 @@ dependencies {
     // Provide one of these if a transort only (no auth) connection is required
     // Boa authorisation is layered on top of a transport only connection
     // Spring social dynamically determines the transport depending on available classes.
-    compileOnly("org.apache.httpcomponents.client5:httpclient5:5.3.1")
+    compileOnly("org.apache.httpcomponents.client5:httpclient5:5.6")
 
     // Provide one of these to use a third-party OAuth implementation (not Boa)
     
     // https://developers.google.com/api-client-library/java/google-oauth-java-client/oauth1
     // If changing the version, check the Guava version too, otherwise an Android Guava dependency may result.
     // test by running FlickrPhotoUpdateProcessor which can exhibit a class loader problem with Streams
-    compileOnly("com.google.oauth-client:google-oauth-client:1.36.0")
+    compileOnly("com.google.oauth-client:google-oauth-client:1.39.0")
     
     
     // Spring Social mothballed July 2019. See https://spring.io/projects/spring-social.
@@ -55,20 +55,20 @@ dependencies {
     //compileOnly("org.springframework.security.oauth:spring-security-oauth2:2.5.2.RELEASE")
     //compileOnly("org.springframework.security.oauth:spring-security-oauth:2.5.2.RELEASE")
     // Spring Social uses Jackson for converting Json - TODO! is it needed with Spring Security?
-    compileOnly("com.fasterxml.jackson.core:jackson-databind:2.10.0")
+    compileOnly("com.fasterxml.jackson.core:jackson-databind:2.21.2")
             
     // For reading metadata from local photo files//
     implementation("com.drewnoakes:metadata-extractor:2.19.0")
     
     // Provide one of these if using a callback server
-    compileOnly("io.netty:netty-all:4.1.110.Final")
-    compileOnly("io.undertow:undertow-core:2.3.13.Final")
+    compileOnly("io.netty:netty-all:4.2.10.Final")
+    compileOnly("io.undertow:undertow-core:2.3.24.Final")
 			
     // Optional for determining content types
-    compileOnly("org.apache.tika:tika-core:2.9.2")
+    compileOnly("org.apache.tika:tika-core:3.3.0")
     
     // Advapi32Util for JNA based Windows registry access for user store
-    compileOnly("net.java.dev.jna:jna-platform:5.14.0")
+    compileOnly("net.java.dev.jna:jna-platform:5.18.1")
 
     // MoreObjects is used for toString() implementations
     // also Iterator concatenation and filtering

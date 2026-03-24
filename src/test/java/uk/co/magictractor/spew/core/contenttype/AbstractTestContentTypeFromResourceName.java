@@ -72,7 +72,10 @@ public abstract class AbstractTestContentTypeFromResourceName {
 
     @Test
     public void testJs() {
-        check("script.js", "application/javascript");
+        // https://tools.ietf.org/html/rfc4329#section-7 (2006) says application/javascript
+        // but is superseded by
+        // https://www.rfc-editor.org/rfc/rfc9239.html#name-iana-considerations (2022) saying text/javascript
+        check("script.js", "text/javascript");
     }
 
     @Test
