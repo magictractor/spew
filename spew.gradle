@@ -47,10 +47,14 @@ dependencies {
     // Spring Social mothballed July 2019. See https://spring.io/projects/spring-social.
     // OAuth moved to Spring Security. See https://spring.io/blog/2018/07/03/spring-social-end-of-life-announcement.
     compileOnly("org.springframework.social:spring-social-core:2.0.0.M4")
-    // Spring Social uses Jackson for converting Json
-    compileOnly("com.fasterxml.jackson.core:jackson-databind:2.10.0")
+    // New API, not a simple migration from Spring Social. So create new impls from scratch before binning Spring Social impls.
+    // compileOnly("org.springframework.security:spring-security-core:6.3.0")
+    //compileOnly("org.springframework.security.oauth:spring-security-oauth2:2.5.2.RELEASE")
+    //compileOnly("org.springframework.security.oauth:spring-security-oauth:2.5.2.RELEASE")
+    // Spring Social uses Jackson for converting Json - TODO! is it needed with Spring Security?
+     compileOnly("com.fasterxml.jackson.core:jackson-databind:2.10.0")
             
-    // For reading metadata from local photo files
+    // For reading metadata from local photo files//
     implementation("com.drewnoakes:metadata-extractor:2.19.0")
     
     // Provide one of these if using a callback server
