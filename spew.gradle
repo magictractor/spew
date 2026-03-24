@@ -21,7 +21,10 @@ repositories {
 }
 
 dependencies {
-    implementation("org.slf4j:slf4j-api:2.0.13")
+     // Logger API.
+    implementation libs.slf4j.api
+    // Logger implementation for unit tests and main() methods.
+    runtimeOnly libs.logback.classic
     
     // For JSON parsing with Boa
     implementation("com.jayway.jsonpath:json-path:2.9.0")
@@ -52,7 +55,7 @@ dependencies {
     //compileOnly("org.springframework.security.oauth:spring-security-oauth2:2.5.2.RELEASE")
     //compileOnly("org.springframework.security.oauth:spring-security-oauth:2.5.2.RELEASE")
     // Spring Social uses Jackson for converting Json - TODO! is it needed with Spring Security?
-     compileOnly("com.fasterxml.jackson.core:jackson-databind:2.10.0")
+    compileOnly("com.fasterxml.jackson.core:jackson-databind:2.10.0")
             
     // For reading metadata from local photo files//
     implementation("com.drewnoakes:metadata-extractor:2.19.0")
@@ -69,12 +72,9 @@ dependencies {
 
     // MoreObjects is used for toString() implementations
     // also Iterator concatenation and filtering
-    implementation("com.google.guava:guava:33.2.0-jre")
+    implementation libs.guava
 
     testImplementation("uk.co.magictractor:jura:0.0.1-SNAPSHOT")
-    
-    // Logger implementation for unit tests and main() methods.
-    runtimeOnly("ch.qos.logback:logback-classic:1.5.6")
 }
 
 
