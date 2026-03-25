@@ -33,9 +33,9 @@ import java.time.temporal.ChronoField;
 import java.util.Map;
 import java.util.function.Function;
 
-import uk.co.magictractor.spew.util.ExceptionUtil;
 import uk.co.magictractor.spew.util.HttpMessageUtil;
 import uk.co.magictractor.spew.util.PathUtil;
+import uk.co.magictractor.util.exception.ExceptionUtil;
 
 /**
  * Simple representation of an HTML page with text substitutions made for values

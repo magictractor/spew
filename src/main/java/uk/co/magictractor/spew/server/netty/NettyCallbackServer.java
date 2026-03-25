@@ -21,7 +21,7 @@ import uk.co.magictractor.spew.api.SpewHttpResponse;
 import uk.co.magictractor.spew.server.CallbackServer;
 import uk.co.magictractor.spew.server.RequestHandler;
 import uk.co.magictractor.spew.server.SpewHttpRequest;
-import uk.co.magictractor.spew.util.ExceptionUtil;
+import uk.co.magictractor.util.exception.ExceptionUtil;
 
 /**
  * Server for receiving OAuth authorization callbacks. Based on example in

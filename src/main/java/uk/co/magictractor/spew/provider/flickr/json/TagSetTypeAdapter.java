@@ -2,7 +2,7 @@ package uk.co.magictractor.spew.provider.flickr.json;
 
 import uk.co.magictractor.spew.core.typeadapter.SpewTypeAdapter;
 import uk.co.magictractor.spew.photo.TagSet;
-import uk.co.magictractor.spew.util.ExceptionUtil;
+import uk.co.magictractor.util.exception.ExceptionUtil;
 
 public class TagSetTypeAdapter implements SpewTypeAdapter<TagSet> {
 

@@ -3,7 +3,7 @@ package uk.co.magictractor.spew.store;
 import java.util.prefs.Preferences;
 
 import uk.co.magictractor.spew.api.SpewApplication;
-import uk.co.magictractor.spew.util.ExceptionUtil;
+import uk.co.magictractor.util.exception.ExceptionUtil;
 
 public class PreferencesProperty extends AbstractEditableProperty {
 

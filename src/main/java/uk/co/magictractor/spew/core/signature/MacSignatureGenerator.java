@@ -22,7 +22,7 @@ import java.util.function.BiFunction;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
-import uk.co.magictractor.spew.util.ExceptionUtil;
+import uk.co.magictractor.util.exception.ExceptionUtil;
 
 /**
  * https://docs.oracle.com/javase/9/docs/specs/security/standard-names.html#mac-algorithms

@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test;
 
 import uk.co.magictractor.spew.photo.Photo;
 import uk.co.magictractor.spew.photo.fraction.Fraction;
-import uk.co.magictractor.spew.util.ExceptionUtil;
+import uk.co.magictractor.util.exception.ExceptionUtil;
 
 public class ExifPropertiesSupplierFactoryTest {
 

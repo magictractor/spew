@@ -18,7 +18,7 @@ package uk.co.magictractor.spew.core.typeadapter;
 import java.time.Instant;
 import java.util.function.Function;
 
-import uk.co.magictractor.spew.util.ExceptionUtil;
+import uk.co.magictractor.util.exception.ExceptionUtil;
 
 /**
  *

@@ -18,6 +18,8 @@ package uk.co.magictractor.spew.util;
 import java.awt.Desktop;
 import java.net.URI;
 
+import uk.co.magictractor.util.exception.ExceptionUtil;
+
 /**
  * Utility for working with the default browser to open
  */

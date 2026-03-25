@@ -26,7 +26,7 @@ import com.google.common.collect.Streams;
 
 import uk.co.magictractor.spew.photo.TagSet;
 import uk.co.magictractor.spew.photo.fraction.Fraction;
-import uk.co.magictractor.spew.util.ExceptionUtil;
+import uk.co.magictractor.util.exception.ExceptionUtil;
 
 /**
  * Photo properties read from a sidecar (.xmp) file. MetadataExtractor does not

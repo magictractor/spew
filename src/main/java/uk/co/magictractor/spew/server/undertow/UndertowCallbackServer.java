@@ -13,8 +13,8 @@ import uk.co.magictractor.spew.core.http.header.SpewHeader;
 import uk.co.magictractor.spew.server.CallbackServer;
 import uk.co.magictractor.spew.server.RequestHandler;
 import uk.co.magictractor.spew.server.SpewHttpRequest;
-import uk.co.magictractor.spew.util.ExceptionUtil;
 import uk.co.magictractor.spew.util.HttpMessageUtil;
+import uk.co.magictractor.util.exception.ExceptionUtil;
 
 // Undertow suggested by https://javachannel.org/posts/netty-is-not-a-web-framework
 public class UndertowCallbackServer implements CallbackServer {

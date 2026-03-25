@@ -23,8 +23,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import uk.co.magictractor.spew.photo.local.dates.LocalDirectoryDatesStrategy;
-import uk.co.magictractor.spew.util.ExceptionUtil;
 import uk.co.magictractor.spew.util.spi.SPIUtil;
+import uk.co.magictractor.util.exception.ExceptionUtil;
 
 /**
  *

@@ -34,8 +34,8 @@ import org.xml.sax.SAXException;
 import uk.co.magictractor.spew.api.SpewConnectionConfiguration;
 import uk.co.magictractor.spew.api.SpewHttpMessage;
 import uk.co.magictractor.spew.core.response.parser.ObjectCentricHttpMessageBodyReader;
-import uk.co.magictractor.spew.util.ExceptionUtil;
 import uk.co.magictractor.spew.util.HttpMessageUtil;
+import uk.co.magictractor.util.exception.ExceptionUtil;
 
 /**
  *

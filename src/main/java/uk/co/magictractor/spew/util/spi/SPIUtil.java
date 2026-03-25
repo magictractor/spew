@@ -66,7 +66,7 @@ import uk.co.magictractor.spew.store.application.ApplicationPropertyStore;
 import uk.co.magictractor.spew.store.application.ResourceFileApplicationPropertyStore;
 import uk.co.magictractor.spew.store.user.PreferencesUserPropertyStore;
 import uk.co.magictractor.spew.store.user.UserPropertyStore;
-import uk.co.magictractor.spew.util.ExceptionUtil;
+import uk.co.magictractor.util.exception.ExceptionUtil;
 
 /**
  *

@@ -3,8 +3,9 @@ package uk.co.magictractor.spew.util;
 import java.io.Closeable;
 import java.io.IOException;
 
-import uk.co.magictractor.spew.util.ExceptionUtil.ConsumerWithException;
-import uk.co.magictractor.spew.util.ExceptionUtil.FunctionWithException;
+import uk.co.magictractor.util.exception.ExceptionUtil;
+import uk.co.magictractor.util.exception.ExceptionUtil.ConsumerWithException;
+import uk.co.magictractor.util.exception.ExceptionUtil.FunctionWithException;
 
 public final class IOUtil {
 

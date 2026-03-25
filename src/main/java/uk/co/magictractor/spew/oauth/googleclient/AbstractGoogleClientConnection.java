@@ -19,7 +19,7 @@ import uk.co.magictractor.spew.api.OutgoingHttpRequest;
 import uk.co.magictractor.spew.api.SpewConnectionConfiguration;
 import uk.co.magictractor.spew.api.SpewHttpResponse;
 import uk.co.magictractor.spew.api.connection.AbstractSpewConnection;
-import uk.co.magictractor.spew.util.ExceptionUtil;
+import uk.co.magictractor.util.exception.ExceptionUtil;
 
 public abstract class AbstractGoogleClientConnection<CONFIG extends SpewConnectionConfiguration>
         extends AbstractSpewConnection<CONFIG> {

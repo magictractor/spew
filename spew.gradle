@@ -15,9 +15,16 @@ plugins {
 }
 
 repositories {
+    // mavenLocal() for snapshots of other uk.co.magictractor projects
+    // Alternatively, other uk.co.magictractor projects may be included by
+    // adding their source directory to sourceSets.main.java.srcDirs.
+    // The other projects should include the maven-publish plugin and use the publishToMavenLocal task.
+    // See https://docs.gradle.org/current/userguide/publishing_maven.html.
+    mavenLocal()
+    
     mavenCentral()
     // For Spring Social 2.0 milestones. Will never be released. Spring OAuth moved to Spring Security. Rework code then remove this.
-    maven { url "https://repo.spring.io/artifactory/libs-milestone-local" }
+    maven { url = "https://repo.spring.io/artifactory/libs-milestone-local" }
 }
 
 dependencies {
@@ -34,10 +41,13 @@ dependencies {
     // No! auth requests use form data, not Json
     //implementation("javax.json:javax.json-api:1.1.4")
     
-    // Provide one of these if a transort only (no auth) connection is required
+    // Provide one of these if a transport only (no auth) connection is required
     // Boa authorisation is layered on top of a transport only connection
     // Spring social dynamically determines the transport depending on available classes.
-    compileOnly("org.apache.httpcomponents.client5:httpclient5:5.6")
+    // TODO! code is actually using httpclient-4.5.14, presumably a transitive dependency, so make it explicit
+    // TODO! impls for both httpclient 4 and 5?
+    // compileOnly("org.apache.httpcomponents.client5:httpclient5:5.6")
+    compileOnly 'org.apache.httpcomponents:httpclient:4.5.14'
 
     // Provide one of these to use a third-party OAuth implementation (not Boa)
     
@@ -74,6 +84,7 @@ dependencies {
     // also Iterator concatenation and filtering
     implementation libs.guava
 
+    implementation('uk.co.magictractor:util:0.0.1-SNAPSHOT')
     testImplementation("uk.co.magictractor:jura:0.0.1-SNAPSHOT")
 }
 

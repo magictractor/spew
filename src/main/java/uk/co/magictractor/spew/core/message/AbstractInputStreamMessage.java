@@ -21,8 +21,8 @@ import java.io.InputStream;
 import com.google.common.io.ByteStreams;
 
 import uk.co.magictractor.spew.api.SpewHttpMessage;
-import uk.co.magictractor.spew.util.ExceptionUtil;
-import uk.co.magictractor.spew.util.ExceptionUtil.SupplierWithException;
+import uk.co.magictractor.util.exception.ExceptionUtil;
+import uk.co.magictractor.util.exception.ExceptionUtil.SupplierWithException;
 
 /**
  * Base class for response implementations which need to read and cache their

@@ -9,7 +9,7 @@ import java.nio.file.Paths;
 import org.junit.jupiter.api.Test;
 
 import uk.co.magictractor.spew.photo.Media;
-import uk.co.magictractor.spew.util.ExceptionUtil;
+import uk.co.magictractor.util.exception.ExceptionUtil;
 
 public class LocalPhotoTest {
 
